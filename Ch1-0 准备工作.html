@@ -1,0 +1,368 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="chs" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Ch1-0 准备工作 &mdash; EasyVulkan</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Ch1-1 创建GLFW窗口" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html" />
+    <link rel="prev" title="EasyVulkan" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+          
+
+          
+            
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">第一章 从零到交换链</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch1-0 准备工作</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">下载所需的库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">配置项目</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9B%E5%BB%BAVk%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-2 创建Vk实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-3 创建交换链</a></li>
+</ul>
+<p class="caption"><span class="caption-text">第二章 基础绘制</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20%E7%AC%AC%E4%B8%80%E4%B8%AA%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-1 第一个三角形</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Ch1-0 准备工作</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ch1-0">
+<h1>Ch1-0 准备工作<a class="headerlink" href="#ch1-0" title="Permalink to this headline">¶</a></h1>
+<div class="line-block">
+<div class="line">下面以Win10上的VisualStudio 2019为例。</div>
+<div class="line">笔者没有Mac或者安装了Linux的PC（事实上我从没用过Win以外的系统），其中各种差异请各位自行解决。</div>
+</div>
+<div class="section" id="id1">
+<h2>下载所需的库<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>名称</p></th>
+<th class="head"><p>描述</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Vulkan SDK</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>GLM</p></td>
+<td><p>用于OpenGL的数学库，也适用于Vulkan</p></td>
+</tr>
+<tr class="row-even"><td><p>GLFW</p></td>
+<td><p>帮助你轻松创建窗口，获取键鼠输入</p></td>
+</tr>
+<tr class="row-odd"><td><p>stb_image.h</p></td>
+<td><p>用于读取贴图</p></td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line">后两项可用其他库替代（比如在Windows上不用GLFW，自行创建一个Windows窗口以及surface，不过我不打算花笔墨讲Windows API）。</div>
+</div>
+<div class="line-block">
+<div class="line">1.下载并安装Vulkan SDK</div>
+</div>
+<blockquote>
+<div><div class="line-block">
+<div class="line">根据你的系统选择最新的SDK，然后建议Windows下安装到默认目录。</div>
+<div class="line"><a class="reference external" href="https://vulkan.lunarg.com/sdk/home">https://vulkan.lunarg.com/sdk/home</a></div>
+</div>
+<div class="line-block">
+<div class="line"><strong>检查设备是否支持Vulkan</strong></div>
+<div class="line">安装完以后，你可以在 <span class="str">VulkanSDK\1.2.154.1\Bin</span> 或者 <span class="str">VulkanSDK\1.2.154.1\Bin32</span> 下找到一些exe文件。</div>
+<div class="line">运行其中的 <span class="str">vkcube.exe</span> ，若是成功运行，看到了一个正在旋转的正方体，说明你的显卡支持Vulkan。</div>
+<div class="line">另外，你可以通过 <span class="str">vulkaninfoSDK.exe</span> 来查看显卡的相关信息。</div>
+</div>
+</div></blockquote>
+<div class="line-block">
+<div class="line">2.下载GLM</div>
+</div>
+<blockquote>
+<div><div class="line-block">
+<div class="line">务必是最新的。从OpenGL过来的程序员们，不要使用几年前的版本！</div>
+<div class="line"><a class="reference external" href="https://github.com/g-truc/glm/releases">https://github.com/g-truc/glm/releases</a></div>
+</div>
+</div></blockquote>
+<div class="line-block">
+<div class="line">3.下载GLFW</div>
+</div>
+<blockquote>
+<div><div class="line-block">
+<div class="line">根据你的系统选择相应的pre-compiled binaries：</div>
+<div class="line"><a class="reference external" href="https://www.glfw.org/download.html">https://www.glfw.org/download.html</a></div>
+</div>
+</div></blockquote>
+<div class="line-block">
+<div class="line">4.下载stb_image.h</div>
+</div>
+<blockquote>
+<div><div class="line-block">
+<div class="line">直接下载单个文件即可：</div>
+<div class="line"><a class="reference external" href="https://github.com/nothings/stb/blob/master/stb_image.h">https://github.com/nothings/stb/blob/master/stb_image.h</a></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="id2">
+<h2>配置项目<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<img alt="_images/ch1-0-1.png" class="align-right" src="_images/ch1-0-1.png" />
+<div class="line-block">
+<div class="line">1.打开VS2019，创建一个空的C++解决方案。</div>
+</div>
+<div class="line-block">
+<div class="line">2.在项目目录下，按你的命名习惯创建个用于存放外部依赖项的文件夹，我打算叫它 <span class="str">Dependency</span></div>
+</div>
+<blockquote>
+<div><ul class="simple">
+<li><p>将 <span class="str">stb_image.h</span> 放在 <span class="str">Dependency</span> 下</p></li>
+<li><p>将glm压缩包内的 <span class="str">glm/glm</span> 放在 <span class="str">Dependency</span> 下</p></li>
+<li><p>在 <span class="str">Dependency</span> 中新建一个 <span class="str">GLFW</span> 文件夹，将glfw-3.3.3.bin.WIN64压缩包内 <span class="str">glfw-3.3.3.bin.WIN64(或32)/include</span> 文件解压到该文件夹中，新建文件夹叫 <span class="str">lib_win64</span> 和 <span class="str">lib_win32</span> ，并在压缩包内找到相应的lib文件夹，将内容解压到刚刚新建的相应文件夹中。</p></li>
+<li><p>在 <span class="str">Dependency</span> 中新建一个 <span class="str">Vulkan</span> 文件夹，并依次新建  <span class="str">Include</span> 、 <span class="str">Lib</span> 、 <span class="str">Lib32</span> 三个文件夹，从你VulkanSDK的安装目录下找到  <span class="str">Include/vulkan</span> 、 <span class="str">Lib/vulkan-1.lb</span> 、 <span class="str">Lib32/vulkan-1.lib</span> ，分别复制到上述三个文件夹。</p></li>
+</ul>
+<div class="line-block">
+<div class="line">因为我尽量不想更改压缩包内原有的文件层级关系，所以出现了GLFW/include/GLFW这样的路径。</div>
+<div class="line">最后看上去应该如右图所示。</div>
+</div>
+</div></blockquote>
+<div class="line-block">
+<div class="line">3.新建 <span class="str">main.cpp</span> （为了让项目属性里出现C++选项）。</div>
+</div>
+<div class="line-block">
+<div class="line">4.在项目属性中做如下变更：</div>
+</div>
+<blockquote>
+<div><div class="line-block">
+<div class="line">[所有配置,所有平台] C/C++/常规/附加包含目录</div>
+<div class="line">添加：</div>
+<div class="line"><span class="macro">$(ProjectDir)Dependencies;</span></div>
+<div class="line"><span class="macro">$(ProjectDir)Dependencies\Vulkan\Include;</span></div>
+<div class="line"><span class="macro">$(ProjectDir)Dependencies\glm;</span></div>
+<div class="line"><span class="macro">$(ProjectDir)Dependencies\GLFW\include;</span></div>
+</div>
+<div class="line-block">
+<div class="line">[所有配置,所有平台] C/C++/语言/C++语言标准</div>
+<div class="line">设置为：</div>
+<div class="line">预览 - 最新 C++ 工作草案中的功能 (/std:c++latest)</div>
+</div>
+<div class="line-block">
+<div class="line">[所有配置,Win32] 链接器/常规/附加库目录</div>
+<div class="line">添加：</div>
+<div class="line"><span class="macro">$(ProjectDir)Dependencies\Vulkan\Lib32;</span></div>
+<div class="line"><span class="macro">$(ProjectDir)Dependencies\GLFW\lib_win32;</span></div>
+<div class="line"><span class="macro">%(AdditionalLibraryDirectories)</span></div>
+</div>
+<div class="line-block">
+<div class="line">[所有配置,Win64] 链接器/常规/附加库目录</div>
+<div class="line">添加：</div>
+<div class="line"><span class="macro">$(ProjectDir)Dependencies\Vulkan\Lib;</span></div>
+<div class="line"><span class="macro">$(ProjectDir)Dependencies\GLFW\lib_win64;</span></div>
+<div class="line"><span class="macro">%(AdditionalLibraryDirectories)</span></div>
+</div>
+<div class="line-block">
+<div class="line"><span class="comment">//以下非必要，但是建议</span></div>
+<div class="line">[所有配置,所有平台] 配置属性/常规/输出目录</div>
+<div class="line">设置为：</div>
+<div class="line"><span class="macro">$(SolutionDir)$(Platform)\$(Configuration)\</span></div>
+<div class="line">[所有配置,所有平台] 配置属性/常规/中间目录</div>
+<div class="line">设置为：</div>
+<div class="line"><span class="macro">$(SolutionDir)bin$(Platform)\$(Configuration)\</span></div>
+</div>
+</div></blockquote>
+<div class="line-block">
+<div class="line">至此为止我们就配置完了！</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html" class="btn btn-neutral float-right" title="Ch1-1 创建GLFW窗口" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="EasyVulkan" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Qiao Wu.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
