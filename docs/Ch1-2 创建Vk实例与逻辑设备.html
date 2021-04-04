@@ -92,12 +92,39 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch1-2 创建Vk实例与逻辑设备</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch1-2 创建Vk实例与逻辑设备</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">单例类</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vk">创建一个VK实例</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">获取所需的实例级别层和扩展</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">检查是否能满足所需的层和扩展</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">创建VK实例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#window-surface">创建Window Surface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">选择物理设备</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">记录所需的设备级别扩展和层</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">获取物理设备列表</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">检查物理设备是否满足要求</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">选择物理设备</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">创建逻辑设备</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id11">获取物理设备特性</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">创建逻辑设备</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id13">验证层及其扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id14">加快启动速度</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-3 创建交换链</a></li>
 </ul>
 <p class="caption"><span class="caption-text">第二章 基础绘制</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20%E7%AC%AC%E4%B8%80%E4%B8%AA%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-1 第一个三角形</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93.html">Ch2-1 创建渲染通道</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD%E7%AE%80%E4%BB%8B.html">Ch2-2 同步原语简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%A4%A9%E5%93%AA%EF%BC%8C%E6%98%AF%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 天哪，是三角形</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-4%20%E5%8D%B3%E6%97%B6%E5%B8%A7%E4%B8%8E%E9%98%9F%E5%88%97%E6%89%80%E6%9C%89%E6%9D%83%E8%BD%AC%E7%A7%BB.html">Ch2-4 即时帧与队列所有权转移</a></li>
 </ul>
 
             
@@ -165,6 +192,619 @@
             
   <div class="section" id="ch1-2-vk">
 <h1>Ch1-2 创建Vk实例与逻辑设备<a class="headerlink" href="#ch1-2-vk" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>单例类<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line">首先在 <span class="str">VKBase.h</span> 里添加一个叫 <code class="docutils literal notranslate"><span class="pre">vulkan</span></code> 的命名空间。</div>
+<div class="line">在该命名空间下，用一个单例类来管理Vulkan中那些最基础的对象和行为，我将这个类命名为 <span class="type">graphicsBase</span> 。</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">graphicsBase</span> <span class="p">{</span>
+    <span class="c1">//Static</span>
+    <span class="k">static</span> <span class="n">graphicsBase</span> <span class="n">singleton</span><span class="p">;</span>
+    <span class="c1">//--------------------</span>
+    <span class="n">graphicsBase</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">graphicsBase</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">&amp;&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
+    <span class="o">~</span><span class="n">graphicsBase</span><span class="p">()</span> <span class="p">{</span>
+        <span class="cm">/*待填充*/</span>
+    <span class="p">}</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="c1">//Static Function</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="n">graphicsBase</span><span class="o">&amp;</span> <span class="n">Base</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">singleton</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">};</span>
+<span class="kr">inline</span> <span class="n">graphicsBase</span> <span class="n">graphicsBase</span><span class="o">::</span><span class="n">singleton</span><span class="p">;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>叫Base是因为还会有Plus！...</p></li>
+<li><p>删除移动构造器，且没有定义复制构造器、复制赋值、移动赋值时，上述四个函数全部无法使用。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Base()</span></code> 带 <span class="kw">constexpr</span> 是为了避免你觉得 <code class="docutils literal notranslate"><span class="pre">vulkan::graphicsBase::Base()</span></code> 太长，这样你就可以视情况创建一个全局的引用。</p></li>
+</ul>
+</div>
+<div class="section" id="vk">
+<h2>创建一个VK实例<a class="headerlink" href="#vk" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line"><span class="type">VkInstance</span> 是你的应用程序与显卡驱动所提供的Vulkan实现之间的联系。VK实例的底层是一系列Vulkan应用程序所必需的，用于记录状态的变量。</div>
+</div>
+<div class="line-block">
+<div class="line">步骤：</div>
+<div class="line">1.获取所需的实例级别层和扩展</div>
+<div class="line">2.检查是否能满足所需的层和扩展</div>
+<div class="line">3.创建VK实例</div>
+</div>
+<div class="line-block">
+<div class="line">Q：什么是扩展？</div>
+<div class="line">A：顾名思义。扩展中有很多是平台特定/厂商特定的，因为Vulkan是个平台无关的API，实现平台特定的内容需要依靠扩展。</div>
+</div>
+<div class="line-block">
+<div class="line">Q：什么是层？</div>
+<div class="line">A：类似扩展，但层有显著的作用范围。比如实例级别的验证层，会检查所有Vulkan相关的指令。层本身具有一定的功能。有些扩展需要特定的层才能使用。</div>
+</div>
+<div class="line-block">
+<div class="line">Q：实例级别和设备级别有何差别？</div>
+<div class="line">A：实例级别与特定GPU无关，可能作用于所有Vulkan相关指令，或者跟GPU无关的指令。设备级别作用于特定GPU。</div>
+</div>
+<div class="section" id="id2">
+<h3>获取所需的实例级别层和扩展<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line">首先在我们刚刚创建的 <span class="type">graphicsBase</span> 中加入以下代码</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">private</span><span class="o">:</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="k">const</span> <span class="kt">char</span><span class="o">*&gt;</span> <span class="n">instanceLayers</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="k">const</span> <span class="kt">char</span><span class="o">*&gt;</span> <span class="n">instanceExtensions</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="c1">//Non-const Function</span>
+    <span class="cm">/*For initialization*/</span>
+    <span class="kt">void</span> <span class="n">PushInstanceLayer</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">layerName</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">instanceLayers</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">layerName</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">PushInstanceExtension</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">extensionName</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">instanceExtensions</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">extensionName</span><span class="p">);</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">无需解释的代码。正如我在主页所言，这套教程的读者起码得知道什么是面向对象编程。</div>
+</div>
+<div class="line-block">
+<div class="line">接着来获取所需的层和扩展。</div>
+<div class="line">关于验证层及其扩展的内容被单独拿出来放在本节的最后，眼下只关心GLFW所需的层。</div>
+<div class="line">在前一节的 <code class="docutils literal notranslate"><span class="pre">InitializeWindow</span></code> 函数中，在 <code class="docutils literal notranslate"><span class="pre">glfwWindowHint</span></code> 后，加入以下代码：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">uint32_t</span> <span class="n">extensionCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">char</span><span class="o">**</span> <span class="n">extensionNames</span><span class="p">;</span>
+<span class="n">extensionNames</span> <span class="o">=</span> <span class="n">glfwGetRequiredInstanceExtensions</span><span class="p">(</span><span class="o">&amp;</span><span class="n">extensionCount</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">extensionNames</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ InitializeWindow ]</span><span class="se">\n</span><span class="s">Vulkan is not available on this machine!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+    <span class="n">glfwTerminate</span><span class="p">();</span>
+    <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">extensionCount</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="n">vulkan</span><span class="o">::</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">PushInstanceExtension</span><span class="p">(</span><span class="n">extensionNames</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">glfwGetRequiredInstanceExtensions</span></code> 函数：</div>
+<div class="line">参数一： <span class="type">uint32_t</span> * 类型的指针，所指向的变量用于记录所需扩展的数量</div>
+<div class="line">返回值：若成功，返回一个指针，指向一个由所需扩展的名称字符串构成的数组。失败则返回 <span class="kw">nullptr</span> ，并意味着此设备不支持Vulkan。</div>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>注意，你不需要手动free掉 <code class="docutils literal notranslate"><span class="pre">extensionNames</span></code> ，GLFW的注释中写到：<br>
+<span class="comment">The returned array is allocated and freed by GLFW.</span> <br>
+<span class="comment">You should not free it yourself.</span> <br>
+<span class="comment">It is guaranteed to be valid only until the library is terminated.</span></p>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>检查是否能满足所需的层和扩展<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line">在 <span class="type">graphicsBase</span> 中添加一个私有函数：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">//Non-const Function</span>
+<span class="cm">/*For initialization*/</span>
+<span class="kt">void</span> <span class="nf">CheckInstanceLayersAndExtensions</span><span class="p">()</span> <span class="p">{</span>
+    <span class="cm">/*待填充*/</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">接着我们来填充这个函数，首先我们要取得所有可用的层和扩展：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">uint32_t</span> <span class="n">layerCount</span><span class="p">;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">VkLayerProperties</span><span class="o">&gt;</span> <span class="n">availableInstanceLayers</span><span class="p">;</span>
+<span class="n">vkEnumerateInstanceLayerProperties</span><span class="p">(</span><span class="o">&amp;</span><span class="n">layerCount</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">layerCount</span><span class="p">)</span>
+    <span class="n">availableInstanceLayers</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">layerCount</span><span class="p">),</span>
+    <span class="n">vkEnumerateInstanceLayerProperties</span><span class="p">(</span><span class="o">&amp;</span><span class="n">layerCount</span><span class="p">,</span> <span class="n">availableInstanceLayers</span><span class="p">.</span><span class="n">data</span><span class="p">());</span>
+
+<span class="kt">uint32_t</span> <span class="n">extensionCount</span><span class="p">;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">VkExtensionProperties</span><span class="o">&gt;</span> <span class="n">availableInstanceExtensions</span><span class="p">;</span>
+<span class="n">vkEnumerateInstanceExtensionProperties</span><span class="p">(</span><span class="k">nullptr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">extensionCount</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">layerCount</span><span class="p">)</span>
+    <span class="n">availableInstanceExtensions</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">extensionCount</span><span class="p">),</span>
+    <span class="n">vkEnumerateInstanceExtensionProperties</span><span class="p">(</span><span class="k">nullptr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">extensionCount</span><span class="p">,</span> <span class="n">availableInstanceExtensions</span><span class="p">.</span><span class="n">data</span><span class="p">());</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><span class="str">vkEnumerateInstanceLayerProperties</span> 和 <span class="str">vkEnumerateInstanceExtensionProperties</span> 各被调用了两次，这在Vulkan中是很常见的情形。</div>
+<div class="line">第一次调用时，传入一个 <span class="type">uint32_t</span> 类型变量的地址，并在最后一个参数的位置传入 <span class="kw">nullptr</span> ，如此一来函数就会返回层/扩展的数量到相应地址。</div>
+<div class="line">第二次调用时，再次传入记录了数量的变量的地址，这决定了我们会取得多少层/扩展的信息，然后最后一个参数的位置传入一个有效的，指向 <span class="type">VkLayerProperties</span> / <span class="type">VkExtensionProperties</span> 类型数组的地址，用于存放层/扩展的相关信息。</div>
+<div class="line"><span class="str">vkEnumerateInstanceExtensionProperties</span> 的首个参数是 <span class="kw">const char</span> * 类型，用于指定层的名称，可以取得特定层的扩展。当该参数是 <span class="kw">nullptr</span> 时，表示取得所有由Vulkan的实现提供，或隐式开启的层的扩展，简而言之就是取得所有默认扩展，本教程中涉及到的所有扩展皆在此列。</div>
+<div class="line">Vulkan中的函数执行成功时返回 <span class="macro">VK_SUCCESS</span> ，值为0。</div>
+</div>
+<div class="line-block">
+<div class="line">然后来验证我们所需的层和扩展是否可用：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">size_t</span> <span class="n">layerCount_found</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">i</span> <span class="p">:</span> <span class="n">instanceLayers</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">j</span> <span class="p">:</span> <span class="n">availableInstanceLayers</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">.</span><span class="n">layerName</span><span class="p">))</span>
+        <span class="p">{</span>
+            <span class="n">layerCount_found</span><span class="o">++</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">layerCount_found</span> <span class="o">!=</span> <span class="n">instanceLayers</span><span class="p">.</span><span class="n">size</span><span class="p">())</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ graphicsBase ]</span><span class="se">\n</span><span class="s">Not all instance level layers are supported!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+    <span class="n">abort</span><span class="p">();</span>
+
+<span class="kt">size_t</span> <span class="n">extensionCount_found</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">i</span> <span class="p">:</span> <span class="n">instanceExtensions</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">j</span> <span class="p">:</span> <span class="n">availableInstanceExtensions</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">.</span><span class="n">extensionName</span><span class="p">))</span>
+        <span class="p">{</span>
+            <span class="n">extensionCount_found</span><span class="o">++</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">extensionCount_found</span> <span class="o">!=</span> <span class="n">instanceExtensions</span><span class="p">.</span><span class="n">size</span><span class="p">())</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ graphicsBase ]</span><span class="se">\n</span><span class="s">Not all instance level extensions are supported!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+    <span class="n">abort</span><span class="p">();</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><span class="type">VkLayerProperties</span> 和 <span class="type">VkExtensionProperties</span> 各有成员变量记录了层/扩展的名称，我们遍历所有的层和扩展，用 <code class="docutils literal notranslate"><span class="pre">strcmp</span></code> 将我们所需的层和扩展的名称与先前取得的列表中的名称做比较，若找到了一致的就增加计数。</div>
+<div class="line">若计数与我们两个 <span class="type">vector</span> 中的数量不一致，说明没能找到所有所需的扩展和层，我们直接 <code class="docutils literal notranslate"><span class="pre">abort()</span></code> ，而不必返回 <span class="kw">false</span> 了 —— 如果是开发者，更新你的VulkanSDK，用户的话更新显卡驱动去吧！。</div>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>创建VK实例<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line">在 <span class="type">graphicsBase</span> 中添加一个私有变量和两个公有函数：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span>    <span class="n">VkInstance</span> <span class="n">instance</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="c1">//Getter</span>
+    <span class="n">VkInstance</span> <span class="n">Instance</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">instance</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c1">//Non-const Function</span>
+    <span class="kt">void</span> <span class="n">CreateInstance</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">CheckInstanceLayersAndExtensions</span><span class="p">();</span><span class="c1">//首先，调用我们在上一段中所写的函数</span>
+        <span class="cm">/*待填充*/</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">在我们的程序成功通过了对实例级别层和扩展的检查后，我们通过 <code class="docutils literal notranslate"><span class="pre">vkCreateInstance</span></code> 函数来创建一个实例。</div>
+<div class="line"><span class="type">VkResult</span> <span class="macro">VKAPI_CALL</span> vkCreateInstance(</div>
+<div class="line-block">
+<div class="line"><span class="kw">const</span> <span class="type">VkInstanceCreateInfo</span> * pCreateInfo,</div>
+<div class="line"><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span> * pAllocator,</div>
+<div class="line"><span class="type">VkInstance</span> * pInstance);</div>
+</div>
+<div class="line">这是一个非常典型的Vulkan API函数，它需要传入一个指向某种创建信息的指针，一个指向描述自定义内存分配方式的结构体的指针，一个用于接收所创建对象的指针。</div>
+<div class="line">关于这个 <code class="docutils literal notranslate"><span class="pre">pAllocator</span></code> ，你会经常看见它，所指向的类型 <span class="type">VkAllocationCallbacks</span> 中是一系列函数指针，用于描述内存的分配和回收方式，有一些特殊情形（比如对某些嵌入式系统）可能需要这么做，本教程中但凡出现 <span class="kw">const</span> <span class="type">VkAllocationCallbacks</span> * pAllocator一概填 <span class="kw">nullptr</span>。</div>
+<div class="line">通过结构体来传递各类创建信息的做法，对于直接从OpenGL转向Vulkan的程序员来说可能不太习惯，但如果你之前有写过DX11或DX12，想必你已经习惯了。</div>
+</div>
+<div class="line-block">
+<div class="line">于是我们来看看 <span class="type">VkInstanceCreateInfo</span> 的内容：</div>
+<div class="line"><span class="kw">struct</span> <span class="type">VkInstanceCreateInfo</span> {</div>
+<div class="line-block">
+<div class="line"><span class="type">VkStructureType</span> sType; <span class="comment">//该结构体的类型，本处必须是VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO</span></div>
+<div class="line"><span class="kw">const void</span> * pNext; <span class="comment">//指向一个用于扩展该结构体的结构体</span></div>
+<div class="line"><span class="type">VkInstanceCreateFlags</span> flags;</div>
+<div class="line"><span class="kw">const VkApplicationInfo</span> * pApplicationInfo; <span class="comment">//描述本程序相关信息的结构体</span></div>
+<div class="line"><span class="type">uint32_t</span> enabledLayerCount; <span class="comment">//所需额外开启的实例级别层数</span></div>
+<div class="line"><span class="kw">const char</span> * <span class="kw">const</span> * ppEnabledLayerNames; <span class="comment">//指向由所需开启的层的名称构成的数组</span></div>
+<div class="line"><span class="type">uint32_t</span> enabledExtensionCount; <span class="comment">//所需开启的实例级别扩展数</span></div>
+<div class="line"><span class="kw">const char</span> * <span class="kw">const</span> * ppEnabledExtensionNames; <span class="comment">//指向由所需开启的扩展的名称构成的数组</span></div>
+</div>
+<div class="line">};</div>
+<div class="line">Vulkan的各种CreateInfo中有不少所谓的flags，有些可以填写内容，有些只是为了可扩展性设置的，目前没有任何可用的flag bit，比如 <span class="type">VkInstanceCreateInfo</span> 便是如此。</div>
+<div class="line">pNext也是个很常见的东西，它指向一些后续版本或与特定厂商的扩展相关的结构体，这个教程会使用Vulkan1.0版本，并且书写尽量通用的代码，因此pNext将总是 <span class="kw">nullptr</span> 。</div>
+</div>
+<div class="line-block">
+<div class="line">然后是 <span class="type">VkApplicationInfo</span> 的内容：</div>
+<div class="line"><span class="kw">struct</span> <span class="type">VkApplicationInfo</span> {</div>
+<div class="line-block">
+<div class="line"><span class="type">VkStructureType</span> sType; <span class="comment">//VK_STRUCTURE_TYPE_APPLICATION_INFO</span></div>
+<div class="line"><span class="kw">const void</span> * pNext;</div>
+<div class="line"><span class="kw">const char</span> * pApplicationName;</div>
+<div class="line"><span class="type">uint32_t</span> applicationVersion;</div>
+<div class="line"><span class="kw">const char</span> * pEngineName;</div>
+<div class="line"><span class="type">uint32_t</span> engineVersion;</div>
+<div class="line"><span class="type">uint32_t</span> apiVersion; <span class="comment">//所用的VulkanAPI版本号</span></div>
+</div>
+<div class="line">};</div>
+<div class="line">这个结构体很水。</div>
+<div class="line">你可以用它描述你的应用程序名称和版本号，如果你写的程序是个某种引擎，比如游戏引擎，可以描述其引擎名称和版本号，随你喜欢即可，毕竟这对程序的运行不构成任何影响，可以直接省略。</div>
+<div class="line">重要的是apiVersion，这个参数决定了所用的VulkanAPI版本号。</div>
+<div class="line">版本号总是能有三个部分，你可以用 <span class="macro">VK_MAKE_VERSION</span> (major, minor, patch)计算版本号。</div>
+<div class="line">apiVersion不关心patch版本号，所以请直接使用宏 <span class="macro">VK_API_VERSION_1_0</span> 或 <span class="macro">VK_API_VERSION_1_1</span> 或 <span class="macro">VK_API_VERSION_1_2</span>。</div>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>注意，若你想使用高于1.0的版本：<br> <br>
+Vulkan是向下兼容的，意味着只要设备支持Vulkan，就必定支持最早的1.0版本。<br>
+但是，若设备的Vulkan实现为1.0版本，apiVersion中填写了更高版本， <code class="docutils literal notranslate"><span class="pre">vkCreateInstance</span></code> 会返回 <span class="macro">VK_ERROR_INCOMPATIBLE_DRIVER</span> 。<br>
+若设备的Vulkan实现为1.1或以上版本，apiVersion中填写了更高版本， <code class="docutils literal notranslate"><span class="pre">vkCreateInstance</span></code> 哪怕失败也不会返回 <span class="macro">VK_ERROR_INCOMPATIBLE_DRIVER</span> ，<br>
+这是因为Vulkan实现为1.1或以上时，你可以用 <code class="docutils literal notranslate"><span class="pre">vkEnumerateInstanceVersion(uint32_t*</span> <span class="pre">pApiVersion)</span></code> 来获取所支持的最高api版本。<br> <br>
+若要在创建实例前确定Vulkan实现的版本，调用该函数： <code class="docutils literal notranslate"><span class="pre">vkGetInstanceProcAddr(nullptr,</span> <span class="pre">&quot;vkEnumerateInstanceVersion&quot;)</span></code> ，若返回值非 <span class="kw">nullptr</span> ，则为1.0以上，可以调用 <code class="docutils literal notranslate"><span class="pre">vkEnumerateInstanceVersion</span></code> 函数，否则为1.0。</p>
+</div>
+<div class="line-block">
+<div class="line">在 <code class="docutils literal notranslate"><span class="pre">CreateInstance</span></code> 的待填充区域，创建VK实例的具体代码如下：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">VkApplicationInfo</span> <span class="n">applicatianInfo</span><span class="p">{};</span>
+<span class="n">applicatianInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_APPLICATION_INFO</span><span class="p">;</span>
+<span class="n">applicatianInfo</span><span class="p">.</span><span class="n">apiVersion</span> <span class="o">=</span> <span class="n">VK_API_VERSION_1_0</span><span class="p">;</span>
+
+<span class="n">VkInstanceCreateInfo</span> <span class="n">instanceCreateInfo</span><span class="p">{};</span>
+<span class="n">instanceCreateInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO</span><span class="p">;</span>
+<span class="n">instanceCreateInfo</span><span class="p">.</span><span class="n">pApplicationInfo</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">applicatianInfo</span><span class="p">;</span>
+<span class="n">instanceCreateInfo</span><span class="p">.</span><span class="n">enabledLayerCount</span> <span class="o">=</span> <span class="n">instanceLayers</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="n">instanceCreateInfo</span><span class="p">.</span><span class="n">ppEnabledLayerNames</span> <span class="o">=</span> <span class="n">instanceLayers</span><span class="p">.</span><span class="n">data</span><span class="p">();</span>
+<span class="n">instanceCreateInfo</span><span class="p">.</span><span class="n">enabledExtensionCount</span> <span class="o">=</span> <span class="n">instanceExtensions</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="n">instanceCreateInfo</span><span class="p">.</span><span class="n">ppEnabledExtensionNames</span> <span class="o">=</span> <span class="n">instanceExtensions</span><span class="p">.</span><span class="n">data</span><span class="p">();</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkCreateInstance</span><span class="p">(</span><span class="o">&amp;</span><span class="n">instanceCreateInfo</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">instance</span><span class="p">))</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ graphicsBase ]</span><span class="se">\n</span><span class="s">Failed to create a vulkan instance!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">,</span>
+    <span class="n">abort</span><span class="p">();</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">最后，在 <code class="docutils literal notranslate"><span class="pre">InitializeWindow</span></code> 中获取所需扩展的代码后面，调用 <code class="docutils literal notranslate"><span class="pre">vulkan::graphicsBase::Base().CreateInstance()</span></code></div>
+</div>
+</div>
+</div>
+<div class="section" id="window-surface">
+<h2>创建Window Surface<a class="headerlink" href="#window-surface" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line">Vulkan是平台无关的API，你必须向其提供一个 <span class="type">VkSurfaceKHR</span> ，以和平台特定的窗口对接。</div>
+</div>
+<div class="line-block">
+<div class="line">在 <span class="type">graphicsBase</span> 中添加一个私有变量和一个Setter：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span>    <span class="n">VkSurfaceKHR</span> <span class="n">surface</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="c1">//Setter</span>
+    <span class="kt">void</span> <span class="n">Surface</span><span class="p">(</span><span class="n">VkSurfaceKHR</span> <span class="n">surface</span><span class="p">)</span> <span class="p">{</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">surface</span><span class="p">)</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">surface</span> <span class="o">=</span> <span class="n">surface</span><span class="p">;</span> <span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>注意到了吗？ 我给instance的初始值是 <span class="kw">nullptr</span> ，而我给surface的初始值是 <span class="macro">VK_NULL_HANDLE</span> ，单例类的成员并不需要初始值 —— 因为它们会被自动零初始化，我写明 <span class="kw">nullptr</span> 和 <span class="macro">VK_NULL_HANDLE</span> 是为了显示他们之间的区别：instance是一个与位数相关的地址，而surface总是64位的。<br> <br>
+Vulkan中有一系列总是为64位的handle，它们在64位下是个指向特定类型的指针，而在32位下是 <span class="type">uint64_t</span> 。有时候你需要注意这件事，比如我会在之后向你展示一个 <span class="type">bufferMemory</span> 类，用来完成显存的分配并绑定到buffer上，它会包含两个类型的handle： <span class="type">VkBuffer</span> 和 <span class="type">VkMemory</span> ，这俩类型在64位下能做出区别，所以我能在64位下通过运算符重载为 <span class="type">bufferMemory</span> 定义到两个类型的自动转换，但是在32位下不行。</p>
+</div>
+<div class="line-block">
+<div class="line">创建surface的代码如下，写在 <code class="docutils literal notranslate"><span class="pre">InitializeWindow</span></code> 中创建窗口的代码后面：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">//Create a vulkan surface</span>
+<span class="n">VkSurfaceKHR</span> <span class="n">surface</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">glfwCreateWindowSurface</span><span class="p">(</span>
+    <span class="n">vulkan</span><span class="o">::</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Instance</span><span class="p">(),</span>
+    <span class="n">pWindow</span><span class="p">,</span>
+    <span class="k">nullptr</span><span class="p">,</span><span class="c1">//这个是pAllocator</span>
+    <span class="o">&amp;</span><span class="n">surface</span><span class="p">))</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ InitializeWindow ]</span><span class="se">\n</span><span class="s">Failed to create a window surface!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="n">glfwTerminate</span><span class="p">();</span>
+    <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">vulkan</span><span class="o">::</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Surface</span><span class="p">(</span><span class="n">surface</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>选择物理设备<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line"><span class="type">VkPhysicalDevice</span> 用于代表物理设备（一般是GPU）。</div>
+</div>
+<div class="line-block">
+<div class="line">步骤：</div>
+<div class="line">1.记录所需的设备级别扩展和层</div>
+<div class="line">2.获取物理设备列表</div>
+<div class="line">3.根据对扩展和层，以及队列族的支持（以及其他参数，如有必要）选择物理设备</div>
+</div>
+<div class="line-block">
+<div class="line">Q：什么是队列族？</div>
+<div class="line">A：命令的接收方称为队列，命令在队列中按顺序开始执行（按标准而言，但实际未必）。而队列族是一族能执行某种类型命令的队列。主要有三种队列族：graphics、transfer、compute，对应三种命令类型，此外还有presentation。其中graphics队列必定支持transfer命令。</div>
+</div>
+<div class="section" id="id6">
+<h3>记录所需的设备级别扩展和层<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line">在 <span class="type">graphicsBase</span> 中添加以下内容：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span>    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="k">const</span> <span class="kt">char</span><span class="o">*&gt;</span> <span class="n">deviceLayers</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="k">const</span> <span class="kt">char</span><span class="o">*&gt;</span> <span class="n">deviceExtensions</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="kt">void</span> <span class="n">PushDeviceLayer</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">layerName</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">deviceLayers</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">layerName</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">PushDeviceExtension</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">extensionName</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">deviceExtensions</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">extensionName</span><span class="p">);</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">然后在 <code class="docutils literal notranslate"><span class="pre">InitializeWindow</span></code> 函数中加入语句：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">vulkan</span><span class="o">::</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">PushDeviceExtension</span><span class="p">(</span><span class="n">VK_KHR_SWAPCHAIN_EXTENSION_NAME</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">比起手打字符串，用宏 <span class="macro">VK_KHR_SWAPCHAIN_EXTENSION_NAME</span> 更安全，VS会帮你做检查。</div>
+<div class="line">我们不需要其他的设备级别的层或扩展。</div>
+</div>
+</div>
+<div class="section" id="id7">
+<h3>获取物理设备列表<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line">在 <span class="type">graphicsBase</span> 中添加以下内容：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span>    <span class="n">VkPhysicalDevice</span> <span class="n">physicalDevice</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+    <span class="n">VkPhysicalDeviceProperties</span> <span class="n">physicalDeviceProperties</span><span class="p">;</span>
+    <span class="n">VkPhysicalDeviceMemoryProperties</span> <span class="n">physicalDeviceMemoryProperties</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">VkPhysicalDevice</span> <span class="n">PhysicalDevice</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">physicalDevice</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">const</span> <span class="n">VkPhysicalDeviceProperties</span><span class="o">&amp;</span> <span class="n">PhysicalDeviceProperties</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">physicalDeviceProperties</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">const</span> <span class="n">VkPhysicalDeviceMemoryProperties</span><span class="o">&amp;</span> <span class="n">PhysicalDeviceMemoryProperties</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">physicalDeviceMemoryProperties</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">GetPhysicalDevice</span><span class="p">()</span> <span class="p">{</span>
+        <span class="cm">/*待填充*/</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">在 <code class="docutils literal notranslate"><span class="pre">GetPhysicalDevice</span></code> 中首先加入以下内容：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">uint32_t</span> <span class="n">deviceCount</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkEnumeratePhysicalDevices</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">deviceCount</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">))</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ graphicsBase ]</span><span class="se">\n</span><span class="s">Failed to get the count of physical devices!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">,</span>
+    <span class="n">abort</span><span class="p">();</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">deviceCount</span><span class="p">)</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ graphicsBase ]</span><span class="se">\n</span><span class="s">Failed to find any physical device supports vulkan!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+    <span class="n">abort</span><span class="p">();</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">VkPhysicalDevice</span><span class="o">&gt;</span> <span class="n">physicalDevices</span><span class="p">(</span><span class="n">deviceCount</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkEnumeratePhysicalDevices</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">deviceCount</span><span class="p">,</span> <span class="n">physicalDevices</span><span class="p">.</span><span class="n">data</span><span class="p">()))</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ graphicsBase ]</span><span class="se">\n</span><span class="s">Failed to enumerate physical devices!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">,</span>
+    <span class="n">abort</span><span class="p">();</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">这跟我们之前获取实例级别层和扩展的方式相似，唯一的不同是多了一个对deviceCount是否为0的验证，有些计算机，比如普通的服务器是没有GPU的。</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>至少就笔记本电脑而言，哪怕你有独立显卡，往往 <code class="docutils literal notranslate"><span class="pre">vkEnumeratePhysicalDevices</span></code> 只会给你返回一个设备，默认是核显，要使用独显运行程序，你得去显卡控制面板里进行设置。</p>
+</div>
+</div>
+<div class="section" id="id8">
+<h3>检查物理设备是否满足要求<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line">在 <span class="type">graphicsBase</span> 中添加以下内容：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span>    <span class="kt">uint32_t</span> <span class="n">queueFamilyIndex_graphics</span> <span class="o">=</span> <span class="mi">-1</span><span class="p">;</span>
+    <span class="kt">uint32_t</span> <span class="n">queueFamilyIndex_presentation</span> <span class="o">=</span> <span class="mi">-1</span><span class="p">;</span>
+
+    <span class="kt">bool</span> <span class="nf">CheckDeviceLayersAndExtensions</span><span class="p">(</span><span class="n">VkPhysicalDevice</span><span class="o">&amp;</span> <span class="n">physicalDevice</span><span class="p">)</span> <span class="p">{</span>
+        <span class="cm">/*待填充*/</span>
+    <span class="p">}</span>
+    <span class="kt">bool</span> <span class="nf">GetQueueFamilyIndex</span><span class="p">(</span><span class="n">VkPhysicalDevice</span><span class="o">&amp;</span> <span class="n">physicalDevice</span><span class="p">)</span> <span class="p">{</span>
+        <span class="cm">/*待填充*/</span>
+    <span class="p">}</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="kt">uint32_t</span> <span class="n">QueueFamilyIndex_Graphics</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">queueFamilyIndex_graphics</span><span class="p">;</span> <span class="p">}</span>
+    <span class="kt">uint32_t</span> <span class="n">QueueFamilyIndex_Presentation</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">queueFamilyIndex_presentation</span><span class="p">;</span> <span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">两个 <code class="docutils literal notranslate"><span class="pre">queueFamilyIndex</span></code> 是队列族索引，用默认值-1来表明尚未取得合适的索引，我们会在创建完逻辑设备后用到它们。</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">CheckDeviceLayersAndExtensions</span></code> 用来检查传入的物理设备是否满足所需的层和扩展，如满足则返回 <span class="kw">true</span> 。</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">GetQueueFamilyIndex</span></code> 用来检查传入的物理设备是否满足所需的队列族，如满足则获取队列族索引，并返回 <span class="kw">true</span> 。</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>你可以只查找一个队列族索引，并且在之后使用单一队列来完成渲染和呈现。<br>
+事实上，我谷歌逛下来接结论是，是个支持Vulkan的硬件基本都能找到同时满足graphics和presentation的队列族。<br> <br>
+但据我所知，目前标准中并没有明确这点，因此我决定在教程中使用两个队列族索引，尽管这俩索引很可能是相同的。<br>
+虽然我们之后写的函数会倾向于查找同时满足渲染和呈现的队列族，但你可以刻意找出并使用两个不同的队列族（核显的话可能找不出，因为只有一个队列族）。<br>
+而使用来自两个不同的队列族的队列，可能需要对数据进行额外的所有权转移（所谓可能，是因为经测试至少我的GTX 1060MQ不需要），在画出三角形后，会有一章专门讲述这个问题。</p>
+</div>
+<div class="line-block">
+<div class="line">在 <code class="docutils literal notranslate"><span class="pre">CheckDeviceLayersAndExtensions</span></code> 中，首先获取物理设备所支持的所有设备级别层和扩展：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">uint32_t</span> <span class="n">layerCount</span><span class="p">;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">VkLayerProperties</span><span class="o">&gt;</span> <span class="n">availableDeviceLayers</span><span class="p">;</span>
+<span class="n">vkEnumerateDeviceLayerProperties</span><span class="p">(</span><span class="n">physicalDevice</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">layerCount</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">layerCount</span><span class="p">)</span>
+    <span class="n">availableDeviceLayers</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">layerCount</span><span class="p">),</span>
+    <span class="n">vkEnumerateDeviceLayerProperties</span><span class="p">(</span><span class="n">physicalDevice</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">layerCount</span><span class="p">,</span> <span class="n">availableDeviceLayers</span><span class="p">.</span><span class="n">data</span><span class="p">());</span>
+
+<span class="kt">uint32_t</span> <span class="n">extensionCount</span><span class="p">;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">VkExtensionProperties</span><span class="o">&gt;</span> <span class="n">availableDeviceExtensions</span><span class="p">;</span>
+<span class="n">vkEnumerateDeviceExtensionProperties</span><span class="p">(</span><span class="n">physicalDevice</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">extensionCount</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">layerCount</span><span class="p">)</span>
+    <span class="n">availableDeviceExtensions</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">extensionCount</span><span class="p">),</span>
+    <span class="n">vkEnumerateDeviceExtensionProperties</span><span class="p">(</span><span class="n">physicalDevice</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">extensionCount</span><span class="p">,</span> <span class="n">availableDeviceExtensions</span><span class="p">.</span><span class="n">data</span><span class="p">());</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">这跟我们之前获取实例级别层和扩展的的方式十分相似，无需多说。之后也是非常相似的套路：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">size_t</span> <span class="n">layerCount_found</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">i</span> <span class="p">:</span> <span class="n">deviceLayers</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">j</span> <span class="p">:</span> <span class="n">availableDeviceLayers</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">.</span><span class="n">layerName</span><span class="p">))</span>
+        <span class="p">{</span>
+            <span class="n">layerCount_found</span><span class="o">++</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">layerCount_found</span> <span class="o">!=</span> <span class="n">deviceLayers</span><span class="p">.</span><span class="n">size</span><span class="p">())</span>
+    <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+
+<span class="kt">size_t</span> <span class="n">extensionCount_found</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">i</span> <span class="p">:</span> <span class="n">deviceExtensions</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">j</span> <span class="p">:</span> <span class="n">availableDeviceExtensions</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">.</span><span class="n">extensionName</span><span class="p">))</span>
+        <span class="p">{</span>
+            <span class="n">extensionCount_found</span><span class="o">++</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">extensionCount_found</span> <span class="o">!=</span> <span class="n">deviceExtensions</span><span class="p">.</span><span class="n">size</span><span class="p">())</span>
+    <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+<span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">在 <code class="docutils literal notranslate"><span class="pre">CheckDeviceLayersAndExtensions</span></code> 中，再次用惯例的方式，来取得队列族属性：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">uint32_t</span> <span class="n">queueFamilyCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="n">vkGetPhysicalDeviceQueueFamilyProperties</span><span class="p">(</span><span class="n">physicalDevice</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">queueFamilyCount</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">queueFamilyCount</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">VkQueueFamilyProperties</span><span class="o">&gt;</span> <span class="n">queueFamilyPropertieses</span><span class="p">(</span><span class="n">queueFamilyCount</span><span class="p">);</span>
+<span class="n">vkGetPhysicalDeviceQueueFamilyProperties</span><span class="p">(</span><span class="n">physicalDevice</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">queueFamilyCount</span><span class="p">,</span> <span class="n">queueFamilyPropertieses</span><span class="p">.</span><span class="n">data</span><span class="p">());</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><span class="type">VkQueueFamilyProperties</span> 的首个成员，queueFlags表明了该队列所支持的命令类型。</div>
+<div class="line">之后我们遍历所有的队列族属性，来寻找所需的队列族的索引，索引当然是从0开始技术的。</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="p">(</span><span class="kt">uint32_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">queueFamilyCount</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="c1">//遍历队列族索引</span>
+<span class="p">{</span>
+    <span class="n">VkBool32</span><span class="c1">//这是个4字节类型，不要用bool，下面的vkGetPhysicalDeviceSurfaceSupportKHR函数要求该类型</span>
+        <span class="n">supportGraphics</span> <span class="o">=</span> <span class="n">queueFamilyPropertieses</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">queueFlags</span> <span class="o">&amp;</span> <span class="n">VK_QUEUE_GRAPHICS_BIT</span><span class="p">,</span><span class="c1">//将queueFlags同VK_QUEUE_GRAPHICS_BIT做位与来确定是否满足graphics</span>
+        <span class="n">supportPresentation</span><span class="p">;</span><span class="c1">//呈现不在标准之内，所以不存在 VK_QUEUE_PRESENTATION_BIT</span>
+    <span class="n">vkGetPhysicalDeviceSurfaceSupportKHR</span><span class="p">(</span><span class="c1">//查询是否满足presentation</span>
+        <span class="n">physicalDevice</span><span class="p">,</span>
+        <span class="n">i</span><span class="p">,</span><span class="c1">//队列族索引</span>
+        <span class="n">surface</span><span class="p">,</span><span class="c1">//呈现跟surface有关，需填入surface的handle</span>
+        <span class="o">&amp;</span><span class="n">supportPresentation</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">supportGraphics</span> <span class="o">&amp;&amp;</span> <span class="n">supportPresentation</span><span class="p">)</span><span class="c1">//若找到了同时支持graphics和presentation的队列族，直接break</span>
+    <span class="p">{</span>
+        <span class="n">queueFamilyIndex_graphics</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+        <span class="n">queueFamilyIndex_presentation</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">supportGraphics</span> <span class="o">&amp;&amp;</span> <span class="n">queueFamilyIndex_graphics</span> <span class="o">==</span> <span class="mi">-1</span><span class="p">)</span><span class="c1">//若支持graphics且此前相应的索引未被找到，记录索引</span>
+        <span class="n">queueFamilyIndex_graphics</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">supportPresentation</span> <span class="o">&amp;&amp;</span> <span class="n">queueFamilyIndex_presentation</span> <span class="o">==</span> <span class="mi">-1</span><span class="p">)</span><span class="c1">//若支持presentation且此前相应的索引未被找到，记录索引</span>
+        <span class="n">queueFamilyIndex_presentation</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">queueFamilyIndex_graphics</span> <span class="o">==</span> <span class="mi">-1</span> <span class="o">||</span> <span class="n">queueFamilyIndex_presentation</span> <span class="o">==</span> <span class="mi">-1</span><span class="p">)</span><span class="c1">//若有一个索引没被找到，必须将两个索引重新设置为-1，以用于检查下一个设备。</span>
+<span class="p">{</span>
+    <span class="n">queueFamilyIndex_graphics</span> <span class="o">=</span> <span class="n">queueFamilyIndex_presentation</span> <span class="o">=</span> <span class="mi">-1</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">注释说明了一切。总而言之，最好的状况就是找到同时支持graphics和presentation的队列族。</div>
+</div>
+</div>
+<div class="section" id="id9">
+<h3>选择物理设备<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line">来接着写 <code class="docutils literal notranslate"><span class="pre">GetPhysicalDevice</span></code> ：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">i</span> <span class="p">:</span> <span class="n">physicalDevices</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">GetQueueFamilyIndex</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">CheckDeviceLayersAndExtensions</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="n">physicalDevice</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+        <span class="n">vkGetPhysicalDeviceProperties</span><span class="p">(</span><span class="n">physicalDevice</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">physicalDeviceProperties</span><span class="p">);</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Renderer: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">physicalDeviceProperties</span><span class="p">.</span><span class="n">deviceName</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="n">vkGetPhysicalDeviceMemoryProperties</span><span class="p">(</span><span class="n">physicalDevice</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">physicalDeviceMemoryProperties</span><span class="p">);</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ graphicsBase ]</span><span class="se">\n</span><span class="s">Failed to find any physical device satisfies all requirements!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="n">abort</span><span class="p">();</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">vkGetPhysicalDeviceProperties</span></code> 和 <code class="docutils literal notranslate"><span class="pre">vkGetPhysicalDeviceMemoryProperties</span></code> 分别用于获取物理设备的属性（主要包含硬件限制）和内存属性，我们将结果保存到之前写的两个成员变量中，这会在之后有用。</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">physicalDeviceProperties.deviceName</span></code> 是物理设备的名称，如果你有多显卡，建议将名称输出到控制台。</div>
+<div class="line">如果找到了合适的物理设备，则直接return，若无任何合适的设备，最终循环结束后会 <code class="docutils literal notranslate"><span class="pre">abort()</span></code> 。</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>如果你对设备的性能有要求，你应该检查 <code class="docutils literal notranslate"><span class="pre">physicalDeviceProperties.limits</span></code> 中的各种硬件参数。</p>
+</div>
+<div class="line-block">
+<div class="line">最后，在 <code class="docutils literal notranslate"><span class="pre">InitializeWindow</span></code> 中创建surface的代码后面，调用 <code class="docutils literal notranslate"><span class="pre">vulkan::graphicsBase::Base().GetPhysicalDevice()</span></code></div>
+</div>
+</div>
+</div>
+<div class="section" id="id10">
+<h2>创建逻辑设备<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line"><span class="type">VkDevice</span> 是编程层面上与对应的物理设备交互的对象，换言之，是个编程接口。</div>
+</div>
+<div class="line-block">
+<div class="line">步骤：</div>
+<div class="line">1.获取物理设备特性</div>
+<div class="line">2.创建逻辑设备</div>
+<div class="line">3.获取队列</div>
+</div>
+<div class="line-block">
+<div class="line">在 <span class="type">graphicsBase</span> 中添加以下内容：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span>    <span class="n">VkDevice</span> <span class="n">device</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+    <span class="n">VkQueue</span> <span class="n">queue_graphics</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+    <span class="n">VkQueue</span> <span class="n">queue_presentation</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">VkDevice</span> <span class="n">Device</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">device</span><span class="p">;</span> <span class="p">}</span>
+    <span class="n">VkQueue</span> <span class="n">Queue_Graphics</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">queue_graphics</span><span class="p">;</span> <span class="p">}</span>
+    <span class="n">VkQueue</span> <span class="n">Queue_Presentation</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">queue_presentation</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">CreateLogicalDevice</span><span class="p">()</span> <span class="p">{</span>
+        <span class="cm">/*待填充*/</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="id11">
+<h3>获取物理设备特性<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line">填充 <code class="docutils literal notranslate"><span class="pre">CreateLogicalDevice</span></code> ：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">VkPhysicalDeviceFeatures</span> <span class="n">physicalDeviceFeatures</span><span class="p">;</span>
+<span class="n">vkGetPhysicalDeviceFeatures</span><span class="p">(</span><span class="n">physicalDevice</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">physicalDeviceFeatures</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">物理设备特性是一系列 <span class="type">VkBool32</span> 类型的值构成的结构体，描述了物理设备有哪些特性（废话）。</div>
+<div class="line">我们不需要把它存储到一个成员变量里，只需要在创建逻辑设备时获取它。</div>
+</div>
+</div>
+<div class="section" id="id12">
+<h3>创建逻辑设备<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+</div>
+<div class="section" id="id13">
+<h2>验证层及其扩展<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="id14">
+<h2>加快启动速度<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line">我们先来核对下目前所写的内容，并整理一下各种变量和函数的顺序：</div>
+</div>
+<div class="line-block">
+<div class="line">终于，最长的一节结束了。</div>
+</div>
+</div>
 </div>
 
 
