@@ -110,21 +110,27 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#id10">创建逻辑设备</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id11">获取物理设备特性</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id12">创建逻辑设备</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">创建逻辑设备及队列</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">获取队列</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id13">验证层及其扩展</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id14">加快启动速度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id14">验证层及其扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id15">杂项</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id16">析构</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id17">可选：相关回调函数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id18">整理</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-3 创建交换链</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E6%89%BF%E5%89%8D%E5%90%AF%E5%90%8E.html">Ch1-4 承前启后</a></li>
 </ul>
 <p class="caption"><span class="caption-text">第二章 基础绘制</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch2-1%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93.html">Ch2-1 创建渲染通道</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD%E7%AE%80%E4%BB%8B.html">Ch2-2 同步原语简介</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%A4%A9%E5%93%AA%EF%BC%8C%E6%98%AF%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 天哪，是三角形</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch2-4%20%E5%8D%B3%E6%97%B6%E5%B8%A7%E4%B8%8E%E9%98%9F%E5%88%97%E6%89%80%E6%9C%89%E6%9D%83%E8%BD%AC%E7%A7%BB.html">Ch2-4 即时帧与队列所有权转移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%A4%A9%E5%93%AA%EF%BC%8C%E6%98%AF%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-2 天哪，是三角形</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%8D%B3%E6%97%B6%E5%B8%A7%E4%B8%8E%E9%98%9F%E5%88%97%E6%89%80%E6%9C%89%E6%9D%83%E8%BD%AC%E7%A7%BB.html">Ch2-3 即时帧与队列所有权转移</a></li>
 </ul>
 
             
@@ -246,7 +252,7 @@
 <div class="section" id="id2">
 <h3>获取所需的实例级别层和扩展<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <div class="line-block">
-<div class="line">首先在我们刚刚创建的 <span class="type">graphicsBase</span> 中加入以下代码</div>
+<div class="line">首先在我们刚刚创建的 <span class="type">graphicsBase</span> 中加入以下代码：</div>
 </div>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">private</span><span class="o">:</span>
     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="k">const</span> <span class="kt">char</span><span class="o">*&gt;</span> <span class="n">instanceLayers</span><span class="p">;</span>
@@ -285,7 +291,7 @@
 </div>
 <div class="line-block">
 <div class="line"><code class="docutils literal notranslate"><span class="pre">glfwGetRequiredInstanceExtensions</span></code> 函数：</div>
-<div class="line">参数一： <span class="type">uint32_t</span> * 类型的指针，所指向的变量用于记录所需扩展的数量</div>
+<div class="line">参数1： <span class="type">uint32_t</span> * 类型的指针，所指向的变量用于记录所需扩展的数量</div>
 <div class="line">返回值：若成功，返回一个指针，指向一个由所需扩展的名称字符串构成的数组。失败则返回 <span class="kw">nullptr</span> ，并意味着此设备不支持Vulkan。</div>
 </div>
 <div class="admonition important">
@@ -434,8 +440,8 @@
 <p class="admonition-title">Important</p>
 <p>注意，若你想使用高于1.0的版本：<br> <br>
 Vulkan是向下兼容的，意味着只要设备支持Vulkan，就必定支持最早的1.0版本。<br>
-但是，若设备的Vulkan实现为1.0版本，apiVersion中填写了更高版本， <code class="docutils literal notranslate"><span class="pre">vkCreateInstance</span></code> 会返回 <span class="macro">VK_ERROR_INCOMPATIBLE_DRIVER</span> 。<br>
-若设备的Vulkan实现为1.1或以上版本，apiVersion中填写了更高版本， <code class="docutils literal notranslate"><span class="pre">vkCreateInstance</span></code> 哪怕失败也不会返回 <span class="macro">VK_ERROR_INCOMPATIBLE_DRIVER</span> ，<br>
+但是，若设备的Vulkan实现为1.0版本，apiVersion中填写了更高版本， <code class="docutils literal notranslate"><span class="pre">vkCreateInstance</span></code> 会返回 VK_ERROR_INCOMPATIBLE_DRIVER 。<br>
+若设备的Vulkan实现为1.1或以上版本，apiVersion中填写了更高版本， <code class="docutils literal notranslate"><span class="pre">vkCreateInstance</span></code> 哪怕失败也不会返回 VK_ERROR_INCOMPATIBLE_DRIVER ，<br>
 这是因为Vulkan实现为1.1或以上时，你可以用 <code class="docutils literal notranslate"><span class="pre">vkEnumerateInstanceVersion(uint32_t*</span> <span class="pre">pApiVersion)</span></code> 来获取所支持的最高api版本。<br> <br>
 若要在创建实例前确定Vulkan实现的版本，调用该函数： <code class="docutils literal notranslate"><span class="pre">vkGetInstanceProcAddr(nullptr,</span> <span class="pre">&quot;vkEnumerateInstanceVersion&quot;)</span></code> ，若返回值非 <span class="kw">nullptr</span> ，则为1.0以上，可以调用 <code class="docutils literal notranslate"><span class="pre">vkEnumerateInstanceVersion</span></code> 函数，否则为1.0。</p>
 </div>
@@ -470,11 +476,11 @@ Vulkan是向下兼容的，意味着只要设备支持Vulkan，就必定支持�
 <div class="line">Vulkan是平台无关的API，你必须向其提供一个 <span class="type">VkSurfaceKHR</span> ，以和平台特定的窗口对接。</div>
 </div>
 <div class="line-block">
-<div class="line">在 <span class="type">graphicsBase</span> 中添加一个私有变量和一个Setter：</div>
+<div class="line">在 <span class="type">graphicsBase</span> 中添加以下内容：</div>
 </div>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span>    <span class="n">VkSurfaceKHR</span> <span class="n">surface</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
 <span class="k">public</span><span class="o">:</span>
-    <span class="c1">//Setter</span>
+    <span class="n">VkSurfaceKHR</span> <span class="n">Surface</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">surface</span><span class="p">;</span> <span class="p">}</span>
     <span class="kt">void</span> <span class="n">Surface</span><span class="p">(</span><span class="n">VkSurfaceKHR</span> <span class="n">surface</span><span class="p">)</span> <span class="p">{</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">surface</span><span class="p">)</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">surface</span> <span class="o">=</span> <span class="n">surface</span><span class="p">;</span> <span class="p">}</span>
 </pre></div>
 </div>
@@ -540,6 +546,7 @@ Vulkan中有一系列总是为64位的handle，它们在64位下是个指向特�
 </pre></div>
 </div>
 <div class="line-block">
+<div class="line">我们会在下节课创建交换链，交换链是需要使用扩展的，名称叫 <code class="docutils literal notranslate"><span class="pre">&quot;VK_KHR_swapchain&quot;</span></code> ，这节课先将这个扩展push进相应 <span class="type">vector</span> 里。</div>
 <div class="line">比起手打字符串，用宏 <span class="macro">VK_KHR_SWAPCHAIN_EXTENSION_NAME</span> 更安全，VS会帮你做检查。</div>
 <div class="line">我们不需要其他的设备级别的层或扩展。</div>
 </div>
@@ -606,7 +613,7 @@ Vulkan中有一系列总是为64位的handle，它们在64位下是个指向特�
 </pre></div>
 </div>
 <div class="line-block">
-<div class="line">两个 <code class="docutils literal notranslate"><span class="pre">queueFamilyIndex</span></code> 是队列族索引，用默认值-1来表明尚未取得合适的索引，我们会在创建完逻辑设备后用到它们。</div>
+<div class="line">两个 <code class="docutils literal notranslate"><span class="pre">queueFamilyIndex</span></code> 是队列族索引，我将默认值设置为-1，用以表明尚未取得合适的索引，我们会在创建完逻辑设备后用到它们。</div>
 <div class="line"><code class="docutils literal notranslate"><span class="pre">CheckDeviceLayersAndExtensions</span></code> 用来检查传入的物理设备是否满足所需的层和扩展，如满足则返回 <span class="kw">true</span> 。</div>
 <div class="line"><code class="docutils literal notranslate"><span class="pre">GetQueueFamilyIndex</span></code> 用来检查传入的物理设备是否满足所需的队列族，如满足则获取队列族索引，并返回 <span class="kw">true</span> 。</div>
 </div>
@@ -753,7 +760,7 @@ Vulkan中有一系列总是为64位的handle，它们在64位下是个指向特�
 <div class="line-block">
 <div class="line">步骤：</div>
 <div class="line">1.获取物理设备特性</div>
-<div class="line">2.创建逻辑设备</div>
+<div class="line">2.创建逻辑设备及队列</div>
 <div class="line">3.获取队列</div>
 </div>
 <div class="line-block">
@@ -787,22 +794,393 @@ Vulkan中有一系列总是为64位的handle，它们在64位下是个指向特�
 </div>
 </div>
 <div class="section" id="id12">
-<h3>创建逻辑设备<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<h3>创建逻辑设备及队列<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
 <div class="line-block">
-<div class="line"><br /></div>
+<div class="line">我们通过 <code class="docutils literal notranslate"><span class="pre">vkCreateInstance</span></code> 函数来创建一个实例。</div>
+<div class="line"><span class="type">VkResult</span> <span class="macro">VKAPI_CALL</span> vkCreateDevice(</div>
+<div class="line-block">
+<div class="line"><span class="type">VkPhysicalDevice</span> physicalDevice,</div>
+<div class="line"><span class="kw">const</span> <span class="type">VkDeviceCreateInfo</span> * pCreateInfo,</div>
+<div class="line"><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span> * pAllocator,</div>
+<div class="line"><span class="type">VkDevice</span> * pDevice);</div>
 </div>
+</div>
+<div class="line-block">
+<div class="line">其中 <span class="type">VkDeviceCreateInfo</span> 具体如下：</div>
+<div class="line"><span class="kw">struct</span> <span class="type">VkDeviceCreateInfo</span> {</div>
+<div class="line-block">
+<div class="line"><span class="type">VkStructureType</span> sType; <span class="comment">//VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO</span></div>
+<div class="line"><span class="kw">const void</span> * pNext;</div>
+<div class="line"><span class="type">VkDeviceCreateFlags</span> flags; <span class="comment">//暂无任何可用的bit</span></div>
+<div class="line"><span class="type">uint32_t</span> queueCreateInfoCount; <span class="comment">//要创建的队列个数</span></div>
+<div class="line"><span class="kw">const</span> <span class="type">VkDeviceQueueCreateInfo</span> * pQueueCreateInfos;</div>
+<div class="line"><span class="type">uint32_t</span> enabledLayerCount; <span class="comment">//所需开启的设备级别层数</span></div>
+<div class="line"><span class="kw">const char</span> * <span class="kw">const</span> * ppEnabledLayerNames; <span class="comment">//指向由所需开启的层的名称构成的数组</span></div>
+<div class="line"><span class="type">uint32_t</span> enabledExtensionCount; <span class="comment">//需要开启的设备级别扩展数</span></div>
+<div class="line"><span class="kw">const char</span> * <span class="kw">const</span> * ppEnabledExtensionNames; <span class="comment">//指向由所需开启的扩展的名称构成的数组</span></div>
+<div class="line"><span class="kw">const</span> <span class="type">VkPhysicalDeviceFeatures</span> *  pEnabledFeatures;</div>
+</div>
+<div class="line">};</div>
+<div class="line">pEnabledFeatures指向一个 <span class="type">VkPhysicalDeviceFeatures</span> 类型的结构体，其中的布尔值决定了要开启哪些特性。我打算使用所有能用的特性，毕竟，聊胜于无，所以会直接指向之前取得的physicalDeviceFeatures。</div>
+</div>
+<div class="line-block">
+<div class="line">至于 <span class="type">VkDeviceQueueCreateInfo</span> 结构体：</div>
+<div class="line"><span class="kw">struct</span> <span class="type">VkDeviceQueueCreateInfo</span> {</div>
+<div class="line-block">
+<div class="line"><span class="type">VkStructureType</span> sType; <span class="comment">//VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO</span></div>
+<div class="line"><span class="kw">const void</span> * pNext;</div>
+<div class="line"><span class="type">VkDeviceQueueCreateFlags</span> flags;</div>
+<div class="line"><span class="type">uint32_t</span> queueFamilyIndex; <span class="comment">//队列族索引</span></div>
+<div class="line"><span class="type">uint32_t</span> queueCount; <span class="comment">//所要求的队列个数</span></div>
+<div class="line"><span class="kw">const float</span> * pQueuePriorities; <span class="comment">//指向浮点数的数组，用于指定各个队列的优先级，浮点数范围在0到1之间</span></div>
+</div>
+<div class="line">};</div>
+<div class="line">对于这个flags，1.1版本中有个 VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT ，我们目标版本是1.0所以直接无视。</div>
+<div class="line">之后的教程里若无特殊说明，flags一律为0，相关bit要么1.0版本没有，要么一般不用。</div>
+</div>
+<div class="line-block">
+<div class="line">于是，我们需要创建两个 <span class="type">VkDeviceQueueCreateInfo</span> 结构体，一个 <span class="type">VkDeviceCreateInfo</span> 结构体，然后调用 <code class="docutils literal notranslate"><span class="pre">vkCreateInstance</span></code> ：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">float</span> <span class="n">queuePriority</span> <span class="o">=</span> <span class="mf">1.0f</span><span class="p">;</span>
+<span class="n">VkDeviceQueueCreateInfo</span> <span class="n">deviceQueueCreateInfos</span><span class="p">[</span><span class="mi">2</span><span class="p">]{};</span>
+<span class="n">deviceQueueCreateInfos</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO</span><span class="p">;</span>
+<span class="n">deviceQueueCreateInfos</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">queueFamilyIndex</span> <span class="o">=</span> <span class="n">queueFamilyIndex_graphics</span><span class="p">;</span>
+<span class="n">deviceQueueCreateInfos</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">queueCount</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="n">deviceQueueCreateInfos</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">pQueuePriorities</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">queuePriority</span><span class="p">;</span>
+<span class="n">deviceQueueCreateInfos</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO</span><span class="p">;</span>
+<span class="n">deviceQueueCreateInfos</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">queueFamilyIndex</span> <span class="o">=</span> <span class="n">queueFamilyIndex_presentation</span><span class="p">;</span>
+<span class="n">deviceQueueCreateInfos</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">queueCount</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="n">deviceQueueCreateInfos</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">pQueuePriorities</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">queuePriority</span><span class="p">;</span>
+
+<span class="n">VkDeviceCreateInfo</span> <span class="n">deviceCreateInfo</span><span class="p">{};</span>
+<span class="n">deviceCreateInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO</span><span class="p">;</span>
+<span class="n">deviceCreateInfo</span><span class="p">.</span><span class="n">queueCreateInfoCount</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">queueFamilyIndex_graphics</span> <span class="o">!=</span> <span class="n">queueFamilyIndex_presentation</span><span class="p">);</span>
+<span class="n">deviceCreateInfo</span><span class="p">.</span><span class="n">pQueueCreateInfos</span> <span class="o">=</span> <span class="n">deviceQueueCreateInfos</span><span class="p">;</span>
+<span class="n">deviceCreateInfo</span><span class="p">.</span><span class="n">enabledLayerCount</span> <span class="o">=</span> <span class="n">deviceLayers</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="n">deviceCreateInfo</span><span class="p">.</span><span class="n">ppEnabledLayerNames</span> <span class="o">=</span> <span class="n">deviceLayers</span><span class="p">.</span><span class="n">data</span><span class="p">();</span>
+<span class="n">deviceCreateInfo</span><span class="p">.</span><span class="n">enabledExtensionCount</span> <span class="o">=</span> <span class="n">deviceExtensions</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="n">deviceCreateInfo</span><span class="p">.</span><span class="n">ppEnabledExtensionNames</span> <span class="o">=</span> <span class="n">deviceExtensions</span><span class="p">.</span><span class="n">data</span><span class="p">();</span>
+<span class="n">deviceCreateInfo</span><span class="p">.</span><span class="n">pEnabledFeatures</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">physicalDeviceFeatures</span><span class="p">;</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkCreateDevice</span><span class="p">(</span><span class="n">physicalDevice</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">deviceCreateInfo</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">device</span><span class="p">))</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ graphicsBase ]</span><span class="se">\n</span><span class="s">Failed to create a vulkan logical device!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">,</span>
+    <span class="n">abort</span><span class="p">();</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">两个队列的优先级都使用1.0f。</div>
+<div class="line">如果 <code class="docutils literal notranslate"><span class="pre">queueFamilyIndex_graphics</span></code> 与 <code class="docutils literal notranslate"><span class="pre">queueFamilyIndex_presentation</span></code> 相同，我们只传入一个 <span class="type">VkDeviceQueueCreateInfo</span> ，相应地也只会创建一个队列。</div>
 </div>
 </div>
 <div class="section" id="id13">
-<h2>验证层及其扩展<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h2>
+<h3>获取队列<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line">最后我们来获取我们所创建的队列</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">vkGetDeviceQueue</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">queueFamilyIndex_graphics</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">queue_graphics</span><span class="p">);</span>
+<span class="n">vkGetDeviceQueue</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">queueFamilyIndex_presentation</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">queue_presentation</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">其中，参数3表示所要取得的队列在参数2所指示的队列族中的索引。</div>
+<div class="line">显然，如果之前在两个不同队列族下各创建了一个队列，那么这俩队列在各自队列族中的索引都是0。</div>
+<div class="line">如果之前只创建了一个队列，那么 <code class="docutils literal notranslate"><span class="pre">queue_graphics</span></code> 和 <code class="docutils literal notranslate"><span class="pre">queue_graphics</span></code> 会是相同的。</div>
+</div>
+<div class="line-block">
+<div class="line">最后，在 <code class="docutils literal notranslate"><span class="pre">InitializeWindow</span></code> 中 <code class="docutils literal notranslate"><span class="pre">vulkan::graphicsBase::Base().GetPhysicalDevice()</span></code> 后面，调用 <code class="docutils literal notranslate"><span class="pre">vulkan::graphicsBase::Base().CreateLogicalDevice()</span></code></div>
+</div>
+</div>
 </div>
 <div class="section" id="id14">
-<h2>加快启动速度<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h2>
+<h2>验证层及其扩展<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h2>
 <div class="line-block">
-<div class="line">我们先来核对下目前所写的内容，并整理一下各种变量和函数的顺序：</div>
+<div class="line">验证层是一个实例级别的层，它会检验Vulkan相关的异常，并将错误信息输出至控制台。</div>
+<div class="line">验证层本身够用了，而 <code class="docutils literal notranslate"><span class="pre">&quot;VK_EXT_debug_utils&quot;</span></code> 扩展允许你自定义一个Debug Messenger，以自己想要的格式来输出错误信息。</div>
 </div>
 <div class="line-block">
-<div class="line">终于，最长的一节结束了。</div>
+<div class="line">首先我们修改 <code class="docutils literal notranslate"><span class="pre">CreateInstance()</span></code> 函数，在该函数的开头增加以下内容：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#ifndef NDEBUG</span>
+    <span class="n">instanceLayers</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="s">&quot;VK_LAYER_KHRONOS_validation&quot;</span><span class="p">);</span>
+    <span class="n">instanceExtensions</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">VK_EXT_DEBUG_UTILS_EXTENSION_NAME</span><span class="p">);</span>
+<span class="cp">#endif</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">这里我使用了 <code class="docutils literal notranslate"><span class="pre">#ifndef</span> <span class="pre">NDEBUG</span></code> ，说明若没有定义 <span class="macro">NDEBUG</span> ，则编译上述代码。Release配置默认具有 <span class="macro">NDEBUG</span> 这一预处理器定义，换言之Release配置下不会开启验证层。 你也可以用 #ifdef <span class="macro">_DEBUG</span> ，注意下划线。</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">&quot;VK_LAYER_KHRONOS_validation&quot;</span></code> 是验证层的名称。如果你在此之前有读过一些别的教程，可能见过名称中带有LunarG字样的验证层，那个是比较旧的了。</div>
+<div class="line">用宏 <span class="macro">VK_EXT_DEBUG_UTILS_EXTENSION_NAME</span> 来替代 <code class="docutils literal notranslate"><span class="pre">&quot;VK_EXT_debug_utils&quot;</span></code> 。</div>
+</div>
+<div class="line-block">
+<div class="line">接着在 <span class="type">graphicsBase</span> 中添加一个私有成员和一个私有函数：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">VkDebugUtilsMessengerEXT</span> <span class="n">debugUtilsMessenger</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">CreateDebugMessenger</span><span class="p">()</span> <span class="p">{</span>
+    <span class="cm">/*待填充*/</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">在 <code class="docutils literal notranslate"><span class="pre">CreateInstance()</span></code> 函数末尾（因为必须在创建完实例后创建Debug Messenger）加入以下内容：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#ifndef NDEBUG</span>
+    <span class="n">CreateDebugMessenger</span><span class="p">();</span>
+<span class="cp">#endif</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">在填充 <code class="docutils literal notranslate"><span class="pre">CreateDebugMessenger</span></code> 函数前，你需要先了解一些事情。</div>
+</div>
+<div class="line-block">
+<div class="line">那些与Vulkan的扩展相关的函数，可能在 <code class="docutils literal notranslate"><span class="pre">vulkan_core.h</span></code> 找不到入口，或者说，可能这个函数压根没有被写进 <code class="docutils literal notranslate"><span class="pre">vulkan_core.h</span></code> ，你需要通过 <code class="docutils literal notranslate"><span class="pre">vkGetInstanceProcAddr</span></code> 函数来获取一个函数指针，并将这个函数指针转换成相应的类型。</div>
+<div class="line"><span class="type">PFN_vkVoidFunction</span> vkGetInstanceProcAddr(</div>
+<div class="line-block">
+<div class="line"><span class="type">VkInstance</span> instance,</div>
+<div class="line"><span class="kw">const char</span> * pName <span class="comment">//所需获取的函数的名称</span></div>
+</div>
+<div class="line">);</div>
+<div class="line">而创建Debug Messenger的函数即是如此：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">PFN_vkCreateDebugUtilsMessengerEXT</span> <span class="n">CreateDebugUtilsMessenger</span> <span class="o">=</span> <span class="n">PFN_vkCreateDebugUtilsMessengerEXT</span><span class="p">(</span>
+    <span class="n">vkGetInstanceProcAddr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="s">&quot;vkCreateDebugUtilsMessengerEXT&quot;</span><span class="p">)</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">函数指针类型 <span class="type">PFN_vkCreateDebugUtilsMessengerEXT</span> 的具体信息如下：</div>
+<div class="line"><span class="kw">typedef</span> <span class="type">VkResult</span> ( <span class="macro">VKAPI_PTR</span> * <span class="type">PFN_vkCreateDebugUtilsMessengerEXT</span> )(</div>
+<div class="line-block">
+<div class="line"><span class="type">VkInstance</span> instance,</div>
+<div class="line"><span class="kw">const</span> <span class="type">VkDebugUtilsMessengerCreateInfoEXT</span> * pCreateInfo,</div>
+<div class="line"><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span> * pAllocator,</div>
+<div class="line"><span class="type">VkDebugUtilsMessengerEXT</span> * pMessenger</div>
+</div>
+<div class="line">);</div>
+</div>
+<div class="line-block">
+<div class="line">其中 <span class="type">VkDebugUtilsMessengerCreateInfoEXT</span> 类型的具体信息如下：</div>
+<div class="line">struct VkDebugUtilsMessengerCreateInfoEXT {</div>
+<div class="line-block">
+<div class="line"><span class="type">VkStructureType</span> sType; <span class="comment">//VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT</span></div>
+<div class="line"><span class="kw">const void</span> * pNext;</div>
+<div class="line"><span class="type">VkDebugUtilsMessengerCreateFlagsEXT</span> flags;</div>
+<div class="line"><span class="type">VkDebugUtilsMessageSeverityFlagsEXT</span> messageSeverity; <span class="comment">//表明所需获取信息的严重性</span></div>
+<div class="line"><span class="type">VkDebugUtilsMessageTypeFlagsEXT</span> messageType; <span class="comment">//表明需要获取哪些类型的信息</span></div>
+<div class="line"><span class="type">PFN_vkDebugUtilsMessengerCallbackEXT</span> pfnUserCallback; <span class="comment">//输出信息的回调函数的指针</span></div>
+<div class="line"><span class="kw">void</span> * pUserData; <span class="comment">//用于传入Debug Messenger回调函数的自定义数据地址</span></div>
+</div>
+<div class="line">};</div>
+<div class="line">请自行在VS中用F12来查询 <span class="type">VkDebugUtilsMessageSeverityFlagsEXT</span> 和 <span class="type">VkDebugUtilsMessageTypeFlagsEXT</span> 有哪些bit。</div>
+</div>
+<div class="line-block">
+<div class="line">重点在于 <span class="type">PFN_vkDebugUtilsMessengerCallbackEXT</span> 类型：</div>
+<div class="line"><span class="kw">typedef</span> <span class="type">VkBool32</span> ( <span class="macro">VKAPI_PTR</span> * <span class="type">PFN_vkDebugUtilsMessengerCallbackEXT</span>)(</div>
+<div class="line-block">
+<div class="line"><span class="type">VkDebugUtilsMessageSeverityFlagBitsEXT</span> messageSeverity, <span class="comment">//所获取到的信息的严重性</span></div>
+<div class="line"><span class="type">VkDebugUtilsMessageTypeFlagsEXT</span> messageTypes, messageSeverity; <span class="comment">//所获取到的信息的类型</span></div>
+<div class="line"><span class="kw">const</span> <span class="type">VkDebugUtilsMessengerCallbackDataEXT</span> * pCallbackData, <span class="comment">//所获取到的相关回调信息</span></div>
+<div class="line"><span class="kw">void</span> * pUserData <span class="comment">//传入的自定义数据</span></div>
+<div class="line">);</div>
+</div>
+<div class="line"><span class="type">VkDebugUtilsMessengerCallbackDataEXT</span> 能提供诸如队列和命令缓冲区的标签等更详细的信息，这里不作讲解，有兴趣请自行了解。</div>
+<div class="line">既然是回调函数，那么这个函数就并非由我们直接调用，而是将函数指针交给程序，由程序来调用。</div>
+<div class="line">最后一项的自定义数据为我们提供了一些灵活性，能让我们在前面那些由程序获取的参数之外，传入一些由我们自己管理的数据。</div>
+</div>
+<div class="line-block">
+<div class="line">上面三个类型定义看下来，你应该明白该如何创建一个Debug Messenger了：</div>
+<div class="line">1.定义 <span class="type">PFN_vkDebugUtilsMessengerCallbackEXT</span> 类型的回调函数</div>
+<div class="line">2.填写 <span class="type">VkDebugUtilsMessengerCreateInfoEXT</span> 类型的结构体</div>
+<div class="line">3.调用 <code class="docutils literal notranslate"><span class="pre">vkGetInstanceProcAddr</span></code> 来取得一个 <span class="type">PFN_vkCreateDebugUtilsMessengerEXT</span> 类型的函数指针</div>
+<div class="line">4.向上一步所取得的函数指针中传入正确的参数，创建Debug Messenger</div>
+</div>
+<div class="line-block">
+<div class="line">填充 <code class="docutils literal notranslate"><span class="pre">CreateDebugMessenger</span></code> ，具体代码如下：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">//用lambda表达式创建用于输出信息的回调函数，用static确保其生命周期</span>
+<span class="k">static</span> <span class="n">PFN_vkDebugUtilsMessengerCallbackEXT</span> <span class="n">DebugUtilsMessengerCallback</span> <span class="o">=</span> <span class="p">[](</span>
+    <span class="n">VkDebugUtilsMessageSeverityFlagBitsEXT</span> <span class="n">messageSeverity</span><span class="p">,</span>
+    <span class="n">VkDebugUtilsMessageTypeFlagsEXT</span> <span class="n">messageTypes</span><span class="p">,</span>
+    <span class="k">const</span> <span class="n">VkDebugUtilsMessengerCallbackDataEXT</span><span class="o">*</span> <span class="n">pCallbackData</span><span class="p">,</span>
+    <span class="kt">void</span><span class="o">*</span> <span class="n">pUserData</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">VkBool32</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">pCallbackData</span><span class="o">-&gt;</span><span class="n">pMessage</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n\n</span><span class="s">&quot;</span><span class="p">;</span><span class="c1">//内容可自定义，我这里是单纯输出信息后空一行</span>
+    <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="n">VkDebugUtilsMessengerCreateInfoEXT</span> <span class="n">debugUtilsMessengerCreateInfo</span><span class="p">{};</span>
+<span class="n">debugUtilsMessengerCreateInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT</span><span class="p">;</span>
+<span class="n">debugUtilsMessengerCreateInfo</span><span class="p">.</span><span class="n">messageSeverity</span> <span class="o">=</span>
+    <span class="n">VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT</span> <span class="o">|</span>
+    <span class="n">VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT</span><span class="p">;</span><span class="c1">//只获取警告和错误</span>
+<span class="n">debugUtilsMessengerCreateInfo</span><span class="p">.</span><span class="n">messageType</span> <span class="o">=</span>
+    <span class="n">VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT</span> <span class="o">|</span>
+    <span class="n">VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT</span> <span class="o">|</span>
+    <span class="n">VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT</span><span class="p">;</span><span class="c1">//获取所有类型的信息</span>
+<span class="n">debugUtilsMessengerCreateInfo</span><span class="p">.</span><span class="n">pfnUserCallback</span> <span class="o">=</span> <span class="n">DebugUtilsMessengerCallback</span><span class="p">;</span>
+
+<span class="n">PFN_vkCreateDebugUtilsMessengerEXT</span> <span class="n">CreateDebugUtilsMessenger</span> <span class="o">=</span> <span class="n">PFN_vkCreateDebugUtilsMessengerEXT</span><span class="p">(</span>
+    <span class="n">vkGetInstanceProcAddr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="s">&quot;vkCreateDebugUtilsMessengerEXT&quot;</span><span class="p">)</span>
+<span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">CreateDebugUtilsMessenger</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">CreateDebugUtilsMessenger</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">debugUtilsMessengerCreateInfo</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">debugUtilsMessenger</span><span class="p">))</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ graphicsBase ]</span><span class="se">\n</span><span class="s">Failed to create a debug messenger!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">,</span>
+        <span class="n">abort</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id15">
+<h2>杂项<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id16">
+<h3>析构<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line">首先延续前一小节，我们写一个用于销毁Debug Messenger的私有函数：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">DestroyDebugMessenger</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">PFN_vkDestroyDebugUtilsMessengerEXT</span> <span class="n">DestroyDebugUtilsMessenger</span> <span class="o">=</span> <span class="n">PFN_vkDestroyDebugUtilsMessengerEXT</span><span class="p">(</span>
+        <span class="n">vkGetInstanceProcAddr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="s">&quot;vkDestroyDebugUtilsMessengerEXT&quot;</span><span class="p">)</span>
+    <span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">DestroyDebugUtilsMessenger</span><span class="p">)</span>
+        <span class="n">DestroyDebugUtilsMessenger</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">debugUtilsMessenger</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">);</span><span class="c1">//最后一项是个pAllocator</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>然后来填充 <span class="type">graphicsBase</span> 的析构器：</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="o">~</span><span class="n">graphicsBase</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">vkDeviceWaitIdle</span><span class="p">(</span><span class="n">device</span><span class="p">);</span>
+<span class="cp">#ifndef NDEBUG</span>
+    <span class="n">DestroyDebugMessenger</span><span class="p">();</span>
+<span class="cp">#endif</span>
+    <span class="n">vkDestroyDevice</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">);</span>
+    <span class="n">vkDestroySurfaceKHR</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">);</span>
+    <span class="n">vkDestroyInstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">上文中的 <span class="kw">nullptr</span> 皆是pAllocator。</div>
+<div class="line">简而言之，你得先调用 <code class="docutils literal notranslate"><span class="pre">vkDeviceWaitIdle</span></code> 来等待GPU空闲，确保GPU已经结束了对资源的访问以及各种处理，然后按与创建相反的顺序销毁对象。</div>
+<div class="line">如果你想测试Debug Messenger是否起效了，你可以把 <code class="docutils literal notranslate"><span class="pre">vkDestroySurfaceKHR</span></code> 注释掉，如此一来，在你关闭GLFW窗口时，控制台上应当会显示出错误信息。</div>
+</div>
+</div>
+<div class="section" id="id17">
+<h3>可选：相关回调函数<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line">在 <span class="type">graphicsBase</span> 中加入以下代码：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span>    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="o">*</span><span class="p">)()</span><span class="o">&gt;</span> <span class="n">callbacks_createDevice</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="o">*</span><span class="p">)()</span><span class="o">&gt;</span> <span class="n">callbacks_cleanUp</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="kt">void</span> <span class="n">PushCallback_CreateDevice</span><span class="p">(</span><span class="kt">void</span><span class="p">(</span><span class="o">*</span><span class="n">function</span><span class="p">)())</span> <span class="p">{</span>
+        <span class="n">callbacks_createDevice</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">function</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">PushCallback_CleanUp</span><span class="p">(</span><span class="kt">void</span><span class="p">(</span><span class="o">*</span><span class="n">function</span><span class="p">)())</span> <span class="p">{</span>
+        <span class="n">callbacks_cleanUp</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">function</span><span class="p">);</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">第一个vector中的回调用于创建完逻辑设备后，其实并非特别必要，除非你同我一样，希望在表面上让某些东西的初始化顺序看似顺序无关。</div>
+<div class="line">第二个vector中的回调用于销毁逻辑设备前，这个很是会有用的。我们之后会通过封装Vulkan中的对象来实现自动析构，而考虑到初始化顺序，所有handle在栈上的对象都应该会在 <span class="type">graphicsBase</span> 之前被析构掉，但是如果是在在堆上的对象，你可能就会想要设置一个用于析构的回调。</div>
+</div>
+<div class="line-block">
+<div class="line">接着在正确的场合调用这两组回调：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="o">~</span><span class="n">graphicsBase</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">vkDeviceWaitIdle</span><span class="p">(</span><span class="n">device</span><span class="p">);</span>
+<span class="cp">#ifndef NDEBUG</span>
+    <span class="n">DestroyDebugMessenger</span><span class="p">();</span>
+<span class="cp">#endif</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">i</span> <span class="p">:</span> <span class="n">callbacks_cleanUp</span><span class="p">)</span>
+        <span class="n">i</span><span class="p">();</span>
+    <span class="n">vkDestroyDevice</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">);</span>
+    <span class="n">vkDestroySurfaceKHR</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">);</span>
+    <span class="n">vkDestroyInstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">CreateLogicalDevice</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">//...</span>
+    <span class="c1">//放在本函数的最后</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">i</span> <span class="p">:</span> <span class="n">callbacks_createDevice</span><span class="p">)</span>
+        <span class="n">i</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id18">
+<h3>整理<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line">在进入下一节之前，我们来核对下 <span class="type">graphicsBase</span> 的内容，并整理一下各种变量和函数的顺序：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">graphicsBase</span> <span class="p">{</span>
+    <span class="n">VkInstance</span> <span class="n">instance</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+    <span class="n">VkPhysicalDevice</span> <span class="n">physicalDevice</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+    <span class="n">VkPhysicalDeviceProperties</span> <span class="n">physicalDeviceProperties</span><span class="p">;</span>
+    <span class="n">VkPhysicalDeviceMemoryProperties</span> <span class="n">physicalDeviceMemoryProperties</span><span class="p">;</span>
+
+    <span class="n">VkDevice</span> <span class="n">device</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+    <span class="kt">uint32_t</span> <span class="n">queueFamilyIndex_graphics</span> <span class="o">=</span> <span class="mi">-1</span><span class="p">;</span>
+    <span class="kt">uint32_t</span> <span class="n">queueFamilyIndex_presentation</span> <span class="o">=</span> <span class="mi">-1</span><span class="p">;</span>
+    <span class="n">VkQueue</span> <span class="n">queue_graphics</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+    <span class="n">VkQueue</span> <span class="n">queue_presentation</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+
+    <span class="n">VkSurfaceKHR</span> <span class="n">surface</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
+
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="k">const</span> <span class="kt">char</span><span class="o">*&gt;</span> <span class="n">instanceLayers</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="k">const</span> <span class="kt">char</span><span class="o">*&gt;</span> <span class="n">instanceExtensions</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="k">const</span> <span class="kt">char</span><span class="o">*&gt;</span> <span class="n">deviceLayers</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="k">const</span> <span class="kt">char</span><span class="o">*&gt;</span> <span class="n">deviceExtensions</span><span class="p">;</span>
+
+    <span class="n">VkDebugUtilsMessengerEXT</span> <span class="n">debugUtilsMessenger</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
+
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="o">*</span><span class="p">)()</span><span class="o">&gt;</span> <span class="n">callbacks_createDevice</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="o">*</span><span class="p">)()</span><span class="o">&gt;</span> <span class="n">callbacks_cleanUp</span><span class="p">;</span>
+    <span class="c1">//Static</span>
+    <span class="k">static</span> <span class="n">graphicsBase</span> <span class="n">singleton</span><span class="p">;</span>
+    <span class="c1">//--------------------</span>
+    <span class="n">graphicsBase</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">graphicsBase</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">&amp;&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
+    <span class="o">~</span><span class="n">graphicsBase</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+    <span class="c1">//Non-const Function</span>
+    <span class="cm">/*For initialization*/</span>
+    <span class="kt">void</span> <span class="n">CheckInstanceLayersAndExtensions</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+    <span class="kt">bool</span> <span class="n">CheckDeviceLayersAndExtensions</span><span class="p">(</span><span class="n">VkPhysicalDevice</span><span class="o">&amp;</span> <span class="n">physicalDevice</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+    <span class="kt">bool</span> <span class="n">GetQueueFamilyIndex</span><span class="p">(</span><span class="n">VkPhysicalDevice</span><span class="o">&amp;</span> <span class="n">physicalDevice</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">CreateDebugMessenger</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">DestroyDebugMessenger</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="c1">//Getter</span>
+    <span class="n">VkInstance</span> <span class="n">Instance</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">instance</span><span class="p">;</span> <span class="p">}</span>
+    <span class="n">VkPhysicalDevice</span> <span class="n">PhysicalDevice</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">physicalDevice</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">const</span> <span class="n">VkPhysicalDeviceProperties</span><span class="o">&amp;</span> <span class="n">PhysicalDeviceProperties</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">physicalDeviceProperties</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">const</span> <span class="n">VkPhysicalDeviceMemoryProperties</span><span class="o">&amp;</span> <span class="n">PhysicalDeviceMemoryProperties</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">physicalDeviceMemoryProperties</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="n">VkDevice</span> <span class="n">Device</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">device</span><span class="p">;</span> <span class="p">}</span>
+    <span class="kt">uint32_t</span> <span class="n">QueueFamilyIndex_Graphics</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">queueFamilyIndex_graphics</span><span class="p">;</span> <span class="p">}</span>
+    <span class="kt">uint32_t</span> <span class="n">QueueFamilyIndex_Presentation</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">queueFamilyIndex_presentation</span><span class="p">;</span> <span class="p">}</span>
+    <span class="n">VkQueue</span> <span class="n">Queue_Graphics</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">queue_graphics</span><span class="p">;</span> <span class="p">}</span>
+    <span class="n">VkQueue</span> <span class="n">Queue_Presentation</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">queue_presentation</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c1">//Setter</span>
+    <span class="kt">void</span> <span class="n">Surface</span><span class="p">(</span><span class="n">VkSurfaceKHR</span> <span class="n">surface</span><span class="p">)</span> <span class="p">{</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">surface</span><span class="p">)</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">surface</span> <span class="o">=</span> <span class="n">surface</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c1">//Non-const Function</span>
+    <span class="kt">void</span> <span class="n">PushCallback_CreateDevice</span><span class="p">(</span><span class="kt">void</span><span class="p">(</span><span class="o">*</span><span class="n">function</span><span class="p">)())</span> <span class="p">{</span> <span class="n">callbacks_createDevice</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">function</span><span class="p">);</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">PushCallback_CleanUp</span><span class="p">(</span><span class="kt">void</span><span class="p">(</span><span class="o">*</span><span class="n">function</span><span class="p">)())</span> <span class="p">{</span> <span class="n">callbacks_cleanUp</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">function</span><span class="p">);</span> <span class="p">}</span>
+    <span class="cm">/*For initialization*/</span>
+    <span class="kt">void</span> <span class="n">PushInstanceLayer</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">layerName</span><span class="p">)</span> <span class="p">{</span> <span class="n">instanceLayers</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">layerName</span><span class="p">);</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">PushInstanceExtension</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">extensionName</span><span class="p">)</span> <span class="p">{</span> <span class="n">instanceExtensions</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">extensionName</span><span class="p">);</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">PushDeviceLayer</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">layerName</span><span class="p">)</span> <span class="p">{</span> <span class="n">deviceLayers</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">layerName</span><span class="p">);</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">PushDeviceExtension</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">extensionName</span><span class="p">)</span> <span class="p">{</span> <span class="n">deviceExtensions</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">extensionName</span><span class="p">);</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">CreateInstance</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">GetPhysicalDevice</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">CreateLogicalDevice</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+    <span class="c1">//Static Function</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="n">graphicsBase</span><span class="o">&amp;</span> <span class="n">Base</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">singleton</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">};</span>
+<span class="kr">inline</span> <span class="n">graphicsBase</span> <span class="n">graphicsBase</span><span class="o">::</span><span class="n">singleton</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">函数内的具体内容请参考Github上的示例代码。</div>
+</div>
 </div>
 </div>
 </div>

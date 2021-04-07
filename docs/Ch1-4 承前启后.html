@@ -1,0 +1,1227 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="chs" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Ch1-4 承前启后 &mdash; EasyVulkan</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Ch2-1 创建渲染通道" href="Ch2-1%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93.html" />
+    <link rel="prev" title="Ch1-3 创建交换链" href="Ch1-3%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+          
+
+          
+            
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">第一章 从零到交换链</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9B%E5%BB%BAVk%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-2 创建Vk实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-3 创建交换链</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch1-4 承前启后</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vulkan">使用类来封装Vulkan对象</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">同步机制简介</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">显式同步机制</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">隐式同步保证</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">各种Vulkan对象简介及必要封装</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">同步原语</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">内存相关</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">渲染通道以及帧缓冲</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">管线相关</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">三种池子</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">第二章 基础绘制</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93.html">Ch2-1 创建渲染通道</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%A4%A9%E5%93%AA%EF%BC%8C%E6%98%AF%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-2 天哪，是三角形</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%8D%B3%E6%97%B6%E5%B8%A7%E4%B8%8E%E9%98%9F%E5%88%97%E6%89%80%E6%9C%89%E6%9D%83%E8%BD%AC%E7%A7%BB.html">Ch2-3 即时帧与队列所有权转移</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Ch1-4 承前启后</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ch1-4">
+<h1>Ch1-4 承前启后<a class="headerlink" href="#ch1-4" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="vulkan">
+<h2>使用类来封装Vulkan对象<a class="headerlink" href="#vulkan" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line">我们使用类来封装Vulkan对象，以在正确的实际自动销毁对象（而不必每创建一个Vulkan对象后，都得在一个用于清理的函数中手动Destroy）。</div>
+<div class="line">局部对象会先于全局和静态对象析构，这自不必多说，而全局和静态对象会按初始化的相反顺序被析构。</div>
+<div class="line">因此我将 <span class="type">graphicsBase</span> 的单例直接用inline定义在了类后面，这样它就会在所有其他的Vulkan对象之前被初始化，以及在最后被析构。</div>
+<div class="line">inline关键字使得所有编译单元中，同一符号都指向同一实体，所以不会有重定义的问题发生。</div>
+</div>
+<div class="line-block">
+<div class="line">我们已经完成了初始化，相比学多少介绍多少的做法，我认为事向读者介绍一下VulkanAPI中都有些什么会更好。</div>
+<div class="line">我们会在这个章节中介绍我们之后会用到的所有Vulkan对象，并完成必要的封装（有些“必要的封装”你可能当下还看不懂，总之先抄了之后再回头来看）。</div>
+</div>
+<div class="line-block">
+<div class="line">首先，加入以下宏，来让我们之后的代码写得更容易一些：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#define DestroyHandleBy(x) if (handle) { x; handle = VK_NULL_HANDLE; }</span>
+<span class="cp">#define MoveHandle handle = other.handle; other.handle = VK_NULL_HANDLE;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">第一个宏用于销毁对象并将其设置为空handle，以避免一些意外情况</div>
+<div class="line">第二个宏用于移动构造器</div>
+</div>
+</div>
+<div class="section" id="id1">
+<h2>同步机制简介<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line">在封装Vulkan对象之前我要单独介绍下同步机制以及同步原语，因为有些同步原语单纯只是个命令，并不依靠Vulkan对象实现。</div>
+<div class="line">同步机制是Vulkan新手最容易产生畏惧感，并且最容易走入误区的内容，不过其实它们也没那么难。</div>
+</div>
+<div class="section" id="id2">
+<h3>显式同步机制<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line">Vulkan中有以下几种同步方式：</div>
+</div>
+<blockquote>
+<div><ul class="simple">
+<li><p>vkWaitDeviceIdle 函数，等待GPU完全空闲，比较耗时，只有在销毁一些较为根部的对象时才会使用。</p></li>
+<li><p><span class="type">VkFence</span> 栅栏，用于GPU与CPU之间的同步。</p></li>
+<li><p><span class="type">VkSemaphore</span> 信号灯，用于GPU上，队列之间的同步。</p></li>
+<li><p>Subpass Denpendency</p></li>
+<li><p>Pipeline Barrier</p></li>
+<li><p>Event</p></li>
+</ul>
+</div></blockquote>
+<div class="line-block">
+<div class="line">你用的最多的可能是 <span class="type">VkFence</span> ，因为每次提交命令缓冲区都得附带一个 <span class="type">VkFence</span> ，否则验证层会报错：</div>
+<div class="line">1.若是对于反复使用的命令缓冲区，在重置命令缓冲区时，会说你的命令还没有执行完（哪怕实际上已经执行完了）。</div>
+<div class="line">2.对于只使用一次后就被销毁的命令缓冲区，在销毁缓冲区时，会说你的资源还在被使用（同上，哪怕实际上已经执行完了）。</div>
+<div class="line">点亮 <span class="type">VkFence</span> 的操作是其他函数附带的，等待和重置则是手动调用函数进行的，并且你也可以手动取得其状态。</div>
+</div>
+<div class="line-block">
+<div class="line-block">
+<div class="line"><span class="type">VkSemaphore</span> 不会特别常用，但是肯定得用，你需要在呈现和渲染的队列间用它同步。</div>
+<div class="line"><span class="type">VkSemaphore</span> 有两种，普通的相当于一个布尔值，而timeline semaphore可以计数。</div>
+</div>
+<div class="line">点亮 <span class="type">VkSemaphore</span> 的操作由其他函数附带，而重置则是由其他函数附带等待操作后，自动实行的。</div>
+<div class="line">尽管1.2版本中你也可以手动等待，但这个教程使用的是1.0，并且通常也没必要手动等待。</div>
+</div>
+<div class="line-block">
+<div class="line">Subpass Denpendency，子通道依赖，用于渲染通道（Render Pass）中的子通道（Subpass）与外界或者其内部其他子通道间的同步，并附带图像内存布局转换。</div>
+</div>
+<div class="line-block">
+<div class="line">接着简要介绍一下Pipeline Barrier。</div>
+<div class="line">Pipeline Barrier是一种用于命令缓冲区内部的同步命令，注意，它无法保证命令缓冲区外的同步。</div>
+<div class="line">Pipeline Barrier可以附加Memory Barrier：</div>
+<div class="line">1.如果没有Memory Barrier，单纯就是一个Pipeline Barrier的话，那么它定义了一个单纯的执行依赖，其前后的命令会按照其规定的srcStage和dstStage被阻塞。</div>
+<div class="line">2.如果带有Memory Barrier，那么你可能带有一个全局的Memory Brrier，或者一个Buffer Memory Barrier，或者一个Image Memory Barrier。Memory Barrier定义了一个内存访问上的先后关系，同时还可以附带资源的队列所有权转移，Image Memory Barrier还可以附带图像的内存布局变换。</div>
+<div class="line">（我知道以上两条目前看上去都是很抽象的内容，先留个印象，实际使用时会再做讲解。）</div>
+</div>
+<div class="line-block">
+<div class="line">Event和Pipeline Barrier的区别在于，你在等待Pipeline Barrier完成时，中间不能插入其他命令，但Event可以先设置事件，再在中间插入其他与我们先前命令的资源访问无关的其他命令，然后再等待先前设置的事件，提高并行度。</div>
+</div>
+<div class="line-block">
+<div class="line">Pipeline Barrier和Event通常使用在渲染通道之外，如果要在渲染通道内使用，渲染通道必须有一个自依赖的子通道，这个也是之后再细说。</div>
+<div class="line">Pipeline Barrier经常用于在transfer过程前后的图像内存布局转换，除此以外其实并不十分常用 —— 此外通常用于资源的队列所有权转移，以及不同渲染通道之间的同步，因为子通道依赖只能用于与该子通道所用的图像附件有关的同步，诸如阴影贴图这样无法作为输入附件使用的图像，应当使用Pipeline Barrier。</div>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>隐式同步保证<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line">重点来了：明确一点：<strong>并不是Vulkan中的任何命令都需要同步</strong>。</div>
+</div>
+<div class="line-block">
+<div class="line">首先你要明白，Vulkan中的命令（特指命令缓冲区中的命令）不会立刻被执行，而是显式地记录下来之后，被提交到GPU上执行。</div>
+</div>
+<div class="line-block">
+<div class="line">Vulkan官方标准中说到，Vulkan的命令按顺序开始执行，但未必按顺序结束。</div>
+<div class="line">尽管很多显卡驱动所提供的Vulkan实现确实会按顺序开始执行，但实际上有些命令可能会被重排，但有些绝对不可能 —— 因为它们根本不会被GPU执行。</div>
+<div class="line">命令缓冲中的命令可以分为三种性质：动作（action）、状态（state）、同步（synchronization）。</div>
+<div class="line">有些命令可能会附带多个性质，比如 <code class="docutils literal notranslate"><span class="pre">vkCmdBeginRenderPass</span></code> ，它即设置了状态，同时也会实行子通道依赖（是个同步操作）。</div>
+<div class="line">同步命令通常不会被重排 —— 但不绝对，渲染通道开始时的子通道依赖所附带的图像内存布局转换可能不会按1.0标准所说的那样发生，这是少数例外。</div>
+<div class="line">可能会被重排的是动作命令。</div>
+<div class="line">而压根不会被GPU执行的是状态命令，状态命令在CPU上切换了状态，而具体的参数会被记录在之后的动作命令中。</div>
+</div>
+<div class="line-block">
+<div class="line">因为 <code class="docutils literal notranslate"><span class="pre">vkCmdBeginRenderPass</span></code> 涉及到了同步操作，所以在单一命令缓冲区内若有多个渲染通道，每个渲染通道会依序而来。</div>
+<div class="line">那么每个渲染通道内的动作命令是否需要同步呢？</div>
+<div class="line">如果每一条绘制命令都需要同步，那还得了！</div>
+<div class="line">事实是，在同一渲染通道中，无论你的绘制命令何时结束，混色和深度测试仍旧按照你提交命令的顺序而来 —— 所以画家算法（从后往前绘制，前面的物体覆盖后面的）依旧有效！</div>
+</div>
+<div class="line-block">
+<div class="line">综上所述，虽然Pipeline Barrier写起来很麻烦，但通常你很少需要使用它。</div>
+</div>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>各种Vulkan对象简介及必要封装<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line">我对Vulkan对象的封装有以下共性：</div>
+<div class="line">1.默认构造器、移动构造器、参数为createInfo的引用的构造器、析构器（以上皆排除需要从池子分配的对象）</div>
+<div class="line">2.参数为createInfo的引用的Create函数（除了需要从池子分配的对象），到相应Vk类型的自动转换</div>
+<div class="line">3.除了内存相关的类，其余的类中只有一个handle，这样一来，若要使用数组，我们的自建类的数组地址可以直接作为通常的数组地址来使用</div>
+</div>
+<div class="line-block">
+<div class="line">下面仅仅是简介，代码中的注释也写得并不详细，我以后还会对这些Vulkan对象进行进一步解说。</div>
+</div>
+<div class="section" id="id5">
+<h3>同步原语<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line">两种同步原语对象已经在之前初步介绍过了，所以我们直接封装它们：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">semaphore</span> <span class="p">{</span>
+    <span class="n">VkSemaphore</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">semaphore</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">())</span> <span class="p">{</span>
+            <span class="n">VkSemaphoreCreateInfo</span> <span class="n">createInfo</span><span class="p">{};</span>
+            <span class="n">Create</span><span class="p">(</span><span class="n">createInfo</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">semaphore</span><span class="p">(</span><span class="n">VkSemaphoreCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Create</span><span class="p">(</span><span class="n">createInfo</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">semaphore</span><span class="p">(</span><span class="n">semaphore</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="n">MoveHandle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="o">~</span><span class="n">semaphore</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">DestroyHandleBy</span><span class="p">(</span><span class="n">vkDestroySemaphore</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="c1">//Getter</span>
+    <span class="k">operator</span> <span class="n">VkSemaphore</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">handle</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="c1">//Non-const Function</span>
+    <span class="n">VkResult</span> <span class="n">Create</span><span class="p">(</span><span class="n">VkSemaphoreCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO</span><span class="p">;</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkCreateSemaphore</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="o">&amp;</span><span class="n">createInfo</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">handle</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ semaphore ]</span><span class="se">\n</span><span class="s">Failed to create a semaphore!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">fence</span> <span class="p">{</span>
+    <span class="n">VkFence</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">fence</span><span class="p">(</span><span class="kt">bool</span> <span class="n">signaled</span> <span class="o">=</span> <span class="nb">false</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">())</span> <span class="p">{</span>
+            <span class="n">VkFenceCreateInfo</span> <span class="n">createInfo</span><span class="p">{};</span>
+            <span class="n">createInfo</span><span class="p">.</span><span class="n">flags</span> <span class="o">=</span> <span class="n">signaled</span><span class="p">;</span>
+            <span class="n">Create</span><span class="p">(</span><span class="n">createInfo</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">fence</span><span class="p">(</span><span class="n">VkFenceCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Create</span><span class="p">(</span><span class="n">createInfo</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">fence</span><span class="p">(</span><span class="n">fence</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="n">MoveHandle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="o">~</span><span class="n">fence</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">DestroyHandleBy</span><span class="p">(</span><span class="n">vkDestroyFence</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="c1">//Getter</span>
+    <span class="k">operator</span> <span class="n">VkFence</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">handle</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="c1">//Const Function</span>
+    <span class="c1">//等待</span>
+    <span class="n">VkResult</span> <span class="n">Wait</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkWaitForFences</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">handle</span><span class="p">,</span> <span class="nb">false</span><span class="p">,</span> <span class="n">UINT64_MAX</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ fence ]</span><span class="se">\n</span><span class="s">Failed to wait for the fence!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//重置</span>
+    <span class="n">VkResult</span> <span class="n">Reset</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkResetFences</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">handle</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ fence ]</span><span class="se">\n</span><span class="s">Failed to reset the fence!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//等待并重置</span>
+    <span class="n">VkResult</span> <span class="n">WaitAndReset</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">Wait</span><span class="p">();</span>
+        <span class="n">result</span> <span class="o">||</span> <span class="p">(</span><span class="n">result</span> <span class="o">=</span> <span class="n">Reset</span><span class="p">());</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//取得状态</span>
+    <span class="n">VkResult</span> <span class="n">Status</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkGetFenceStatus</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="c1">//返回VK_SUCCESS表示被点亮，返回VK_NOT_READY表示没被点亮，可能的错误代码都是负值</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ fence ]</span><span class="se">\n</span><span class="s">Failed to get the status of the fence!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">//Non-const Function</span>
+    <span class="n">VkResult</span> <span class="n">Create</span><span class="p">(</span><span class="n">VkFenceCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_FENCE_CREATE_INFO</span><span class="p">;</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkCreateFence</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="o">&amp;</span><span class="n">createInfo</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">handle</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ fence ]</span><span class="se">\n</span><span class="s">Failed to create a fence!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">默认构造器：在逻辑设备已经创建了的情况下自动创建 <span class="type">VkSemaphore</span> / <span class="type">VkFence</span> 对象，因为创建这俩通常不需要什么额外的信息， <span class="type">fence</span> 视情况而定你可能会希望创建一个已经点亮了的。</div>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>内存相关<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line">首先是 <span class="type">VkDeviceMemory</span> ，device指的是GPU，那deviceMemory自然是视频内存（显存）啦。</div>
+<div class="line"><span class="type">VkDeviceMemory</span> 只是指代一块内存，要使用这块内存，必须要将其绑定到 <span class="type">VkImage</span> 或者 <span class="type">VkBuffer</span> 上。</div>
+<div class="line">换言之 <span class="type">VkImage</span> 和 <span class="type">VkBuffer</span> 本身并不代表内存，而是决定了内存的使用方式。因为涉及到内存布局和对齐要求，我们会先创建 <span class="type">VkImage</span> 或 <span class="type">VkBuffer</span> 并获取内存要求，然后再分配内存。</div>
+<div class="line">而 <span class="type">VkImageView</span> 和 <span class="type">VkBufferView</span> 描述了图像/缓冲区在着色器中的使用方式，比如6层的2D数组可以作为数组使用，也可以作为立方体贴图使用。</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">deviceMemory</span> <span class="p">{</span>
+    <span class="n">VkDeviceMemory</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
+    <span class="kt">bool</span> <span class="n">isHostCoherent</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+    <span class="c1">//↑这个成员变量用于记录内存属性（MEMORY_PROPERTY）是否是HOST_COHERENT的，如果内存属性并非HOST_COHERENT，在每次Unmap前，你必须要手动Flush掉该内存区域。</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">deviceMemory</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">deviceMemory</span><span class="p">(</span><span class="n">VkMemoryAllocateInfo</span><span class="o">&amp;</span> <span class="n">allocateInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Allocate</span><span class="p">(</span><span class="n">allocateInfo</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">deviceMemory</span><span class="p">(</span><span class="n">deviceMemory</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="n">MoveHandle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="o">~</span><span class="n">deviceMemory</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">DestroyHandleBy</span><span class="p">(</span><span class="n">vkFreeMemory</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="c1">//Getter</span>
+    <span class="k">operator</span> <span class="n">VkDeviceMemory</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">handle</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="c1">//Const Function</span>
+    <span class="c1">//仅当该块内存是HOST_VISIBLE（主机可见，即CPU可见）时，才可以通过Map → memcpy → Unmap的方式来读写内存。</span>
+    <span class="c1">//映射内存</span>
+    <span class="n">VkResult</span> <span class="n">MapMemory</span><span class="p">(</span><span class="kt">void</span><span class="o">*&amp;</span> <span class="n">pData</span><span class="p">,</span> <span class="n">VkDeviceSize</span> <span class="n">size</span><span class="p">,</span> <span class="n">VkDeviceSize</span> <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkMapMemory</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pData</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ deviceMemory ]</span><span class="se">\n</span><span class="s">Failed to map the memory!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//取消映射内存</span>
+    <span class="n">VkResult</span> <span class="n">UnmapMemory</span><span class="p">(</span><span class="n">VkDeviceSize</span> <span class="n">size</span><span class="p">,</span> <span class="n">VkDeviceSize</span> <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">VK_SUCCESS</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">isHostCoherent</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">VkMappedMemoryRange</span> <span class="n">mappedMemoryRange</span><span class="p">{};</span>
+            <span class="n">mappedMemoryRange</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE</span><span class="p">;</span>
+            <span class="n">mappedMemoryRange</span><span class="p">.</span><span class="n">memory</span> <span class="o">=</span> <span class="n">handle</span><span class="p">;</span>
+            <span class="n">mappedMemoryRange</span><span class="p">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span><span class="p">;</span>
+            <span class="n">mappedMemoryRange</span><span class="p">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">result</span> <span class="o">=</span> <span class="n">vkFlushMappedMemoryRanges</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">mappedMemoryRange</span><span class="p">))</span>
+                <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ deviceMemory ]</span><span class="se">\n</span><span class="s">Warning: Failed to flush the memory!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">vkUnmapMemory</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//存入一整块数据</span>
+    <span class="n">VkResult</span> <span class="n">BufferData</span><span class="p">(</span><span class="k">const</span> <span class="kt">void</span><span class="o">*</span> <span class="n">pData_src</span><span class="p">,</span> <span class="n">VkDeviceSize</span> <span class="n">size</span><span class="p">,</span> <span class="n">VkDeviceSize</span> <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="kt">void</span><span class="o">*</span> <span class="n">pData_dst</span><span class="p">;</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">MapMemory</span><span class="p">(</span><span class="n">pData_dst</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">offset</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+        <span class="n">memcpy</span><span class="p">(</span><span class="n">pData_dst</span><span class="p">,</span> <span class="n">pData_src</span><span class="p">,</span> <span class="kt">size_t</span><span class="p">(</span><span class="n">size</span><span class="p">));</span>
+        <span class="k">return</span> <span class="nf">UnmapMemory</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">offset</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">//存入一整块数据，模板函数版本</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span>
+    <span class="n">VkResult</span> <span class="n">BufferData</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">data_src</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nf">BufferData</span><span class="p">(</span><span class="o">&amp;</span><span class="n">data_src</span><span class="p">,</span> <span class="k">sizeof</span> <span class="n">data_src</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">//取回数据到其他内存地址</span>
+    <span class="n">VkResult</span> <span class="n">RetrieveData</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span> <span class="n">pData_dst</span><span class="p">,</span> <span class="n">VkDeviceSize</span> <span class="n">size</span><span class="p">,</span> <span class="n">VkDeviceSize</span> <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">void</span><span class="o">*</span> <span class="n">pData_src</span><span class="p">;</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">MapMemory</span><span class="p">(</span><span class="n">pData_src</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">offset</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+        <span class="n">memcpy</span><span class="p">(</span><span class="n">pData_dst</span><span class="p">,</span> <span class="n">pData_src</span><span class="p">,</span> <span class="kt">size_t</span><span class="p">(</span><span class="n">size</span><span class="p">));</span>
+        <span class="k">return</span> <span class="nf">UnmapMemory</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">offset</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">//上一条注释至此位置的函数都需要内存属性为HOST_VISIBLE，HOST_VISIBLE的好处在于读写时不需要命令缓冲区，但这种显存在GPU中访问时可能无法达到最高效，</span>
+    <span class="c1">//所以届时还会有另一种方式来读写显存。</span>
+
+    <span class="c1">//Non-const Function</span>
+    <span class="c1">//分配内存</span>
+    <span class="n">VkResult</span> <span class="n">Allocate</span><span class="p">(</span><span class="n">VkMemoryAllocateInfo</span><span class="o">&amp;</span> <span class="n">allocateInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">isHostCoherent</span> <span class="o">=</span>
+            <span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">PhysicalDeviceMemoryProperties</span><span class="p">().</span><span class="n">memoryTypes</span><span class="p">[</span><span class="n">allocateInfo</span><span class="p">.</span><span class="n">memoryTypeIndex</span><span class="p">].</span><span class="n">propertyFlags</span> <span class="o">&amp;</span>
+            <span class="n">VK_MEMORY_PROPERTY_HOST_COHERENT_BIT</span><span class="p">;</span>
+        <span class="n">allocateInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO</span><span class="p">;</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkAllocateMemory</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="o">&amp;</span><span class="n">allocateInfo</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">handle</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ deviceMemory ]</span><span class="se">\n</span><span class="s">Failed to allocate memory!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//分配并绑定内存，这里使用了个模板函数，要求参数1为自建的buffer或image类的引用</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span> <span class="k">requires</span> <span class="p">(</span><span class="o">!</span><span class="n">std</span><span class="o">::</span><span class="n">derived_from</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">deviceMemory</span><span class="o">&gt;</span><span class="p">)</span>
+        <span class="kt">int32_t</span> <span class="n">Allocate</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;</span> <span class="n">bufferOrImage</span><span class="p">,</span> <span class="n">VkMemoryPropertyFlags</span> <span class="n">desiredMemoryProperties</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">VkMemoryAllocateInfo</span> <span class="n">memoryAllocateInfo</span> <span class="o">=</span> <span class="n">bufferOrImage</span><span class="p">.</span><span class="n">MemoryAllocateInfo</span><span class="p">(</span><span class="n">desiredMemoryProperties</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">memoryAllocateInfo</span><span class="p">.</span><span class="n">memoryTypeIndex</span> <span class="o">==</span> <span class="mi">-1</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">VK_RESULT_MAX_ENUM</span><span class="p">;</span><span class="c1">//没有合适的数值，所以我选择了一个永远不会出现的值</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">Allocate</span><span class="p">(</span><span class="n">memoryAllocateInfo</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">result</span> <span class="o">?</span>
+            <span class="nl">result</span> <span class="p">:</span>
+            <span class="n">bufferOrImage</span><span class="p">.</span><span class="n">Attach</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span><span class="c1">//自建的buffer和image类里都会有这个Attach函数</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">buffer</span> <span class="p">{</span>
+    <span class="n">VkBuffer</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">buffer</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">buffer</span><span class="p">(</span><span class="n">VkBufferCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Create</span><span class="p">(</span><span class="n">createInfo</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">buffer</span><span class="p">(</span><span class="n">buffer</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="n">MoveHandle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="o">~</span><span class="n">buffer</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">DestroyHandleBy</span><span class="p">(</span><span class="n">vkDestroyBuffer</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="c1">//Getter</span>
+    <span class="k">operator</span> <span class="n">VkBuffer</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">handle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c1">//Const Function</span>
+    <span class="n">VkMemoryAllocateInfo</span> <span class="n">MemoryAllocateInfo</span><span class="p">(</span><span class="n">VkMemoryPropertyFlags</span> <span class="n">desiredMemoryProperties</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="n">VkMemoryAllocateInfo</span> <span class="n">memoryAllocateInfo</span><span class="p">{};</span>
+        <span class="n">VkMemoryRequirements</span> <span class="n">memoryRequirements</span><span class="p">;</span>
+        <span class="c1">//Get allocation size</span>
+        <span class="n">vkGetBufferMemoryRequirements</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">memoryRequirements</span><span class="p">);</span>
+        <span class="n">memoryAllocateInfo</span><span class="p">.</span><span class="n">allocationSize</span> <span class="o">=</span> <span class="n">memoryRequirements</span><span class="p">.</span><span class="n">size</span><span class="p">;</span>
+        <span class="c1">//Get memory type index</span>
+        <span class="k">auto</span><span class="o">&amp;</span> <span class="n">physicalDeviceMemoryProperties</span> <span class="o">=</span> <span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">PhysicalDeviceMemoryProperties</span><span class="p">();</span>
+        <span class="n">memoryAllocateInfo</span><span class="p">.</span><span class="n">memoryTypeIndex</span> <span class="o">=</span> <span class="mi">-1</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">size_t</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">physicalDeviceMemoryProperties</span><span class="p">.</span><span class="n">memoryTypeCount</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">memoryRequirements</span><span class="p">.</span><span class="n">memoryTypeBits</span> <span class="o">&amp;</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">i</span> <span class="o">&amp;&amp;</span>
+                    <span class="p">(</span><span class="n">physicalDeviceMemoryProperties</span><span class="p">.</span><span class="n">memoryTypes</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">propertyFlags</span> <span class="o">&amp;</span> <span class="n">desiredMemoryProperties</span><span class="p">)</span> <span class="o">==</span> <span class="n">desiredMemoryProperties</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">memoryAllocateInfo</span><span class="p">.</span><span class="n">memoryTypeIndex</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="c1">//Highly possible that GPU and its driver may not support lazy allocation.</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">memoryAllocateInfo</span><span class="p">.</span><span class="n">memoryTypeIndex</span> <span class="o">==</span> <span class="mi">-1</span> <span class="o">&amp;&amp;</span>
+                <span class="n">desiredMemoryProperties</span> <span class="o">&amp;</span> <span class="n">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span><span class="p">)</span>
+                <span class="n">desiredMemoryProperties</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">VkFlags</span><span class="p">(</span><span class="n">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">memoryAllocateInfo</span><span class="p">.</span><span class="n">memoryTypeIndex</span> <span class="o">==</span> <span class="mi">-1</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ buffer ]</span><span class="se">\n</span><span class="s">Failed to find any memory type satisfies all desired memory properties!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">memoryAllocateInfo</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">VkResult</span> <span class="n">Attach</span><span class="p">(</span><span class="n">VkDeviceMemory</span> <span class="n">deviceMemory</span><span class="p">,</span> <span class="n">VkDeviceSize</span> <span class="n">memoryOffset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkBindBufferMemory</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">,</span> <span class="n">deviceMemory</span><span class="p">,</span> <span class="n">memoryOffset</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ buffer ]</span><span class="se">\n</span><span class="s">Failed to attach the memory!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//Non-const Function</span>
+    <span class="n">VkResult</span> <span class="n">Create</span><span class="p">(</span><span class="n">VkBufferCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO</span><span class="p">;</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkCreateBuffer</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="o">&amp;</span><span class="n">createInfo</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">handle</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ buffer ]</span><span class="se">\n</span><span class="s">Failed to create a buffer!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">bufferMemory</span> <span class="o">:</span><span class="k">public</span> <span class="n">buffer</span><span class="p">,</span> <span class="k">public</span> <span class="n">deviceMemory</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">buffer</span><span class="o">::</span><span class="n">MemoryAllocateInfo</span><span class="p">;</span>
+    <span class="k">using</span> <span class="n">buffer</span><span class="o">::</span><span class="n">Attach</span><span class="p">;</span>
+    <span class="k">using</span> <span class="n">buffer</span><span class="o">::</span><span class="n">Create</span><span class="p">;</span>
+    <span class="k">using</span> <span class="n">deviceMemory</span><span class="o">::</span><span class="n">Allocate</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">bufferMemory</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">bufferMemory</span><span class="p">(</span><span class="n">VkDeviceSize</span> <span class="n">size</span><span class="p">,</span> <span class="n">VkBufferUsageFlags</span> <span class="n">desiredBufferUsages</span><span class="p">,</span> <span class="n">VkMemoryPropertyFlags</span> <span class="n">desiredMemoryProperties</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">CreateAndAllocate</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">desiredBufferUsages</span><span class="p">,</span> <span class="n">desiredMemoryProperties</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">//Getter</span>
+    <span class="cm">/*Implicit casting is invalid on 32-bit, because VkBuffer and VkDeviceMemory are both uint64_t*/</span>
+    <span class="n">VkBuffer</span> <span class="n">Buffer</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">buffer</span><span class="o">::</span><span class="k">operator</span> <span class="n">VkBuffer</span><span class="p">();</span> <span class="p">}</span>
+    <span class="n">VkDeviceMemory</span> <span class="n">Memory</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">deviceMemory</span><span class="o">::</span><span class="k">operator</span> <span class="n">VkDeviceMemory</span><span class="p">();</span> <span class="p">}</span>
+    <span class="c1">//Non-const Function</span>
+    <span class="kt">int32_t</span> <span class="n">CreateAndAllocate</span><span class="p">(</span><span class="n">VkDeviceSize</span> <span class="n">size</span><span class="p">,</span> <span class="n">VkBufferUsageFlags</span> <span class="n">desiredBufferUsages</span><span class="p">,</span> <span class="n">VkMemoryPropertyFlags</span> <span class="n">desiredMemoryProperties</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">VkBufferCreateInfo</span> <span class="n">createInfo</span><span class="p">{};</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span><span class="p">;</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">usage</span> <span class="o">=</span> <span class="n">desiredBufferUsages</span><span class="p">;</span>
+        <span class="kt">int32_t</span> <span class="n">result</span> <span class="o">=</span> <span class="n">Create</span><span class="p">(</span><span class="n">createInfo</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">result</span> <span class="o">?</span>
+            <span class="nl">result</span> <span class="p">:</span>
+            <span class="n">Allocate</span><span class="p">((</span><span class="n">buffer</span><span class="o">&amp;</span><span class="p">)</span><span class="o">*</span><span class="k">this</span><span class="p">,</span> <span class="n">desiredMemoryProperties</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">bufferView</span> <span class="p">{</span>
+    <span class="n">VkBufferView</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">bufferView</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">bufferView</span><span class="p">(</span><span class="n">VkBufferViewCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Create</span><span class="p">(</span><span class="n">createInfo</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">bufferView</span><span class="p">(</span><span class="n">VkBuffer</span> <span class="n">buffer</span><span class="p">,</span> <span class="n">VkFormat</span> <span class="n">format</span><span class="p">,</span> <span class="n">VkDeviceSize</span> <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">VkDeviceSize</span> <span class="n">range</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Create</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">format</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">range</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">bufferView</span><span class="p">(</span><span class="n">bufferView</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="n">MoveHandle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="o">~</span><span class="n">bufferView</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">DestroyHandleBy</span><span class="p">(</span><span class="n">vkDestroyBufferView</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="c1">//Getter</span>
+    <span class="k">operator</span> <span class="n">VkBufferView</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">handle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c1">//Non-const Function</span>
+    <span class="n">VkResult</span> <span class="n">Create</span><span class="p">(</span><span class="n">VkBufferViewCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO</span><span class="p">;</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkCreateBufferView</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="o">&amp;</span><span class="n">createInfo</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">handle</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ bufferView ]</span><span class="se">\n</span><span class="s">Failed to create a buffer view!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">VkResult</span> <span class="n">Create</span><span class="p">(</span><span class="n">VkBuffer</span> <span class="n">buffer</span><span class="p">,</span> <span class="n">VkFormat</span> <span class="n">format</span><span class="p">,</span> <span class="n">VkDeviceSize</span> <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">VkDeviceSize</span> <span class="n">range</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">VkBufferViewCreateInfo</span> <span class="n">createInfo</span><span class="p">{};</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">buffer</span><span class="p">;</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">format</span> <span class="o">=</span> <span class="n">format</span><span class="p">;</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span><span class="p">;</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">range</span> <span class="o">=</span> <span class="n">range</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nf">Create</span><span class="p">(</span><span class="n">createInfo</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">image</span> <span class="p">{</span>
+    <span class="n">VkImage</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">image</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">image</span><span class="p">(</span><span class="n">VkImageCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Create</span><span class="p">(</span><span class="n">createInfo</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">image</span><span class="p">(</span><span class="n">image</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="n">MoveHandle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="o">~</span><span class="n">image</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">DestroyHandleBy</span><span class="p">(</span><span class="n">vkDestroyImage</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="c1">//Getter</span>
+    <span class="k">operator</span> <span class="n">VkImage</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">handle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c1">//Const Function</span>
+    <span class="n">VkMemoryAllocateInfo</span> <span class="n">MemoryAllocateInfo</span><span class="p">(</span><span class="n">VkMemoryPropertyFlags</span> <span class="n">desiredMemoryProperties</span><span class="p">)</span><span class="k">const</span> <span class="p">{</span>
+        <span class="n">VkMemoryAllocateInfo</span> <span class="n">memoryAllocateInfo</span><span class="p">{};</span>
+        <span class="n">VkMemoryRequirements</span> <span class="n">memoryRequirements</span><span class="p">;</span>
+        <span class="n">vkGetImageMemoryRequirements</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">memoryRequirements</span><span class="p">);</span>
+        <span class="n">memoryAllocateInfo</span><span class="p">.</span><span class="n">allocationSize</span> <span class="o">=</span> <span class="n">memoryRequirements</span><span class="p">.</span><span class="n">size</span><span class="p">;</span>
+        <span class="k">auto</span><span class="o">&amp;</span> <span class="n">physicalDeviceMemoryProperties</span> <span class="o">=</span> <span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">PhysicalDeviceMemoryProperties</span><span class="p">();</span>
+        <span class="n">memoryAllocateInfo</span><span class="p">.</span><span class="n">memoryTypeIndex</span> <span class="o">=</span> <span class="mi">-1</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">size_t</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">physicalDeviceMemoryProperties</span><span class="p">.</span><span class="n">memoryTypeCount</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">memoryRequirements</span><span class="p">.</span><span class="n">memoryTypeBits</span> <span class="o">&amp;</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">i</span> <span class="o">&amp;&amp;</span>
+                    <span class="p">(</span><span class="n">physicalDeviceMemoryProperties</span><span class="p">.</span><span class="n">memoryTypes</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">propertyFlags</span> <span class="o">&amp;</span> <span class="n">desiredMemoryProperties</span><span class="p">)</span> <span class="o">==</span> <span class="n">desiredMemoryProperties</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">memoryAllocateInfo</span><span class="p">.</span><span class="n">memoryTypeIndex</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">memoryAllocateInfo</span><span class="p">.</span><span class="n">memoryTypeIndex</span> <span class="o">==</span> <span class="mi">-1</span> <span class="o">&amp;&amp;</span>
+                <span class="n">desiredMemoryProperties</span> <span class="o">&amp;</span> <span class="n">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span><span class="p">)</span>
+                <span class="n">desiredMemoryProperties</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">VkFlags</span><span class="p">(</span><span class="n">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">memoryAllocateInfo</span><span class="p">.</span><span class="n">memoryTypeIndex</span> <span class="o">==</span> <span class="mi">-1</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ image ]</span><span class="se">\n</span><span class="s">Failed to find any memory type satisfies all desired memory properties!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">memoryAllocateInfo</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">VkResult</span> <span class="n">Attach</span><span class="p">(</span><span class="n">VkDeviceMemory</span> <span class="n">deviceMemory</span><span class="p">,</span> <span class="n">VkDeviceSize</span> <span class="n">memoryOffset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkBindImageMemory</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">,</span> <span class="n">deviceMemory</span><span class="p">,</span> <span class="n">memoryOffset</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ image ]</span><span class="se">\n</span><span class="s">Failed to attach the memory!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//Non-const Function</span>
+    <span class="n">VkResult</span> <span class="n">Create</span><span class="p">(</span><span class="n">VkImageCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO</span><span class="p">;</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkCreateImage</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="o">&amp;</span><span class="n">createInfo</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">handle</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ image ]</span><span class="se">\n</span><span class="s">Failed to create an image!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">imageMemory</span> <span class="o">:</span><span class="k">public</span> <span class="n">image</span><span class="p">,</span> <span class="k">public</span> <span class="n">deviceMemory</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">image</span><span class="o">::</span><span class="n">MemoryAllocateInfo</span><span class="p">;</span>
+    <span class="k">using</span> <span class="n">image</span><span class="o">::</span><span class="n">Attach</span><span class="p">;</span>
+    <span class="k">using</span> <span class="n">image</span><span class="o">::</span><span class="n">Create</span><span class="p">;</span>
+    <span class="k">using</span> <span class="n">deviceMemory</span><span class="o">::</span><span class="n">Allocate</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">imageMemory</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">imageMemory</span><span class="p">(</span><span class="n">VkImageType</span> <span class="n">imageType</span><span class="p">,</span> <span class="n">VkFormat</span> <span class="n">format</span><span class="p">,</span> <span class="n">VkExtent3D</span> <span class="n">extent</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">mipLevelCount</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">arrayLayerCount</span><span class="p">,</span> <span class="n">VkSampleCountFlagBits</span> <span class="n">sampleCount</span><span class="p">,</span>
+        <span class="n">VkImageUsageFlags</span> <span class="n">desiredImageUsages</span><span class="p">,</span> <span class="n">VkMemoryPropertyFlags</span> <span class="n">desiredMemoryProperties</span><span class="p">,</span> <span class="n">VkImageCreateFlags</span> <span class="n">flags</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">CreateAndAllocate</span><span class="p">(</span><span class="n">imageType</span><span class="p">,</span> <span class="n">format</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="n">mipLevelCount</span><span class="p">,</span> <span class="n">arrayLayerCount</span><span class="p">,</span> <span class="n">sampleCount</span><span class="p">,</span> <span class="n">desiredImageUsages</span><span class="p">,</span> <span class="n">desiredMemoryProperties</span><span class="p">,</span> <span class="n">flags</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">//Getter</span>
+    <span class="n">VkImage</span> <span class="n">Image</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">image</span><span class="o">::</span><span class="k">operator</span> <span class="n">VkImage</span><span class="p">();</span> <span class="p">}</span>
+    <span class="n">VkDeviceMemory</span> <span class="n">Memory</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">deviceMemory</span><span class="o">::</span><span class="k">operator</span> <span class="n">VkDeviceMemory</span><span class="p">();</span> <span class="p">}</span>
+    <span class="c1">//Non-const Function</span>
+    <span class="kt">int32_t</span> <span class="n">CreateAndAllocate</span><span class="p">(</span><span class="n">VkImageType</span> <span class="n">imageType</span><span class="p">,</span> <span class="n">VkFormat</span> <span class="n">format</span><span class="p">,</span> <span class="n">VkExtent3D</span> <span class="n">extent</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">mipLevelCount</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">arrayLayerCount</span><span class="p">,</span> <span class="n">VkSampleCountFlagBits</span>    <span class="n">sampleCount</span><span class="p">,</span>
+        <span class="n">VkImageUsageFlags</span> <span class="n">desiredImageUsages</span><span class="p">,</span> <span class="n">VkMemoryPropertyFlags</span> <span class="n">desiredMemoryProperties</span><span class="p">,</span> <span class="n">VkImageCreateFlags</span> <span class="n">flags</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">VkImageCreateInfo</span> <span class="n">createInfo</span><span class="p">{};</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">flags</span> <span class="o">=</span> <span class="n">flags</span><span class="p">;</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">imageType</span> <span class="o">=</span> <span class="n">imageType</span><span class="p">;</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">format</span> <span class="o">=</span> <span class="n">format</span><span class="p">;</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">extent</span> <span class="o">=</span> <span class="n">extent</span><span class="p">;</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">mipLevels</span> <span class="o">=</span> <span class="n">mipLevelCount</span><span class="p">;</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">arrayLayers</span> <span class="o">=</span> <span class="n">arrayLayerCount</span><span class="p">;</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">samples</span> <span class="o">=</span> <span class="n">sampleCount</span><span class="p">;</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">usage</span> <span class="o">=</span> <span class="n">desiredImageUsages</span><span class="p">;</span>
+        <span class="kt">int32_t</span> <span class="n">result</span> <span class="o">=</span> <span class="n">Create</span><span class="p">(</span><span class="n">createInfo</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">result</span> <span class="o">?</span>
+            <span class="nl">result</span> <span class="p">:</span>
+            <span class="n">Allocate</span><span class="p">((</span><span class="n">image</span><span class="o">&amp;</span><span class="p">)</span><span class="o">*</span><span class="k">this</span><span class="p">,</span> <span class="n">desiredMemoryProperties</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">imageView</span> <span class="p">{</span>
+    <span class="n">VkImageView</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">imageView</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">imageView</span><span class="p">(</span><span class="n">VkImageViewCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Create</span><span class="p">(</span><span class="n">createInfo</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">imageView</span><span class="p">(</span><span class="n">VkImage</span> <span class="n">image</span><span class="p">,</span> <span class="n">VkImageViewType</span> <span class="n">viewType</span><span class="p">,</span> <span class="n">VkFormat</span> <span class="n">format</span><span class="p">,</span> <span class="k">const</span> <span class="n">VkImageSubresourceRange</span><span class="o">&amp;</span> <span class="n">subresourceRange</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Create</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">viewType</span><span class="p">,</span> <span class="n">format</span><span class="p">,</span> <span class="n">subresourceRange</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">imageView</span><span class="p">(</span><span class="n">imageView</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="n">MoveHandle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="o">~</span><span class="n">imageView</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">DestroyHandleBy</span><span class="p">(</span><span class="n">vkDestroyImageView</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="c1">//Getter</span>
+    <span class="k">operator</span> <span class="n">VkImageView</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">handle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c1">//Non-const Function</span>
+    <span class="n">VkResult</span> <span class="n">Create</span><span class="p">(</span><span class="n">VkImageViewCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO</span><span class="p">;</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkCreateImageView</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="o">&amp;</span><span class="n">createInfo</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">handle</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ imageView ]</span><span class="se">\n</span><span class="s">Failed to create an image view!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">VkResult</span> <span class="n">Create</span><span class="p">(</span><span class="n">VkImage</span> <span class="n">image</span><span class="p">,</span> <span class="n">VkImageViewType</span> <span class="n">viewType</span><span class="p">,</span> <span class="n">VkFormat</span> <span class="n">format</span><span class="p">,</span> <span class="k">const</span> <span class="n">VkImageSubresourceRange</span><span class="o">&amp;</span> <span class="n">subresourceRange</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">VkImageViewCreateInfo</span> <span class="n">createInfo</span><span class="p">{};</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="p">;</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">viewType</span> <span class="o">=</span> <span class="n">viewType</span><span class="p">;</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">format</span> <span class="o">=</span> <span class="n">format</span><span class="p">;</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">subresourceRange</span> <span class="o">=</span> <span class="n">subresourceRange</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nf">Create</span><span class="p">(</span><span class="n">createInfo</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h3>渲染通道以及帧缓冲<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line"><span class="type">VkRenderPass</span> ，渲染通道。渲染通道下面可以有多个子通道。渲染通道需要描述有哪些种类的图像附件，包括输入何种图像附件，输出到何种图像附件。</div>
+<div class="line"><span class="type">VkFramebuffer</span> ，帧缓冲是具体渲染通道下的一套图像附件（比如一个颜色附件+一个深度附件），你可以有多个帧缓冲用于同一渲染通道。</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">renderPass</span> <span class="p">{</span>
+    <span class="n">VkRenderPass</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">renderPass</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">renderPass</span><span class="p">(</span><span class="n">VkRenderPassCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Create</span><span class="p">(</span><span class="n">createInfo</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">renderPass</span><span class="p">(</span><span class="n">renderPass</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="n">MoveHandle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="o">~</span><span class="n">renderPass</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">DestroyHandleBy</span><span class="p">(</span><span class="n">vkDestroyRenderPass</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="c1">//Getter</span>
+    <span class="k">operator</span> <span class="n">VkRenderPass</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">handle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c1">//Const Function</span>
+    <span class="kt">void</span> <span class="n">CmdBegin</span><span class="p">(</span><span class="n">VkCommandBuffer</span> <span class="n">commandBuffer</span><span class="p">,</span> <span class="n">VkRenderPassBeginInfo</span><span class="o">&amp;</span> <span class="n">beginInfo</span><span class="p">,</span> <span class="n">VkSubpassContents</span> <span class="n">subpassContents</span> <span class="o">=</span> <span class="n">VK_SUBPASS_CONTENTS_INLINE</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="n">beginInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO</span><span class="p">;</span>
+        <span class="n">vkCmdBeginRenderPass</span><span class="p">(</span><span class="n">commandBuffer</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">beginInfo</span><span class="p">,</span> <span class="n">subpassContents</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">CmdBegin</span><span class="p">(</span><span class="n">VkCommandBuffer</span> <span class="n">commandBuffer</span><span class="p">,</span> <span class="n">VkFramebuffer</span> <span class="n">framebuffer</span><span class="p">,</span> <span class="n">VkSubpassContents</span> <span class="n">subpassContents</span> <span class="o">=</span> <span class="n">VK_SUBPASS_CONTENTS_INLINE</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="n">VkRenderPassBeginInfo</span> <span class="n">beginInfo</span><span class="p">{};</span>
+        <span class="n">beginInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO</span><span class="p">;</span>
+        <span class="n">beginInfo</span><span class="p">.</span><span class="n">renderPass</span> <span class="o">=</span> <span class="n">handle</span><span class="p">;</span>
+        <span class="n">beginInfo</span><span class="p">.</span><span class="n">framebuffer</span> <span class="o">=</span> <span class="n">framebuffer</span><span class="p">;</span>
+        <span class="n">beginInfo</span><span class="p">.</span><span class="n">renderArea</span> <span class="o">=</span> <span class="p">{</span> <span class="p">{},</span> <span class="n">windowSize</span> <span class="p">};</span>
+        <span class="n">vkCmdBeginRenderPass</span><span class="p">(</span><span class="n">commandBuffer</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">beginInfo</span><span class="p">,</span> <span class="n">subpassContents</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">CmdBegin</span><span class="p">(</span><span class="n">VkCommandBuffer</span> <span class="n">commandBuffer</span><span class="p">,</span> <span class="n">VkFramebuffer</span> <span class="n">framebuffer</span><span class="p">,</span> <span class="n">VkClearValue</span> <span class="n">clearValue</span><span class="p">,</span> <span class="n">VkSubpassContents</span> <span class="n">subpassContents</span> <span class="o">=</span> <span class="n">VK_SUBPASS_CONTENTS_INLINE</span><span class="p">)</span> <span class="k">const</span>  <span class="p">{</span>
+        <span class="n">VkRenderPassBeginInfo</span> <span class="n">beginInfo</span><span class="p">{};</span>
+        <span class="n">beginInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO</span><span class="p">;</span>
+        <span class="n">beginInfo</span><span class="p">.</span><span class="n">renderPass</span> <span class="o">=</span> <span class="n">handle</span><span class="p">;</span>
+        <span class="n">beginInfo</span><span class="p">.</span><span class="n">framebuffer</span> <span class="o">=</span> <span class="n">framebuffer</span><span class="p">;</span>
+        <span class="n">beginInfo</span><span class="p">.</span><span class="n">renderArea</span> <span class="o">=</span> <span class="p">{</span> <span class="p">{},</span> <span class="n">windowSize</span> <span class="p">};</span>
+        <span class="n">beginInfo</span><span class="p">.</span><span class="n">clearValueCount</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="n">beginInfo</span><span class="p">.</span><span class="n">pClearValues</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">clearValue</span><span class="p">;</span>
+        <span class="n">vkCmdBeginRenderPass</span><span class="p">(</span><span class="n">commandBuffer</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">beginInfo</span><span class="p">,</span> <span class="n">subpassContents</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="kt">size_t</span> <span class="n">elementCount</span><span class="o">&gt;</span>
+    <span class="kt">void</span> <span class="n">CmdBegin</span><span class="p">(</span><span class="n">VkCommandBuffer</span> <span class="n">commandBuffer</span><span class="p">,</span> <span class="n">VkFramebuffer</span> <span class="n">framebuffer</span><span class="p">,</span> <span class="k">const</span> <span class="n">VkClearValue</span><span class="p">(</span><span class="o">&amp;</span><span class="n">clearValues</span><span class="p">)[</span><span class="n">elementCount</span><span class="p">],</span> <span class="n">VkSubpassContents</span> <span class="n">subpassContents</span> <span class="o">=</span>     <span class="n">VK_SUBPASS_CONTENTS_INLINE</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="n">VkRenderPassBeginInfo</span> <span class="n">beginInfo</span><span class="p">{};</span>
+        <span class="n">beginInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO</span><span class="p">;</span>
+        <span class="n">beginInfo</span><span class="p">.</span><span class="n">renderPass</span> <span class="o">=</span> <span class="n">handle</span><span class="p">;</span>
+        <span class="n">beginInfo</span><span class="p">.</span><span class="n">framebuffer</span> <span class="o">=</span> <span class="n">framebuffer</span><span class="p">;</span>
+        <span class="n">beginInfo</span><span class="p">.</span><span class="n">renderArea</span> <span class="o">=</span> <span class="p">{</span> <span class="p">{},</span> <span class="n">windowSize</span> <span class="p">};</span>
+        <span class="n">beginInfo</span><span class="p">.</span><span class="n">clearValueCount</span> <span class="o">=</span> <span class="n">elementCount</span><span class="p">;</span>
+        <span class="n">beginInfo</span><span class="p">.</span><span class="n">pClearValues</span> <span class="o">=</span> <span class="n">clearValues</span><span class="p">;</span>
+        <span class="n">vkCmdBeginRenderPass</span><span class="p">(</span><span class="n">commandBuffer</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">beginInfo</span><span class="p">,</span> <span class="n">subpassContents</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">CmdEnd</span><span class="p">(</span><span class="n">VkCommandBuffer</span> <span class="n">commandBuffer</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="n">vkCmdEndRenderPass</span><span class="p">(</span><span class="n">commandBuffer</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">//Non-const Function</span>
+    <span class="n">VkResult</span> <span class="n">Create</span><span class="p">(</span><span class="n">VkRenderPassCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO</span><span class="p">;</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkCreateRenderPass</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="o">&amp;</span><span class="n">createInfo</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">handle</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ renderPass ]</span><span class="se">\n</span><span class="s">Failed to create a render pass!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">framebuffer</span> <span class="p">{</span>
+    <span class="n">VkFramebuffer</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">framebuffer</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">framebuffer</span><span class="p">(</span><span class="n">VkFramebufferCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Create</span><span class="p">(</span><span class="n">createInfo</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">framebuffer</span><span class="p">(</span><span class="n">framebuffer</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="n">MoveHandle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="o">~</span><span class="n">framebuffer</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">DestroyHandleBy</span><span class="p">(</span><span class="n">vkDestroyFramebuffer</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="c1">//Getter</span>
+    <span class="k">operator</span> <span class="n">VkFramebuffer</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">handle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c1">//Non-const Function</span>
+    <span class="n">VkResult</span> <span class="n">Create</span><span class="p">(</span><span class="n">VkFramebufferCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO</span><span class="p">;</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkCreateFramebuffer</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="o">&amp;</span><span class="n">createInfo</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">handle</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ framebuffer ]</span><span class="se">\n</span><span class="s">Failed to create a framebuffer!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h3>管线相关<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line"><span class="type">VkShaderModule</span> 着色器模块，着色器就是……就是着色器！最典型的是顶点着色器和片段着色器，这是两个必须的着色器（除非你用的是计算管线），前者处理顶点，而后者输出颜色到颜色附件上。</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">shader</span> <span class="p">{</span>
+    <span class="n">VkShaderModule</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">shader</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">shader</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">filepath</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Create</span><span class="p">(</span><span class="n">filepath</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">shader</span><span class="p">(</span><span class="n">shader</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="n">MoveHandle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="o">~</span><span class="n">shader</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">DestroyHandleBy</span><span class="p">(</span><span class="n">vkDestroyShaderModule</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="c1">//Getter</span>
+    <span class="k">operator</span> <span class="n">VkShaderModule</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">handle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c1">//Const Function</span>
+    <span class="c1">//着色器阶段创建信息</span>
+    <span class="n">VkPipelineShaderStageCreateInfo</span> <span class="n">StageCreateInfo</span><span class="p">(</span><span class="n">VkShaderStageFlagBits</span> <span class="n">stage</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">entry</span> <span class="o">=</span> <span class="s">&quot;main&quot;</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">VkPipelineShaderStageCreateInfo</span><span class="p">{</span>
+            <span class="n">VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO</span><span class="p">,</span><span class="c1">//sType;</span>
+            <span class="k">nullptr</span><span class="p">,</span>                                            <span class="c1">//pNext;</span>
+            <span class="mi">0</span><span class="p">,</span>                                                  <span class="c1">//flags;</span>
+            <span class="n">stage</span><span class="p">,</span>                                              <span class="c1">//stage;</span>
+            <span class="n">handle</span><span class="p">,</span>                                             <span class="c1">//module;</span>
+            <span class="n">entry</span><span class="p">,</span>                                              <span class="c1">//pName;</span>
+            <span class="k">nullptr</span>                                             <span class="c1">//pSpecializationInfo;</span>
+        <span class="p">};</span>
+    <span class="p">}</span>
+    <span class="c1">//Non-const Function</span>
+    <span class="n">VkResult</span> <span class="n">Create</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">filepath</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">ifstream</span> <span class="n">file</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">ios</span><span class="o">::</span><span class="n">ate</span> <span class="o">|</span> <span class="n">std</span><span class="o">::</span><span class="n">ios</span><span class="o">::</span><span class="n">binary</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">file</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ shader ]</span><span class="se">\n</span><span class="s">Failed to load the shader file: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">filepath</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="kt">size_t</span> <span class="n">fileSize</span> <span class="o">=</span> <span class="kt">size_t</span><span class="p">(</span><span class="n">file</span><span class="p">.</span><span class="n">tellg</span><span class="p">());</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;</span> <span class="n">binaries</span><span class="p">(</span><span class="n">fileSize</span><span class="p">);</span>
+        <span class="n">file</span><span class="p">.</span><span class="n">seekg</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+        <span class="n">file</span><span class="p">.</span><span class="n">read</span><span class="p">(</span><span class="n">binaries</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span> <span class="n">fileSize</span><span class="p">);</span>
+        <span class="n">file</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+        <span class="n">VkShaderModuleCreateInfo</span> <span class="n">shaderModuleCreateInfo</span><span class="p">{};</span>
+        <span class="n">shaderModuleCreateInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO</span><span class="p">;</span>
+        <span class="n">shaderModuleCreateInfo</span><span class="p">.</span><span class="n">codeSize</span> <span class="o">=</span> <span class="n">binaries</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+        <span class="n">shaderModuleCreateInfo</span><span class="p">.</span><span class="n">pCode</span> <span class="o">=</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="o">*</span><span class="p">)</span><span class="n">binaries</span><span class="p">.</span><span class="n">data</span><span class="p">();</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkCreateShaderModule</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="o">&amp;</span><span class="n">shaderModuleCreateInfo</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">handle</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ shader ]</span><span class="se">\n</span><span class="s">Failed to create a shader module!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><span class="type">VkSampler</span> 采样器，决定了在着色器中如何采样图像（比如是否使用mipmap、各向异性等）。</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">sampler</span> <span class="p">{</span>
+    <span class="n">VkSampler</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">sampler</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">sampler</span><span class="p">(</span><span class="n">sampler</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="n">MoveHandle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="n">sampler</span><span class="p">(</span><span class="n">VkSamplerCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Create</span><span class="p">(</span><span class="n">createInfo</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="o">~</span><span class="n">sampler</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">DestroyHandleBy</span><span class="p">(</span><span class="n">vkDestroySampler</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="c1">//Getter</span>
+    <span class="k">operator</span> <span class="n">VkSampler</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">handle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c1">//Non-const Function</span>
+    <span class="n">VkResult</span> <span class="n">Create</span><span class="p">(</span><span class="n">VkSamplerCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO</span><span class="p">;</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkCreateSampler</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="o">&amp;</span><span class="n">createInfo</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">handle</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ sampler ]</span><span class="se">\n</span><span class="s">Failed to create a sampler!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><span class="type">VkDescriptorSetLayout</span> ，描述符布局，描述符用于传入着色器，可以描述所用图像、采样器、以及常量，而描述符布局描述了你有多少套描述符以及各需访问多大的内存。</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">descriptorSetLayout</span> <span class="p">{</span>
+    <span class="n">VkDescriptorSetLayout</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">descriptorSetLayout</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">descriptorSetLayout</span><span class="p">(</span><span class="n">VkDescriptorSetLayoutCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Create</span><span class="p">(</span><span class="n">createInfo</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">descriptorSetLayout</span><span class="p">(</span><span class="n">descriptorSetLayout</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="n">MoveHandle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="o">~</span><span class="n">descriptorSetLayout</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">DestroyHandleBy</span><span class="p">(</span><span class="n">vkDestroyDescriptorSetLayout</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="c1">//Getter</span>
+    <span class="k">operator</span> <span class="n">VkDescriptorSetLayout</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">handle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c1">//Non-const Function</span>
+    <span class="n">VkResult</span> <span class="n">Create</span><span class="p">(</span><span class="n">VkDescriptorSetLayoutCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO</span><span class="p">;</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkCreateDescriptorSetLayout</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="o">&amp;</span><span class="n">createInfo</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">handle</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ descriptorSetLayout ]</span><span class="se">\n</span><span class="s">Failed to create a descriptor set layout!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><span class="type">VkPipelineLayout</span> ，管线布局，描述渲染管线有哪些着色器阶段以及如何传入常量。管线布局级别比描述符布局高，你在创建管线布局时需要传入描述符布局的指针（若需要描述符）。</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">pipelineLayout</span> <span class="p">{</span>
+    <span class="n">VkPipelineLayout</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">pipelineLayout</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">pipelineLayout</span><span class="p">(</span><span class="n">VkPipelineLayoutCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Create</span><span class="p">(</span><span class="n">createInfo</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">pipelineLayout</span><span class="p">(</span><span class="n">pipelineLayout</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="n">MoveHandle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="o">~</span><span class="n">pipelineLayout</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">DestroyHandleBy</span><span class="p">(</span><span class="n">vkDestroyPipelineLayout</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="c1">//Getter</span>
+    <span class="k">operator</span> <span class="n">VkPipelineLayout</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">handle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c1">//Non-const Function</span>
+    <span class="n">VkResult</span> <span class="n">Create</span><span class="p">(</span><span class="n">VkPipelineLayoutCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO</span><span class="p">;</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkCreatePipelineLayout</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="o">&amp;</span><span class="n">createInfo</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">handle</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ pipelineLayout ]</span><span class="se">\n</span><span class="s">Failed to create a pipeline layout!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><span class="type">VkPipeline</span> ，管线，通过管线布局、着色阶段信息来创建管线，管线描述了所用的着色器以及一系列状态（比如视口大小以及剪裁状态，是否开启深度测试等），通过在命令缓冲区中绑定管线来应用着色器和状态。创建管线所需的参数是整个Vulkan中最多的，之后我会有一个类来简化这件事。</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">pipeline</span> <span class="p">{</span>
+    <span class="n">VkPipeline</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">pipeline</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">pipeline</span><span class="p">(</span><span class="n">VkGraphicsPipelineCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Create</span><span class="p">(</span><span class="n">createInfo</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">pipeline</span><span class="p">(</span><span class="n">pipeline</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="n">MoveHandle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="o">~</span><span class="n">pipeline</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">DestroyHandleBy</span><span class="p">(</span><span class="n">vkDestroyPipeline</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="c1">//Getter</span>
+    <span class="k">operator</span> <span class="n">VkPipeline</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">handle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c1">//Non-const Function</span>
+    <span class="n">VkResult</span> <span class="n">Create</span><span class="p">(</span><span class="n">VkGraphicsPipelineCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO</span><span class="p">;</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkCreateGraphicsPipelines</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">VK_NULL_HANDLE</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">createInfo</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">handle</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ pipeline ]</span><span class="se">\n</span><span class="s">Failed to create a graphics pipeline!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id9">
+<h3>三种池子<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line">Vulkan鼓励你一次性分配更多内存，而不是一小块一小块地分配。命令缓冲、描述符集、查询，这三类都是创建pool后，从pool中分配内存来使用。</div>
+<div class="line">我将三种池子都放在这里其实并不科学，因为这三类pool没有什么关系，单纯因为都是pool。</div>
+<div class="line">从池子中分配的对象都没写析构器，池子被销毁时，下属的所有内存都会被回收。</div>
+<div class="line">如果你想在运行过程中回收内存，手动调用池子的Free函数 —— 要通过析构器自动实现Free必须要记录池子的handle，这么一来就不能一次性分配多个对象了（因为你没法把自建 <span class="type">commandBuffer</span> / <span class="type">descriptorSet</span> 类实例的数组当做 <span class="type">VkCommandBuffer</span> / <span class="type">VkDescriptorSet</span> 的数组来使用了）。</div>
+</div>
+<div class="line-block">
+<div class="line"><span class="type">VkCommandPool</span> ，命令池，用于分配 <span class="type">VkCommandBuffer</span> 。</div>
+<div class="line">命令缓冲区用于记录命令，然后提交到GPU上执行，命令缓冲区一共有两种：一级和二级命令缓冲区，后者不能被直接提交，而是被记录下来后，在前者中使用。</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">commandPool</span> <span class="p">{</span>
+    <span class="n">VkCommandPool</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">commandPool</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">commandPool</span><span class="p">(</span><span class="n">VkCommandPoolCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Create</span><span class="p">(</span><span class="n">createInfo</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">commandPool</span><span class="p">(</span><span class="n">VkCommandPoolCreateFlags</span> <span class="n">createFlags</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">queueFamilyIndex</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Create</span><span class="p">(</span><span class="n">createFlags</span><span class="p">,</span> <span class="n">queueFamilyIndex</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">commandPool</span><span class="p">(</span><span class="n">commandPool</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="n">MoveHandle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="o">~</span><span class="n">commandPool</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">DestroyHandleBy</span><span class="p">(</span><span class="n">vkDestroyCommandPool</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="c1">//Getter</span>
+    <span class="k">operator</span> <span class="n">VkCommandPool</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">handle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c1">//Const Function</span>
+    <span class="n">VkResult</span> <span class="n">AllocateCommandBuffers</span><span class="p">(</span><span class="n">VkCommandBuffer</span><span class="o">*</span> <span class="n">pCommandBuffers</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">commandBufferCount</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">VkCommandBufferLevel</span> <span class="n">level</span> <span class="o">=</span> <span class="n">VK_COMMAND_BUFFER_LEVEL_PRIMARY</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="n">VkCommandBufferAllocateInfo</span> <span class="n">commandBufferAllocateInfo</span><span class="p">{};</span>
+        <span class="n">commandBufferAllocateInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO</span><span class="p">;</span>
+        <span class="n">commandBufferAllocateInfo</span><span class="p">.</span><span class="n">commandPool</span> <span class="o">=</span> <span class="n">handle</span><span class="p">;</span>
+        <span class="n">commandBufferAllocateInfo</span><span class="p">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">level</span><span class="p">;</span>
+        <span class="n">commandBufferAllocateInfo</span><span class="p">.</span><span class="n">commandBufferCount</span> <span class="o">=</span> <span class="n">commandBufferCount</span><span class="p">;</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkAllocateCommandBuffers</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="o">&amp;</span><span class="n">commandBufferAllocateInfo</span><span class="p">,</span> <span class="n">pCommandBuffers</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ commandPool ]</span><span class="se">\n</span><span class="s">Failed to allocate command buffers!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">FreeCommandBuffers</span><span class="p">(</span><span class="n">VkCommandBuffer</span><span class="o">*</span> <span class="n">pCommandBuffers</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">commandBufferCount</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="n">vkFreeCommandBuffers</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">,</span> <span class="n">commandBufferCount</span><span class="p">,</span> <span class="n">pCommandBuffers</span><span class="p">);</span>
+        <span class="n">memset</span><span class="p">(</span><span class="n">pCommandBuffers</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">commandBufferCount</span> <span class="o">*</span> <span class="k">sizeof</span> <span class="n">VkCommandBuffer</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">//Non-const Function</span>
+    <span class="n">VkResult</span> <span class="n">Create</span><span class="p">(</span><span class="n">VkCommandPoolCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO</span><span class="p">;</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkCreateCommandPool</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="o">&amp;</span><span class="n">createInfo</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">handle</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ commandPool ]</span><span class="se">\n</span><span class="s">Failed to create a command pool!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">VkResult</span> <span class="n">Create</span><span class="p">(</span><span class="n">VkCommandPoolCreateFlags</span> <span class="n">createFlags</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">queueFamilyIndex</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">VkCommandPoolCreateInfo</span> <span class="n">createInfo</span><span class="p">{};</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">flags</span> <span class="o">=</span> <span class="n">createFlags</span><span class="p">;</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">queueFamilyIndex</span> <span class="o">=</span> <span class="n">queueFamilyIndex</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nf">Create</span><span class="p">(</span><span class="n">createInfo</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+<span class="k">class</span> <span class="nc">commandBuffer</span> <span class="p">{</span>
+    <span class="n">VkCommandBuffer</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="c1">//Getter</span>
+    <span class="k">operator</span> <span class="n">VkCommandBuffer</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">handle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c1">//Const Function</span>
+    <span class="n">VkResult</span> <span class="n">Begin</span><span class="p">(</span><span class="n">VkCommandBufferUsageFlags</span> <span class="n">usageFlags</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="k">const</span> <span class="n">VkCommandBufferInheritanceInfo</span><span class="o">&amp;</span> <span class="n">inheritanceInfo</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">VkCommandBufferInheritanceInfo</span><span class="o">*</span><span class="p">)</span><span class="k">nullptr</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="n">VkCommandBufferBeginInfo</span> <span class="n">beginInfo</span><span class="p">{};</span>
+        <span class="n">beginInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO</span><span class="p">;</span>
+        <span class="n">beginInfo</span><span class="p">.</span><span class="n">flags</span> <span class="o">=</span> <span class="n">usageFlags</span><span class="p">;</span>
+        <span class="n">beginInfo</span><span class="p">.</span><span class="n">pInheritanceInfo</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">inheritanceInfo</span><span class="p">;</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkBeginCommandBuffer</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">beginInfo</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ commandBuffer ]</span><span class="se">\n</span><span class="s">Failed to begin a command buffer!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">VkResult</span> <span class="n">End</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkEndCommandBuffer</span><span class="p">(</span><span class="n">handle</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ commandBuffer ]</span><span class="se">\n</span><span class="s">Failed to end a command buffer!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><span class="type">VkDescriptorPool</span> 与 <span class="type">VkDescriptorSet</span> ，描述符池与描述符集。前面已经介绍过描述符了，因此暂且不再赘言。</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">descriptorPool</span> <span class="p">{</span>
+    <span class="n">VkDescriptorPool</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">descriptorPool</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">descriptorPool</span><span class="p">(</span><span class="n">VkDescriptorPoolCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Create</span><span class="p">(</span><span class="n">createInfo</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">descriptorPool</span><span class="p">(</span><span class="n">VkDescriptorPoolCreateFlags</span> <span class="n">createFlags</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">maxSetCount</span><span class="p">,</span> <span class="n">VkDescriptorPoolSize</span> <span class="n">descriptorPoolSize</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Create</span><span class="p">(</span><span class="n">createFlags</span><span class="p">,</span> <span class="n">maxSetCount</span><span class="p">,</span> <span class="n">descriptorPoolSize</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="kt">size_t</span> <span class="n">elementCount</span><span class="o">&gt;</span>
+    <span class="n">descriptorPool</span><span class="p">(</span><span class="n">VkDescriptorPoolCreateFlags</span> <span class="n">createFlags</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">maxSetCount</span><span class="p">,</span> <span class="k">const</span> <span class="n">VkDescriptorPoolSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">descriptorPoolSizes</span><span class="p">)[</span><span class="n">elementCount</span><span class="p">])</span> <span class="p">{</span>
+        <span class="n">Create</span><span class="p">(</span><span class="n">createFlags</span><span class="p">,</span> <span class="n">maxSetCount</span><span class="p">,</span> <span class="n">descriptorPoolSizes</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">descriptorPool</span><span class="p">(</span><span class="n">descriptorPool</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="n">MoveHandle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="o">~</span><span class="n">descriptorPool</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">DestroyHandleBy</span><span class="p">(</span><span class="n">vkDestroyDescriptorPool</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="c1">//Getter</span>
+    <span class="k">operator</span> <span class="n">VkDescriptorPool</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">handle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c1">//Const Function</span>
+    <span class="n">VkResult</span> <span class="n">AllocateDescriptorSets</span><span class="p">(</span><span class="n">VkDescriptorSet</span><span class="o">*</span> <span class="n">pDescriptorSets</span><span class="p">,</span> <span class="k">const</span> <span class="n">VkDescriptorSetLayout</span><span class="o">*</span> <span class="n">pDescriptorSetLayouts</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">descriptorSetCount</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="n">VkDescriptorSetAllocateInfo</span> <span class="n">descriptorSetAllocateInfo</span><span class="p">{};</span>
+        <span class="n">descriptorSetAllocateInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO</span><span class="p">;</span>
+        <span class="n">descriptorSetAllocateInfo</span><span class="p">.</span><span class="n">descriptorPool</span> <span class="o">=</span> <span class="n">handle</span><span class="p">;</span>
+        <span class="n">descriptorSetAllocateInfo</span><span class="p">.</span><span class="n">descriptorSetCount</span> <span class="o">=</span> <span class="n">descriptorSetCount</span><span class="p">;</span>
+        <span class="n">descriptorSetAllocateInfo</span><span class="p">.</span><span class="n">pSetLayouts</span> <span class="o">=</span> <span class="n">pDescriptorSetLayouts</span><span class="p">;</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkAllocateDescriptorSets</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="o">&amp;</span><span class="n">descriptorSetAllocateInfo</span><span class="p">,</span> <span class="n">pDescriptorSets</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ descriptorPool ]</span><span class="se">\n</span><span class="s">Failed to allocate descriptor sets!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">VkResult</span> <span class="n">AllocateDescriptorSet</span><span class="p">(</span><span class="n">VkDescriptorSet</span><span class="o">&amp;</span> <span class="n">descriptorSet</span><span class="p">,</span> <span class="n">VkDescriptorSetLayout</span> <span class="n">descriptorSetLayout</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nf">AllocateDescriptorSets</span><span class="p">(</span><span class="o">&amp;</span><span class="n">descriptorSet</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">descriptorSetLayout</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">FreeDescriptorSets</span><span class="p">(</span><span class="n">VkDescriptorSet</span><span class="o">*</span> <span class="n">pDescriptorSets</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">descriptorSetCount</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="n">vkFreeDescriptorSets</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="n">handle</span><span class="p">,</span> <span class="n">descriptorSetCount</span><span class="p">,</span> <span class="n">pDescriptorSets</span><span class="p">);</span>
+        <span class="n">memset</span><span class="p">(</span><span class="n">pDescriptorSets</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">descriptorSetCount</span> <span class="o">*</span> <span class="k">sizeof</span> <span class="n">VkDescriptorSet</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">//Non-const Function</span>
+    <span class="n">VkResult</span> <span class="n">Create</span><span class="p">(</span><span class="n">VkDescriptorPoolCreateInfo</span><span class="o">&amp;</span> <span class="n">createInfo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO</span><span class="p">;</span>
+        <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkCreateDescriptorPool</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="o">&amp;</span><span class="n">createInfo</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">handle</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ descriptorPool ]</span><span class="se">\n</span><span class="s">Failed to create a descriptor pool!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">VkResult</span> <span class="n">Create</span><span class="p">(</span><span class="n">VkDescriptorPoolCreateFlags</span> <span class="n">createFlags</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">maxSetCount</span><span class="p">,</span> <span class="n">VkDescriptorPoolSize</span> <span class="n">descriptorPoolSize</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">VkDescriptorPoolCreateInfo</span> <span class="n">createInfo</span><span class="p">{};</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">flags</span> <span class="o">=</span> <span class="n">createFlags</span><span class="p">;</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">maxSets</span> <span class="o">=</span> <span class="n">maxSetCount</span><span class="p">;</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">poolSizeCount</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">pPoolSizes</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">descriptorPoolSize</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nf">Create</span><span class="p">(</span><span class="n">createInfo</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="kt">size_t</span> <span class="n">elementCount</span><span class="o">&gt;</span>
+    <span class="n">VkResult</span> <span class="n">Create</span><span class="p">(</span><span class="n">VkDescriptorPoolCreateFlags</span> <span class="n">createFlags</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">maxSetCount</span><span class="p">,</span> <span class="k">const</span> <span class="n">VkDescriptorPoolSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">descriptorPoolSizes</span><span class="p">)[</span><span class="n">elementCount</span><span class="p">])</span> <span class="p">{</span>
+        <span class="n">VkDescriptorPoolCreateInfo</span> <span class="n">createInfo</span><span class="p">{};</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">flags</span> <span class="o">=</span> <span class="n">createFlags</span><span class="p">;</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">maxSets</span> <span class="o">=</span> <span class="n">maxSetCount</span><span class="p">;</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">poolSizeCount</span> <span class="o">=</span> <span class="n">elementCount</span><span class="p">;</span>
+        <span class="n">createInfo</span><span class="p">.</span><span class="n">pPoolSizes</span> <span class="o">=</span> <span class="n">descriptorPoolSizes</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nf">Create</span><span class="p">(</span><span class="n">createInfo</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+<span class="k">class</span> <span class="nc">descriptorSet</span> <span class="p">{</span>
+    <span class="n">VkDescriptorSet</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="c1">//Getter</span>
+    <span class="k">operator</span> <span class="n">VkDescriptorSet</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">handle</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c1">//Const Function</span>
+    <span class="kt">void</span> <span class="n">Write</span><span class="p">(</span><span class="n">VkDescriptorType</span> <span class="n">descriptorType</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span><span class="o">*</span> <span class="n">pDescriptorInfo</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">dstBinding</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">dstArrayElement</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="n">VkWriteDescriptorSet</span> <span class="n">writeDescriptorSet</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET</span><span class="p">,</span>
+        <span class="k">nullptr</span><span class="p">,</span>
+        <span class="n">handle</span><span class="p">,</span>
+        <span class="n">dstBinding</span><span class="p">,</span>
+        <span class="n">dstArrayElement</span><span class="p">,</span>
+        <span class="n">count</span><span class="p">,</span>
+        <span class="n">descriptorType</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">VkDescriptorImageInfo</span><span class="o">*</span><span class="p">)</span><span class="n">pDescriptorInfo</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">VkDescriptorBufferInfo</span><span class="o">*</span><span class="p">)</span><span class="n">pDescriptorInfo</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">VkBufferView</span><span class="o">*</span><span class="p">)</span><span class="n">pDescriptorInfo</span>
+        <span class="p">};</span>
+        <span class="n">vkUpdateDescriptorSets</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">Device</span><span class="p">(),</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">writeDescriptorSet</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><span class="type">VkQueryPool</span> ，查询池。 Vulkan中查询命令的结果和状态会被存入查询池。较常用的查询操作是遮挡查询，用于实现顺序无关的透明物体渲染。</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">//说实话我还没用过所以先不写了</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="Ch2-1%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93.html" class="btn btn-neutral float-right" title="Ch2-1 创建渲染通道" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Ch1-3%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html" class="btn btn-neutral float-left" title="Ch1-3 创建交换链" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Qiao Wu.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
