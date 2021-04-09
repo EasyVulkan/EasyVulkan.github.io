@@ -95,18 +95,17 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9B%E5%BB%BAVk%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-2 创建Vk实例与逻辑设备</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-3 创建交换链</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Ch1-4 承前启后</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#vulkan">使用类来封装Vulkan对象</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id1">同步机制简介</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id2">显式同步机制</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id3">隐式同步保证</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">各种Vulkan对象简介及必要封装</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id5">同步原语</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id6">内存相关</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id7">渲染通道以及帧缓冲</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id8">管线相关</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id9">三种池子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vulkan">使用类来封装Vulkan对象</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">同步原语</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">内存相关</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">渲染通道以及帧缓冲</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">管线相关</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">三种池子</a></li>
 </ul>
 </li>
 </ul>
@@ -115,8 +114,9 @@
 <p class="caption"><span class="caption-text">第二章 基础绘制</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch2-1%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93.html">Ch2-1 创建渲染通道</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%A4%A9%E5%93%AA%EF%BC%8C%E6%98%AF%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-2 天哪，是三角形</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%8D%B3%E6%97%B6%E5%B8%A7%E4%B8%8E%E9%98%9F%E5%88%97%E6%89%80%E6%9C%89%E6%9D%83%E8%BD%AC%E7%A7%BB.html">Ch2-3 即时帧与队列所有权转移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20Rendering%20Loop.html">Ch2-2 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%A4%A9%E5%93%AA%EF%BC%8C%E6%98%AF%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 天哪，是三角形</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-4%20%E5%8D%B3%E6%97%B6%E5%B8%A7%E4%B8%8E%E9%98%9F%E5%88%97%E6%97%8F%E6%89%80%E6%9C%89%E6%9D%83%E8%BD%AC%E7%A7%BB.html">Ch2-4 即时帧与队列族所有权转移</a></li>
 </ul>
 
             
@@ -184,34 +184,9 @@
             
   <div class="section" id="ch1-4">
 <h1>Ch1-4 承前启后<a class="headerlink" href="#ch1-4" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="vulkan">
-<h2>使用类来封装Vulkan对象<a class="headerlink" href="#vulkan" title="Permalink to this headline">¶</a></h2>
-<div class="line-block">
-<div class="line">我们使用类来封装Vulkan对象，以在正确的实际自动销毁对象（而不必每创建一个Vulkan对象后，都得在一个用于清理的函数中手动Destroy）。</div>
-<div class="line">局部对象会先于全局和静态对象析构，这自不必多说，而全局和静态对象会按初始化的相反顺序被析构。</div>
-<div class="line">因此我将 <span class="type">graphicsBase</span> 的单例直接用inline定义在了类后面，这样它就会在所有其他的Vulkan对象之前被初始化，以及在最后被析构。</div>
-<div class="line">inline关键字使得所有编译单元中，同一符号都指向同一实体，所以不会有重定义的问题发生。</div>
-</div>
-<div class="line-block">
-<div class="line">我们已经完成了初始化，相比学多少介绍多少的做法，我认为事向读者介绍一下VulkanAPI中都有些什么会更好。</div>
-<div class="line">我们会在这个章节中介绍我们之后会用到的所有Vulkan对象，并完成必要的封装（有些“必要的封装”你可能当下还看不懂，总之先抄了之后再回头来看）。</div>
-</div>
-<div class="line-block">
-<div class="line">首先，加入以下宏，来让我们之后的代码写得更容易一些：</div>
-</div>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#define DestroyHandleBy(x) if (handle) { x; handle = VK_NULL_HANDLE; }</span>
-<span class="cp">#define MoveHandle handle = other.handle; other.handle = VK_NULL_HANDLE;</span>
-</pre></div>
-</div>
-<div class="line-block">
-<div class="line">第一个宏用于销毁对象并将其设置为空handle，以避免一些意外情况</div>
-<div class="line">第二个宏用于移动构造器</div>
-</div>
-</div>
 <div class="section" id="id1">
 <h2>同步机制简介<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <div class="line-block">
-<div class="line">在封装Vulkan对象之前我要单独介绍下同步机制以及同步原语，因为有些同步原语单纯只是个命令，并不依靠Vulkan对象实现。</div>
 <div class="line">同步机制是Vulkan新手最容易产生畏惧感，并且最容易走入误区的内容，不过其实它们也没那么难。</div>
 </div>
 <div class="section" id="id2">
@@ -230,28 +205,26 @@
 </ul>
 </div></blockquote>
 <div class="line-block">
-<div class="line">你用的最多的可能是 <span class="type">VkFence</span> ，因为每次提交命令缓冲区都得附带一个 <span class="type">VkFence</span> ，否则验证层会报错：</div>
-<div class="line">1.若是对于反复使用的命令缓冲区，在重置命令缓冲区时，会说你的命令还没有执行完（哪怕实际上已经执行完了）。</div>
-<div class="line">2.对于只使用一次后就被销毁的命令缓冲区，在销毁缓冲区时，会说你的资源还在被使用（同上，哪怕实际上已经执行完了）。</div>
+<div class="line">你用的最多的可能是 <span class="type">VkFence</span> ，因为每次提交命令缓冲区都得附带一个 <span class="type">VkFence</span> ，否则验证层可能会报错（说你的命令缓冲区没执行完，尽管实际上执行完了）。</div>
+<div class="line">所谓可能会报错，是因为根据情况，以及你显卡驱动所提供的Vulkan实现的不同，表现上可能有差异。</div>
+<div class="line">以及报错未必会影响实际的执行，不过一般我们都会附带一个fence，主要目的更多是为了同步而不是为了追求0错误0警告！</div>
 <div class="line">点亮 <span class="type">VkFence</span> 的操作是其他函数附带的，等待和重置则是手动调用函数进行的，并且你也可以手动取得其状态。</div>
 </div>
 <div class="line-block">
-<div class="line-block">
 <div class="line"><span class="type">VkSemaphore</span> 不会特别常用，但是肯定得用，你需要在呈现和渲染的队列间用它同步。</div>
 <div class="line"><span class="type">VkSemaphore</span> 有两种，普通的相当于一个布尔值，而timeline semaphore可以计数。</div>
-</div>
 <div class="line">点亮 <span class="type">VkSemaphore</span> 的操作由其他函数附带，而重置则是由其他函数附带等待操作后，自动实行的。</div>
 <div class="line">尽管1.2版本中你也可以手动等待，但这个教程使用的是1.0，并且通常也没必要手动等待。</div>
 </div>
 <div class="line-block">
-<div class="line">Subpass Denpendency，子通道依赖，用于渲染通道（Render Pass）中的子通道（Subpass）与外界或者其内部其他子通道间的同步，并附带图像内存布局转换。</div>
+<div class="line">Subpass Denpendency，子通道依赖，用于渲染通道（Render Pass）中的子通道（Subpass）与外界或者其内部其他子通道间的同步，并附带对附件图像的内存布局转换。</div>
 </div>
 <div class="line-block">
 <div class="line">接着简要介绍一下Pipeline Barrier。</div>
 <div class="line">Pipeline Barrier是一种用于命令缓冲区内部的同步命令，注意，它无法保证命令缓冲区外的同步。</div>
 <div class="line">Pipeline Barrier可以附加Memory Barrier：</div>
 <div class="line">1.如果没有Memory Barrier，单纯就是一个Pipeline Barrier的话，那么它定义了一个单纯的执行依赖，其前后的命令会按照其规定的srcStage和dstStage被阻塞。</div>
-<div class="line">2.如果带有Memory Barrier，那么你可能带有一个全局的Memory Brrier，或者一个Buffer Memory Barrier，或者一个Image Memory Barrier。Memory Barrier定义了一个内存访问上的先后关系，同时还可以附带资源的队列所有权转移，Image Memory Barrier还可以附带图像的内存布局变换。</div>
+<div class="line">2.如果带有Memory Barrier，那么你可能带有一个全局的Memory Brrier，或者一个Buffer Memory Barrier，或者一个Image Memory Barrier。Memory Barrier定义了一个内存访问上的先后关系，同时还可以附带资源的队列族所有权转移，Image Memory Barrier还可以附带图像的内存布局变换。</div>
 <div class="line">（我知道以上两条目前看上去都是很抽象的内容，先留个印象，实际使用时会再做讲解。）</div>
 </div>
 <div class="line-block">
@@ -259,7 +232,11 @@
 </div>
 <div class="line-block">
 <div class="line">Pipeline Barrier和Event通常使用在渲染通道之外，如果要在渲染通道内使用，渲染通道必须有一个自依赖的子通道，这个也是之后再细说。</div>
-<div class="line">Pipeline Barrier经常用于在transfer过程前后的图像内存布局转换，除此以外其实并不十分常用 —— 此外通常用于资源的队列所有权转移，以及不同渲染通道之间的同步，因为子通道依赖只能用于与该子通道所用的图像附件有关的同步，诸如阴影贴图这样无法作为输入附件使用的图像，应当使用Pipeline Barrier。</div>
+<div class="line">Pipeline Barrier常用于在transfer过程前后的图像内存布局转换，此外还用于资源的队列族所有权转移，以及不同渲染通道之间的同步（因为子通道依赖无法对并非附件的图像进行内存布局转换）。</div>
+</div>
+<div class="line-block">
+<div class="line">同步的目的是为了确保对资源的访问依序发生，以及资源的内存布局转换在正确的时机发生。</div>
+<div class="line">同步并不可怕，重要的是在适当的情况下选择正确的同步方式 —— 这起初似乎很难做到（因为Vulkan的同步机制确实有很多需要注意的细枝末节），不过我会在之后的章节里让你慢慢熟悉的。</div>
 </div>
 </div>
 <div class="section" id="id3">
@@ -274,8 +251,8 @@
 <div class="line">Vulkan官方标准中说到，Vulkan的命令按顺序开始执行，但未必按顺序结束。</div>
 <div class="line">尽管很多显卡驱动所提供的Vulkan实现确实会按顺序开始执行，但实际上有些命令可能会被重排，但有些绝对不可能 —— 因为它们根本不会被GPU执行。</div>
 <div class="line">命令缓冲中的命令可以分为三种性质：动作（action）、状态（state）、同步（synchronization）。</div>
-<div class="line">有些命令可能会附带多个性质，比如 <code class="docutils literal notranslate"><span class="pre">vkCmdBeginRenderPass</span></code> ，它即设置了状态，同时也会实行子通道依赖（是个同步操作）。</div>
-<div class="line">同步命令通常不会被重排 —— 但不绝对，渲染通道开始时的子通道依赖所附带的图像内存布局转换可能不会按1.0标准所说的那样发生，这是少数例外。</div>
+<div class="line">有些命令可能会附带多个性质，比如 <code class="docutils literal notranslate"><span class="pre">vkCmdBeginRenderPass</span></code> ，它即设置了状态，同时也会在GPU上实行子通道依赖（是个同步操作）。</div>
+<div class="line">同步命令通常不会被重排 —— 但不绝对，命令缓冲区开始执行的时机未必会按1.0标准所说的那样发生，这是少数例外。</div>
 <div class="line">可能会被重排的是动作命令。</div>
 <div class="line">而压根不会被GPU执行的是状态命令，状态命令在CPU上切换了状态，而具体的参数会被记录在之后的动作命令中。</div>
 </div>
@@ -290,19 +267,46 @@
 </div>
 </div>
 </div>
-<div class="section" id="id4">
-<h2>各种Vulkan对象简介及必要封装<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="vulkan">
+<h2>使用类来封装Vulkan对象<a class="headerlink" href="#vulkan" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line">我们使用类来封装Vulkan对象，以在正确的时机自动销毁对象（而不必每创建一个Vulkan对象后，都得在一个用于清理的函数中手动Destroy）。</div>
+<div class="line">局部对象会先于全局和静态对象析构，这自不必多说，而全局和静态对象会按初始化的相反顺序被析构。</div>
+<div class="line">因此我将 <span class="type">graphicsBase</span> 的单例直接用inline定义在了类后面，这样它就会在所有其他的Vulkan对象之前被初始化，以及在最后被析构。</div>
+<div class="line">inline关键字使得所有编译单元中，同一符号都指向同一实体，所以不会有重定义或生成多个副本的问题发生。</div>
+</div>
+<div class="line-block">
+<div class="line">我们已经完成了初始化，相比学多少介绍多少的做法，我认为事向读者介绍一下VulkanAPI中都有些什么会更好。</div>
+<div class="line">我会简要介绍我们之后将用到的所有Vulkan对象，并完成必要的封装。</div>
+</div>
+<div class="line-block">
+<div class="line">首先，加入以下宏，来让我们之后的代码写得更容易一些：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#define DestroyHandleBy(x) if (handle) { x; handle = VK_NULL_HANDLE; }</span>
+<span class="cp">#define MoveHandle handle = other.handle; other.handle = VK_NULL_HANDLE;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">第一个宏用于销毁对象并将其设置为空handle</div>
+<div class="line">第二个宏用于移动构造器</div>
+</div>
 <div class="line-block">
 <div class="line">我对Vulkan对象的封装有以下共性：</div>
-<div class="line">1.默认构造器、移动构造器、参数为createInfo的引用的构造器、析构器（以上皆排除需要从池子分配的对象）</div>
-<div class="line">2.参数为createInfo的引用的Create函数（除了需要从池子分配的对象），到相应Vk类型的自动转换</div>
-<div class="line">3.除了内存相关的类，其余的类中只有一个handle，这样一来，若要使用数组，我们的自建类的数组地址可以直接作为通常的数组地址来使用</div>
+<div class="line">1.都在vulkan命名空间下。</div>
+<div class="line">2.默认构造器、移动构造器、参数为createInfo的引用的构造器、析构器（以上皆排除需要从池子分配的对象）。</div>
+<div class="line">3.参数为createInfo的引用的Create函数（除了需要从池子分配的对象），到相应Vk类型的自动转换。</div>
+<div class="line">4.自动补全createInfo中所有的sType成员。</div>
+<div class="line">5.除了内存相关的类，其余的类中只有一个handle，这样一来，若要使用数组，我们的自建类的数组地址可以直接作为通常的数组地址来使用。</div>
 </div>
 <div class="line-block">
-<div class="line">下面仅仅是简介，代码中的注释也写得并不详细，我以后还会对这些Vulkan对象进行进一步解说。</div>
+<div class="line">在析构器中，首先会判断handle是否为空，若非空才会执行相应的Destroy函数。</div>
 </div>
-<div class="section" id="id5">
-<h3>同步原语<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line"><strong>下面仅仅是简介，代码中的注释也写得并不详细，我以后还会对这些Vulkan对象进行进一步解说。</strong></div>
+<div class="line"><strong>总之代码请先抄了。</strong></div>
+</div>
+<div class="section" id="id4">
+<h3>同步原语<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <div class="line-block">
 <div class="line">两种同步原语对象已经在之前初步介绍过了，所以我们直接封装它们：</div>
 </div>
@@ -401,8 +405,8 @@
 <div class="line">默认构造器：在逻辑设备已经创建了的情况下自动创建 <span class="type">VkSemaphore</span> / <span class="type">VkFence</span> 对象，因为创建这俩通常不需要什么额外的信息， <span class="type">fence</span> 视情况而定你可能会希望创建一个已经点亮了的。</div>
 </div>
 </div>
-<div class="section" id="id6">
-<h3>内存相关<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id5">
+<h3>内存相关<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
 <div class="line-block">
 <div class="line">首先是 <span class="type">VkDeviceMemory</span> ，device指的是GPU，那deviceMemory自然是视频内存（显存）啦。</div>
 <div class="line"><span class="type">VkDeviceMemory</span> 只是指代一块内存，要使用这块内存，必须要将其绑定到 <span class="type">VkImage</span> 或者 <span class="type">VkBuffer</span> 上。</div>
@@ -737,8 +741,8 @@
 </pre></div>
 </div>
 </div>
-<div class="section" id="id7">
-<h3>渲染通道以及帧缓冲<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id6">
+<h3>渲染通道以及帧缓冲<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
 <div class="line-block">
 <div class="line"><span class="type">VkRenderPass</span> ，渲染通道。渲染通道下面可以有多个子通道。渲染通道需要描述有哪些种类的图像附件，包括输入何种图像附件，输出到何种图像附件。</div>
 <div class="line"><span class="type">VkFramebuffer</span> ，帧缓冲是具体渲染通道下的一套图像附件（比如一个颜色附件+一个深度附件），你可以有多个帧缓冲用于同一渲染通道。</div>
@@ -759,6 +763,7 @@
     <span class="c1">//Const Function</span>
     <span class="kt">void</span> <span class="n">CmdBegin</span><span class="p">(</span><span class="n">VkCommandBuffer</span> <span class="n">commandBuffer</span><span class="p">,</span> <span class="n">VkRenderPassBeginInfo</span><span class="o">&amp;</span> <span class="n">beginInfo</span><span class="p">,</span> <span class="n">VkSubpassContents</span> <span class="n">subpassContents</span> <span class="o">=</span> <span class="n">VK_SUBPASS_CONTENTS_INLINE</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
         <span class="n">beginInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO</span><span class="p">;</span>
+        <span class="n">beginInfo</span><span class="p">.</span><span class="n">renderPass</span> <span class="o">=</span> <span class="n">handle</span><span class="p">;</span>
         <span class="n">vkCmdBeginRenderPass</span><span class="p">(</span><span class="n">commandBuffer</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">beginInfo</span><span class="p">,</span> <span class="n">subpassContents</span><span class="p">);</span>
     <span class="p">}</span>
     <span class="kt">void</span> <span class="n">CmdBegin</span><span class="p">(</span><span class="n">VkCommandBuffer</span> <span class="n">commandBuffer</span><span class="p">,</span> <span class="n">VkFramebuffer</span> <span class="n">framebuffer</span><span class="p">,</span> <span class="n">VkSubpassContents</span> <span class="n">subpassContents</span> <span class="o">=</span> <span class="n">VK_SUBPASS_CONTENTS_INLINE</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
@@ -828,8 +833,8 @@
 </pre></div>
 </div>
 </div>
-<div class="section" id="id8">
-<h3>管线相关<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id7">
+<h3>管线相关<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
 <div class="line-block">
 <div class="line"><span class="type">VkShaderModule</span> 着色器模块，着色器就是……就是着色器！最典型的是顶点着色器和片段着色器，这是两个必须的着色器（除非你用的是计算管线），前者处理顶点，而后者输出颜色到颜色附件上。</div>
 </div>
@@ -963,7 +968,7 @@
 </pre></div>
 </div>
 <div class="line-block">
-<div class="line"><span class="type">VkPipeline</span> ，管线，通过管线布局、着色阶段信息来创建管线，管线描述了所用的着色器以及一系列状态（比如视口大小以及剪裁状态，是否开启深度测试等），通过在命令缓冲区中绑定管线来应用着色器和状态。创建管线所需的参数是整个Vulkan中最多的，之后我会有一个类来简化这件事。</div>
+<div class="line"><span class="type">VkPipeline</span> ，管线，通过管线布局、着色器阶段信息来创建管线，管线描述了所用的着色器以及一系列状态（比如视口大小以及剪裁状态，是否开启深度测试等），通过在命令缓冲区中绑定管线来应用着色器和状态。创建管线所需的参数是整个Vulkan中最多的，之后我会有一个类来简化这件事。</div>
 </div>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">pipeline</span> <span class="p">{</span>
     <span class="n">VkPipeline</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
@@ -990,8 +995,8 @@
 </pre></div>
 </div>
 </div>
-<div class="section" id="id9">
-<h3>三种池子<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id8">
+<h3>三种池子<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
 <div class="line-block">
 <div class="line">Vulkan鼓励你一次性分配更多内存，而不是一小块一小块地分配。命令缓冲、描述符集、查询，这三类都是创建pool后，从pool中分配内存来使用。</div>
 <div class="line">我将三种池子都放在这里其实并不科学，因为这三类pool没有什么关系，单纯因为都是pool。</div>

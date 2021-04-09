@@ -1,0 +1,5 @@
+直接把 名称.阶段简称.shader 文件拖入 compile.exe
+可以编译为 名称.阶段简称.spv 文件
+可以一次拖多个
+
+如果提示找不到 glslc.exe，说明你安装Vulkan SDK的目录跟我不一样
