@@ -1,6 +1,5 @@
 # EasyVulkan.github.io
-面向懒人的Vulkan中文教程
-
+面向懒人的Vulkan中文教程<br>
 https://easyvulkan.github.io/
 
 到绘制三角形为止已经完成。
