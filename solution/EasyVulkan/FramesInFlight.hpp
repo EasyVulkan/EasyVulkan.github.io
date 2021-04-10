@@ -54,22 +54,23 @@ int main() {
 	CreatePipeline();
 
 	//Synchronization Object
-	std::vector<semaphore> semaphores_imageIsAvailable(graphicsBase::Base().SwapchainImageCount());
-	std::vector<semaphore> semaphores_renderingIsOver(graphicsBase::Base().SwapchainImageCount());
+	uint32_t framesInFlightCount = std::min(uint32_t(graphicsBase::Base().SwapchainImageCount()), 3u);//Should not greater than swapchainImageCount.
+	std::vector<semaphore> semaphores_imageIsAvailable(framesInFlightCount);
+	std::vector<semaphore> semaphores_renderingIsOver(framesInFlightCount);
 	std::vector<fence> fences;
-	for (size_t i = 0; i < graphicsBase::Base().SwapchainImageCount(); i++)
+	for (size_t i = 0; i < framesInFlightCount; i++)
 		fences.emplace_back(true);
 	//Command Object
 	commandPool commandPool(VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, graphicsBase::Base().QueueFamilyIndex_Graphics());
-	std::vector<commandBuffer> commandBuffers_graphics(graphicsBase::Base().SwapchainImageCount());
-	commandPool.AllocateCommandBuffers((VkCommandBuffer*)commandBuffers_graphics.data(), graphicsBase::Base().SwapchainImageCount());
+	std::vector<commandBuffer> commandBuffers_graphics(framesInFlightCount);
+	commandPool.AllocateCommandBuffers((VkCommandBuffer*)commandBuffers_graphics.data(), framesInFlightCount);
 
 	//Clear Color
 	VkClearValue clearColor = { .color = { 1.f, 0.f, 0.f, 1.f } };
 
 	while (!glfwWindowShouldClose(pWindow)) {
 		TitleFps();
-		auto i = graphicsBase::Base().CurrentImageIndex();
+		static uint32_t i = 0;
 		graphicsBase::Base().SwapImage(semaphores_imageIsAvailable[i]);
 		fences[i].WaitAndReset();
 
@@ -84,6 +85,8 @@ int main() {
 		graphicsBase::Base().SubmitGraphicsCommandBuffer(commandBuffers_graphics[i], semaphores_imageIsAvailable[i], semaphores_renderingIsOver[i], fences[i]);
 
 		graphicsBase::Base().PresentImage(semaphores_renderingIsOver[i]);
+		i = (i + 1) % framesInFlightCount;
+
 		glfwPollEvents();
 	}
 	TerminateWindow();
