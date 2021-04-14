@@ -9,7 +9,7 @@ https://easyvulkan.github.io/
 
 关于代码文件
 * VKBase.h中修改了一处注释
-* VKBase+.h中，为texture::CopyBufferToImage2d中的两个dstStage为VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT的vkCmdPipelineBarrier添加了VK_DEPENDENCY_BY_REGION_BIT，几乎没卵用，因为读图不是渲染过程中实时发生的操作，写上去聊胜于无，为说明你想用这个bit的话能用。
+* VKBase+.h中，为texture::CopyBufferToImage2d中的两个dstStage为VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT的vkCmdPipelineBarrier添加了VK_DEPENDENCY_BY_REGION_BIT，几乎没卵用，因为读图一般不是渲染过程中实时发生的操作，写上去聊胜于无，为说明你想用这个bit的话能用。
 
 未来更新预定（要是有反响。我觉得做教程最怕的就是，自己花了时间，结果却没人在乎）：
 * 顶点和索引
