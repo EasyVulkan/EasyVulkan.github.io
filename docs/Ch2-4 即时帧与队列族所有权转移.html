@@ -100,7 +100,11 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch2-1%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93.html">Ch2-1 创建渲染通道</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch2-2%20Rendering%20Loop.html">Ch2-2 Rendering Loop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%A4%A9%E5%93%AA%EF%BC%8C%E6%98%AF%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 天哪，是三角形</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch2-4 即时帧与队列族所有权转移</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch2-4 即时帧与队列族所有权转移</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">即时帧</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">队列族所有权转移</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -168,9 +172,267 @@
             
   <div class="section" id="ch2-4">
 <h1>Ch2-4 即时帧与队列族所有权转移<a class="headerlink" href="#ch2-4" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>即时帧<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <div class="line-block">
-<div class="line">还没写！ 等不及的可以先去看我的代码。</div>
-<div class="line">先提个重点：队列族所有权转移，通过“一组**完全相同**（实际上可以不同，如果有其他同步措施的话）的Image Memory Barrier分别在不同队列族的队列中执行”来实现。</div>
+<div class="line">我们之前的Rendering Loop是构建在一个命令缓冲区和一套同步对象上的，我们在每一帧里等待上一帧的fence被点亮，然而，若此时上一帧的命令还没有执行完，那么等待fence就需要花时间。</div>
+<div class="line">实现即时帧就是创建多个命令缓冲区和多套同步对象（以及多套uniform buffer、描述符、以及渲染附件），并交替使用它们。这样一来，若有N套即时帧，当前帧等待的fence就会对应N帧前的命令，相比没有即时帧，这些命令很有可能已经被执行完了，于是就可以减少阻塞。</div>
+<div class="line">比较推荐的做法是为每张交换链图像实现一套即时帧 —— 前提是你的程序不是特别消耗内存的话，如果你要在4K下实现4xMSAA延迟渲染并使用即时帧，除非你是特别强劲的显卡，不然显存八成是会炸的。</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="k">namespace</span> <span class="n">vulkan</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">InitializeWindow</span><span class="p">({</span> <span class="mi">1280</span><span class="p">,</span> <span class="mi">720</span> <span class="p">}))</span>
+        <span class="k">return</span> <span class="mi">-1</span><span class="p">;</span>
+    <span class="n">easyVulkan</span><span class="o">::</span><span class="n">CreateRpwf_Screen</span><span class="p">();</span>
+    <span class="n">CreateLayout</span><span class="p">();</span>
+    <span class="n">CreatePipeline</span><span class="p">();</span>
+
+    <span class="c1">//Synchronization Object</span>
+    <span class="kt">uint32_t</span> <span class="n">framesInFlightCount</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">min</span><span class="p">(</span><span class="kt">uint32_t</span><span class="p">(</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">SwapchainImageCount</span><span class="p">()),</span> <span class="mi">3u</span><span class="p">);</span><span class="c1">//使用3套即时帧，若交换链图像数量少于3，则使用交换链图像数量</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">semaphore</span><span class="o">&gt;</span> <span class="n">semaphores_imageIsAvailable</span><span class="p">(</span><span class="n">framesInFlightCount</span><span class="p">);</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">semaphore</span><span class="o">&gt;</span> <span class="n">semaphores_renderingIsOver</span><span class="p">(</span><span class="n">framesInFlightCount</span><span class="p">);</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">fence</span><span class="o">&gt;</span> <span class="n">fences</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">framesInFlightCount</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">fences</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+    <span class="c1">//Command Object</span>
+    <span class="n">commandPool</span> <span class="n">commandPool</span><span class="p">(</span><span class="n">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span><span class="p">,</span> <span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">QueueFamilyIndex_Graphics</span><span class="p">());</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">commandBuffer</span><span class="o">&gt;</span> <span class="n">commandBuffers_graphics</span><span class="p">(</span><span class="n">framesInFlightCount</span><span class="p">);</span>
+    <span class="n">commandPool</span><span class="p">.</span><span class="n">AllocateCommandBuffers</span><span class="p">((</span><span class="n">VkCommandBuffer</span><span class="o">*</span><span class="p">)</span><span class="n">commandBuffers_graphics</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span> <span class="n">framesInFlightCount</span><span class="p">);</span>
+
+    <span class="c1">//Clear Color</span>
+    <span class="n">VkClearValue</span> <span class="n">clearColor</span> <span class="o">=</span> <span class="p">{</span> <span class="p">.</span><span class="n">color</span> <span class="o">=</span> <span class="p">{</span> <span class="mf">1.f</span><span class="p">,</span> <span class="mf">0.f</span><span class="p">,</span> <span class="mf">0.f</span><span class="p">,</span> <span class="mf">1.f</span> <span class="p">}</span> <span class="p">};</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">glfwWindowShouldClose</span><span class="p">(</span><span class="n">pWindow</span><span class="p">))</span> <span class="p">{</span>
+        <span class="n">TitleFps</span><span class="p">();</span>
+        <span class="k">static</span> <span class="kt">uint32_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">SwapImage</span><span class="p">(</span><span class="n">semaphores_imageIsAvailable</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="n">fences</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">WaitAndReset</span><span class="p">();</span>
+
+        <span class="n">commandBuffers_graphics</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">Begin</span><span class="p">(</span><span class="n">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span><span class="p">);</span>
+        <span class="c1">//注意，framebuffer的编号是graphicsBase::Base().CurrentImageIndex()，而不是i。</span>
+        <span class="n">easyVulkan</span><span class="o">::</span><span class="n">rpwf_screen</span><span class="p">.</span><span class="n">renderPass</span><span class="p">.</span><span class="n">CmdBegin</span><span class="p">(</span><span class="n">commandBuffers_graphics</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">easyVulkan</span><span class="o">::</span><span class="n">rpwf_screen</span><span class="p">.</span><span class="n">framebuffers</span><span class="p">[</span><span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">CurrentImageIndex</span><span class="p">()],</span> <span class="n">clearColor</span><span class="p">)</span> <span class="p">;</span>
+
+        <span class="n">vkCmdBindPipeline</span><span class="p">(</span><span class="n">commandBuffers_graphics</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">VK_PIPELINE_BIND_POINT_GRAPHICS</span><span class="p">,</span> <span class="n">pipeline_triangle</span><span class="p">);</span>
+        <span class="n">vkCmdDraw</span><span class="p">(</span><span class="n">commandBuffers_graphics</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+        <span class="n">easyVulkan</span><span class="o">::</span><span class="n">rpwf_screen</span><span class="p">.</span><span class="n">renderPass</span><span class="p">.</span><span class="n">CmdEnd</span><span class="p">(</span><span class="n">commandBuffers_graphics</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="n">commandBuffers_graphics</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">End</span><span class="p">();</span>
+        <span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">SubmitGraphicsCommandBuffer</span><span class="p">(</span><span class="n">commandBuffers_graphics</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">semaphores_imageIsAvailable</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">semaphores_renderingIsOver</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">fences</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+
+        <span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">PresentImage</span><span class="p">(</span><span class="n">semaphores_renderingIsOver</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">framesInFlightCount</span><span class="p">;</span>
+
+        <span class="n">glfwPollEvents</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="n">TerminateWindow</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">需要注意的是，即时帧的数量不应该多于交换链图像的数量。举例而言，如果有3个交换链图像，而即时帧数量为4，那么当第一次 <code class="docutils literal notranslate"><span class="pre">WaitAndReset</span></code> 第4套即时帧的fence时，由于我们是以signal状态创建的fence，实质上就不会发生等待，但第1套即时帧跟第4套却会使用同一个交换链图像，而第1套即时帧的命令却可能还没有执行完！</div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>队列族所有权转移<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line">资源在被队列使用时，其队列族拥有其所有权，当你把资源从一个队列族中的队列，移交给另一个队列族中的队列时，需要进行队列族所有权转移。</div>
+<div class="line">举例而言，若进行图形绘制的队列和进行呈现的队列不在一个队列族中，你可能就需要进行队列所有权转移（如我之前在Ch1-2所说，至少我的Nvidia 1060MQ不需要，我很确信我手动选择了两个不同的队列族）。</div>
+<div class="line">队列所有权转移通过两个可以是完全一致的image memory barrier，在不同队列中执行，来实行。两个一组，一个释放所有权，一个取得所有权。如果有其他的同步措施，你可以在第二个image memory barrier中少写一些参数。</div>
+<div class="line">在 <span class="type">graphicsBase</span> 中加入下列代码：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">//第一个barrier，必须在graphics的queue中，在渲染通道结束后执行。</span>
+<span class="kt">void</span> <span class="nf">CmdReleaseImageOwnership_Graphics</span><span class="p">(</span><span class="n">VkCommandBuffer</span> <span class="n">commandBuffer</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">VkImageMemoryBarrier</span> <span class="n">imageMemoryBarrier_g2p_release</span><span class="p">{};</span>
+    <span class="n">imageMemoryBarrier_g2p_release</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span><span class="p">;</span>
+    <span class="n">imageMemoryBarrier_g2p_release</span><span class="p">.</span><span class="n">srcAccessMask</span> <span class="o">=</span> <span class="n">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span><span class="p">;</span>
+    <span class="n">imageMemoryBarrier_g2p_release</span><span class="p">.</span><span class="n">dstAccessMask</span><span class="p">;</span>
+    <span class="n">imageMemoryBarrier_g2p_release</span><span class="p">.</span><span class="n">oldLayout</span> <span class="o">=</span> <span class="n">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span><span class="p">;</span>
+    <span class="n">imageMemoryBarrier_g2p_release</span><span class="p">.</span><span class="n">newLayout</span> <span class="o">=</span> <span class="n">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span><span class="p">;</span>
+    <span class="n">imageMemoryBarrier_g2p_release</span><span class="p">.</span><span class="n">srcQueueFamilyIndex</span> <span class="o">=</span> <span class="n">queueFamilyIndex_graphics</span><span class="p">;</span>
+    <span class="n">imageMemoryBarrier_g2p_release</span><span class="p">.</span><span class="n">dstQueueFamilyIndex</span> <span class="o">=</span> <span class="n">queueFamilyIndex_presentation</span><span class="p">;</span>
+    <span class="n">imageMemoryBarrier_g2p_release</span><span class="p">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">swapchainImages</span><span class="p">[</span><span class="n">currentImageIndex</span><span class="p">];</span>
+    <span class="n">imageMemoryBarrier_g2p_release</span><span class="p">.</span><span class="n">subresourceRange</span> <span class="o">=</span> <span class="p">{</span> <span class="n">VK_IMAGE_ASPECT_COLOR_BIT</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="p">};</span>
+    <span class="n">vkCmdPipelineBarrier</span><span class="p">(</span><span class="n">commandBuffer</span><span class="p">,</span> <span class="n">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span><span class="p">,</span> <span class="n">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">imageMemoryBarrier_g2p_release</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//第二个barrier，必须在presentation的queue中执行。</span>
+<span class="kt">void</span> <span class="nf">CmdAcquireImageOwnership_Presentation</span><span class="p">(</span><span class="n">VkCommandBuffer</span> <span class="n">commandBuffer</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">VkImageMemoryBarrier</span> <span class="n">imageMemoryBarrier_g2p_acquire</span><span class="p">{};</span>
+    <span class="n">imageMemoryBarrier_g2p_acquire</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span><span class="p">;</span>
+    <span class="n">imageMemoryBarrier_g2p_acquire</span><span class="p">.</span><span class="n">oldLayout</span> <span class="o">=</span> <span class="n">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span><span class="p">;</span>
+    <span class="n">imageMemoryBarrier_g2p_acquire</span><span class="p">.</span><span class="n">newLayout</span> <span class="o">=</span> <span class="n">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span><span class="p">;</span>
+    <span class="n">imageMemoryBarrier_g2p_acquire</span><span class="p">.</span><span class="n">srcQueueFamilyIndex</span> <span class="o">=</span> <span class="n">queueFamilyIndex_graphics</span><span class="p">;</span>
+    <span class="n">imageMemoryBarrier_g2p_acquire</span><span class="p">.</span><span class="n">dstQueueFamilyIndex</span> <span class="o">=</span> <span class="n">queueFamilyIndex_presentation</span><span class="p">;</span>
+    <span class="n">imageMemoryBarrier_g2p_acquire</span><span class="p">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">swapchainImages</span><span class="p">[</span><span class="n">currentImageIndex</span><span class="p">];</span>
+    <span class="n">imageMemoryBarrier_g2p_acquire</span><span class="p">.</span><span class="n">subresourceRange</span> <span class="o">=</span> <span class="p">{</span> <span class="n">VK_IMAGE_ASPECT_COLOR_BIT</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="p">};</span>
+    <span class="n">vkCmdPipelineBarrier</span><span class="p">(</span><span class="n">commandBuffer</span><span class="p">,</span> <span class="n">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span><span class="p">,</span> <span class="n">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">imageMemoryBarrier_g2p_acquire</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//向presentation队列提交命令缓冲区</span>
+<span class="n">VkResult</span> <span class="nf">SubmitPresentationCommandBuffer</span><span class="p">(</span><span class="n">VkCommandBuffer</span> <span class="n">commandBuffer</span><span class="p">,</span>
+    <span class="n">VkSemaphore</span> <span class="n">semaphore_renderingIsOver</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">,</span> <span class="n">VkSemaphore</span> <span class="n">semaphore_ownershipIsTransfered</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">,</span> <span class="n">VkFence</span> <span class="n">fence</span> <span class="o">=</span> <span class="n">VK_NULL_HANDLE</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="n">VkPipelineStageFlags</span> <span class="n">waitDstStage</span> <span class="o">=</span> <span class="n">VK_PIPELINE_STAGE_ALL_COMMANDS_BIT</span><span class="p">;</span>
+    <span class="n">VkSubmitInfo</span> <span class="n">submitInfo</span><span class="p">{};</span>
+    <span class="n">submitInfo</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_SUBMIT_INFO</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">semaphore_renderingIsOver</span><span class="p">)</span>
+        <span class="n">submitInfo</span><span class="p">.</span><span class="n">waitSemaphoreCount</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">submitInfo</span><span class="p">.</span><span class="n">pWaitSemaphores</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">semaphore_renderingIsOver</span><span class="p">,</span>
+        <span class="n">submitInfo</span><span class="p">.</span><span class="n">pWaitDstStageMask</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">waitDstStage</span><span class="p">;</span>
+    <span class="n">submitInfo</span><span class="p">.</span><span class="n">commandBufferCount</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="n">submitInfo</span><span class="p">.</span><span class="n">pCommandBuffers</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">commandBuffer</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">semaphore_ownershipIsTransfered</span><span class="p">)</span>
+        <span class="n">submitInfo</span><span class="p">.</span><span class="n">signalSemaphoreCount</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">submitInfo</span><span class="p">.</span><span class="n">pSignalSemaphores</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">semaphore_ownershipIsTransfered</span><span class="p">;</span>
+    <span class="n">VkResult</span> <span class="n">result</span> <span class="o">=</span> <span class="n">vkQueueSubmit</span><span class="p">(</span><span class="n">queue_presentation</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">submitInfo</span><span class="p">,</span> <span class="n">fence</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ graphicsBase ]</span><span class="se">\n</span><span class="s">Failed to submit the presentation command buffer!</span><span class="se">\n</span><span class="s">Error code: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">首先来解释下 <code class="docutils literal notranslate"><span class="pre">vkCmdPipelineBarrier</span></code> ：</div>
+<div class="line"><span class="kw">void</span> <span class="macro">VKAPI_CALL</span> vkCmdPipelineBarrier(</div>
+<div class="line-block">
+<div class="line"><span class="type">VkCommandBuffer</span> commandBuffer,</div>
+<div class="line"><span class="type">VkPipelineStageFlags</span> srcStageMask,</div>
+<div class="line"><span class="type">VkPipelineStageFlags</span> dstStageMask,</div>
+<div class="line"><span class="type">VkDependencyFlags</span> dependencyFlags,</div>
+<div class="line"><span class="type">uint32_t</span> memoryBarrierCount,</div>
+<div class="line"><span class="kw">const</span> <span class="type">VkMemoryBarrier</span> * pMemoryBarriers,</div>
+<div class="line"><span class="type">uint32_t</span> bufferMemoryBarrierCount,</div>
+<div class="line"><span class="kw">const</span> <span class="type">VkBufferMemoryBarrier</span> * pBufferMemoryBarriers,</div>
+<div class="line"><span class="type">uint32_t</span> imageMemoryBarrierCount,</div>
+<div class="line"><span class="kw">const</span> <span class="type">VkImageMemoryBarrier</span> * pImageMemoryBarriers</div>
+</div>
+<div class="line">);</div>
+<div class="line">相信这些参数你都看得懂。类似于之前讲过的子通道依赖， <code class="docutils literal notranslate"><span class="pre">vkCmdPipelineBarrier</span></code> 会使得 <code class="docutils literal notranslate"><span class="pre">srcStageMask</span></code> 中的操作在 <code class="docutils literal notranslate"><span class="pre">dstStageMask</span></code> 中的操作之前发生，并在两者之间实行Memory Barrier。</div>
+</div>
+<div class="line-block">
+<div class="line"><span class="kw">struct</span> <span class="type">VkImageMemoryBarrier</span> {</div>
+<div class="line-block">
+<div class="line"><span class="type">VkStructureType</span> sType;</div>
+<div class="line"><span class="kw">const void</span> * pNext;</div>
+<div class="line"><span class="type">VkAccessFlags</span> srcAccessMask;</div>
+<div class="line"><span class="type">VkAccessFlags</span> dstAccessMask;</div>
+<div class="line"><span class="type">VkImageLayout</span> oldLayout;</div>
+<div class="line"><span class="type">VkImageLayout</span> newLayout;</div>
+<div class="line"><span class="type">uint32_t</span> srcQueueFamilyIndex;</div>
+<div class="line"><span class="type">uint32_t</span> dstQueueFamilyIndex;</div>
+<div class="line"><span class="type">VkImage</span> image;</div>
+<div class="line"><span class="type">VkImageSubresourceRange</span> subresourceRange;</div>
+</div>
+<div class="line">};</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">srcAccessMask</span></code> 和 <code class="docutils literal notranslate"><span class="pre">dstAccessMask</span></code> 想必不用多讲了。</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">oldLayout</span></code> 和 <code class="docutils literal notranslate"><span class="pre">newLayout</span></code> 指定了Memory Barrier前后的图像布局，如果你不需要图像布局转换，那么这里就填两个一样的值。</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">srcQueueFamilyIndex</span></code> 和 <code class="docutils literal notranslate"><span class="pre">dstQueueFamilyIndex</span></code> 指定了Memory Barrier前后，该资源属于哪个队列族，若不需要转移所有权，可以写两个VK_QUEUE_FAMILY_IGNORED。</div>
+<div class="line"><span class="type">VkImageSubresourceRange</span> 在Ch1-3中解释过了。</div>
+</div>
+<div class="line-block">
+<div class="line">于是第一个pipeline barrier，从graphics队列族释放所有权：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">VkImageMemoryBarrier</span> <span class="n">imageMemoryBarrier_g2p_release</span><span class="p">{};</span>
+<span class="n">imageMemoryBarrier_g2p_release</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span><span class="p">;</span>
+<span class="n">imageMemoryBarrier_g2p_release</span><span class="p">.</span><span class="n">srcAccessMask</span> <span class="o">=</span> <span class="n">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span><span class="p">;</span>
+<span class="n">imageMemoryBarrier_g2p_release</span><span class="p">.</span><span class="n">dstAccessMask</span><span class="p">;</span><span class="c1">//若对应的阶段是TOP/BOTTOM_OF_PIPE，你可以使用VK_ACCESS_MEMORY_LOAD_BIT和VK_ACCESS_MEMORY_WRITE_BIT，但是没有必要。</span>
+<span class="n">imageMemoryBarrier_g2p_release</span><span class="p">.</span><span class="n">oldLayout</span> <span class="o">=</span> <span class="n">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span><span class="p">;</span><span class="c1">//渲染通道结束时自动转换成了VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>
+<span class="n">imageMemoryBarrier_g2p_release</span><span class="p">.</span><span class="n">newLayout</span> <span class="o">=</span> <span class="n">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span><span class="p">;</span><span class="c1">//不做图像布局变换</span>
+<span class="n">imageMemoryBarrier_g2p_release</span><span class="p">.</span><span class="n">srcQueueFamilyIndex</span> <span class="o">=</span> <span class="n">queueFamilyIndex_graphics</span><span class="p">;</span><span class="c1">//执行图形命令的队列族</span>
+<span class="n">imageMemoryBarrier_g2p_release</span><span class="p">.</span><span class="n">dstQueueFamilyIndex</span> <span class="o">=</span> <span class="n">queueFamilyIndex_presentation</span><span class="p">;</span><span class="c1">//用于呈现的队列族</span>
+<span class="n">imageMemoryBarrier_g2p_release</span><span class="p">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">swapchainImages</span><span class="p">[</span><span class="n">currentImageIndex</span><span class="p">];</span><span class="c1">//当前交换链图像</span>
+<span class="n">imageMemoryBarrier_g2p_release</span><span class="p">.</span><span class="n">subresourceRange</span> <span class="o">=</span> <span class="p">{</span> <span class="n">VK_IMAGE_ASPECT_COLOR_BIT</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="p">};</span>
+<span class="c1">//dstStageMask是VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT，意味着不进行任何阻塞。</span>
+<span class="c1">//这个Barrier之后不该有其他与该交换链图像相关的命令了，所以不进行阻塞毫无问题，我们只需在颜色被写入到图像后释放所有权。</span>
+<span class="c1">//dependencyFlags使用了0，可以用BY_REGION但没必要，毕竟，显卡驱动不至于给每个像素或采样点标记所有权。</span>
+<span class="n">vkCmdPipelineBarrier</span><span class="p">(</span><span class="n">commandBuffer</span><span class="p">,</span> <span class="n">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span><span class="p">,</span> <span class="n">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="mi">0</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">imageMemoryBarrier_g2p_release</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">第二个pipeline barrier，在presentation队列族获取所有权：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">//这个barrier可以跟上面的完全一致，我有意将其写得不一致，以说明哪些地方可以做出区别。</span>
+<span class="n">VkImageMemoryBarrier</span> <span class="n">imageMemoryBarrier_g2p_acquire</span><span class="p">{};</span>
+<span class="n">imageMemoryBarrier_g2p_acquire</span><span class="p">.</span><span class="n">sType</span> <span class="o">=</span> <span class="n">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span><span class="p">;</span>
+<span class="c1">//因为有Semaphore做同步，确保在执行这个Barrier所在的命令缓冲区前完成COLOR_ATTACHMENT_WRITE，所以srcAccessMask可以不写</span>
+<span class="n">imageMemoryBarrier_g2p_acquire</span><span class="p">.</span><span class="n">oldLayout</span> <span class="o">=</span> <span class="n">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span><span class="p">;</span>
+<span class="n">imageMemoryBarrier_g2p_acquire</span><span class="p">.</span><span class="n">newLayout</span> <span class="o">=</span> <span class="n">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span><span class="p">;</span>
+<span class="n">imageMemoryBarrier_g2p_acquire</span><span class="p">.</span><span class="n">srcQueueFamilyIndex</span> <span class="o">=</span> <span class="n">queueFamilyIndex_graphics</span><span class="p">;</span>
+<span class="n">imageMemoryBarrier_g2p_acquire</span><span class="p">.</span><span class="n">dstQueueFamilyIndex</span> <span class="o">=</span> <span class="n">queueFamilyIndex_presentation</span><span class="p">;</span>
+<span class="n">imageMemoryBarrier_g2p_acquire</span><span class="p">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">swapchainImages</span><span class="p">[</span><span class="n">currentImageIndex</span><span class="p">];</span>
+<span class="n">imageMemoryBarrier_g2p_acquire</span><span class="p">.</span><span class="n">subresourceRange</span> <span class="o">=</span> <span class="p">{</span> <span class="n">VK_IMAGE_ASPECT_COLOR_BIT</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="p">};</span>
+<span class="c1">//也是因为有Semaphore做同步，srcStage我可以使用VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT。</span>
+<span class="n">vkCmdPipelineBarrier</span><span class="p">(</span><span class="n">commandBuffer</span><span class="p">,</span> <span class="n">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span><span class="p">,</span> <span class="n">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="mi">0</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">imageMemoryBarrier_g2p_acquire</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">你将包含以上barrier的命令缓冲区提交到presentation队列的方式跟之前所写的 <code class="docutils literal notranslate"><span class="pre">SubmitGraphicsCommandBuffer</span></code> 并无太大不同，只是 <code class="docutils literal notranslate"><span class="pre">waitDstStage</span></code> 变成了 VK_PIPELINE_STAGE_ALL_COMMANDS_BIT，渲染通道结束时的隐式子通道依赖中，srcDstStage是VK_PIPELINE_STAGE_ALL_COMMANDS_BIT，这里与其对应。</div>
+</div>
+<div class="line-block">
+<div class="line">最后主函数变成了这样：</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="k">namespace</span> <span class="n">vulkan</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">InitializeWindow</span><span class="p">({</span> <span class="mi">1280</span><span class="p">,</span> <span class="mi">720</span> <span class="p">}))</span>
+        <span class="k">return</span> <span class="mi">-1</span><span class="p">;</span>
+    <span class="n">easyVulkan</span><span class="o">::</span><span class="n">BootScreen</span><span class="p">();</span>
+    <span class="n">CreateLayout</span><span class="p">();</span>
+    <span class="n">CreatePipeline</span><span class="p">();</span>
+
+    <span class="c1">//Synchronization object</span>
+    <span class="n">semaphore</span> <span class="n">semaphore_imageIsAvailable</span><span class="p">;</span>
+    <span class="n">semaphore</span> <span class="n">semaphore_renderingIsOver</span><span class="p">;</span>
+    <span class="n">semaphore</span> <span class="n">semaphore_ownershipIsTransfered</span><span class="p">;</span>
+    <span class="n">fence</span> <span class="n">fence_graphics</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+    <span class="n">fence</span> <span class="n">fence_presentation</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+    <span class="c1">//Create Command Objects</span>
+    <span class="n">commandPool</span> <span class="n">commandPool_graphics</span><span class="p">(</span><span class="n">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span><span class="p">,</span> <span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">QueueFamilyIndex_Graphics</span><span class="p">());</span>
+    <span class="n">commandBuffer</span> <span class="n">commandBuffer_graphics</span><span class="p">;</span>
+    <span class="n">commandPool_graphics</span><span class="p">.</span><span class="n">AllocateCommandBuffers</span><span class="p">((</span><span class="n">VkCommandBuffer</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">commandBuffer_graphics</span><span class="p">);</span>
+
+    <span class="n">commandPool</span> <span class="n">commandPool_presentation</span><span class="p">(</span><span class="n">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span><span class="p">,</span> <span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">QueueFamilyIndex_Presentation</span><span class="p">());</span>
+    <span class="n">commandBuffer</span> <span class="n">commandBuffer_presentation</span><span class="p">;</span>
+    <span class="n">commandPool_presentation</span><span class="p">.</span><span class="n">AllocateCommandBuffers</span><span class="p">((</span><span class="n">VkCommandBuffer</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">commandBuffer_presentation</span><span class="p">);</span>
+
+    <span class="c1">//Clear Color</span>
+    <span class="n">VkClearValue</span> <span class="n">clearColor</span> <span class="o">=</span> <span class="p">{</span> <span class="p">.</span><span class="n">color</span> <span class="o">=</span> <span class="p">{</span> <span class="mf">1.f</span><span class="p">,</span> <span class="mf">0.f</span><span class="p">,</span> <span class="mf">0.f</span><span class="p">,</span> <span class="mf">1.f</span> <span class="p">}</span> <span class="p">};</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">glfwWindowShouldClose</span><span class="p">(</span><span class="n">pWindow</span><span class="p">))</span> <span class="p">{</span>
+        <span class="n">TitleFps</span><span class="p">();</span>
+        <span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">SwapImage</span><span class="p">(</span><span class="n">semaphore_imageIsAvailable</span><span class="p">);</span>
+        <span class="k">auto</span> <span class="n">i</span> <span class="o">=</span> <span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">CurrentImageIndex</span><span class="p">();</span>
+
+        <span class="c1">//Graphics Queue Side</span>
+        <span class="n">fence_graphics</span><span class="p">.</span><span class="n">WaitAndReset</span><span class="p">();</span>
+        <span class="n">commandBuffer_graphics</span><span class="p">.</span><span class="n">Begin</span><span class="p">(</span><span class="n">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span><span class="p">);</span>
+        <span class="n">easyVulkan</span><span class="o">::</span><span class="n">rpwf_screen</span><span class="p">.</span><span class="n">renderPass</span><span class="p">.</span><span class="n">CmdBegin</span><span class="p">(</span><span class="n">commandBuffer_graphics</span><span class="p">,</span> <span class="n">easyVulkan</span><span class="o">::</span><span class="n">rpwf_screen</span><span class="p">.</span><span class="n">framebuffers</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">clearColor</span><span class="p">);</span>
+
+        <span class="n">vkCmdBindPipeline</span><span class="p">(</span><span class="n">commandBuffer_graphics</span><span class="p">,</span> <span class="n">VK_PIPELINE_BIND_POINT_GRAPHICS</span><span class="p">,</span> <span class="n">pipeline_triangle</span><span class="p">);</span>
+        <span class="n">vkCmdDraw</span><span class="p">(</span><span class="n">commandBuffer_graphics</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+        <span class="n">easyVulkan</span><span class="o">::</span><span class="n">rpwf_screen</span><span class="p">.</span><span class="n">renderPass</span><span class="p">.</span><span class="n">CmdEnd</span><span class="p">(</span><span class="n">commandBuffer_graphics</span><span class="p">);</span>
+        <span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">CmdReleaseImageOwnership_Graphics</span><span class="p">(</span><span class="n">commandBuffer_graphics</span><span class="p">);</span>
+        <span class="n">commandBuffer_graphics</span><span class="p">.</span><span class="n">End</span><span class="p">();</span>
+        <span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">SubmitGraphicsCommandBuffer</span><span class="p">(</span><span class="n">commandBuffer_graphics</span><span class="p">,</span> <span class="n">semaphore_imageIsAvailable</span><span class="p">,</span> <span class="n">semaphore_renderingIsOver</span><span class="p">,</span> <span class="n">fence_graphics</span><span class="p">);</span>
+
+        <span class="c1">//Presentation Queue Side</span>
+        <span class="n">fence_presentation</span><span class="p">.</span><span class="n">WaitAndReset</span><span class="p">();</span>
+        <span class="n">commandBuffer_presentation</span><span class="p">.</span><span class="n">Begin</span><span class="p">(</span><span class="n">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span><span class="p">);</span>
+        <span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">CmdAcquireImageOwnership_Presentation</span><span class="p">(</span><span class="n">commandBuffer_presentation</span><span class="p">);</span>
+        <span class="n">commandBuffer_presentation</span><span class="p">.</span><span class="n">End</span><span class="p">();</span>
+        <span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">SubmitPresentationCommandBuffer</span><span class="p">(</span><span class="n">commandBuffer_presentation</span><span class="p">,</span> <span class="n">semaphore_renderingIsOver</span><span class="p">,</span> <span class="n">semaphore_ownershipIsTransfered</span><span class="p">,</span> <span class="n">fence_presentation</span><span class="p">);</span>
+
+        <span class="n">graphicsBase</span><span class="o">::</span><span class="n">Base</span><span class="p">().</span><span class="n">PresentImage</span><span class="p">(</span><span class="n">semaphore_ownershipIsTransfered</span><span class="p">);</span>
+        <span class="n">glfwPollEvents</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="n">TerminateWindow</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>因为多了一个命令缓冲区，所以相应地也多了个fence和semaphore。</p>
 </div>
 </div>
 

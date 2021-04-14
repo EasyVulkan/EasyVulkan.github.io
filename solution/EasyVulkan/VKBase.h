@@ -561,7 +561,7 @@ public:
 		VkImageMemoryBarrier imageMemoryBarrier_g2p_release{};
 		imageMemoryBarrier_g2p_release.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
 		imageMemoryBarrier_g2p_release.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-		imageMemoryBarrier_g2p_release.dstAccessMask;//No access mask if the corresponding stage is TOP/BOTTOM_OF_PIPE.
+		imageMemoryBarrier_g2p_release.dstAccessMask;//Access mask is not necessary, if the corresponding stage is TOP/BOTTOM_OF_PIPE.
 		//When a renderpass ends, the image layout is transitioned into its final layout, which is specified inside VkAttachmentDescription.
 		imageMemoryBarrier_g2p_release.oldLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 		imageMemoryBarrier_g2p_release.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;

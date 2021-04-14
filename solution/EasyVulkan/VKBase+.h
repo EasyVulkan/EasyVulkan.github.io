@@ -363,7 +363,7 @@ public:
 			else
 				imageMemoryBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
 				imageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-				vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0,
+				vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, VK_DEPENDENCY_BY_REGION_BIT,
 					0, nullptr, 0, nullptr, 1, &imageMemoryBarrier);
 			commandBuffer.End();
 			//Submit
@@ -430,7 +430,7 @@ public:
 				image,
 				{ VK_IMAGE_ASPECT_COLOR_BIT, 0, mipLevelCount, 0, layerCount }
 			};
-			vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0,
+			vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, VK_DEPENDENCY_BY_REGION_BIT,
 				0, nullptr, 0, nullptr, 1, &imageMemoryBarrier);
 			commandBuffer.End();
 			//Submit command buffer

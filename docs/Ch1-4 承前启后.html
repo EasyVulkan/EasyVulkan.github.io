@@ -221,7 +221,7 @@
 </div>
 <div class="line-block">
 <div class="line">接着简要介绍一下Pipeline Barrier。</div>
-<div class="line">Pipeline Barrier是一种用于命令缓冲区内部的同步命令，注意，它无法保证命令缓冲区外的同步。</div>
+<div class="line">Pipeline Barrier是一种用于命令缓冲区内部的同步命令，注意，它可以影响到之后提交的命令缓冲区，但无法保证命令缓冲区外的同步。</div>
 <div class="line">Pipeline Barrier可以附加Memory Barrier：</div>
 <div class="line">1.如果没有Memory Barrier，单纯就是一个Pipeline Barrier的话，那么它定义了一个单纯的执行依赖，其前后的命令会按照其规定的srcStage和dstStage被阻塞。</div>
 <div class="line">2.如果带有Memory Barrier，那么你可能带有一个全局的Memory Brrier，或者一个Buffer Memory Barrier，或者一个Image Memory Barrier。Memory Barrier定义了一个内存访问上的先后关系，同时还可以附带资源的队列族所有权转移，Image Memory Barrier还可以附带图像的内存布局变换。</div>

@@ -378,7 +378,7 @@
 <div class="line"><span class="kw">const</span> <span class="type">VkClearValue</span> * pClearValues;</div>
 </div>
 <div class="line">};</div>
-<div class="line">如果我们之前在创建渲染通道时，在附件描述中制定了读取附件时的操作是清除，那么就得相应提供清空值。</div>
+<div class="line">如果我们之前在创建渲染通道时，在附件描述中指定了读取附件时的操作是清除，那么就得相应提供清空值。</div>
 <div class="line">清空值是 <span class="type">VkClearClorValue</span> 或 <span class="type">VkDepthStencilClearValue</span> 类型，根据你的附件类型选择相应类型。</div>
 <div class="line">如果你有些附件需要被清空，有些不要，那也得传入与 <span class="type">VkAttachmentDescription</span> 数组对应数量的清空值，那些不需要被清空的附件会直接无视对应索引的清空值。</div>
 </div>
