@@ -155,8 +155,9 @@ class deviceLocalBuffer {
 protected:
 	bufferMemory bufferMemory;
 public:
+	deviceLocalBuffer() = default;
 	deviceLocalBuffer(VkDeviceSize size, VkBufferUsageFlags desiredBufferUsage__Without_transfer_dst) {
-		bufferMemory.CreateAndAllocate(size, desiredBufferUsage__Without_transfer_dst | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+		Create(size, desiredBufferUsage__Without_transfer_dst);
 	}
 	//Getter
 	operator VkBuffer() const { return	bufferMemory.Buffer(); }
@@ -185,37 +186,55 @@ public:
 		vkCmdUpdateBuffer(commandBuffer, bufferMemory.Buffer(), 0, sizeof data_src, &data_src);
 	}
 	//Non-const Function
+	void Create(VkDeviceSize size, VkBufferUsageFlags desiredBufferUsage__Without_transfer_dst) {
+		bufferMemory.CreateAndAllocate(size, desiredBufferUsage__Without_transfer_dst | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+	}
 	void Recreate(VkDeviceSize size, VkBufferUsageFlags desiredBufferUsage__Without_transfer_dst) {
 		vkDeviceWaitIdle(graphicsBase::Base().Device());
 		bufferMemory.~bufferMemory();
-		bufferMemory.CreateAndAllocate(size, desiredBufferUsage__Without_transfer_dst | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+		Create(size, desiredBufferUsage__Without_transfer_dst);
 	}
 };
 class vertexBuffer :public deviceLocalBuffer {
+	using deviceLocalBuffer::Create;
 	using deviceLocalBuffer::Recreate;
 public:
+	vertexBuffer() = default;
 	vertexBuffer(VkDeviceSize size) :deviceLocalBuffer(size, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT) {}
 	//Non-const Function
+	void Create(VkDeviceSize size) {
+		Create(size, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
+	}
 	void Recreate(VkDeviceSize size) {
 		Recreate(size, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
 	}
 };
 class indexBuffer :public deviceLocalBuffer {
+	using deviceLocalBuffer::Create;
 	using deviceLocalBuffer::Recreate;
 public:
+	indexBuffer() = default;
 	indexBuffer(VkDeviceSize size) :deviceLocalBuffer(size, VK_BUFFER_USAGE_INDEX_BUFFER_BIT) {}
 	//Non-const Function
+	void Create(VkDeviceSize size) {
+		Create(size, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
+	}
 	void Recreate(VkDeviceSize size) {
 		Recreate(size, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
 	}
 };
 class uniformBuffer :public deviceLocalBuffer {
+	using deviceLocalBuffer::Create;
 	using deviceLocalBuffer::Recreate;
 public:
+	uniformBuffer() = default;
 	uniformBuffer(VkDeviceSize size) :deviceLocalBuffer(size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT) {}
 	//Non-const Function
+	void Create(VkDeviceSize size) {
+		Create(size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+	}
 	void Recreate(VkDeviceSize size) {
-		Recreate(size, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
+		Recreate(size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 	}
 };
 
@@ -301,6 +320,7 @@ public:
 #pragma endregion
 
 #pragma region Texture
+#define CalculateMipLevelCount(size) generateMipmap * uint32_t(std::floor(std::log2(std::min(size.x, size.y)))) + 1
 class texture {
 protected:
 	imageView imageView;
@@ -324,10 +344,9 @@ public:
 			std::cout << "[ texture ]\nFailed to load file: " << filepath << std::endl;
 		return pImageData;
 	}
-	static void CopyBufferToImage2d(
-		VkBuffer buffer, VkImage image,
-		VkExtent3D imageExtent, uint32_t mipLevelCount = 1, uint32_t layerCount = 1, bool generateMipmap = true, VkFilter minFilter = VK_FILTER_LINEAR) {
-		generateMipmap = generateMipmap && mipLevelCount - 1;
+	static void CopyBufferToImage2d(VkBuffer buffer, VkImage image, VkExtent3D imageExtent,
+		uint32_t mipLevelCount = 1, uint32_t layerCount = 1, VkFilter minFilter = VK_FILTER_LINEAR) {
+		bool generateMipmap = mipLevelCount - 1;
 		fence fence_copy;
 		{
 			auto& commandBuffer = graphicsBase::Plus().commandBuffers_transfer[0];
@@ -463,7 +482,6 @@ public:
 		return createInfo;
 	}
 };
-#define CalculateMipLevelCount(size) generateMipmap * uint32_t(std::floor(std::log2(std::min(size.x, size.y)))) + 1
 
 class texture2d :public texture {
 protected:
@@ -481,7 +499,7 @@ public:
 		bufferMemory_staging.BufferData(pImageData, imageDataSize);
 		free(pImageData);
 		//Create image and memory
-		uint32_t mipLevelCount = CalculateMipLevelCount(size);
+		uint32_t mipLevelCount = generateMipmap ? CalculateMipLevelCount(size) : 1;
 		imageMemory.CreateAndAllocate(
 			VK_IMAGE_TYPE_2D,
 			formatIsR8 ? format_r8 : format_rgba8,
@@ -548,7 +566,7 @@ public:
 			free(pImageData);
 		}
 		//Create image and memory
-		uint32_t mipLevelCount = CalculateMipLevelCount(size);
+		uint32_t mipLevelCount = generateMipmap ? CalculateMipLevelCount(size) : 1;
 		imageMemory.CreateAndAllocate(
 			VK_IMAGE_TYPE_2D,
 			formatIsR8 ? format_r8 : format_rgba8,
@@ -579,13 +597,14 @@ public:
 			if (pImageDatas[i]) {
 				if (i == 0)
 					this->size = size;
-				continue;
+				if (size == this->size)
+					continue;
+				else
+					std::cout <<
+					"[ texture2dArray ]\nImage not available!\nFile: " << filepaths[i] << std::endl <<
+					"Image width must be " << size.x << std::endl <<
+					"Image height must be " << size.y << std::endl;
 			}
-			if (size != this->size)
-				std::cout <<
-				"[ texture2dArray ]\nImage not available!\nFile: " << filepaths[i] << std::endl <<
-				"Image width must be " << size.x << std::endl <<
-				"Image height must be " << size.y << std::endl;
 			for (size_t i = 0; i < layerCount; i++)
 				free(pImageDatas[i]);
 			delete[] pImageDatas;
@@ -605,7 +624,7 @@ public:
 			free(pImageDatas[i]);
 		delete[] pImageDatas;
 		//Create image and memory
-		uint32_t mipLevelCount = CalculateMipLevelCount(size);
+		uint32_t mipLevelCount = generateMipmap ? CalculateMipLevelCount(size) : 1;
 		imageMemory.CreateAndAllocate(
 			VK_IMAGE_TYPE_2D,
 			formatIsR8 ? format_r8 : format_rgba8,
@@ -642,7 +661,7 @@ class textureCube :public texture2d {
 		for (size_t i = 0; i < 6; i++)
 			free(pImageDatas[i]);
 		//Create image and memory
-		uint32_t mipLevelCount = CalculateMipLevelCount(size);
+		uint32_t mipLevelCount = generateMipmap ? CalculateMipLevelCount(size) : 1;
 		imageMemory.CreateAndAllocate(
 			VK_IMAGE_TYPE_2D,
 			format_rgba8,

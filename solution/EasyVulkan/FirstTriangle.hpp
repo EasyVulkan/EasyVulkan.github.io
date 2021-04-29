@@ -17,7 +17,6 @@ void CreatePipeline() {
 	};
 	auto Create = [] {
 		graphicsPipelineCreateInfoPack pipelineCiPack{};
-		pipelineCiPack.createInfo.flags = VK_PIPELINE_CREATE_ALLOW_DERIVATIVES_BIT;
 		pipelineCiPack.createInfo.layout = pipelineLayout_triangle;
 		pipelineCiPack.createInfo.renderPass = easyVulkan::rpwf_screen.renderPass;
 		pipelineCiPack.inputAssemblyStateCi.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
