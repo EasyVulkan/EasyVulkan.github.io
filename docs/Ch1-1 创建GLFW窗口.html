@@ -204,7 +204,7 @@
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>宏 <span class="macro">_USE_MATH_DEFINES</span> 可以让你使用圆周率 <span class="macro">M_PI</span> ，或者你也可以使用 <code class="docutils literal notranslate"><span class="pre">glm::pi&lt;float&gt;()</span></code> ，不过我觉得 <span class="macro">M_PI</span> 省事些。</p></li>
+<li><p>宏 <span class="macro">_USE_MATH_DEFINES</span> 可以让你使用圆周率 <span class="macro">M_PI</span> ，或者你也可以使用 glm::pi&lt;float&gt;() ，不过我觉得 <span class="macro">M_PI</span> 省事些。</p></li>
 <li><p>GLM本为是OpenGL设计的，在OpenGL中，NDC（标准化设备坐标系）的深度范围为[-1, 1]，而Vulkan中这个范围为[0, 1]，因此我们必须用宏 <span class="macro">GLM_FORCE_DEPTH_ZERO_TO_ONE</span> 来指定深度范围，这样才能获得正确的投影矩阵（如果你从没有学习过计算机图形学，上述内容对你来说可能会过于跳跃，我会在之后的篇章中给出更详细的解释，目前就放心照抄吧）。</p></li>
 </ul>
 <div class="line-block">

@@ -226,7 +226,8 @@
 </pre></div>
 </div>
 <div class="line-block">
-<div class="line">任何一个图形管线都得至少具有顶点（vertex）和片段（fragment）两个着色器。</div>
+<div class="line">通常而言，一个图形管线应当具有顶点（vertex）着色器，若要输出颜色，那么还得有片段（fragment）着色器←如果没有的话只输出深度和模板信息。</div>
+<div class="line">↑因为Task/Mesh管线没有顶点着色器但至少目前也被算作图形管线。</div>
 </div>
 <div class="section" id="id1">
 <h3>命名<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
