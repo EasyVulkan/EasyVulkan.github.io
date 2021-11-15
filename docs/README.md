@@ -5,4 +5,5 @@ https://easyvulkan.github.io/
 注：本教程正在经历重写<br>
 预计会采用新的形式和章节划分。<br>
 因为我对Sphinx提供的代码高亮以及ReadTheDocs的式样不太满意，预计会先写完文字后对代码和文本进行手动着色。<br>
-周更。<br>
+
+意外地费时，年后更新。<br>
