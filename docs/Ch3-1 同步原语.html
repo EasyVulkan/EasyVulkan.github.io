@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch3-1 同步原语 &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ch3-2 图像与缓冲区" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html" />
+    <link rel="prev" title="Ch2-3 创建管线并绘制三角形" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch3-1 同步原语</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">隐式同步保证</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fence">Fence</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">创建栅栏</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">等待栅栏被置位</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">将栅栏重置为未置位状态</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">查询栅栏状态</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">封装为fence类</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#semaphore">Semaphore</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">创建信号量</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">等待信号量被置位</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">封装为semaphore类</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pipeline-barrier">Pipeline Barrier</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id10">全局内存屏障</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">缓冲区内存屏障</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">图像内存屏障</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#event">Event</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch3-1 同步原语</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch3-1">
+<h1>Ch3-1 同步原语<a class="headerlink" href="#ch3-1" title="Permalink to this heading"></a></h1>
+<p>
+    除去隐式同步外，Vulkan中一共有五种同步方式：
+    <br>
+    1.等待物理设备/队列闲置
+    <br>
+    2.栅栏，用于在程序（CPU一侧）和队列间同步
+    <br>
+    3.信号量，Vulkan1.0以来的二值信号量用于队列之间（可为队列与其自身）同步
+    <br>
+    4.内存屏障，用于执行命令时的同步，同步范围通常为同一队列中的命令之间，也可为不同队列的命令间、或命令与外部操作间
+    <br>
+    5.子通道依赖，相当于在渲染通道的子通道开始和结束时自动执行的内存屏障，见<a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html#id4">子通道依赖</a>。
+    <br>
+    6.事件，对在同一队列中的命令进行同步，事件被设置前和事件被等待后的命令纳入同步范围（中间的不受影响），也可用于让队列等待程序（CPU一侧）
+    <br>
+</p>
+<p>
+    等待物理设备/队列闲置的方法已经在第一章里涵盖，本节不再赘述。这种同步方式开销很大，应当只在需要大规模销毁Vulkan对象时使用。
+</p><section id="id1">
+<h2>隐式同步保证<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>
+    并非所有操作都需要手动同步。
+    <br>
+    首先需要明确，Vulkan中的命令（特指命令缓冲区中的命令）不会立刻被执行，而是显式地记录下来之后，被提交到队列上执行。
+    <br>
+    Vulkan官方标准中提到，Vulkan的命令按顺序开始执行，但未必按顺序结束。
+    <br>
+    然而，尽管很多显卡驱动所提供的Vulkan实现确实会按顺序开始执行，但实际上有些命令可能会被重排，但有些绝对不可能 —— 因为它们根本不会被队列执行。
+    <br>
+    <strong>命令缓冲中的命令可以分为三种性质：动作（action）、状态（state）、同步（synchronization）。</strong>
+    <br>
+    有些命令可能会附带多个性质，比如<a href="https://renderdoc.org/vkspec_chunked/chap8.html#vkCmdBeginRenderPass">vkCmdBeginRenderPass</a>(...)，它即设置了状态，同时也会在队列上实行子通道依赖（是个同步操作）。
+    <br>
+    同步命令通常不会被重排，但是本该在子通道依赖后执行的部分操作可能会提前，这是少数例外。
+    <br>
+    很可能会被重排的是动作命令。
+    <br>
+    而压根不会被队列执行的是状态命令，状态命令在CPU上切换了状态，而具体的参数会被记录在之后的动作命令中。
+    <br>
+    因为<a href="https://renderdoc.org/vkspec_chunked/chap8.html#vkCmdBeginRenderPass">vkCmdBeginRenderPass</a>(...)涉及到了同步操作，所以在单一命令缓冲区内若有多个渲染通道，每个渲染通道会依序而来。
+    <br>
+    那么每个渲染通道内的动作命令是否需要同步呢？
+    <br>
+    如果每一条绘制命令都需要同步，那还得了！
+    <br>
+    事实是，在同一渲染通道中，无论你的绘制命令何时结束，深度模板测试和混色仍旧按照你提交命令的顺序而来 —— 所以画家算法（从后往前绘制，前面的物体覆盖后面的）依旧有效！
+</p></section>
+<section id="fence">
+<h2>Fence<a class="headerlink" href="#fence" title="Permalink to this heading"></a></h2>
+<p>
+    栅栏（<span class="type">VkFence</span>）用于在程序（CPU一侧）和队列间同步，只有置位（singaled）和未置位（unsingaled）两种状态。
+    <br>
+    栅栏是一种使用得非常频繁的同步机制，每次提交命令缓冲区都应当至少附带一个栅栏或信号量，而栅栏用的更多一些，因为你能在CPU一侧等待它，或查询其状态。
+</p><section id="id2">
+<h3>创建栅栏<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkCreateFence">vkCreateFence</a>(...)创建栅栏：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkCreateFence">vkCreateFence</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkFenceCreateInfo</span>* pCreateInfo</p></td>
+            <td><p>指向<span class="type">VkFence</span>的创建信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span>* pAllocator</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkRenderPass</span>* pFence</p></td>
+            <td><p>若执行成功，将栅栏的handle写入*pFence</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkFenceCreateInfo">VkFenceCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_FENCE_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkFenceCreateFlags</span> flags</p></td>
+            <td><p>若填入<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>，则以置位状态创建栅栏</p></td>
+        </tr>
+    </tbody>
+</table></section>
+<section id="id3">
+<h3>等待栅栏被置位<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkWaitForFences">vkWaitForFences</a>(...)等待栅栏被置位：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkWaitForFences">vkWaitForFences</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> fenceCount</p></td>
+            <td><p>要等带的栅栏的个数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkFence</span>* pFences</p></td>
+            <td><p>指向所需等待的栅栏的数组</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkBool32</span> waitAll</p></td>
+            <td><p>若为<span class="mcr">VK_TRUE</span>，等待所有栅栏，若为<span class="mcr">VK_FALSE</span>，只需一个栅栏被置位便结束等待</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint64_t</span> timeout</p></td>
+            <td><p>超时时间，单位为纳秒，若无限制，将其指定为<span class="mcr">UINT64_MAX</span></p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            若等待成功，返回<span class="enum">VK_SUCCESS</span>，超时则返回<span class="enum">VK_TIMEOUT</span>。
+        </p>
+    </li>
+    <li>
+        <p>
+            容许的最大超时时间取决于具体实现，即便将timeout指定为<span class="mcr">UINT64_MAX</span>，实际的超时时间可能为一有限值。
+        </p>
+    </li>
+    <li>
+        <p>
+            若命令的计算量过大（或其他各种实现特定的原因），有可能发生逻辑设备丢失，此时函数返回<span class="enum">VK_ERROR_DEVICE_LOST</span>。
+        </p>
+    </li>
+</ul></section>
+<section id="id4">
+<h3>将栅栏重置为未置位状态<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkResetFences">vkResetFences</a>(...)将栅栏重置为未置位状态：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkResetFences">vkResetFences</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> fenceCount</p></td>
+            <td><p>要等带的栅栏的个数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkFence</span>* pFences</p></td>
+            <td><p>指向所需重置的栅栏的数组</p></td>
+        </tr>
+    </tbody>
+</table></section>
+<section id="id5">
+<h3>查询栅栏状态<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkGetFenceStatus">vkGetFenceStatus</a>(...)查询栅栏状态：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkGetFenceStatus">vkGetFenceStatus</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkFence</span> fence</p></td>
+            <td><p>要被查询状态的栅栏的handle</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            该函数的返回值即查询结果，栅栏被置位时返回<span class="enum">VK_SUCCESS</span>，未被置位则返回<span class="enum">VK_NOT_READY</span>，
+            <br>
+            逻辑设备丢失时应当返回<span class="enum">VK_ERROR_DEVICE_LOST</span>，但根据具体实现，也可能返回上述三个数值中的任意一个。
+        </p>
+    </li>
+</ul></section>
+<section id="id6">
+<h3>封装为fence类<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<p>
+    向<span class="path">VKBase.h</span>，vulkan命名空间中添加以下代码：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">fence</span> {
+    <span class="type">VkFence</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
+<span class="kw">public</span>:
+    <span class="cmt">//默认构造器在已创建逻辑设备时，自动创建未置位的栅栏</span>
+    <span class="fn">fence</span>(<span class="kw">bool</span> signaled = <span class="kw">false</span>) {
+        <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>())
+            <span class="fn">Create</span>(signaled);
+    }
+    <span class="fn">fence</span>(<span class="type">VkFenceCreateInfo</span>&amp; createInfo) {
+        <span class="fn">Create</span>(createInfo);
+    }
+    <span class="fn">fence</span>(<span class="type">fence</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    ~<span class="fn">fence</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyFence</span>); }
+    <span class="cmt">//Getter</span>
+    <span class="mcr">DefineHandleTypeOperator</span>;
+    <span class="mcr">DefineAddressFunction</span>;
+    <span class="cmt">//Const Function</span>
+    <span class="type">result_t</span> <span class="fn">Wait</span>() <span class="kw">const</span> {
+        <span class="type">VkResult</span> result = <span class="fn">vkWaitForFences</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), 1, &amp;handle, <span class="kw">false</span>, <span class="mcr">UINT64_MAX</span>);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ fence ] ERROR\nFailed to wait for the fence!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="type">result_t</span> <span class="fn">Reset</span>() <span class="kw">const</span> {
+        <span class="type">VkResult</span> result = <span class="fn">vkResetFences</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), 1, &amp;handle);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ fence ] ERROR\nFailed to reset the fence!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="cmt">//因为“等待后立刻重置”的情形经常出现，定义此函数</span>
+    <span class="type">result_t</span> <span class="fn">WaitAndReset</span>() <span class="kw">const</span> {
+        <span class="type">VkResult</span> result = <span class="fn">Wait</span>();
+        result || (result = <span class="fn">Reset</span>());
+        <span class="kw">return</span> result;
+    }
+    <span class="type">result_t</span> <span class="fn">Status</span>() <span class="kw">const</span> {
+        <span class="type">VkResult</span> result = <span class="fn">vkGetFenceStatus</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle);
+        <span class="kw">if</span> (result < 0)<span class="cmt">//vkGetFenceStatus(...)成功时有两种结果，所以不能仅仅判断result是否非0</span>
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ fence ] ERROR\nFailed to get the status of the fence!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="cmt">//Non-const Function</span>
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkFenceCreateInfo</span>&amp; createInfo) {
+        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_FENCE_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateFence</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ fence ] ERROR\nFailed to create a fence!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="kw">bool</span> signaled = <span class="kw">false</span>) {
+        <span class="type">VkFenceCreateInfo</span> createInfo = {
+            .flags = signaled
+        };
+        <span class="kw">return</span> <span class="fn">Create</span>(createInfo);
+    }
+};
+</pre></section>
+</section>
+<section id="semaphore">
+<h2>Semaphore<a class="headerlink" href="#semaphore" title="Permalink to this heading"></a></h2>
+<p>
+    信号量有两种：
+    <br>
+    1.二值信号量，只有置位（singaled）和未置位（unsingaled）两种状态，用于在队列间同步
+    <br>
+    2.时间线信号量（需Vulkan1.2或相应扩展），即可以计数的信号量
+    <br>
+    可以在CPU一侧等待、重置时间线信号量，换言之时间线信号量兼具栅栏的功能。
+    <br>
+    时间线信号量并不完全涵盖二值信号量的作用，在提交命令缓冲区时，时间线信号量可以替代二值信号量，但在渲染循环中获取下一张交换连图像时，或呈现图像时，必须使用二值信号量，见后文。
+    <br>
+    本套教程不会使用时间线信号量，仅对其创建和使用方式做简单提要。
+</p><section id="id7">
+<h3>创建信号量<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkCreateSemaphore">vkCreateSemaphore</a>(...)创建信号量：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkCreateSemaphore">vkCreateSemaphore</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkSemaphoreCreateInfo</span>* pCreateInfo</p></td>
+            <td><p>指向<span class="type">VkSemaphore</span>的创建信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span>* pAllocator</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkSemaphore</span>* pSemaphore</p></td>
+            <td><p>若执行成功，将信号量的handle写入*pSemaphore</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkSemaphoreCreateInfo">VkSemaphoreCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkSemaphoreCreateFlags</span> flags</p></td>
+            <td><p>到Vulkan1.3为止没用</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    要创建时间线信号量，那么需让<a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkSemaphoreCreateInfo">VkSemaphoreCreateInfo</a>中的pNext指向<a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkSemaphoreTypeCreateInfo">VkSemaphoreTypeCreateInfo</a>，将其中的semaphoreType成员填写为<span class="enum">VK_SEMAPHORE_TYPE_TIMELINE</span>。
+</p></section>
+<section id="id8">
+<h3>等待信号量被置位<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<p>
+    信号量通常用于三种情形：
+    <br>
+    1.在渲染循环中获取下一张交换连图像时，可以置位信号量
+    <br>
+    2.提交命令缓冲区时，可以等待信号量、置位信号量
+    <br>
+    3.呈现图像时，可以等待信号量
+    <br>
+    所有等待二值信号量的操作都是由上述情形相关的函数附带的，没有专用于等待二值信号量的函数。
+    <br>
+    二值信号量在被等待后会自动重置，因此也没有专用于重置二值信号量的函数，而时间线信号量在被等待后数值不变，必须通过<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkSignalSemaphore">vkSignalSemaphore</a>(...)将其手动重置。
+    <br>
+    下文简单讲解下为何时间线信号量不完全涵盖二值信号量的作用，如果你不打算使用时间线信号量，你可以跳过这一部分。
+</p>
+<p>
+    <strong>情形1：在渲染循环中获取下一张交换连图像</strong>
+    <br>
+    通过<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)获取图像，参见<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id3">获取交换链图像索引</a>，这个函数没有pNext参数。
+    <br>
+    Vulkan1.1中提供了<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkAcquireNextImage2KHR">vkAcquireNextImage2KHR</a>(...)，其参数之一为<a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkAcquireNextImageInfoKHR">VkAcquireNextImageInfoKHR</a>类型，该结构体中有pNext，但标准中规定其必须为<span class="kw">nullptr</span>（即目前该pNext无用处），因此在渲染循环中获取下一张交换连图像时，必须使用二值信号量。
+</p>
+<p>
+    <strong>情形2：提交命令缓冲区</strong>
+    <br>
+    以自Vulkan1.0起提供的<a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkQueueSubmit">vkQueueSubmit</a>(...)为例，参见<a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html#id2">提交命令缓冲区</a>。
+    <br>
+    如果要使用时间线信号量，须使得<a href="https://renderdoc.org/vkspec_chunked/chap6.html#VkSubmitInfo">VkSubmitInfo</a>的pNext指向<a href="https://renderdoc.org/vkspec_chunked/chap6.html#VkTimelineSemaphoreSubmitInfoKHR">VkTimelineSemaphoreSubmitInfoKHR</a>，该结构体记录了<a href="https://renderdoc.org/vkspec_chunked/chap6.html#VkSubmitInfo">VkSubmitInfo</a>中各个需等待的信号量的目标计数值，提供的目标值的总数可以少于需等待信号量的总数，但应该涵盖到最后一个时间线信号量，如果某个目标值对应的信号量是二值信号量，那么该目标值被无视。这意味着，如有必要，在提交命令缓冲区时混用二值信号量和时间线信号量是可行的。
+</p>
+<p>
+    <strong>情形3：呈现图像</strong>
+    调用<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...)呈现图像，具体参见<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id5">呈现图像</a>。
+    <br>
+    标准中所规定的<a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkPresentInfoKHR">VkPresentInfoKHR</a>的pNext链中容许的结构体类型中，不包括<a href="https://renderdoc.org/vkspec_chunked/chap6.html#VkTimelineSemaphoreSubmitInfoKHR">VkTimelineSemaphoreSubmitInfoKHR</a>，因此呈现图像时只能等待二值信号量，但是可以在<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...)之前使用<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkWaitSemaphores">vkWaitSemaphores</a>(...)手动等待时间线信号量。
+</p></section>
+<section id="id9">
+<h3>封装为semaphore类<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<p>
+    向<span class="path">VKBase.h</span>，vulkan命名空间中添加以下代码：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">semaphore</span> {
+    <span class="type">VkSemaphore</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
+<span class="kw">public</span>:
+    <span class="cmt">//默认构造器在已创建逻辑设备时，自动创建未置位的信号量</span>
+    <span class="fn">semaphore</span>() {
+        <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>())
+            <span class="fn">Create</span>();
+    }
+    <span class="fn">semaphore</span>(<span class="type">VkSemaphoreCreateInfo</span>&amp; createInfo) {
+        <span class="fn">Create</span>(createInfo);
+    }
+    <span class="fn">semaphore</span>(<span class="type">semaphore</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    ~<span class="fn">semaphore</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroySemaphore</span>); }
+    <span class="cmt">//Getter</span>
+    <span class="mcr">DefineHandleTypeOperator</span>;
+    <span class="mcr">DefineAddressFunction</span>;
+    <span class="cmt">//Non-const Function</span>
+    <span class="type">result_t</span> Create(<span class="type">VkSemaphoreCreateInfo</span>&amp; createInfo) {
+        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateSemaphore</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ semaphore ] ERROR\nFailed to create a semaphore!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="type">result_t</span> Create() {
+        <span class="type">VkSemaphoreCreateInfo</span> createInfo = {};
+        <span class="kw">return</span> <span class="fn">Create</span>(createInfo);
+    }
+};
+</pre>
+<p>
+    虽然这套教程里预计不会使用，我在//TODO <a href="">VkBase+.h</a>中也提供了时间线信号量的封装。
+</p></section>
+</section>
+<section id="pipeline-barrier">
+<h2>Pipeline Barrier<a class="headerlink" href="#pipeline-barrier" title="Permalink to this heading"></a></h2>
+<p>
+    内存屏障（pipeline barrier）是作为命令录制在命令缓冲区中的同步方式，使用内存屏障不需要创建Vulkan对象。
+    <br>
+    虽然内存屏障是作为命令录制的，但是其同步范围不只是包含该内存屏障的命令缓冲区，执行该命令缓冲区的队列上的所有命令都能被纳入同步范围。
+    <br>
+    自Vulkan1.0以来，可以通过<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkCmdPipelineBarrier">vkCmdPipelineBarrier</a>(...)设置内存屏障。从Vulkan1.3开始（在之前版本中也可以通过扩展使用），也可以使用<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkCmdPipelineBarrier2">vkCmdPipelineBarrier2</a>(...)。
+    <br>
+    本套教程就Vulkan1.0版本中的用法进行解说：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkCmdPipelineBarrier">vkCmdPipelineBarrier</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandBuffer</span> commandBuffer</p></td>
+            <td><p>命令缓冲区的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkPipelineStageFlags</span> srcStageMask</p></td>
+            <td><p>源管线阶段，见后文</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkPipelineStageFlags</span> dstStageMask</p></td>
+            <td><p>目标管线阶段，见后文</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkDependencyFlags</span> dependencyFlags</p></td>
+            <td><p>见后文</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> memoryBarrierCount</p></td>
+            <td><p>全局内存屏障的个数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkMemoryBarrier</span>* pMemoryBarriers</p></td>
+            <td><p>指向全局内存屏障的数组</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> bufferMemoryBarrierCount</p></td>
+            <td><p>缓冲区内存屏障的个数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkBufferMemoryBarrier</span>* pBufferMemoryBarriers</p></td>
+            <td><p>指向缓冲区内存屏障的数组</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> imageMemoryBarrierCount</p></td>
+            <td><p>图像内存屏障的个数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkImageMemoryBarrier</span>* pImageMemoryBarriers</p></td>
+            <td><p>指向图像内存屏障的数组</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkPipelineStageFlagBits">VkPipelineStageFlagBits</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_NONE                               </span>不表示任何阶段</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT                    </span>表示管线的起始</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT                  </span>表示读取间接绘制命令的参数缓冲区的阶段</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_VERTEX_INPUT_BIT                   </span>表示图形管线中读取顶点缓冲区和索引缓冲区的阶段</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_VERTEX_SHADER_BIT                  </span>表示图形管线中的顶点着色器阶段</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT    </span>表示图形管线中的细分控制着色器阶段</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT </span>表示图形管线中的细分求值着色器阶段</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT                </span>表示图形管线中的几何着色器阶段</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT                </span>表示图形管线中的片段着色器阶段</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT           </span>表示图形管线中的前期片段测试阶段（发生在片段着色器阶段前），此阶段可读取深度模板值</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT            </span>表示图形管线中的后期片段测试阶段（发生在片段着色器阶段后），此阶段可写入深度模板值</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT        </span>表示图形管线中经过混色后，将色值输出到颜色附件的阶段，用<a href="https://renderdoc.org/vkspec_chunked/chap19.html#vkCmdClearAttachments">vkCmdClearAttachments</a>(...)手动清空颜色/深度模板附件也算在这一阶段。</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT                 </span>表示计算管线中的计算着色器阶段</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT                       </span>表示表示通过数据转移命令进行的写入操作</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT                 </span>表示管线的底部</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_HOST_BIT                           </span>伪管线阶段，对应CPU侧对设备内存的读写</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT                   </span>表示所有图形管线阶段</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_ALL_COMMANDS_BIT                   </span>表示队列上执行的所有命令涉及的所有阶段</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            在srcStageMask使用<span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span>为在先前的命令完成前，阻止后续的所有命令达到dstStageMask所示阶段。
+            <br>
+            在dstStageMask使用<span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span>为不阻塞后续的命令。
+        </p>
+    </li>
+    <li>
+        <p>
+            在srcStageMask使用<span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>为不阻塞先前的命令。
+            <br>
+            在dstStageMask使用<span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>为在先前的命令完成srcStageMask所示阶段前，阻塞后续的所有命令。
+        </p>
+    </li>
+</ul>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr>
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkDependencyFlagBits">VkDependencyFlagBits</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_DEPENDENCY_BY_REGION_BIT    </span>表示该内存屏障所定义的依赖是framebuffer-local的</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_DEPENDENCY_DEVICE_GROUP_BIT </span>表示该内存屏障所定义的依赖涉及到多个物理设备</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_DEPENDENCY_VIEW_LOCAL_BIT   </span>表示一个自依赖的子通道使用多个视点（仅适用于在渲染通道内使用的内存屏障）</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            相关说明参见<a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html#id4">子通道依赖</a>
+        </p>
+    </li>
+</ul>
+<p>
+    不考虑各个内存屏障结构体（或者说若memoryBarrierCount、bufferMemoryBarrierCount、imageMemoryBarrierCount皆为0），那么<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkCmdPipelineBarrier">vkCmdPipelineBarrier</a>(...)的效果是：
+    <br>
+    在执行该命令的队列中，于该命令前（即按提交和录制顺序先于该命令）的命令中由srcStageMask注明的阶段，在该命令后的命令中由dstStageMask注明的阶段前完成，这构成一种<strong>执行依赖</strong>。
+</p>
+<p>
+    在渲染通道中使用内存屏障时，必须在一个自依赖的子通道中使用，且由同步域（srcStageMask、dstStageMask）和访问域（srcAccessMask、dstAccessMask）指定的同步范围必须是子通道自依赖中同步范围的子集。
+</p><section id="id10">
+<h3>全局内存屏障<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
+<p>
+    全局内存屏障相当简单，它作用于所有资源（缓冲区/图像），仅指定访问域，确保在内存屏障前的命令中srcStageMask注明的阶段中srcAccessMask注明的写入操作的结果，能被内存屏障后的命令中dstStageMask注明的阶段中dstAccessMask注明的任何读取操作正确读取，构成一种<strong>内存依赖</strong>。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkMemoryBarrier">VkMemoryBarrier</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_MEMORY_BARRIER</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkAccessFlags</span> srcAccessMask</p></td>
+            <td><p>源操作</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkAccessFlags</span> dstAccessMask</p></td>
+            <td><p>目标操作</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkAccessFlags">VkAccessFlags</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_ACCESS_NONE                               </span>表示无访问</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_ACCESS_INDIRECT_COMMAND_READ_BIT          </span>表示对间接绘制命令参数的读取操作</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_ACCESS_INDEX_READ_BIT                     </span>表示对索引数据的读取操作</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT          </span>表示对顶点数据的读取操作</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_ACCESS_UNIFORM_READ_BIT                   </span>表示着色器中对uniform缓冲区的读取操作</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_ACCESS_INPUT_ATTACHMENT_READ_BIT          </span>表示着色器中对输入附件的读取操作</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_ACCESS_SHADER_READ_BIT                    </span>表示着色器中对附件以外的读取操作（含uniform缓冲区）</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_ACCESS_SHADER_WRITE_BIT                   </span>表示着色器中对附件以外的写入操作</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_ACCESS_COLOR_ATTACHMENT_READ_BIT          </span>表示对颜色附件的读取操作</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT         </span>表示对颜色附件的写入操作</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT  </span>表示对深度模板附件的读取操作</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT </span>表示对深度模板附件的写入操作</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_ACCESS_TRANSFER_READ_BIT                  </span>表示表示通过数据转移命令（<a href="https://renderdoc.org/vkspec_chunked/chap20.html#vkCmdCopyBuffer">vkCmdCopyBuffer</a>或<a href="https://renderdoc.org/vkspec_chunked/chap20.html#vkCmdBlitImage">vkCmdBlitImage</a>等）进行的读操作</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_ACCESS_TRANSFER_WRITE_BIT                 </span>表示表示通过数据转移命令进行的写入操作</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_ACCESS_HOST_READ_BIT                      </span>表示CPU侧的读取操作</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_ACCESS_HOST_WRITE_BIT                     </span>表示CPU侧的写入操作</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_ACCESS_MEMORY_READ_BIT                    </span>表示任何读取操作</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0 + VK_KHR_swapchain</p></td>
+            <td><p><span class="enum">VK_ACCESS_MEMORY_WRITE_BIT                   </span>表示任何写入操作</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            关于各个管线阶段可以发生哪些访问操作，请参考<a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkAccessFlagBits">官方文档</a>中的 Table 4. Supported access types。
+        </p>
+    </li>
+</ul></section>
+<section id="id11">
+<h3>缓冲区内存屏障<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>
+<p>
+    缓冲区内存屏障作用于特定缓冲区的指定资源范围，除了设置内存依赖外，它还能进行资源的队列族所有权转移。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkBufferMemoryBarrier">VkBufferMemoryBarrier</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkAccessFlags</span> srcAccessMask</p></td>
+            <td><p>源操作</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkAccessFlags</span> dstAccessMask</p></td>
+            <td><p>目标操作</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> srcQueueFamilyIndex</p></td>
+            <td><p>源队列族</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> dstQueueFamilyIndex</p></td>
+            <td><p>目标队列族</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkBuffer</span> buffer</p></td>
+            <td><p>缓冲区的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkDeviceSize</span> offset</p></td>
+            <td><p>被同步的数据块距离缓冲区起始位置的字节数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkDeviceSize</span> size</p></td>
+            <td><p>被同步的数据块的大小，单位是字节</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            关于资源的队列族所有权转移，具体说明参见<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id7">队列族所有权转移</a>，若不需要转移资源的队列族所有权，则srcQueueFamilyIndex和dstQueueFamilyIndex应当皆为<span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>。
+        </p>
+    </li>
+</ul></section>
+<section id="id12">
+<h3>图像内存屏障<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h3>
+<p>
+    图像内存屏障作用于特定图像的指定资源范围，除了设置内存依赖外、进行资源的队列族所有权转移外，它还能转换图像的内存布局。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkBufferMemoryBarrier">VkBufferMemoryBarrier</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkAccessFlags</span> srcAccessMask</p></td>
+            <td><p>源操作</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkAccessFlags</span> dstAccessMask</p></td>
+            <td><p>目标操作</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkImageLayout</span> oldLayout</p></td>
+            <td><p>旧的内存布局</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkImageLayout</span> newLayout</p></td>
+            <td><p>新的内存布局</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> srcQueueFamilyIndex</p></td>
+            <td><p>源队列族</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> dstQueueFamilyIndex</p></td>
+            <td><p>目标队列族</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkImage</span> image</p></td>
+            <td><p>图像的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkImageSubresourceRange</span> subresourceRange</p></td>
+            <td><p>被同步的图像的子资源范围</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkImageLayout">VkImageLayout</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_LAYOUT_UNDEFINED                                  </span>表示不关心图像的原有内容，注意不能转换到该布局</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_LAYOUT_GENERAL                                    </span>该布局支持所有物理设备上的访问操作，但效率未必最佳</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL                   </span>表示最适合用于图像附件的布局</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL           </span>表示最适合用于深度模板附件的布局</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL            </span>表示最适合仅读取深度模板值的布局（作为附件只读不写，或用于采样）</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL                   </span>表示最适用于仅让着色器读取的布局（用于被采样图像和输入附件）</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL                       </span>表示最适用于作为数据传送的来源的布局</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL                       </span>表示最适用于作为数据传送的目标的布局</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_LAYOUT_PREINITIALIZED                             </span>表示图像已经由CPU侧直接写入了数据（应当是线性排列的），注意不能转换到该布局</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL </span>表示最适合仅读取深度值（作为附件只读不写，或用于采样）和读写模板附件的布局</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL </span>表示最适合仅读取模板值（作为附件只读不写，或用于采样）和读写深度附件的布局</p></td>
+        </tr>
+        <tr>
+            <td><p>1.2</p></td>
+            <td><p><span class="enum">VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL                   </span>表示最适合用于深度附件的布局</p></td>
+        </tr>
+        <tr>
+            <td><p>1.2</p></td>
+            <td><p><span class="enum">VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_OPTIMAL                    </span>表示最适合仅读取深度值的布局（作为附件只读不写，或用于采样）</p></td>
+        </tr>
+        <tr>
+            <td><p>1.2</p></td>
+            <td><p><span class="enum">VK_IMAGE_LAYOUT_STENCIL_ATTACHMENT_OPTIMAL                 </span>表示最适合用于模板附件的布局</p></td>
+        </tr>
+        <tr>
+            <td><p>1.2</p></td>
+            <td><p><span class="enum">VK_IMAGE_LAYOUT_STENCIL_READ_ONLY_OPTIMAL                  </span>表示最适合仅读取模板值的布局（作为附件只读不写，或用于采样）</p></td>
+        </tr>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL                          </span>表示适合用于只读的布局（作为附件只读不写，或用于采样）</p></td>
+        </tr>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL                         </span>表示适合用于渲染管线中附件的布局</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0 + VK_KHR_swapchain</p></td>
+            <td><p><span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR                            </span>表示最适用于呈现的布局</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            对只有深度/模板值的深度模板附件使用<span class="enum">VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL</span>而非<span class="enum">VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL</span>或<span class="enum">VK_IMAGE_LAYOUT_STENCIL_ATTACHMENT_OPTIMAL</span>无妨。
+        </p>
+    </li>
+    <li>
+        <p>
+            Vulkan1.2中仅注明深度/模板的布局，适用于在//TODO 动态渲染中，使用两张不同的图像各自作为深度/模板附件的情况。
+        </p>
+    </li>
+</ul>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkImageSubresourceRange"><span class="highlighted">VkImageSubresourceRange</span></a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkImageAspectFlags</span> aspectMask</p></td>
+            <td><p>所使用图像的层面（即aspect）</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> baseMipLevel</p></td>
+            <td><p>初始mip等级</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> levelCount</p></td>
+            <td><p>mip等级总数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> baseArrayLayer</p></td>
+            <td><p>初始图层</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> layerCount</p></td>
+            <td><p>图层总数</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkImageAspectFlagBits">VkImageAspectFlagBits</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_IMAGE_ASPECT_NONE         </span>表示不使用任何层面</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_ASPECT_COLOR_BIT    </span>表示颜色层面</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_ASPECT_DEPTH_BIT    </span>表示深度层面</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_ASPECT_STENCIL_BIT  </span>表示模板层面</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_ASPECT_METADATA_BIT </span>表示元数据层面（用于稀疏绑定）</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_IMAGE_ASPECT_PLANE_0_BIT  </span>表示多层面（multi-planar）图像格式的0号平面</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_IMAGE_ASPECT_PLANE_1_BIT  </span>表示多层面（multi-planar）图像格式的1号平面</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_IMAGE_ASPECT_PLANE_2_BIT  </span>表示多层面（multi-planar）图像格式的2号平面</p></td>
+        </tr>
+    </tbody>
+</table></section>
+</section>
+<section id="event">
+<h2>Event<a class="headerlink" href="#event" title="Permalink to this heading"></a></h2>
+<p>
+    //TODO 基本用不着先拖着不写。
+</p></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html" class="btn btn-neutral float-left" title="Ch2-3 创建管线并绘制三角形" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-right" title="Ch3-2 图像与缓冲区" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

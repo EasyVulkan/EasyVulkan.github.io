@@ -1,0 +1,2235 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch3-3 管线布局和管线 &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ch3-4 渲染通道和帧缓冲" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html" />
+    <link rel="prev" title="Ch3-2 图像与缓冲区" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch3-3 管线布局和管线</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pipeline-layout">Pipeline Layout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">创建管线布局</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pipelinelayout">封装为pipelineLayout类</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pipeline">Pipeline</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">创建图形管线</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vkgraphicspipelinecreateinfo">VkGraphicsPipelineCreateInfo</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#vkpipelinevertexinputstatecreateinfo">VkPipelineVertexInputStateCreateInfo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vkpipelineinputassemblystatecreateinfo">VkPipelineInputAssemblyStateCreateInfo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vkpipelinetessellationstatecreateinfo">VkPipelineTessellationStateCreateInfo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vkpipelineviewportstatecreateinfo">VkPipelineViewportStateCreateInfo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vkpipelinerasterizationstatecreateinfo">VkPipelineRasterizationStateCreateInfo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vkpipelinemultisamplestatecreateinfo">VkPipelineMultisampleStateCreateInfo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vkpipelinedepthstencilstatecreateinfo">VkPipelineDepthStencilStateCreateInfo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vkpipelinecolorblendstatecreateinfo">VkPipelineColorBlendStateCreateInfo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vkpipelinedynamicstatecreateinfo">VkPipelineDynamicStateCreateInfo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#graphicspipelinecreateinfopack">封装为graphicsPipelineCreateInfoPack类</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">创建计算管线</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">封装为pipeline类</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch3-3 管线布局和管线</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch3-3">
+<h1>Ch3-3 管线布局和管线<a class="headerlink" href="#ch3-3" title="Permalink to this heading"></a></h1>
+<section id="pipeline-layout">
+<h2>Pipeline Layout<a class="headerlink" href="#pipeline-layout" title="Permalink to this heading"></a></h2>
+<p>
+    管线布局（<span class="type">VkPipelineLayout</span>）包含了管线如何使用描述符（uniform缓冲区、storage缓冲区、贴图和采样器等，//TODO 详见）以及push constant的信息。
+</p><section id="id1">
+<h3>创建管线布局<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap14.html#vkCreatePipelineLayout">vkCreatePipelineLayout</a>(...)创建管线布局：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap14.html#vkCreatePipelineLayout">vkCreatePipelineLayout</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkPipelineLayoutCreateInfo</span>* pCreateInfo</p></td>
+            <td><p>指向<span class="type">VkPipelineLayout</span>的创建信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span>* pAllocator</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkPipelineLayout</span>* pPipelineLayout</p></td>
+            <td><p>若创建成功，将帧缓冲的handle写入*pPipelineLayout</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap14.html#VkPipelineLayoutCreateInfo">VkPipelineLayoutCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkPipelineLayoutCreateFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> setLayoutCount</p></td>
+            <td><p>描述符集布局的数量</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkDescriptorSetLayout</span>* pSetLayouts</p></td>
+            <td><p>指向<span class="type">VkDescriptorSetLayout</span>的数组，用于指定描述符集布局</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> pushConstantRangeCount</p></td>
+            <td><p>Push constant范围的数量</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkPushConstantRange</span>* pPushConstantRanges</p></td>
+            <td><p>指向<span class="type">VkPushConstantRange</span>的数组，用于指定push constant范围</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap14.html#VkPushConstantRange">VkPushConstantRange</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkShaderStageFlags</span> stageFlags</p></td>
+            <td><p>会访问本结构体指定的push constant范围的阶段</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> offset</p></td>
+            <td><p>在stageFlags所指定阶段中访问的push constant范围的起始位置</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> size</p></td>
+            <td><p>在stageFlags所指定阶段中访问的push constant数据的总大小</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            关于<a href="https://renderdoc.org/vkspec_chunked/chap14.html#VkPushConstantRange">VkPushConstantRange</a>的具体说明，见<a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a>。
+        </p>
+    </li>
+</ul></section>
+<section id="pipelinelayout">
+<h3>封装为pipelineLayout类<a class="headerlink" href="#pipelinelayout" title="Permalink to this heading"></a></h3>
+<p>
+    向<span class="path">VKBase.h</span>，vulkan命名空间中添加以下代码：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">pipelineLayout</span> {
+    <span class="type">VkPipelineLayout</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
+<span class="kw">public</span>:
+    <span class="fn">pipelineLayout</span>() = <span class="kw">default</span>;
+    <span class="fn">pipelineLayout</span>(<span class="type">VkPipelineLayoutCreateInfo</span>&amp; createInfo) {
+        <span class="fn">Create</span>(createInfo);
+    }
+    <span class="fn">pipelineLayout</span>(<span class="type">pipelineLayout</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    ~<span class="fn">pipelineLayout</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyPipelineLayout</span>); }
+    <span class="cmt">//Getter</span>
+    <span class="mcr">DefineHandleTypeOperator;</span>
+    <span class="mcr">DefineAddressFunction;</span>
+    <span class="cmt">//Non-const Function</span>
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkPipelineLayoutCreateInfo</span>&amp; createInfo) {
+        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreatePipelineLayout</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ pipelineLayout ] ERROR\nFailed to create a pipeline layout!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+};
+</pre></section>
+</section>
+<section id="pipeline">
+<h2>Pipeline<a class="headerlink" href="#pipeline" title="Permalink to this heading"></a></h2>
+<p>
+   管线（<span class="type">VkPipeline</span>）是数据处理流程的抽象，它由可编程着色器阶段、固定管线阶段、以及一系列状态参数构成。
+</p><section id="id2">
+<h3>创建图形管线<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap10.html#vkCreateGraphicsPipelines">vkCreateGraphicsPipelines</a>(...)创建图形管线：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap10.html#vkCreateGraphicsPipelines">vkCreateGraphicsPipelines</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkPipelineCache</span> pipelineCache</p></td>
+            <td><p>若非<span class="macro">VK_NULL_HANDLE</span>，则提供管线的缓存信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> createInfoCount</p></td>
+            <td><p>图形管线的创建信息的个数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkGraphicsPipelineCreateInfo</span>* pCreateInfos</p></td>
+            <td><p>指向<span class="type">VkGraphicsPipelineCreateInfo</span>的数组，提供一个或多个管线的创建信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span>* pAllocator</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkPipeline</span>* pPipelines</p></td>
+            <td><p>若执行成功，将图形管线的handle写入pPipelines所指数组</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    <span class="type">VkPipelineCache</span>类型的handle提供管线的缓存信息，其内容是实现特定的，换言之，<span class="type">VkPipelineCache</span>类型是为显卡驱动创建管线所可能用到的自定义信息提供的接口。
+    <br>
+    利用上一次执行程序时的管线缓存信息可能可以加快对管线的创建，这么做可以加快程序的启动速度，尽管程序初始化的时间大都不是花在创建管线上。也可以在本次运行中，利用首次创建某条管线时的信息来加快重建管线，就这种情况而言，我更推荐你从旧管线衍生出新管线。
+    <br>
+    我个人认为<span class="type">VkPipelineCache</span>的作用比较鸡肋，本套教程中不作具体讲解，如果你有兴趣使用，请自行阅读官方标准，这里我简单提要：
+</p>
+<ul>
+    <li>
+        <p>
+            创建一个没有初始数据的<span class="type">VkPipelineCache</span>，在创建管线时传入其handle，Vulkan的实现会向其写入管线的缓存信息。
+        </p>
+    </li>
+    <li>
+        <p>
+            如果想在下一次启动时加快创建管线的速度，那么将缓存信息存到文件，在下次启动时读取。
+        </p>
+    </li>
+    <li>
+        <p>
+            缓存信息的头部信息（前32位）用于验证管线缓存是否满足显卡驱动的要求，以应对多显卡PC。
+        </p>
+    </li>
+</ul>
+<p>
+    作为参考，在Release Bulid（关闭C++和Vulkan的Debug工具）下，我的英伟达1060MQ在启动时用缓存信息创建单个管线，加快了0.005秒，而在运行过程中重建管线时，耗时没有差别。
+</p></section>
+<section id="vkgraphicspipelinecreateinfo">
+<h3>VkGraphicsPipelineCreateInfo<a class="headerlink" href="#vkgraphicspipelinecreateinfo" title="Permalink to this heading"></a></h3>
+<p>
+    因<a href="https://renderdoc.org/vkspec_chunked/chap10.html#VkGraphicsPipelineCreateInfo">VkGraphicsPipelineCreateInfo</a>内容繁多，专门用这一段对其进行说明。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap10.html#VkGraphicsPipelineCreateInfo">VkGraphicsPipelineCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkPipelineCreateFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> stageCount</p></td>
+            <td><p>可编程管线阶段的数量</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkPipelineShaderStageCreateInfo</span>* pStages</p></td>
+            <td><p>指向<span class="type">VkPipelineShaderStageCreateInfo</span>的数组，提供可编程管线阶段的创建信息，具体说明见<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id3">管线着色器阶段的创建信息</a></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkPipelineVertexInputStateCreateInfo</span>* pVertexInputState</p></td>
+            <td><p>指向顶点输入状态的创建信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkPipelineInputAssemblyStateCreateInfo</span>* pInputAssemblyState</p></td>
+            <td><p>指向输入装配状态的创建信息</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkPipelineTessellationStateCreateInfo</span>* pTessellationState</p></td>
+            <td><p>指向细分状态的创建信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkPipelineViewportStateCreateInfo</span>* pViewportState</p></td>
+            <td><p>指向视口状态的创建信息</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkPipelineRasterizationStateCreateInfo</span>* pRasterizationState</p></td>
+            <td><p>指向栅格化状态的创建信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkPipelineMultisampleStateCreateInfo</span>* pMultisampleState</p></td>
+            <td><p>指向多重采样状态的创建信息</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkPipelineDepthStencilStateCreateInfo</span>* pDepthStencilState</p></td>
+            <td><p>指向深度模板状态的创建信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkPipelineColorBlendStateCreateInfo</span>* pColorBlendState</p></td>
+            <td><p>指向混色状态的创建信息</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkPipelineDynamicStateCreateInfo</span>* pDynamicState</p></td>
+            <td><p>指向动态状态的创建信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkPipelineLayout</span> pipelineLayout</p></td>
+            <td><p>管线布局的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkRenderPass</span> renderPass</p></td>
+            <td><p>渲染通道的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> subpass</p></td>
+            <td><p>指明使用了该管线的子通道在renderPass所示渲染通道中的索引</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkPipeline</span> basePipelineHandle</p></td>
+            <td><p>如果该管线从一个已经创建了的管线衍生而来，提供已创建管线的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">int32_t</span> basePipelineIndex</p></td>
+            <td><p>见后文</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            如果该管线从<a href="https://renderdoc.org/vkspec_chunked/chap10.html#vkCreateGraphicsPipelines">vkCreateGraphicsPipelines</a>(...)中，由pCreateInfos所指数组元素所明确的另一个需要被创建的管线衍生而来，提供另一管线创建信息在pCreateInfos所指数组中的索引basePipelineIndex。该索引必须小于当前管线创建信息的索引，即<a href="https://renderdoc.org/vkspec_chunked/chap10.html#vkCreateGraphicsPipelines">vkCreateGraphicsPipelines</a>(...)依序创建pCreateInfos数组元素对应的管线，而当前管线只能从早于其创建的管线衍生而来。
+        </p>
+    </li>
+    <li>
+        <p>
+            若不需要从同一批创建的管线中较早创建的管线衍生而来，basePipelineIndex应为特殊值-1，而不是0，因为0是一个有效的索引。
+        </p>
+    </li>
+    <li>
+        <p>
+            flags中未包含<span class="enum">VK_PIPELINE_CREATE_DERIVATIVE_BIT</span>时，basePipelineHandle和basePipelineIndex被无视。
+        </p>
+    </li>
+</ul>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap10.html#VkPipelineCreateFlagBits">VkPipelineCreateFlagBits</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT              </span>表示禁止优化</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PIPELINE_CREATE_ALLOW_DERIVATIVES_BIT                 </span>表示允许从该管线衍生出其他管线</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PIPELINE_CREATE_DERIVATIVE_BIT                        </span>表示该管线是从其他管线衍生而来</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT      </span>见后文</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_PIPELINE_CREATE_DISPATCH_BASE_BIT                     </span>表示绑定计算管线后可以使用<a href="https://renderdoc.org/vkspec_chunked/chap30.html#vkCmdDispatchBase">vkCmdDispatchBase</a>(...)指令，仅用于计算管线</p></td>
+        </tr>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_PIPELINE_CREATE_FAIL_ON_PIPELINE_COMPILE_REQUIRED_BIT </span>见后文</p></td>
+        </tr>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_PIPELINE_CREATE_EARLY_RETURN_ON_FAILURE_BIT           </span>见后文</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            <span class="enum">VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT</span>表示着色器中所有的gl_ViewIndex输入（需要GLSL语言扩展GL_EXT_multiview，适用于开启多视点multiview的情况）都采取与gl_DeviceIndex输入（需要GLSL语言扩展GL_EXT_device_group，适用于开启device group的情况，device group是由单个逻辑设备代表多个物理设备的Vulkan扩展功能）一致的数值。
+        </p>
+    </li>
+    <li>
+        <p>
+            若创建管线时使用了着色器模组标识符（shader module identifier，需要用到VK_EXT_shader_module_identifier扩展，用于使用显卡驱动可能会提供的默认着色器阶段实现），并且在flags中指定了<span class="enum">VK_PIPELINE_CREATE_FAIL_ON_PIPELINE_COMPILE_REQUIRED_BIT</span>，那么管线创建将会失败，并返回<span class="enum">VK_PIPELINE_COMPILE_REQUIRED</span>（注意，这个<span class="type">VkResult</span>枚举项是大于0的，不被算作是个错误代码）。
+        </p>
+    </li>
+    <li>
+        <p>
+            <span class="enum">VK_PIPELINE_CREATE_EARLY_RETURN_ON_FAILURE_BIT</span>影响<a href="https://renderdoc.org/vkspec_chunked/chap10.html#vkCreateGraphicsPipelines">vkCreateGraphicsPipelines</a>(...)或<a href="https://renderdoc.org/vkspec_chunked/chap10.html#vkCreateComputePipelines">vkCreateComputePipelines</a>(...)中pCreateInfos所指代其他管线的创建，若当前管线创建信息的flags中包含该bit，且当前管线创建失败，则后续其它管线亦不会被创建。
+        </p>
+    </li>
+</ul><section id="vkpipelinevertexinputstatecreateinfo">
+<h4>VkPipelineVertexInputStateCreateInfo<a class="headerlink" href="#vkpipelinevertexinputstatecreateinfo" title="Permalink to this heading"></a></h4>
+<p>
+    顶点输入状态用于指定顶点数据的内容，以及以如何输入顶点数据。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap22.html#VkPipelineVertexInputStateCreateInfo">VkPipelineVertexInputStateCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkPipelineVertexInputStateCreateFlags</span> flags</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> vertexBindingDescriptionCount</p></td>
+            <td><p>顶点输入绑定描述的数量</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkVertexInputBindingDescription</span>* pVertexBindingDescriptions</p></td>
+            <td><p>指向<span class="type">VkVertexInputBindingDescription</span>的数组，用于指定顶点输入绑定</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> vertexAttributeDescriptionCount</p></td>
+            <td><p>顶点属性描述的数量</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkVertexInputAttributeDescription</span>* pVertexAttributeDescriptions</p></td>
+            <td><p>指向<span class="type">VkVertexInputAttributeDescription</span>的数组，用于指定顶点属性</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap22.html#VkVertexInputBindingDescription">VkVertexInputBindingDescription</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> binding</p></td>
+            <td><p>指定顶点输入对应顶点缓冲区的绑定位置</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> stride</p></td>
+            <td><p>每个顶点的数据之间的步长间隔，单位为字节</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkVertexInputRate</span> inputRate</p></td>
+            <td><p>输入频率</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            注意这里的binding对应<a href="https://renderdoc.org/vkspec_chunked/chap22.html#vkCmdBindVertexBuffers">vkCmdBindVertexBuffers</a>(...)中的binding，跟着色器中的binding修饰符无关，着色器中的binding修饰符不用于修饰顶点输入。
+        </p>
+    </li>
+    <li>
+        <p>
+            允许指定binding的意义在于减少使用<a href="https://renderdoc.org/vkspec_chunked/chap22.html#vkCmdBindVertexBuffers">vkCmdBindVertexBuffers</a>(...)进行绑定缓冲区的行为。即，你可以一次性绑定多个顶点缓冲区到不同的binding，然后不同的管线去取用不同binding对应的数据，而不是每次切换管线时，都特地把所需的缓冲区绑定到从0号binding起始的位置上。
+        </p>
+    </li>
+    <li>
+        <p>
+            inputRate可为<span class="enum">VK_VERTEX_INPUT_RATE_VERTEX</span>或<span class="enum">VK_VERTEX_INPUT_RATE_INSTANCE</span>，前者表示逐顶点输入，后者表示逐实例输入。
+        </p>
+    </li>
+</ul>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap22.html#VkVertexInputAttributeDescription">VkVertexInputAttributeDescription</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> location</p></td>
+            <td><p>指定这个顶点属性输入到着色器中哪个location</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> binding</p></td>
+            <td><p>指定这个顶点属性的数据，对应所用顶点缓冲区的绑定位置</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkFormat</span> format</p></td>
+            <td><p>这个顶点属性的格式</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> offset</p></td>
+            <td><p>这个顶点属性在相应顶点缓冲区的单组顶点数据中，距离起始的位置，单位为字节</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            注意binding和location不是二级结构，互不隶属。
+        </p>
+    </li>
+</ul>
+<p>
+    来举例说明<span class="type">VkVertexInputBindingDescription</span>和<span class="type">VkVertexInputAttributeDescription</span>的作用。
+    <br>
+    先来简单解释下逐顶点输入和逐实例输入，如果我要绘制两个三角形，然后我有3个顶点数据描述一个具体的三角形，将它们逐顶点输入，2个位置数据描述三角形各自的位置，将它们逐实例输入，于是如果我用<a href="https://renderdoc.org/vkspec_chunked/chap21.html#vkCmdDraw">vkCmdDraw</a>(commandBuffer, 3, 2, 0, 0)绘制，将产生6个顶点，每3个顶点构成一个三角形。
+    <br>
+    一个较简单的顶点着色器代码将会如下：
+</p>
+<pre class="code">
+<span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(vertex)
+
+<span class="kw">layout</span>(location = 0) <span class="kw">in</span> <span class="type">vec2</span> i_VertexPosition;<span class="cmt">//逐顶点</span>
+<span class="kw">layout</span>(location = 1) <span class="kw">in</span> <span class="type">vec2</span> i_InstancePosition;<span class="cmt">//逐实例</span>
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    gl_Position = <span class="type">vec4</span>(i_VertexPosition + i_InstancePosition, 1);
+}
+</pre>
+<p>
+    为了说明问题，我让上述代码再复杂一点，逐顶点输入贴图坐标：
+</p>
+<pre class="code">
+<span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(vertex)
+
+<span class="kw">layout</span>(location = 0) <span class="kw">in</span> <span class="type">vec2</span> i_VertexPosition;<span class="cmt">//逐顶点</span>
+<span class="kw">layout</span>(location = 1) <span class="kw">in</span> <span class="type">vec2</span> i_VertexTexCoord;<span class="cmt">//逐顶点</span>
+<span class="kw">layout</span>(location = 2) <span class="kw">in</span> <span class="type">vec2</span> i_InstancePosition;<span class="cmt">//逐实例</span>
+<span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec2</span> o_UV;
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    gl_Position = <span class="type">vec4</span>(i_VertexPosition + i_InstancePosition, 1);
+    o_UV = i_VertexTexCoord;
+}
+</pre>
+<p>
+    对应的C++结构体会是：
+</p>
+<pre class="code">
+<span class="cmt">//逐顶点输入的数据</span>
+<span class="kw">struct</span> <span class="type">perVertex</span> {
+    <span class="type">vec2</span> position;
+    <span class="type">vec2</span> texCoord;
+};
+<span class="cmt">//逐实例输入的数据</span>
+<span class="kw">struct</span> <span class="type">perInstance</span> {
+    <span class="type">vec2</span> position;
+};
+</pre>
+<p>
+    逐顶点输入的数据和逐实例输入的数据会放在其各自的顶点缓冲区中。
+    <br>
+    而上文结构体中的不同成员则占据各自的location。
+    <br>
+    于是为上述情形书写顶点输入绑定描述和顶点属性描述：
+</p>
+<pre class="code">
+<span class="type">VkVertexInputBindingDescription</span> vertexInputBindings[2] = {
+    { 0, <span class="kw">sizeof</span>(<span class="type">perVertex</span>), <span class="type">VK_VERTEX_INPUT_RATE_VERTEX</span> },
+    { 1, <span class="kw">sizeof</span>(<span class="type">perInstance</span>), <span class="type">VK_VERTEX_INPUT_RATE_INSTANCE</span> },
+};
+<span class="type">VkVertexInputAttributeDescription</span> vertexInputAttributes[3] = {
+    { 0, 0, <span class="enum">VK_FORMAT_R32G32_SFLOAT</span>, <span class="mcr">offsetof</span>(<span class="type">perVertex</span>, position) },
+    { 0, 1, <span class="enum">VK_FORMAT_R32G32_SFLOAT</span>, <span class="mcr">offsetof</span>(<span class="type">perVertex</span>, texCoord) },
+    { 1, 2, <span class="enum">VK_FORMAT_R32G32_SFLOAT</span>, <span class="mcr">offsetof</span>(<span class="type">perInstance</span>, position) },
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            <span class="enum">VK_FORMAT_R32G32_SFLOAT</span>表示有两个32位浮点数分量，对应<span class="type">vec2</span>。关于格式的具体说明，参见<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html#id15">图像及数据的格式</a>。
+        </p>
+    </li>
+</ul></section>
+<section id="vkpipelineinputassemblystatecreateinfo">
+<h4>VkPipelineInputAssemblyStateCreateInfo<a class="headerlink" href="#vkpipelineinputassemblystatecreateinfo" title="Permalink to this heading"></a></h4>
+<p>
+    输入装配状态主要用于指定输入的图元拓扑类型。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap21.html#VkPipelineInputAssemblyStateCreateInfo">VkPipelineInputAssemblyStateCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkPipelineInputAssemblyStateCreateFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkPrimitiveTopology</span> topology</p></td>
+            <td><p>输入的图元拓扑类型</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkBool32</span> primitiveRestartEnable</p></td>
+            <td><p>是否允许重启图元，见后文</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            若primitiveRestartEnable为<span class="mcr">VK_TRUE</span>，则允许在索引绘制中，用一个特殊的索引来重启图元，这个索引的数值为所指定无符号索引类型的最大值，比如，若使用索引类型为<span class="enum">VK_INDEX_TYPE_UINT16</span>，则为0xffff。
+        </p>
+    </li>
+</ul>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap21.html#VkPrimitiveTopology">VkPrimitiveTopology</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PRIMITIVE_TOPOLOGY_POINT_LIST                    </span>表示输入点</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PRIMITIVE_TOPOLOGY_LINE_LIST                     </span>表示输入线段，每两个点构成一条线段</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PRIMITIVE_TOPOLOGY_LINE_STRIP                    </span>表示输入线段，每个点（若该点非最初的点）和其前一个点构成线段</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST                 </span>表示输入三角形，每三个点构成一个三角形</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP                </span>表示输入三角形，每个点（若该点非最初的两点之一）和其前两个点构成三角形</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN                  </span>表示输入三角形，每个点（若该点非最初的两点之一）和其前一个点及最初的点构成三角形</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY      </span></p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PRIMITIVE_TOPOLOGY_LINE_STRIP_WITH_ADJACENCY     </span></p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST_WITH_ADJACENCY  </span></p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP_WITH_ADJACENCY </span></p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PRIMITIVE_TOPOLOGY_PATCH_LIST                    </span>表示以patch形式输入顶点，用于涉及到细分（细分控制和细分求值着色器）的管线</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            <span class="type">VkPrimitiveTopology</span>仅仅指定输入的图元拓扑类型，实际生成的图元拓扑类型可以被几何着色器改变，若输入patch，则由细分求值着色器决定生成的图元拓扑类型。
+        </p>
+    </li>
+    <li>
+        <p>
+            用简短的文字难以说明各类WITH_ADJACENCY的图元拓扑类型的规则，有兴趣请自行了解。
+        </p>
+    </li>
+</ul>
+<p>
+    举例而言：
+    <br>
+    绘制一个四边形，若使用<span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST</span>，需要6个顶点，或4个顶点和6个索引，若使用<span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP</span>，则只需要4个顶点。
+    <br>
+    若图元拓扑类型为<span class="enum">VK_PRIMITIVE_TOPOLOGY_LINE_STRIP</span>，由于每个点和其前一个点构成线段，若不重启图元，则绘制出的应当是不间断的折线；通过重启图元，可以使用一个绘制命令来绘制多条折线。
+</p></section>
+<section id="vkpipelinetessellationstatecreateinfo">
+<h4>VkPipelineTessellationStateCreateInfo<a class="headerlink" href="#vkpipelinetessellationstatecreateinfo" title="Permalink to this heading"></a></h4>
+<p>
+    细分状态用于在进行细分的管线中，指定控制点的数量。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap23.html#VkPipelineTessellationStateCreateInfo">VkPipelineTessellationStateCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkPipelineTessellationStateCreateFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> patchControlPoints</p></td>
+            <td><p>指定每个patch中控制点的个数</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            patchControlPoints的上限不超过<span class="type">VkPhysicalDeviceLimits</span>::maxTessellationPatchSize。
+        </p>
+    </li>
+</ul>
+<p>
+    如果管线中没有细分控制和细分求值着色器，且输入图元拓扑类型非<span class="enum">VK_PRIMITIVE_TOPOLOGY_PATCH_LIST</span>，无视patchControlPoints。
+</p></section>
+<section id="vkpipelineviewportstatecreateinfo">
+<h4>VkPipelineViewportStateCreateInfo<a class="headerlink" href="#vkpipelineviewportstatecreateinfo" title="Permalink to this heading"></a></h4>
+<p>
+    视口状态用于指定视口和剪裁范围。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap26.html#VkPipelineViewportStateCreateInfo">VkPipelineViewportStateCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkPipelineViewportStateCreateFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> viewportCount</p></td>
+            <td><p>指定视口的个数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkViewport</span>* pViewports</p></td>
+            <td><p>指向<span class="type">VkViewport</span>的数组，用于指定视口</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> scissorCount</p></td>
+            <td><p>指定剪裁范围的个数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkRect2D</span>* pScissors</p></td>
+            <td><p>指向<span class="type">VkRect2D</span>的数组，用于指定剪裁范围</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <span class="type">VkViewport</span> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="kw">float</span> x</p></td>
+            <td><p>视口左上角相对于图像附件左上角位置的横坐标，单位是像素</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">float</span> y</p></td>
+            <td><p>视口左上角相对于图像附件左上角位置的纵坐标，单位是像素</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">float</span> width</p></td>
+            <td><p>视口宽度，单位是像素</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">float</span> height</p></td>
+            <td><p>视口高度，单位是像素</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">float</span> minDepth</p></td>
+            <td><p>最小深度值，见后文</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">float</span> maxDepth</p></td>
+            <td><p>最大深度值，见后文</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            若没有开启硬件特性中的multiViewport（多视口），那么你只能且必须使用一组视口和剪裁范围。使用多视口时，每个视口与剪裁范围一一对应。渲染到哪个视口需在几何着色器中用gl_ViewportIndex指定。
+        </p>
+    </li>
+    <li>
+        <p>
+            如果你想在渲染命令过程中视情况动态地设置视口或剪裁范围（使用动态状态），那么<span class="type">VkPipelineViewportStateCreateInfo</span>中指定的视口或剪裁范围被无视。
+        </p>
+    </li>
+</ul>
+<p>
+    <span class="type">VkViewport</span>定义一个映射关系。举例说明：
+    <br>
+    若图像附件大小为1280*720，<span class="type">VkViewport</span>中x和y分别为320和180，视口大小为640*360，则内容会被渲染到区域中央640*360大小的范围内。
+    <br>
+    这是一种不必改变着色器中的投影矩阵即可改变渲染区域的方法。注意，像素的位置做了映射，但不代表原本gl_Position的x和y在[-1, 1]范围外的像素就会出现在视口之外。
+    <br>
+    minDepth和maxDepth也是进行映射，若minDepth为0，maxDepth为0.5f，则gl_Depth为0.5f的话，输出到深度附件的数值为0.25f。
+    <br>
+    除非使用VK_EXT_depth_range_unrestricted这一扩展，否则minDepth和maxDepth的数值应当在[0, 1]，即Vulkan默认的深度范围内。
+    <br>
+    剪裁范围用<span class="type">VkRect2D</span>指定，即你需要指定剪裁范围相对于图像附件左上角的位置，以及剪裁范围的大小，单位同样是像素。
+    <br>
+    最后，能显示出像素的区域为视口和对应索引的剪裁范围的交集。
+</p></section>
+<section id="vkpipelinerasterizationstatecreateinfo">
+<h4>VkPipelineRasterizationStateCreateInfo<a class="headerlink" href="#vkpipelinerasterizationstatecreateinfo" title="Permalink to this heading"></a></h4>
+<p>
+    栅格化状态指定在栅格化阶段及该阶段前的操作。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap27.html#VkPipelineRasterizationStateCreateInfo">VkPipelineRasterizationStateCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkPipelineRasterizationStateCreateFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkBool32</span> depthClampEnable</p></td>
+            <td><p>指定是否钳制深度</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkBool32</span> rasterizerDiscardEnable</p></td>
+            <td><p>指定是否在栅格化阶段前丢弃图元</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkPolygonMode</span> polygonMode</p></td>
+            <td><p>三角形绘制模式</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkCullModeFlags</span> cullMode</p></td>
+            <td><p>面剔除模式</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkFrontFace</span> frontFace</p></td>
+            <td><p>指定正面顶点顺序是顺时针还是逆时针，可为<span class="enum">VK_FRONT_FACE_COUNTER_CLOCKWISE</span>（逆时针，默认）或<span class="enum">VK_FRONT_FACE_CLOCKWISE</span>（顺时针）</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkBool32</span> depthBiasEnable</p></td>
+            <td><p>是否开启深度偏移，注：深度偏移主要是为了解决实现阴影时的Shadow Acne问题（物体自身的阴影在其表面形成纹路等情形）</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">float</span> depthBiasConstantFactor</p></td>
+            <td><p>深度偏移常量系数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">float</span> depthBiasClamp</p></td>
+            <td><p>深度偏移钳制</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">float</span> depthBiasSlopeFactor</p></td>
+            <td><p>深度偏移坡度系数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">float</span> lineWidth</p></td>
+            <td><p>若绘制线段，指定线宽，单位是像素</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            如果depthClampEnable为<span class="mcr">VK_TRUE</span>，若gl_Depth的数值在[0, 1]之外，则在映射到<span class="type">VkViewport</span>所指定的深度范围前，钳制到0或1。
+        </p>
+    </li>
+    <li>
+        <p>
+            如果rasterizerDiscardEnable为<span class="mcr">VK_TRUE</span>，则在栅格化阶段前丢弃图元，这意味着不会执行片段着色器，不向图像附件输出新的数值。丢弃图元的意义在于仅使用着色器的其他作用，比如在几何或细分求值着色器中将顶点数据写入storage buffer。
+        </p>
+    </li>
+    <li>
+        <p>
+            深度偏移为：depthBiasConstantFactor*r+depthBiasSlopeFactor*m，其中r是深度缓冲中的最小可表示正数，数值取决于深度缓冲的格式，m为片段NDC坐标的z值在x和y方向的偏导数的较大值。
+        </p>
+    </li>
+    <li>
+        <p>
+            当depthBiasClamp非0时，对depthBiasConstantFactor和depthBiasSlopeFactor的合计效果进行钳制：若depthBiasClamp大于0，则合计的偏移值不超过depthBiasClamp；若depthBiasClamp小于0，则合计的偏移值不小于depthBiasClamp。
+        </p>
+    </li>
+</ul>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap27.html#VkPolygonMode">VkPolygonMode</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_POLYGON_MODE_FILL  </span>表示绘制实心三角形</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_POLYGON_MODE_LINE  </span>表示绘制三角形的线框</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_POLYGON_MODE_POINT </span>表示绘制三角形的顶点</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            虽然<span class="type">VkPolygonMode</span>用了“polygon”这个词，但无论你绘制的是TRIANGLE_LIST还是TRIANGLE_STRIP，绘制线框时，会绘制位于多边形内部的三角形的边。
+        </p>
+    </li>
+</ul>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap27.html#VkCullModeFlagBits">VkCullModeFlagBits</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_CULL_MODE_NONE           </span>表示无面剔除</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_CULL_MODE_FRONT_BIT      </span>表示剔除正面</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_CULL_MODE_BACK_BIT       </span>表示剔除背面</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_CULL_MODE_FRONT_AND_BACK </span>表示剔除正面和背面，相当于<span class="enum">VK_CULL_MODE_FRONT_BIT</span> | <span class="enum">VK_CULL_MODE_BACK_BIT</span></p></td>
+        </tr>
+    </tbody>
+</table></section>
+<section id="vkpipelinemultisamplestatecreateinfo">
+<h4>VkPipelineMultisampleStateCreateInfo<a class="headerlink" href="#vkpipelinemultisamplestatecreateinfo" title="Permalink to this heading"></a></h4>
+<p>
+    多重采样状态，顾名思义。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap27.html#VkPipelineMultisampleStateCreateInfo">VkPipelineMultisampleStateCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkPipelineMultisampleStateCreateFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkSampleCountFlagBits</span> rasterizationSamples</p></td>
+            <td><p>指定每个像素的采样点个数，必须是2的次数，可用值从<span class="enum">VK_SAMPLE_COUNT_1_BIT</span>到<span class="enum">VK_SAMPLE_COUNT_64_BIT</span></p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkBool32</span> sampleShadingEnable</p></td>
+            <td><p>指定是否开启sample shading，见后文</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">float</span> minSampleShading</p></td>
+            <td><p>最小sample shading系数，在[0, 1]范围内</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkSampleMask</span>* pSampleMask</p></td>
+            <td><p>见后文</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkBool32</span> alphaToCoverageEnable</p></td>
+            <td><p>见后文</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkBool32</span> alphaToOneEnable</p></td>
+            <td><p>见后文</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    当rasterizationSamples为<span class="enum">VK_SAMPLE_COUNT_1_BIT</span>以外的值时即表示开启多重采样（MSAA）。
+    <br>
+    记最大采样点个数为N，开启多重采样后，空间开销为原先的(1+N)倍，这个1来源于解析附件，无多重采样时不需要解析。
+    <br>
+    不开启sample shading的情况下，只会在物体边缘进行多重采样，物体内部只采样一次。
+    <br>
+    开启sample shading可以确保每个像素的采样点不少于一定数值，最少的采样点个数为minSampleShading*最大采样点个数，minSampleShading为1时，即超采样（SSAA）。
+</p>
+<p>
+    <span class="type">VkSampleMask</span>实质上是<span class="type">uint32_t</span>别名。
+    <br>
+    Sample mask的比特与采样点一一对应，因为至多64个采样点，pSampleMask所指数组中至多两个元素（两个<span class="type">uint32_t</span>）。
+    <br>
+    在多重采样中，栅格化时会计算采样点是否被图元覆盖，得到初始的coverage mask（覆盖遮罩）。在4xMSAA中，若四个采样点皆被图元覆盖，coverage mask为0b1111。
+    <br>
+    此处指定的sample mask会与coverage mask做位与，这一步叫做sample mask test，发生在栅格化阶段，片段着色器中gl_SampleMaskIn的数值即此处位与的结果。显然，若在此处把对应某个采样点对应的比特指定为0，就意味着直接把该采样点一概算作不被覆盖了。
+    <br>
+    在执行片段着色器前，无论是否经历sample mask test，若一个片段（像素，或多重采样中的多个采样点）的所有采样点coverage mask为0，则该片段被丢弃，不进行后续其它操作。
+</p>
+<div class="admonition note">
+    <p class="admonition-title">Note</p>
+    <p>
+        关于单个采样点的coverage mask的相应bit为0时，是否还会执行其片段着色器：
+        <br>
+        Vulkan官方标准中，对于各类测试不通过时的结果，采用的说法是“coverage为0”，在OpenGL的官方wiki上，采样的说法多为“discard（丢弃）”，显然Vulkan官方标准采用了较为保守的说法。
+        <br>
+        上述两个概念通常不需要区分，除非你想要使用着色器的副作用，比如写入storage缓冲区。
+        <br>
+        你可以用如下GLSL代码进行验证，count_covered为count_notCovered为storage缓冲区中的变量，写入结束后在CPU侧读取其数值，若对不被覆盖的采样点不执行片段着色器，那么count_notCovered应该总是0：
+        <br>
+        <code><span class="kw">if</span> (gl_SampleMaskIn[0] == 1 << gl_SampleID) <span class="fn">atomicAdd</span>(count_covered, 1); <span class="kw">else</span> <span class="fn">atomicAdd</span>(count_notCovered, 1);</code>
+        <br>
+        ↑你可以顺带验证一下gl_SampleMaskIn[0]的数值。
+    </p>
+</div>
+<p>
+    若alphaToCoverageEnable为<span class="mcr">VK_TRUE</span>，则会在执行片段着色器后，根据输出的各个采样点的透明度，生成一个遮罩与片段着色器后的coverage mask（应用可能发生的sample mask test及片段着色器中可能输出的gl_SampleMask后得到的结果）做位与，透明度到遮罩的转换是实现特定的，标准仅规定透明度为0时生成的遮罩为0。
+    <br>
+    若alphaToOneEnable为<span class="mcr">VK_TRUE</span>，则会在执行片段着色器后，无视输出颜色的透明度，使得片段着色器输出到0号索引的色值的透明度为1（关于输出到0号索引，见<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#dual-source-blending">Dual-source Blending</a>），考虑到像素的颜色是采样点的颜色应用遮罩后取平均，这可以在alphaToCoverageEnable为<span class="mcr">VK_TRUE</span>时使像素的透明度不至于过低。
+    <br>
+    注意，虽然名称很相似，alphaToCoverageEnable影响coverage mask，而alphaToOneEnable影响透明度。Alpha to coverage的效果在alpha to one前应用，即alpha to one使得采样点透明度为1并不影响coverage mask。
+</p>
+<div class="admonition note">
+    <p class="admonition-title">Note</p>
+    <p>
+        关于alpha to coverage的效果：
+        <br>
+        即便你给所有采样点一个相同的透明度，且不做sample mask test，若透明度不是<code>整数/采样点个数</code>，最终呈现的图像中，各个像素点可能是不同的透明度。就我的Nvidia 1060 Max-Q显卡而言，图像整体算是均匀的，但细看会察觉到“棋盘格”或“网格”，类似“半调图案”的效果。
+    </p>
+</div></section>
+<section id="vkpipelinedepthstencilstatecreateinfo">
+<h4>VkPipelineDepthStencilStateCreateInfo<a class="headerlink" href="#vkpipelinedepthstencilstatecreateinfo" title="Permalink to this heading"></a></h4>
+<p>
+    深度模板状态指定是否开启深度和模板测试，以及如何比较深度和模板值。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap28.html#VkPipelineDepthStencilStateCreateInfo">VkPipelineDepthStencilStateCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkPipelineDepthStencilStateCreateFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkBool32</span> depthTestEnable</p></td>
+            <td><p>是否开启深度测试</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkBool32</span> depthWriteEnable</p></td>
+            <td><p>开启深度测试时，是否在测试通过后写入深度</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkCompareOp</span> depthCompareOp</p></td>
+            <td><p>深度值的比较方式</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkBool32</span> depthBoundsTestEnable</p></td>
+            <td><p>是否开启depth bounds test</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkBool32</span> stencilTestEnable</p></td>
+            <td><p>是否开启模板测试</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkStencilOpState</span> front</p></td>
+            <td><p>对正面及点线片元做测试时的模板状态</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkStencilOpState</span> back</p></td>
+            <td><p>对背面片元做测试时的模板状态</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">float</span> minDepthBounds</p></td>
+            <td><p>开启depth bounds test时，深度边界的最小值</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">float</span> maxDepthBounds</p></td>
+            <td><p>开启depth bounds test时，深度边界的最大值</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap28.html#VkStencilOpState">VkStencilOpState</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStencilOp</span> failOp</p></td>
+            <td><p>模板测试失败时的选项</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkStencilOp</span> passOp</p></td>
+            <td><p>模板测试通过时的选项</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkStencilOp</span> depthFailOp</p></td>
+            <td><p>模板测试通过但深度测试失败时的选项</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkCompareOp</span> compareOp</p></td>
+            <td><p>模板值的比较方式</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> compareMask</p></td>
+            <td><p>比较模板值前，该遮罩与引用的模板值做位与，将结果用于比较</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> writeMask</p></td>
+            <td><p>写入模板值时，将引用的模板值覆盖到模板缓冲中由此遮罩指定的相应比特位</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> refernece</p></td>
+            <td><p>引用的模板值，见后文</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap13.html#VkCompareOp">VkCompareOp</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_COMPARE_OP_NEVER            </span>表示无论深度值（或模板值，若语境为模板测试）如何，一定不通过测试</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_COMPARE_OP_LESS             </span>表示若新片段的深度值小于深度模板附件中已有的深度值时，通过深度测试</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_COMPARE_OP_EQUAL            </span>表示若新片段的深度值等于DS附件中已有的深度值时，通过深度测试</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_COMPARE_OP_LESS_OR_EQUAL    </span>表示若新深度值小于等于DS附件中已有的深度值时，通过深度测试</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_COMPARE_OP_GREATER          </span>表示若新深度值大于DS附件中已有的深度值时，通过深度测试</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_COMPARE_OP_NOT_EQUAL        </span>表示若新深度值不等于DS附件中已有的深度值时，通过深度测试</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_COMPARE_OP_GREATER_OR_EQUAL </span>表示若新深度值大于等于DS附件中已有的深度值时，通过深度测试</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_COMPARE_OP_ALWAYS           </span>表示无论深度值如何，一定通过深度测试</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    只有开启深度测试时即深度写入，且深度测试通过时，新片段的深度会被写入到深度缓冲。未通过深度测试的片段会被丢弃（对于多重采样的情况，Vulkan标准中的说法为使得采样点的coverage为0）。
+</p>
+<p>
+    Depth bounds test（深度边界测试）的测试方式是：若<strong>已在</strong>深度缓冲中的深度值在[minDepthBounds, maxDepthBounds]之内，执行对当前片段的模板和深度测试及片段着色。
+    <br>
+    注意，用于比较的不是新片段的深度值。这似乎很反直觉，该测试意义在于减少一些后续处理，比如在延迟渲染中，可以用这一方式限定光照距离。
+    <br>
+    若不使用VK_EXT_depth_range_unrestricted这一扩展，则minDepthBounds和maxDepthBounds的数值应该在[0, 1]之内。
+    <br>
+    minDepthBounds和maxDepthBounds也可以被动态地设置，见后文关于动态状态的说明。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap28.html#VkStencilOp">VkStencilOp</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_STENCIL_OP_KEEP                </span>表示不改变模板缓冲中原有的数值</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_STENCIL_OP_ZERO                </span>表示使用0作为写入值</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_STENCIL_OP_REPLACE             </span>表示使用reference作为写入值</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_STENCIL_OP_INCREMENT_AND_CLAMP </span>表示使用DS附件中原有数值+1作为写入值，并钳制到255</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_STENCIL_OP_DECREMENT_AND_CLAMP </span>表示使用DS附件中原有数值-1作为写入值，并钳制到0</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_STENCIL_OP_INVERT              </span>表示将DS附件中原有数值按位取反，以该数值为写入值</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_STENCIL_OP_INCREMENT_AND_WRAP  </span>表示使用DS附件中原有数值+1作为写入值，若原有数值为255，写入值为0</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_STENCIL_OP_DECREMENT_AND_WRAP  </span>表示使用DS附件中原有数值-1作为写入值，若原有数值为0，写入值为255</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    模板测试的测试方式是：
+    <br>
+    将模板缓冲中已有的数值Sa和引用值Sr（即reference）与compareMask作位与，得到Sa'和Sr'，根据compareOp作比较。
+    <br>
+    若模板测试通过，则继续做深度测试。根据模板测试是否通过及深度测试是否通过，从failOp、passOp、depthFailOp中选择如何生成写入值Sg。
+    <br>
+    最终，覆盖到DS附件中的数值为 (writeMask & Sg) | (~writeMask & Sa)。
+</p>
+<p>
+    关于深度测试和模板测试的实际使用，参见//TODO Ch8-2 深度和模板测试
+</p></section>
+<section id="vkpipelinecolorblendstatecreateinfo">
+<h4>VkPipelineColorBlendStateCreateInfo<a class="headerlink" href="#vkpipelinecolorblendstatecreateinfo" title="Permalink to this heading"></a></h4>
+<p>
+    混色状态，指定如何混色，或对颜色数值运用逻辑运算。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap29.html#VkPipelineColorBlendStateCreateInfo">VkPipelineColorBlendStateCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkPipelineColorBlendStateCreateFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkBool32</span> logicOpEnable</p></td>
+            <td><p>是否开启逻辑运算</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkLogicOp</span> logicOp</p></td>
+            <td><p>指定进行何种逻辑运算</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> attachmentCount</p></td>
+            <td><p>混色方式的数量</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkPipelineColorBlendAttachmentState</span>* pAttachments</p></td>
+            <td><p>指向<span class="type">VkPipelineColorBlendAttachmentState</span>的数组，用于为每个颜色附件指定混色方式</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">float</span> blendConstants[4]</p></td>
+            <td><p>如<span class="type">VkPipelineColorBlendAttachmentState</span>中的混色因子涉及到常量，在此按RGBA顺序指定</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap29.html#VkLogicOp">VkLogicOp</a> 的枚举值（记新生成片元的任一通道值为s，颜色附件中已有的对应通道值为d）</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_LOGIC_OP_CLEAR         </span>表示将结果数值设置为0</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_LOGIC_OP_SET           </span>表示结果数值的所有比特位皆为1</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_LOGIC_OP_COPY          </span>表示s</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_LOGIC_OP_NO_OP         </span>表示d</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_LOGIC_OP_COPY_INVERTED </span>表示!s</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_LOGIC_OP_INVERT        </span>表示!d</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_LOGIC_OP_AND           </span>表示s&d</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_LOGIC_OP_OR            </span>表示s|d</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_LOGIC_OP_XOR           </span>表示s^d</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_LOGIC_OP_NAND          </span>表示!(s&d)</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_LOGIC_OP_NOR           </span>表示!(s|d)</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_LOGIC_OP_EQUIVALENT    </span>表示!(s^d)</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_LOGIC_OP_AND_REVERSE   </span>表示s&!d</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_LOGIC_OP_AND_INVERTED  </span>表示!s&d</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_LOGIC_OP_OR_REVERSE    </span>表示s|!d</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_LOGIC_OP_OR_INVERTED   </span>表示!s|d</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    逻辑运算只能用于整数类型（SIGNED/UNSIGNED/NORMALIZED）的颜色附件，不能应用于浮点或SRGB类型。
+    <br>
+    要启用逻辑运算，除此之外还需事先在硬件特性中开启逻辑运算（将<span class="type">VkPhysicalDeviceFeatures</span>::logicOp设置为<span class="mcr">VK_TRUE</span>）。
+    <br>
+    开启逻辑运算时，无论<span class="type">VkPipelineColorBlendAttachmentState</span>::blendEnable是否为<span class="mcr">VK_TRUE</span>，一律关闭混色。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap29.html#VkPipelineColorBlendAttachmentState">VkPipelineColorBlendAttachmentState</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkBool32</span> blendEnable</p></td>
+            <td><p>是否开启混色</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkBlendFactor</span> srcColorBlendFactor</p></td>
+            <td><p>对新生成片元的RGB通道采用的混色因子</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkBlendFactor</span> dstColorBlendFactor</p></td>
+            <td><p>对颜色附件中已有的RGB通道采用的混色因子</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkBlendOp</span> colorBlendOp</p></td>
+            <td><p>对RGB通道的混色选项（运算方式）</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkBlendFactor</span> srcAlphaBlendFactor</p></td>
+            <td><p>对新生成片元的Alpha通道采用的混色因子</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkBlendFactor</span> dstAlphaBlendFactor</p></td>
+            <td><p>对颜色附件中已有的Alpha通道采用的混色因子</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkBlendOp</span> alphaBlendOp</p></td>
+            <td><p>对Alpha通道的混色选项（运算方式）</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkColorComponentFlags</span> colorWriteMask</p></td>
+            <td><p>指示是否向RGBA各通道写入数值的位遮罩，RGBA分别对应0b0001、0b0010、0b0100、0b1000</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            关闭混色时，新生成的色值会被直接覆写到颜色附件。
+        </p>
+    </li>
+    <li>
+        <p>
+            colorWriteMask的作用与是否开启混色无关。
+        </p>
+    </li>
+</ul>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap29.html#VkBlendOp">VkBlendOp</a> 的枚举值（记新生成片元的任一通道值为s，颜色附件中已有的对应通道值为d，混色因子分别为fs和fd）</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BLEND_OP_ADD              </span>表示s*fs+d*fd</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BLEND_OP_SUBTRACT         </span>表示s*fs-d*fd</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BLEND_OP_REVERSE_SUBTRACT </span>表示d*fd-s*fs</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BLEND_OP_MIN              </span>对s和d中的各通道选取较小值，该选项无需混色因子</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BLEND_OP_MAX              </span>对s和d中的各通道选取较大值，该选项无需混色因子</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap29.html#VkBlendFactor">VkBlendFactor</a> 的枚举值（记新生成片元的颜色值为s.rgba，另一混色来源的颜色值为s1.rgba，颜色附件中已有的颜色值为d.rgba）</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BLEND_FACTOR_ZERO                     </span>表示对任意通道应用0</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BLEND_FACTOR_ONE                      </span>表示对任意通道应用1</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BLEND_FACTOR_SRC_COLOR                </span>表示对rgba四通道分别应用s.rgba</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR      </span>表示对rgba四通道分别应用1-s.rgba</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BLEND_FACTOR_DST_COLOR                </span>表示对rgba四通道分别应用d.rgba</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR      </span>表示对rgba四通道分别应用1-d.rgba</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BLEND_FACTOR_SRC_ALPHA                </span>表示对任意通道应用s.a</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA      </span>表示对任意通道应用1-s.a</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BLEND_FACTOR_DST_ALPHA                </span>表示对任意通道应用d.a</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA      </span>表示对任意通道应用1-d.a</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BLEND_FACTOR_CONSTANT_COLOR           </span>表示对rgba四通道分别应用blendConstants.rgba</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_COLOR </span>表示对rgba四通道分别应用1-blendConstants.rgba</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BLEND_FACTOR_CONSTANT_ALPHA           </span>表示对任意通道应用blendConstants.a</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_ALPHA </span>表示对任意通道应用1-blendConstants.a</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BLEND_FACTOR_SRC_ALPHA_SATURATE       </span>表示对rgb通道应用min(s.a, 1-d.a)，对a通道使用1</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BLEND_FACTOR_SRC1_COLOR               </span>表示对rgba四通道分别应用s1.rgba</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BLEND_FACTOR_ONE_MINUS_SRC1_COLOR     </span>表示对rgba四通道分别应用1-s1.rgba</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BLEND_FACTOR_SRC1_ALPHA               </span>表示对任意通道应用s1.a</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA     </span>表示对任意通道应用1-s1.a</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    关于另一混色来源，参见<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#dual-source-blending">Dual-source Blending</a>。
+</p>
+<p>
+    关于混色方式的实际使用案例，参见//TODO Ch8-1 预乘透明度
+</p></section>
+<section id="vkpipelinedynamicstatecreateinfo">
+<h4>VkPipelineDynamicStateCreateInfo<a class="headerlink" href="#vkpipelinedynamicstatecreateinfo" title="Permalink to this heading"></a></h4>
+<p>
+    动态状态是可以在录制命令缓冲区时指定，而不必在创建管线时决定的状态。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap10.html#VkPipelineDynamicStateCreateInfo">VkPipelineDynamicStateCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkPipelineDynamicStateCreateFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> dynamicStateCount</p></td>
+            <td><p>指定动态状态的个数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkDynamicState</span>* pDynamicStates</p></td>
+            <td><p>指向<span class="type">VkDynamicState</span>的数组，用于指定哪些状态将会是动态状态</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap10.html#VkDynamicState">VkDynamicState</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_DYNAMIC_STATE_VIEWPORT                    </span>对应视口</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_DYNAMIC_STATE_SCISSOR                     </span>对应剪裁范围</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_DYNAMIC_STATE_LINE_WIDTH                  </span>对应线宽</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_DYNAMIC_STATE_DEPTH_BIAS                  </span>对应深度偏移常量系数、深度偏移钳制、深度偏移坡度系数</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_DYNAMIC_STATE_BLEND_CONSTANTS             </span>对应混色常量</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_DYNAMIC_STATE_DEPTH_BOUNDS                </span>对应深度钳制范围</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK        </span>对应模板测试中的compareMask</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_DYNAMIC_STATE_STENCIL_WRITE_MASK          </span>对应模板测试中的writeMask</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_DYNAMIC_STATE_STENCIL_REFERENCE           </span>对应模板测试中的引用值</p></td>
+        </tr>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_DYNAMIC_STATE_CULL_MODE                   </span>对应剔除模式</p></td>
+        </tr>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_DYNAMIC_STATE_FRONT_FACE                  </span>对应正面的顶点时针顺序</p></td>
+        </tr>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_DYNAMIC_STATE_PRIMITIVE_TOPOLOGY          </span>对应图元拓扑类型</p></td>
+        </tr>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_DYNAMIC_STATE_VIEWPORT_WITH_COUNT         </span>对应视口和视口的数量</p></td>
+        </tr>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_DYNAMIC_STATE_SCISSOR_WITH_COUNT          </span>对应剪裁范围和剪裁范围的数量</p></td>
+        </tr>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_DYNAMIC_STATE_VERTEX_INPUT_BINDING_STRIDE </span>对应顶点输入绑定描述中，每个顶点数据的步长间隔</p></td>
+        </tr>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_DYNAMIC_STATE_DEPTH_TEST_ENABLE           </span>对应是否开启深度测试</p></td>
+        </tr>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_DYNAMIC_STATE_DEPTH_WRITE_ENABLE          </span>对应是否开启深度写入</p></td>
+        </tr>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_DYNAMIC_STATE_DEPTH_COMPARE_OP            </span>对应深度的比较方式</p></td>
+        </tr>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_DYNAMIC_STATE_DEPTH_BOUNDS_TEST_ENABLE    </span>对应是否开启深度边界测试</p></td>
+        </tr>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_DYNAMIC_STATE_STENCIL_TEST_ENABLE         </span>对应是否开启模板测试</p></td>
+        </tr>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_DYNAMIC_STATE_STENCIL_OP                  </span>对应模板测试的faliOp、passOp、depthFailOp、compareOp</p></td>
+        </tr>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_DYNAMIC_STATE_RASTERIZER_DISCARD_ENABLE   </span>对应是否在栅格化阶段前丢弃图元</p></td>
+        </tr>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_DYNAMIC_STATE_DEPTH_BIAS_ENABLE           </span>对应是否开启深度偏移</p></td>
+        </tr>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_DYNAMIC_STATE_PRIMITIVE_RESTART_ENABLE    </span>对应是否允许重启图元</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            指定了动态状态后，在<span class="type">VkGraphicsPipelineCreateInfo</span>中其他创建信息结构体中的相应参数会被无视。
+        </p>
+    </li>
+    <li>
+        <p>
+            同在创建管线时指定的模板测试参数不同，<span class="enum">VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK</span>、<span class="enum">VK_DYNAMIC_STATE_STENCIL_WRITE_MASK</span>、<span class="enum">VK_DYNAMIC_STATE_STENCIL_REFERENCE</span>、<span class="enum">VK_DYNAMIC_STATE_STENCIL_OP</span>等动态状态指定的模板参数有两套，相关命令函数中具有类型为<a href="https://renderdoc.org/vkspec_chunked/chap28.html#VkStencilFaceFlagBits">VkStencilFaceFlagBits</a>的参数，使得你能为三角形正面和反面分别指定模板测试参数。
+        </p>
+    </li>
+</ul></section>
+<section id="graphicspipelinecreateinfopack">
+<h4>封装为graphicsPipelineCreateInfoPack类<a class="headerlink" href="#graphicspipelinecreateinfopack" title="Permalink to this heading"></a></h4>
+<p>
+    向<span class="path">VKBase+.h</span>（如不存在则创建，并在其中包含<span class="path">VKBase.h</span>），vulkan命名空间中添加以下代码：
+</p>
+<pre class="code">
+<span class="kw">struct</span> <span class="type">graphicsPipelineCreateInfoPack</span> {
+    <span class="type">VkGraphicsPipelineCreateInfo</span> createInfo =
+    { <span class="enum">VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO</span> };
+    std::<span class="type">vector</span>&lt;<span class="type">VkPipelineShaderStageCreateInfo</span>&gt; shaderStages;
+    <span class="cmt">//Vertex Input</span>
+    <span class="type">VkPipelineVertexInputStateCreateInfo</span> vertexInputStateCi =
+    { <span class="enum">VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO</span> };
+    std::<span class="type">vector</span>&lt;<span class="type">VkVertexInputBindingDescription</span>&gt; vertexInputBindings;
+    std::<span class="type">vector</span>&lt;<span class="type">VkVertexInputAttributeDescription</span>&gt; vertexInputAttributes;
+    <span class="cmt">//Input Assembly</span>
+    <span class="type">VkPipelineInputAssemblyStateCreateInfo</span> inputAssemblyStateCi =
+    { <span class="enum">VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO</span> };
+    <span class="cmt">//Tessellation</span>
+    <span class="type">VkPipelineTessellationStateCreateInfo</span> tessellationStateCi =
+    { <span class="enum">VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO</span> };
+    <span class="cmt">//Viewport</span>
+    <span class="type">VkPipelineViewportStateCreateInfo</span> viewportStateCi =
+    { <span class="enum">VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO</span> };
+    std::<span class="type">vector</span>&lt;<span class="type">VkViewport</span>&gt; viewports;
+    std::<span class="type">vector</span>&lt;<span class="type">VkRect2D</span>&gt; scissors;
+    <span class="type">uint32_t</span> dynamicViewportCount = 1;<span class="cmt">//动态视口/剪裁不会用到上述的vector，因此动态视口和剪裁的个数向这俩变量手动指定</span>
+    <span class="type">uint32_t</span> dynamicScissorCount = 1;
+    <span class="cmt">//Rasterization</span>
+    <span class="type">VkPipelineRasterizationStateCreateInfo</span> rasterizationStateCi =
+    { <span class="enum">VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO</span> };
+    <span class="cmt">//Multisample</span>
+    <span class="type">VkPipelineMultisampleStateCreateInfo</span> multisampleStateCi =
+    { <span class="enum">VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO</span> };
+    <span class="cmt">//Depth & Stencil</span>
+    <span class="type">VkPipelineDepthStencilStateCreateInfo</span> depthStencilStateCi =
+    { <span class="enum">VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO</span> };
+    <span class="cmt">//Color Blend</span>
+    <span class="type">VkPipelineColorBlendStateCreateInfo</span> colorBlendStateCi =
+    { <span class="enum">VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO</span> };
+    std::<span class="type">vector</span>&lt;<span class="type">VkPipelineColorBlendAttachmentState</span>&gt; colorBlendAttachmentStates;
+    <span class="cmt">//Dynamic</span>
+    <span class="type">VkPipelineDynamicStateCreateInfo</span> dynamicStateCi =
+    { <span class="enum">VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO</span> };
+    std::<span class="type">vector</span>&lt;<span class="type">VkDynamicState</span>&gt; dynamicStates;
+    <span class="cmt">//--------------------</span>
+    <span class="fn">graphicsPipelineCreateInfoPack</span>() {
+        <span class="fn">SetCreateInfos</span>();
+        <span class="cmt">//若非派生管线，createInfo.basePipelineIndex不得为0，设置为-1</span>
+        createInfo.basePipelineIndex = -1;
+    }
+    <span class="cmt">//移动构造器，所有指针都要重新赋值</span>
+    <span class="fn">graphicsPipelineCreateInfoPack</span>(<span class="kw">const</span> <span class="fn">graphicsPipelineCreateInfoPack</span>&amp; other) <span class="kw">noexcept</span> {
+        createInfo = other.createInfo;
+        <span class="fn">SetCreateInfos</span>();
+
+        vertexInputStateCi = other.vertexInputStateCi;
+        inputAssemblyStateCi = other.inputAssemblyStateCi;
+        tessellationStateCi = other.tessellationStateCi;
+        viewportStateCi = other.viewportStateCi;
+        rasterizationStateCi = other.rasterizationStateCi;
+        multisampleStateCi = other.multisampleStateCi;
+        depthStencilStateCi = other.depthStencilStateCi;
+        colorBlendStateCi = other.colorBlendStateCi;
+        dynamicStateCi = other.dynamicStateCi;
+
+        shaderStages = other.shaderStages;
+        vertexInputBindings = other.vertexInputBindings;
+        vertexInputAttributes = other.vertexInputAttributes;
+        viewports = other.viewports;
+        scissors = other.scissors;
+        colorBlendAttachmentStates = other.colorBlendAttachmentStates;
+        dynamicStates = other.dynamicStates;
+        <span class="fn">UpdateAllArrayAddresses</span>();
+    }
+    <span class="cmt">//Getter，这里我没用const修饰符</span>
+    <span class="kw">operator</span> <span class="type">VkGraphicsPipelineCreateInfo</span>&amp; () { <span class="kw">return</span> createInfo; }
+    <span class="cmt">//Non-const Function</span>
+    <span class="cmt">//该函数用于将各个vector中数据的地址赋值给各个创建信息中相应成员，并相应改变各个count</span>
+    <span class="kw">void</span> <span class="fn">UpdateAllArrays</span>() {
+        createInfo.stageCount = shaderStages.<span class="fn">size</span>();
+        vertexInputStateCi.vertexBindingDescriptionCount = vertexInputBindings.<span class="fn">size</span>();
+        vertexInputStateCi.vertexAttributeDescriptionCount = vertexInputAttributes.<span class="fn">size</span>();
+        viewportStateCi.viewportCount = viewports.<span class="fn">size</span>() ? <span class="type">uint32_t</span>(viewports.<span class="fn">size</span>()) : dynamicViewportCount;
+        viewportStateCi.scissorCount = scissors.<span class="fn">size</span>() ? <span class="type">uint32_t</span>(scissors.<span class="fn">size</span>()) : dynamicScissorCount;
+        colorBlendStateCi.attachmentCount = colorBlendAttachmentStates.<span class="fn">size</span>();
+        dynamicStateCi.dynamicStateCount = dynamicStates.<span class="fn">size</span>();
+        <span class="fn">UpdateAllArrayAddresses</span>();
+    }
+<span class="kw">private</span>:
+    <span class="cmt">//该函数用于将创建信息的地址赋值给basePipelineIndex中相应成员</span>
+    <span class="kw">void</span> <span class="fn">SetCreateInfos</span>() {
+        createInfo.pVertexInputState = &amp;vertexInputStateCi;
+        createInfo.pInputAssemblyState = &amp;inputAssemblyStateCi;
+        createInfo.pTessellationState = &amp;tessellationStateCi;
+        createInfo.pViewportState = &amp;viewportStateCi;
+        createInfo.pRasterizationState = &amp;rasterizationStateCi;
+        createInfo.pMultisampleState = &amp;multisampleStateCi;
+        createInfo.pDepthStencilState = &amp;depthStencilStateCi;
+        createInfo.pColorBlendState = &amp;colorBlendStateCi;
+        createInfo.pDynamicState = &amp;dynamicStateCi;
+    }
+    <span class="cmt">//该函数用于将各个vector中数据的地址赋值给各个创建信息中相应成员，但不改变各个count</span>
+    <span class="kw">void</span> <span class="fn">UpdateAllArrayAddresses</span>() {
+        createInfo.pStages = shaderStages.<span class="fn">data</span>();
+        vertexInputStateCi.pVertexBindingDescriptions = vertexInputBindings.<span class="fn">data</span>();
+        vertexInputStateCi.pVertexAttributeDescriptions = vertexInputAttributes.<span class="fn">data</span>();
+        viewportStateCi.pViewports = viewports.<span class="fn">data</span>();
+        viewportStateCi.pScissors = scissors.<span class="fn">data</span>();
+        colorBlendStateCi.pAttachments = colorBlendAttachmentStates.<span class="fn">data</span>();
+        dynamicStateCi.pDynamicStates = dynamicStates.<span class="fn">data</span>();
+    }
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            由于所有创建信息结构体都是没有构造函数的聚合体，花括号初始化器列表中未提及的成员变量被零初始化。
+        </p>
+    </li>
+</ul></section>
+</section>
+<section id="id3">
+<h3>创建计算管线<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap10.html#vkCreateComputePipelines">vkCreateComputePipelines</a>(...)创建图形管线：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap10.html#vkCreateComputePipelines">vkCreateComputePipelines</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkPipelineCache</span> pipelineCache</p></td>
+            <td><p>若非<span class="macro">VK_NULL_HANDLE</span>，则提供管线的缓存信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> createInfoCount</p></td>
+            <td><p>计算管线的创建信息的个数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkComputePipelineCreateInfo</span>* pCreateInfos</p></td>
+            <td><p>指向<span class="type">VkComputePipelineCreateInfo</span>的数组，提供一个或多个管线的创建信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span>* pAllocator</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkPipeline</span>* pPipelines</p></td>
+            <td><p>若执行成功，将计算管线的handle写入pPipelines所指数组</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap10.html#VkComputePipelineCreateInfo">VkComputePipelineCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkPipelineCreateFlags</span> flags</p></td>
+            <td><p>同<a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html#vkgraphicspipelinecreateinfo">VkGraphicsPipelineCreateInfo</a>一段中的说明</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkPipelineShaderStageCreateInfo</span> stage</p></td>
+            <td><p>提供单个计算着色器阶段的创建信息</a></p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkPipelineLayout</span> pipelineLayout</p></td>
+            <td><p>管线布局的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkPipeline</span> basePipelineHandle</p></td>
+            <td><p>如果该管线从一个已经创建了的管线衍生而来，提供已创建管线的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">int32_t</span> basePipelineIndex</p></td>
+            <td><p>同<a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html#vkgraphicspipelinecreateinfo">VkGraphicsPipelineCreateInfo</a>一段中的说明</p></td>
+        </tr>
+    </tbody>
+</table></section>
+<section id="id4">
+<h3>封装为pipeline类<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<p>
+    向<span class="path">VKBase.h</span>，vulkan命名空间中添加以下代码：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">pipeline</span> {
+    <span class="type">VkPipeline</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
+<span class="kw">public</span>:
+    <span class="fn">pipeline</span>() = <span class="kw">default</span>;
+    <span class="fn">pipeline</span>(<span class="type">VkGraphicsPipelineCreateInfo</span>&amp; createInfo) {
+        <span class="fn">Create</span>(createInfo);
+    }
+    <span class="fn">pipeline</span>(<span class="type">VkComputePipelineCreateInfo</span>&amp; createInfo) {
+        <span class="fn">Create</span>(createInfo);
+    }
+    <span class="fn">pipeline</span>(<span class="type">pipeline</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    ~<span class="fn">pipeline</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyPipeline</span>); }
+    <span class="cmt">//Getter</span>
+    <span class="mcr">DefineHandleTypeOperator</span>;
+    <span class="mcr">DefineAddressFunction</span>;
+    <span class="cmt">//Non-const Function</span>
+    <span class="type">result_t</span> Create(VkGraphicsPipelineCreateInfo&amp; createInfo) {
+        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateGraphicsPipelines</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), <span class="mcr">VK_NULL_HANDLE</span>, 1, &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ pipeline ] ERROR\nFailed to create a graphics pipeline!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="type">result_t</span> Create(VkComputePipelineCreateInfo&amp; createInfo) {
+        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateComputePipelines</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), <span class="mcr">VK_NULL_HANDLE</span>, 1, &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ pipeline ] ERROR\nFailed to create a compute pipeline!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+};
+</pre></section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-left" title="Ch3-2 图像与缓冲区" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html" class="btn btn-neutral float-right" title="Ch3-4 渲染通道和帧缓冲" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

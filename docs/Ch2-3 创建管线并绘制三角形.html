@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch2-3 创建管线并绘制三角形 &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ch3-1 同步原语" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html" />
+    <link rel="prev" title="Ch2-2 创建渲染通道和帧缓冲" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch2-3 创建管线并绘制三角形</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">书写着色器</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">书写一个最简单的顶点着色器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">书写一个最简单的片段着色器</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">创建着色器模组</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">创建管线布局</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">创建管线</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">绘制三角形</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id8">绑定管线</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">绘制</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch2-3 创建管线并绘制三角形</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch2-3">
+<h1>Ch2-3 创建管线并绘制三角形<a class="headerlink" href="#ch2-3" title="Permalink to this heading"></a></h1>
+<p>
+    首先在<span class="path">main.cpp</span>中定义下列变量和函数：
+</p>
+<pre class="code">
+<span class="kw">using namespace</span> vulkan;<span class="cmt">//上一节中在main.cpp中全局范围内使用了命名空间</span>
+
+<span class="type">pipelineLayout</span> pipelineLayout_triangle;<span class="cmt">//管线布局</span>
+<span class="type">pipeline</span> pipeline_triangle;<span class="cmt">//管线</span>
+<span class="cmt">//该函数调用easyVulkan::CreateRpwf_Screen()并存储返回的引用到静态变量，避免重复调用easyVulkan::CreateRpwf_Screen()</span>
+<span class="kw">const auto</span>&amp; <span class="fn">RenderPassAndFramebuffers</span>() {
+    <span class="kw">static const auto</span>&amp; rpwf_screen = easyVulkan::<span class="fn">CreateRpwf_Screen</span>();
+    <span class="kw">return</span> rpwf_screen;
+}
+<span class="cmt">//该函数用于创建管线布局</span>
+<span class="kw">void</span> <span class="fn">CreateLayout</span>() {
+    <span class="cmt">/*待后续填充*/</span>
+}
+<span class="cmt">//该函数用于创建管线</span>
+<span class="kw">void</span> <span class="fn">CreatePipeline</span>() {
+    <span class="cmt">/*待后续填充*/</span>
+}
+</pre><section id="id1">
+<h2>书写着色器<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>
+    参见<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id1">Ch4-1 着色器模组</a>，我在该节中具体叙述何为着色器模组，并对它进行了简单封装，请先阅览该节并完成封装。
+</p>
+<p>
+    在项目目录下新建<span class="path">shader</span>文件夹，在其中创建文件<span class="path">FirstTriangle.vert.shader</span>和<span class="path">FirstTriangle.frag.shader</span>。
+</p><section id="id2">
+<h3>书写一个最简单的顶点着色器<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<p>
+    用Visual Studio或其他文本编辑器打开<span class="path">FirstTriangle.vert.shader</span>，一上来首先在着色器的开头声明GLSL版本和着色器类型，并定义主函数。
+</p>
+<pre class="code">
+<span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(vertex)
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    <span class="cmt">/*待后续填充*/</span>
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            涉及到的语法：<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id7">版本声明</a>、<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id8">接入点函数</a>、<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id5">预编译指令表示着色器类型</a>
+        </p>
+    </li>
+</ul>
+<p>
+    如何用最简单的方式绘制一个纯色三角形？只要画三角形，不需要考虑别的，那么通过写死的三个顶点坐标来绘制当然最省事。
+</p>
+<pre class="code">
+<span class="pragma">#version</span> 450
+<span class="pragma">#pragma shader_stage</span>(vertex)
+
+<span class="type">vec2</span> positions[3] = {
+    {    0, -.5f },
+    { -.5f,  .5f },
+    {  .5f,  .5f }
+};
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    <span class="cmt">/*待填充*/</span>
+}
+</pre>
+<p>
+    已经写好了三个顶点的NDC坐标数据，接着只需按顶点的索引访问相应数据，然后输出到gl_Position了：
+</p>
+<pre class="code">
+<span class="pragma">#version</span> 450
+<span class="pragma">#pragma shader_stage</span>(vertex)
+
+<span class="type">vec2</span> positions[3] = {
+    {    0, -.5f },
+    { -.5f,  .5f },
+    {  .5f,  .5f }
+};
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    gl_Position = <span class="type">vec4</span>(positions[gl_VertexIndex], 0, 1);
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            关于gl_VertexIndex，参见<a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html#id1">顶点着色器的内置输入</a>。
+        </p>
+    </li>
+    <li>
+        <p>
+            gl_Position是顶点着色器的内置输出，代表用于生成图元的顶点坐标，无需声明即可使用。
+        </p>
+    </li>
+    <li>
+        <p>
+            2D绘制中，z分量无所谓，w分量应为1。
+        </p>
+    </li>
+</ul>
+<p>
+    于是一个最简单的顶点着色器就写好了，之后用<a href="https://renderdoc.org/vkspec_chunked/chap21.html#vkCmdDraw">vkCmdDraw</a>(...)绘制时，指定绘制3个顶点以构建三角形，首个顶点索引为0，那么上述着色器便会依次生成在NDC中坐标为<span class="type">vec4</span>(0, -0.5, 0, 1)、<span class="type">vec4</span>(-0.5, 0.5, 0, 1)、<span class="type">vec4</span>(0.5, 0.5, 0, 1)的三个顶点。
+</p>
+<p>
+    书写完着色器后，在<span class="path">shader</span>文件夹下打开控制台（文件浏览器的地址栏中直接输入cmd并回车即可），用以下控制台指令将GLSL着色器其编译到SPIR-V：
+</p>
+<pre class="code">
+glslc.exe路径 FirstTriangle.vert.shader -c
+</pre>
+<ul>
+    <li>
+        <p>
+            生成的文件会叫<span class="path">FirstTriangle.vert.spv</span>。
+        </p>
+    </li>
+    <li>
+        <p>
+            关于上述控制台语句的具体说明，参见<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#glslspir-v">从GLSL编译到SPIR-V</a>。
+        </p>
+    </li>
+</ul></section>
+<section id="id3">
+<h3>书写一个最简单的片段着色器<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<p>
+    打开<span class="path">FirstTriangle.frag.shader</span>，还是声明语言版本、着色器类型和主函数：
+</p>
+<pre class="code">
+<span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(fragment)
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    <span class="cmt">/*待后续填充*/</span>
+}
+</pre>
+<p>
+    接着要定义输出，既然是一个最简单的片段着色器，那么只需要输出像素的颜色到唯一的颜色附件即可：
+</p>
+<pre class="code">
+<span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(fragment)
+
+<span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec4</span> o_Color;
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    <span class="cmt">/*待后续填充*/</span>
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            涉及到的语法：<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id10">图形着色器中通用的输入输出声明方式</a>
+        </p>
+    </li>
+</ul>
+<p>
+    然后将三角形每个像素的颜色简单粗暴地指定为你喜欢的颜色，我使用<span class="type">vec4</span>(0, 0.5, 1, 1)，这是一半绿加全蓝不透明，看上去是一种蓝色。
+    <br>
+    如此一来，一个最简单的片段着色器也完成了：
+</p>
+<pre class="code">
+<span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(fragment)
+
+<span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec4</span> o_Color;
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    o_Color = <span class="type">vec4</span>(0, 0.5, 1, 1);
+}
+</pre>
+<p>
+    写完后编译，不做赘述。
+</p></section>
+</section>
+<section id="id4">
+<h2>创建着色器模组<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<p>
+    填充<span class="fn">CreatePipeline</span>()，从先前写的顶点和片段着色器，以函数内静态变量的形式创建着色器模组，以及它们对应的管线阶段创建信息：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">CreatePipeline</span>() {
+    <span class="kw">static</span> <span class="type">shaderModule</span> vert_triangle(<span class="str">&quot;shader/FirstTriangle.vert.spv&quot;</span>);
+    <span class="kw">static</span> <span class="type">shaderModule</span> frag_triangle(<span class="str">&quot;shader/FirstTriangle.frag.spv&quot;</span>);
+    <span class="kw">static</span> <span class="type">VkPipelineShaderStageCreateInfo</span> shaderStageCreateInfos_triangle[2] = {
+        vert_triangle.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>),
+        frag_triangle.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>)
+    };
+    <span class="cmt">/*待后续填充*/</span>
+}
+</pre></section>
+<section id="id5">
+<h2>创建管线布局<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<p>
+    参见<a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html#pipeline-layout">Ch3-3 管线布局和管线</a>，我在该节中具体叙述何为管线布局，并对它进行了简单封装，请先阅览该节并完成封装。
+    <br>
+    填充<span class="fn">CreatePipelineLayout</span>()，由于前述的着色器中没用到任何uniform缓冲区或push constant等可由CPU侧变更的常量，我们只需要创建一个没有任何描述符集，也没有任何push constant范围的管线布局即可：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">CreateLayout</span>() {
+    <span class="type">VkPipelineLayoutCreateInfo</span> pipelineLayoutCreateInfo{};
+    pipelineLayout_triangle.<span class="fn">Create</span>(pipelineLayoutCreateInfo);
+}
+</pre></section>
+<section id="id6">
+<h2>创建管线<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
+<p>
+    参见<a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html#pipeline">Ch3-3 管线布局和管线</a>，我在该节中具体叙述何为管线，以及涉及到的所有管线状态，内容很长，请先完成封装并了解以下内容：
+    1.<span class="type">VkGraphicsPipelineCreateInfo</span>有哪些成员
+    <br>
+    2.逐顶点和逐实例输入
+    <br>
+    3.图元拓扑类型
+    <br>
+    4.视口和剪裁范围
+    <br>
+    5.采样点个数
+    <br>
+    6.<span class="type">VkPipelineColorBlendAttachmentState</span>有哪些成员
+    <br>
+    你应当会创建一个新的头文件<span class="path">VKBase+.h</span>，这个文件会用来写一些常用但又不那么基础的对象的封装。你可以在主函数里包含它，或者将包含在<span class="path">EasyVulkan.hpp</span>中的<span class="path">VKBase.h</span>替换为<span class="path">VKBase+.h</span>。
+</p>
+<p>
+   继续填充<span class="fn">CreatePipeline</span>()，因为创建管线时，视口和剪裁范围与交换链图像大小相关，于是定义两个lambda，分别用来创建和销毁管线，以及用作创建和销毁交换链时的回调函数。
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">CreatePipeline</span>() {
+    <span class="kw">static</span> <span class="type">shaderModule</span> vert_triangle(<span class="str">&quot;shader/FirstTriangle.vert.spv&quot;</span>);
+    <span class="kw">static</span> <span class="type">shaderModule</span> frag_triangle(<span class="str">&quot;shader/FirstTriangle.frag.spv&quot;</span>);
+    <span class="kw">static</span> <span class="type">VkPipelineShaderStageCreateInfo</span> shaderStageCreateInfos_triangle[2] = {
+        vert_triangle.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>),
+        frag_triangle.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>)
+    };
+    <span class="kw">auto</span> Create = [] {
+        <span class="type">graphicsPipelineCreateInfoPack</span> pipelineCiPack;
+        <span class="cmt">/*待后续填充*/</span>
+        pipeline_triangle.<span class="fn">Create</span>(pipelineCiPack);
+    };
+    <span class="kw">auto</span> Destroy = [] {
+        pipeline_triangle.~<span class="fn">pipeline</span>();
+    };
+    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_CreateSwapchain</span>(Create);
+    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_DestroySwapchain</span>(Destroy);
+    <span class="cmt">//调用Create()以创建管线</span>
+    Create();
+}
+</pre>
+<p>
+    填写管线的创建信息，首先填写管线布局和渲染通道：
+</p>
+<pre class="code">
+<span class="kw">auto</span> Create = [] {
+    <span class="type">graphicsPipelineCreateInfoPack</span> pipelineCiPack;
+    pipelineCiPack.createInfo.layout = pipelineLayout_triangle;
+    pipelineCiPack.createInfo.renderPass = <span class="fn">RenderPassAndFramebuffers</span>().renderPass;
+    <span class="cmt">//子通道只有一个，所以pipelineCiPack.createInfo.renderPass使用默认值0</span>
+    <span class="cmt">/*待后续填充*/</span>
+    pipeline_triangle.<span class="fn">Create</span>(pipelineCiPack);
+};
+</pre>
+<p>
+    只绘制一个三角型，所以图元拓扑类型可为<span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST</span>或<span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP</span>或<span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN</span>：
+</p>
+<pre class="code">
+pipelineCiPack.inputAssemblyStateCi.topology = <span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP</span>;
+</pre>
+<p>
+    接着指定视口和剪裁范围，当然是填满屏幕：
+</p>
+<pre class="code">
+pipelineCiPack.viewports.<span class="fn">emplace_back</span>(0.f, 0.f, <span class="kw">float</span>(windowSize.width), <span class="kw">float</span>(windowSize.height), 0.f, 1.f);
+pipelineCiPack.scissors.<span class="fn">emplace_back</span>(<span class="type">VkOffset2D</span>{}, windowSize);
+</pre>
+<p>
+    不开多重采样，所以每个像素点采样一次：
+</p>
+<pre class="code">
+pipelineCiPack.multisampleStateCi.rasterizationSamples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>;
+</pre>
+<p>
+    不开启混色，只指定RGBA四通道的写入遮罩为全部写入：
+</p>
+<p>
+<pre class="code">
+pipelineCiPack.colorBlendAttachmentStates.<span class="fn">push_back</span>({ .colorWriteMask = 0b1111 });
+</pre>
+</p>
+<p>
+    由于之前的代码中，已经将管线阶段的创建信息定义为了函数内的静态变量，这里先通过<span class="fn">UpdateAllArrays()</span>更新所有涉及到的数组地址，然后手动指定可编程管线阶段的数量及其创建信息的地址：
+</p>
+<p>
+<pre class="code">
+pipelineCiPack.<span class="fn">UpdateAllArrays</span>();
+pipelineCiPack.createInfo.stageCount = 2;
+pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
+</pre>
+</p>
+<p>
+    因为这一节的目标只是画出三角形，其余参数暂且不管，保留默认值。
+    <br>
+    至此，整个<span class="fn">CreatePipeline</span>()如下：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">CreatePipeline</span>() {
+    <span class="kw">static</span> <span class="type">shaderModule</span> vert_triangle(<span class="str">&quot;shader/FirstTriangle.vert.spv&quot;</span>);
+    <span class="kw">static</span> <span class="type">shaderModule</span> frag_triangle(<span class="str">&quot;shader/FirstTriangle.frag.spv&quot;</span>);
+    <span class="kw">static</span> <span class="type">VkPipelineShaderStageCreateInfo</span> shaderStageCreateInfos_triangle[2] = {
+        vert_triangle.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>),
+        frag_triangle.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>)
+    };
+    <span class="kw">auto</span> Create = [] {
+        <span class="type">graphicsPipelineCreateInfoPack</span> pipelineCiPack;
+        pipelineCiPack.createInfo.layout = pipelineLayout_triangle;
+        pipelineCiPack.createInfo.renderPass = <span class="fn">RenderPassAndFramebuffers</span>().renderPass;
+        pipelineCiPack.inputAssemblyStateCi.topology = <span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP</span>;
+        pipelineCiPack.viewports.<span class="fn">emplace_back</span>(0.f, 0.f, <span class="kw">float</span>(windowSize.width), <span class="kw">float</span>(windowSize.height), 0.f, 1.f);
+        pipelineCiPack.scissors.<span class="fn">emplace_back</span>(<span class="type">VkOffset2D</span>{}, windowSize);
+        pipelineCiPack.multisampleStateCi.rasterizationSamples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>;
+        pipelineCiPack.colorBlendAttachmentStates.<span class="fn">push_back</span>({ .colorWriteMask = 0b1111 });
+        pipelineCiPack.<span class="fn">UpdateAllArrays</span>();
+        pipelineCiPack.createInfo.stageCount = 2;
+        pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
+        pipeline_triangle.<span class="fn">Create</span>(pipelineCiPack);
+    };
+    <span class="kw">auto</span> Destroy = [] {
+        pipeline_triangle.~<span class="fn">pipeline</span>();
+    };
+    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_CreateSwapchain</span>(Create);
+    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_DestroySwapchain</span>(Destroy);
+    Create();
+}
+</pre></section>
+<section id="id7">
+<h2>绘制三角形<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h2>
+<p>
+    首先将主函数更新为：
+</p>
+<pre class="code">
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
+        <span class="kw">return</span> -1;
+
+    <span class="cmt">/*变更*/</span><span class="kw">const auto</span>&amp; [renderPass, framebuffers] = <span class="fn">RenderPassAndFramebuffers</span>();
+    <span class="cmt">/*新增*/</span><span class="fn">CreateLayout</span>();
+    <span class="cmt">/*新增*/</span><span class="fn">CreatePipeline</span>();
+
+    <span class="type">fence</span> fence(<span class="kw">true</span>);
+    <span class="type">semaphore</span> semaphore_imageIsAvailable;
+    <span class="type">semaphore</span> semaphore_renderingIsOver;
+
+    <span class="type">commandBuffer</span> commandBuffer;
+    <span class="type">commandPool</span> commandPool(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>());
+    commandPool.<span class="type">AllocateBuffers</span>(commandBuffer);
+
+    <span class="type">VkClearValue</span> clearColor = { .color = { 1.f, 0.f, 0.f, 1.f } };<span class="cmt">//红色</span>
+
+    <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
+        <span class="fn">TitleFps</span>();
+
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+        <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
+
+        fence.<span class="fn">WaitAndReset</span>();
+
+        commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
+        renderPass.<span class="fn">CmdBegin</span>(commandBuffer, framebuffers[i], clearColor);
+        <span class="cmt">/*渲染命令，待填充*/</span>
+        renderPass.<span class="fn">CmdEnd</span>(commandBuffer);
+        commandBuffer.<span class="fn">End</span>();
+
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
+
+        <span class="fn">glfwPollEvents</span>();
+    }
+    <span class="fn">TerminateWindow</span>();
+    <span class="kw">return</span> 0;
+}
+</pre>
+<p>
+    绘制三角形需要两个命令，首先要在渲染通道中绑定管线，然后再使用绘制命令。
+</p><section id="id8">
+<h3>绑定管线<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap10.html#vkCmdBindPipeline">vkCmdBindPipeline</a>(...)绑定管线：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap8.html#vkCreateRenderPass">vkCreateRenderPass</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandBuffer</span> commandBuffer</p></td>
+            <td><p>命令缓冲区的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkPipelineBindPoint</span> pipelineBindPoint</p></td>
+            <td><p>指定管线的类型</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkPipeline</span> pipeline</p></td>
+            <td><p>要被绑定的管线的handle</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap10.html#VkPipelineBindPoint">VkPipelineBindPoint</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS </span>表示绑定图形管线</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_PIPELINE_BIND_POINT_COMPUTE  </span>表示绑定计算管线</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    用以下代码绑定先前创建的图形管线：
+</p>
+<pre class="code">
+<span class="fn">vkCmdBindPipeline</span>(commandBuffer_graphics, <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>, pipeline_triangle);
+</pre></section>
+<section id="id9">
+<h3>绘制<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<p>
+    <a href="https://renderdoc.org/vkspec_chunked/chap21.html#vkCmdDraw">vkCmdDraw</a>(...)是最基本的绘制命令，它适用于直接绘制（而不是从缓冲区中读取绘制参数）且不需要索引缓冲区（index buffer）的情况。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap21.html#vkCmdDraw">vkCmdDraw</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandBuffer</span> commandBuffer</p></td>
+            <td><p>命令缓冲区的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> vertexCount</p></td>
+            <td><p>要绘制的顶点个数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> instanceCount</p></td>
+            <td><p>要绘制的实例个数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> firstVertex</p></td>
+            <td><p>首个顶点的索引</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> firstInstance</p></td>
+            <td><p>首个实例的索引</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    用3个顶点绘制1个三角形，首个顶点和首个实例都是0（实例索引无所谓，考虑到前文中的顶点着色器并没有用到gl_InstanceVertex，那么其执行结果就与实例索引无关）。
+    <br>
+    最终，主函数变为：
+</p>
+<pre class="code">
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
+        <span class="kw">return</span> -1;
+
+    </span><span class="kw">const auto</span>&amp; [renderPass, framebuffers] = <span class="fn">RenderPassAndFramebuffers</span>();
+    </span><span class="fn">CreateLayout</span>();
+    </span><span class="fn">CreatePipeline</span>();
+
+    <span class="type">fence</span> fence(<span class="kw">true</span>);
+    <span class="type">semaphore</span> semaphore_imageIsAvailable;
+    <span class="type">semaphore</span> semaphore_renderingIsOver;
+
+    <span class="type">commandBuffer</span> commandBuffer;
+    <span class="type">commandPool</span> commandPool(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>());
+    commandPool.<span class="type">AllocateBuffers</span>(commandBuffer);
+
+    <span class="type">VkClearValue</span> clearColor = { .color = { 1.f, 0.f, 0.f, 1.f } };<span class="cmt">//红色</span>
+
+    <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
+        <span class="fn">TitleFps</span>();
+
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+        <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
+
+        fence.<span class="fn">WaitAndReset</span>();
+
+        commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
+        renderPass.<span class="fn">CmdBegin</span>(commandBuffer, framebuffers[i], clearColor);
+
+        <span class="cmt">/*新增*/</span><span class="fn">vkCmdBindPipeline</span>(commandBuffer, <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>, pipeline_triangle);
+        <span class="cmt">/*新增*/</span><span class="fn">vkCmdDraw</span>(commandBuffer, 3, 1, 0, 0);
+
+        renderPass.<span class="fn">CmdEnd</span>(commandBuffer);
+        commandBuffer.<span class="fn">End</span>();
+
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
+
+        <span class="fn">glfwPollEvents</span>();
+    }
+    <span class="fn">TerminateWindow</span>();
+    <span class="kw">return</span> 0;
+}
+</pre>
+<p>
+    运行程序，你看到的图像应当如下：
+</p>
+<img alt="_images/ch2-3-1.png" src="_images/ch2-3-1.png" class="align-left">
+<p>
+    下一节请看//TODO Ch7-1 初始顶点缓冲区。
+</p></section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html" class="btn btn-neutral float-left" title="Ch2-2 创建渲染通道和帧缓冲" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html" class="btn btn-neutral float-right" title="Ch3-1 同步原语" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

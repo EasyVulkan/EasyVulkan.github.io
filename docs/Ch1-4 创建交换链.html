@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch1-4 创建交换链 &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ch2-0 代码整理及一些辅助类" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html" />
+    <link rel="prev" title="Ch1-3 创建VK实例与逻辑设备" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch1-4 创建交换链</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">交换链的创建信息</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#vksurfacecapabilitieskhr">VkSurfaceCapabilitiesKHR相关的参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">指定图像格式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">指定呈现模式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">填写剩余的参数</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">创建交换链</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">获取交换链图像</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#image-view">为交换链图像创建Image View</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">重建交换链</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">创建和销毁交换链时的回调函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">若需要重建逻辑设备</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">销毁目前为止创建的对象</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id11">完成初始化</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch1-4 创建交换链</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch1-4">
+<h1>Ch1-4 创建交换链<a class="headerlink" href="#ch1-4" title="Permalink to this heading"></a></h1>
+<section id="id1">
+<h2>交换链的创建信息<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkCreateSwapchainKHR">vkCreateSwapchainKHR</a>(...)创建交换链：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkCreateSwapchainKHR">vkCreateSwapchainKHR</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkSwapchainCreateInfoKHR</span>* pCreateInfo</p></td>
+            <td><p>交换链的创建信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span>* pAllocator</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkSwapchainKHR</span>* pSwapchain</p></td>
+            <td><p>若执行成功，将交换链的handle写入*pSwapchain</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    然后来看下<a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkSwapchainCreateInfoKHR">VkSwapchainCreateInfoKHR</a>：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkSwapchainCreateInfoKHR">VkSwapchainCreateInfoKHR</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkSwapchainCreateFlagsKHR</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkSurfaceKHR</span> surface</p></td>
+            <td><p>Window surface的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> minImageCount</p></td>
+            <td><p>交换链中图像的最少数量</p></td>
+        </tr>
+        <tr class="row-odd">
+        <td><p><span class="type">VkFormat</span> imageFormat</p></td>
+            <td><p>交换链中图像的格式</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkColorSpaceKHR</span> imageColorSpace</p></td>
+            <td><p>交换链中图像的色彩空间</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkExtent2D</span> imageExtent</p></td>
+            <td><p>交换链图像的尺寸</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> imageArrayLayers</p></td>
+            <td><p>对于多视点（multiview）或立体显示设备，需要提供一个视点数，对于普通的2D显示设备，该值为1</p></td>
+        </tr>
+        <tr class="row-odd">
+        <td><p><span class="type">VkImageUsageFlags</span>  imageUsage</p></td>
+            <td><p>交换链中图像的用途</p></td>
+        </tr>
+        <tr class="row-even">
+        <td><p><span class="type">VkSharingMode</span> imageSharingMode</p></td>
+            <td><p>交换链中图像的分享模式</p></td>
+        </tr>
+        <tr class="row-odd">
+        <td><p><span class="type">uint32_t</span> queueFamilyIndexCount</p></td>
+            <td><p>若imageSharingMode为<span class="enum">VK_SHARING_MODE_CONCURRENT</span>，这里需指定将会访问交换链图像的队列族总数</p></td>
+        </tr>
+        <tr class="row-even">
+        <td><p><span class="kw">const</span> <span class="type">uint32_t</span>* pQueueFamilyIndices</p></td>
+            <td><p>续上一条，以及具体的队列族索引</p></td>
+        </tr>
+        <tr class="row-odd">
+        <td><p><span class="type">VkSurfaceTransformFlagBitsKHR</span> preTransform</p></td>
+            <td><p>对交换链图像的变换，比如旋转90°、镜像等</p></td>
+        </tr>
+        <tr class="row-even">
+        <td><p><span class="type">VkCompositeAlphaFlagBitsKHR</span> compositeAlpha</p></td>
+            <td><p>指定如何处理交换链图像的透明度</p></td>
+        </tr>
+        <tr class="row-odd">
+        <td><p><span class="type">VkPresentModeKHR</span> presentMode</p></td>
+            <td><p>呈现方式</p></td>
+        </tr>
+        <tr class="row-even">
+        <td><p><span class="type">VkBool32</span> clipped</p></td>
+            <td><p>是否允许舍弃掉交换链图像应有但窗口中不会显示的像素</p></td>
+        </tr>
+        <tr class="row-odd">
+        <td><p><span class="type">VkSwapchainKHR</span> oldSwapchain</p></td>
+            <td><p>旧的交换链，在重建交换链时填入</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    接下来在vulkan::<span class="type">graphicsBase</span>::<span class="fn">CreateSwapchain</span>(...)中逐步填写交换链的创建信息。
+</p><section id="vksurfacecapabilitieskhr">
+<h3>VkSurfaceCapabilitiesKHR相关的参数<a class="headerlink" href="#vksurfacecapabilitieskhr" title="Permalink to this heading"></a></h3>
+<p>
+    与<a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkSurfaceCapabilitiesKHR">VkSurfaceCapabilitiesKHR</a>相关的参数有：交换链图像的数量、尺寸、视点数、变换、透明通道的方式、图像的用途。
+</p>
+<p>
+    首先用<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkGetPhysicalDeviceSurfaceCapabilitiesKHR">vkGetPhysicalDeviceSurfaceCapabilitiesKHR</a>(...)获取window surface的<a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkSurfaceCapabilitiesKHR">VkSurfaceCapabilitiesKHR</a>：
+</p>
+<pre class="code">
+<span class="type">VkSurfaceCapabilitiesKHR</span> surfaceCapabilities = {};
+<span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfaceCapabilitiesKHR</span>(physicalDevice, surface, &amp;surfaceCapabilities)) {
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+    <span class="kw">return</span> result;
+}
+</pre>
+<p>
+    <a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkGetPhysicalDeviceSurfaceCapabilitiesKHR">vkGetPhysicalDeviceSurfaceCapabilitiesKHR</a>(...)各个参数的含义应当一目了然，来看一下<a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkSurfaceCapabilitiesKHR">VkSurfaceCapabilitiesKHR</a>：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkSurfaceCapabilitiesKHR">VkSurfaceCapabilitiesKHR</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> minImageCount</p></td>
+            <td><p>交换链中图像的数量不得少于minImageCount</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> maxImageCount</p></td>
+            <td><p>交换链中图像的数量不得大于maxImageCount</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkExtent2D</span> currentExtent</p></td>
+            <td><p>当前window surface的尺寸</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkExtent2D</span> minImageExtent</p></td>
+            <td><p>Window surface所对应的交换链图像的尺寸不得小于minImageExtent</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkExtent2D</span> maxImageExtent</p></td>
+            <td><p>Window surface所对应的交换链图像的尺寸不得大于maxImageExtent</p></td>
+        </tr>
+        <tr class="row-odd">
+        <td><p><span class="type">uint32_t</span> maxImageArrayLayers</p></td>
+            <td><p>对于多视点（multiview）或立体显示设备，允许的最大视点数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkSurfaceTransformFlagsKHR</span> supportedTransforms</p></td>
+            <td><p>对于交换链中图像，支持的变形（如旋转90°、镜像等）</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkSurfaceTransformFlagBitsKHR</span> currentTransform</p></td>
+            <td><p>当前变形</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkCompositeAlphaFlagsKHR</span> supportedCompositeAlpha</p></td>
+            <td><p>对于交换链中图像，支持的处理透明通道的方式</p></td>
+        </tr>
+        <tr class="row-odd">
+        <td><p><span class="type">VkImageUsageFlags</span>  supportedUsageFlags</p></td>
+            <td><p>对于交换链中图像，支持的用途</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            如果currentExtent的width或height为特殊值-1，说明当前window surface的大小尚未被指定。
+        </p>
+    </li>
+</ul>
+<p>
+    对于交换链图像的数量，尽量不要太少，避免阻塞（所谓阻塞，即当需要渲染一张新图像时，所有交换链图像不是正在被呈现引擎读取就是正在被渲染），但也不要太多，避免多余的显存开销。
+    <br>
+    于是，如果容许的最大数量与最小数量不等，那么使用最小数量+1：
+</p>
+<pre class="code">
+swapchainCreateInfo.minImageCount = surfaceCapabilities.minImageCount + (surfaceCapabilities.maxImageCount &gt; surfaceCapabilities.minImageCount);
+</pre>
+<ul>
+    <li>
+        <p>
+            一般<a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkSurfaceCapabilitiesKHR">VkSurfaceCapabilitiesKHR</a>::minImageCount会是2，多一张图像可以实现三重缓冲。
+        </p>
+    </li>
+</ul>
+<p>
+    对于图像尺寸，若当前尺寸已定，那么直接使用当前尺寸，否则使用一个由你指定的默认大小。
+</p>
+<pre class="code">
+<span class="cmt">//全局常量用constexpr修饰定义在类外：</span>
+<span class="kw">namespace</span> vulkan {
+    <span class="kw">constexpr</span> <span class="type">VkExtent2D</span> defaultWindowSize = { 1280, 720 };
+    <span class="kw">class</span> <span class="type">graphicsBase</span> {
+        <span class="type">VkResult</span> <span class="fn">CreateSwapchain</span>(<span class="kw">bool</span> limitFrameRate = <span class="kw">true</span>, <span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkSwapchainCreateFlagsKHR</span> flags = 0) {
+            <span class="type">VkSurfaceCapabilitiesKHR</span> surfaceCapabilities = {};
+            <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfaceCapabilitiesKHR</span>(physicalDevice, surface, &amp;surfaceCapabilities)) {
+                std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+                <span class="kw">return</span> result;
+            }
+            swapchainCreateInfo.minImageCount = surfaceCapabilities.minImageCount + (surfaceCapabilities.maxImageCount &gt; surfaceCapabilities.minImageCount);
+            swapchainCreateInfo.imageExtent =
+                surfaceCapabilities.currentExtent.width == -1 ?
+                <span class="type">VkExtent2D</span>{
+                    glm::<span class="fn">clamp</span>(defaultWindowSize.width, surfaceCapabilities.minImageExtent.width, surfaceCapabilities.maxImageExtent.width),
+                    glm::<span class="fn">clamp</span>(defaultWindowSize.height, surfaceCapabilities.minImageExtent.height, surfaceCapabilities.maxImageExtent.height) } :
+                surfaceCapabilities.currentExtent;
+            <span class="cmt">/*待后续填充*/</span>
+        }
+    };
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            若window surface的大小未定，<span class="var">surfaceCapabilities.currentExtent</span>的width和height应当同时为特殊值-1，因此这里只对width做判断。
+        </p>
+    </li>
+</ul>
+<p>
+    视点数为1，变换使用当前变换：
+</p>
+<pre class="code">
+swapchainCreateInfo.imageArrayLayers = 1;
+swapchainCreateInfo.preTransform = = surfaceCapabilities.currentTransform;
+</pre>
+<p>
+    接着指定处理交换链图像透明通道的方式，先来看一下可选值：
+</p>
+<ul>
+    <li>
+        <p>
+            <span class="enum">VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR</span>表示不透明，每个像素的透明度皆被视作1.f。
+        </p>
+    </li>
+    <li>
+        <p>
+            <span class="enum">VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR</span>表示将颜色值视作预乘透明度（premultiplied alpha）形式。
+        </p>
+    </li>
+    <li>
+        <p>
+            <span class="enum">VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR</span>表示将颜色值视作后乘透明度形式，或称直接透明度（straight alpha）形式。
+        </p>
+    </li>
+    <li>
+        <p>
+            <span class="enum">VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR</span>表示透明度的处理方式由应用程序的其他（即Vulkan以外）部分指定。
+        </p>
+    </li>
+</ul>
+<p>
+    将直接透明度形式颜色值的RGB通道乘以其A通道即为预乘透明度形式，举例而言，一个恰好半透明的红色写作直接透明度形式为(1.0f ,0.0f ,0.0f ,0.5f)，写作预乘透明度形式为(0.5f ,0.0f ,0.0f ,0.5f)。
+    <br>
+    在渲染中用作颜色附件的图像，其颜色值通常都是预乘透明度形式，具体参见：//TODO Ch8-1 预乘透明度。
+</p>
+<p>
+    在呈现时处理透明通道的方式未必能由Vulkan决定，而窗口系统可能会指定这一方式，这种情况下应当将<span class="var">swapchainCreateInfo.compositeAlpha</span>设置为<span class="enum">VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR</span>，该bit说明程序会用窗口系统相关的指令设定处理透明通道的方式，若程序没有执行这样的指令，该bit会确保使用程序的运行平台默认的透明度处理方式（通常为使用不透明背景）。
+    <br>
+    因此，若<span class="var">surfaceCapabilities.supportedCompositeAlpha</span>具有<span class="enum">VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR</span>则优先将<span class="var">swapchainCreateInfo.compositeAlpha</span>设置为<span class="enum">VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR</span>，否则选择<span class="var">surfaceCapabilities.supportedCompositeAlpha</span>中首个非0的bit（姑且只确保处理方式有效）：
+</p>
+<pre class="code">
+<span class="kw">if</span> (surfaceCapabilities.supportedCompositeAlpha & <span class="enum">VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR</span>)
+    swapchainCreateInfo.compositeAlpha = <span class="enum">VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR</span>;
+<span class="kw">else</span>
+    <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; 4; i++)
+        <span class="kw">if</span> (surfaceCapabilities.supportedCompositeAlpha &amp; 1 &lt;&lt; i) {
+            swapchainCreateInfo.compositeAlpha = <span class="type">VkCompositeAlphaFlagBitsKHR</span>(surfaceCapabilities.supportedCompositeAlpha &amp; 1 &lt;&lt; i);
+            <span class="kw">break</span>;
+        }
+</pre>
+<div class="admonition note">
+    <p class="admonition-title">Note</p>
+    <p>
+        如果你想使用透明背景的窗口，这里提示一种<span class="strong">不具有普遍性</span>的实现方法：
+        <br>
+        1.在初始化GLFW后，调用<a href="https://www.glfw.org/docs/latest/group__init.html#ga110fd1d3f0412822b4f1908c026f724a">glfwWindowHint</a>(<span class="mcr">GLFW_TRANSPARENT_FRAMEBUFFER</span>, <span class="kw">true</span>)，在Windows上，GLFW对此的底层实现是使用dwmapi中的<a href="https://docs.microsoft.com/en-us/windows/win32/api/dwmapi/nf-dwmapi-dwmenableblurbehindwindow">DwmEnableBlurBehindWindow</a>(...)，你也可以自行调用该函数。
+        <br>
+        2.检查<span class="var">surfaceCapabilities.supportedCompositeAlpha</span>，指定<span class="var">swapchainCreateInfo.compositeAlpha</span>为<span class="enum">VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR</span>。
+        <br>
+        3.清屏颜色必须为<span class="type">VkClearColorValue</span>{ 0.f, 0.f, 0.f, 0.f }。
+        <br>
+        如果是英特尔核显，以上步骤就足够了。
+        <br>
+        如果是独显，发现背景为黑色而非透明，可能需要将<span class="var">surfaceCapabilities.presentMode</span>指定为<span class="enum">VK_PRESENT_MODE_IMMEDIATE_KHR</span>或<span class="enum">VK_PRESENT_MODE_MAILBOX_KHR</span>（但这么一来就不限制帧数了，可能会耗费多余算力）。
+        <br>
+        我这里没有足够的硬件做测试来找出一个普遍有效的做法，而且GLFW对此相关的功能也不算完善，因此如果透明背景对你的程序而言不可或缺的话，我推荐你尝试平台特定的图形API（比如DirectX12搭配DirectComposition）而非Vulkan。
+    </p>
+</div>
+<p>
+    接着是图像的用途，图像必须被用作颜色附件（<span class="enum">VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT</span>），最好还能被用作数据传送的目标（<span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>），这样就能用<a href="https://renderdoc.org/vkspec_chunked/chap19.html#vkCmdClearColorImage">vkCmdClearColorImage</a>(...)清屏，还可以用<a href="https://renderdoc.org/vkspec_chunked/chap20.html#vkCmdBlitImage">vkCmdBlitImage</a>(...)将图像直接搬运（而不必渲染）到屏幕上，此外还可能得被用作数据传送的来源（<span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>），比如实现窗口截屏。
+</p>
+<pre class="code">
+swapchainCreateInfo.imageUsage = <span class="enum">VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT</span>;
+<span class="kw">if</span> (surfaceCapabilities.supportedUsageFlags &amp; <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>)
+    swapchainCreateInfo.imageUsage |= <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>;
+<span class="kw">if</span> (surfaceCapabilities.supportedUsageFlags &amp; <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>)
+    swapchainCreateInfo.imageUsage |= <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>;
+<span class="kw">else</span>
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] WARNING\nVK_IMAGE_USAGE_TRANSFER_DST_BIT isn't supported!\n&quot;</span>);
+</pre></section>
+<section id="id2">
+<h3>指定图像格式<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<p>
+    首先来填充vulkan::<span class="type">graphicsBase</span>::<span class="fn">GetSurfaceFormats</span>()，用<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkGetPhysicalDeviceSurfaceFormatsKHR">vkGetPhysicalDeviceSurfaceFormatsKHR</a>(...)来取得surface的可用图像格式及色彩空间：
+</p>
+<pre class="code">
+<span class="type">VkResult</span> <span class="fn">GetSurfaceFormats</span>() {
+    <span class="type">uint32_t</span> surfaceFormatCount;
+    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfaceFormatsKHR</span>(physicalDevice, surface, &amp;surfaceFormatCount, <span class="kw">nullptr</span>)) {
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of surface formats!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="kw">if</span> (!surfaceFormatCount)
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to find any supported surface format!\n&quot;</span>),
+        <span class="fn">abort</span>();
+    availableSurfaceFormats.<span class="fn">resize</span>(surfaceFormatCount);
+    <span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfaceFormatsKHR</span>(physicalDevice, surface, &amp;surfaceFormatCount, availableSurfaceFormats.<span class="fn">data</span>());
+    <span class="kw">if</span> (result)
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get surface formats!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+    <span class="kw">return</span> result;
+}
+</pre>
+<p>
+    <a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkSurfaceFormatKHR">VkSurfaceFormatKHR</a>代表了一组可用的图像格式和色彩空间的组合：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkSurfaceFormatKHR">VkSurfaceFormatKHR</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkFormat</span> format</p></td>
+            <td><p>Window surface的图像格式</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkColorSpaceKHR</span> colorSpace</p></td>
+            <td><p>Window surface的色彩空间</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    然后填充vulkan::<span class="type">graphicsBase</span>::<span class="fn">SetSurfaceFormat</span>(...)，考虑色彩空间确定但图像格式可任意，及两者都确定的情况：
+</p>
+<pre class="code">
+<span class="type">VkResult</span> <span class="fn">SetSurfaceFormat</span>(<span class="type">VkSurfaceFormatKHR</span> surfaceFormat) {
+    <span class="kw">bool</span> formatIsAvailable = <span class="kw">false</span>;
+    <span class="kw">if</span> (!surfaceFormat.format) {
+        <span class="cmt">//如果格式未指定，只匹配色彩空间，图像格式有啥就用啥</span>
+        <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : availableSurfaceFormats)
+            <span class="kw">if</span> (i.colorSpace == surfaceFormat.colorSpace) {
+                swapchainCreateInfo.imageFormat = surfaceFormat.format;
+                swapchainCreateInfo.imageColorSpace = surfaceFormat.colorSpace;
+                formatIsAvailable = <span class="kw">true</span>;
+                <span class="kw">break</span>;
+            }
+    }
+    <span class="kw">else</span>
+        <span class="cmt">//否则匹配格式和色彩空间</span>
+        <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : availableSurfaceFormats)
+            <span class="kw">if</span> (i.format == surfaceFormat.format &amp;&amp;
+                i.colorSpace == surfaceFormat.colorSpace) {
+                swapchainCreateInfo.imageFormat = surfaceFormat.format;
+                swapchainCreateInfo.imageColorSpace = surfaceFormat.colorSpace;
+                formatIsAvailable = <span class="kw">true</span>;
+                <span class="kw">break</span>;
+            }
+    <span class="cmt">//如果没有符合的格式，恰好有个语义相符的错误代码</span>
+    <span class="kw">if</span> (!formatIsAvailable)
+        <span class="kw">return</span> <span class="enum">VK_ERROR_FORMAT_NOT_SUPPORTED</span>;
+    <span class="cmt">//如果交换链已存在，调用RecreateSwapchain()重建交换链</span>
+    <span class="kw">if</span> (swapchain)
+        <span class="kw">return</span> <span class="fn">RecreateSwapchain</span>();
+    <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            对于本函数，若只指定色彩空间而不指定格式，则输入的<span class="var">surfaceFormat</span>中format应当为0（即<span class="enum">VK_FORMAT_UNDEFINED</span>）。
+        </p>
+    </li>
+    <li>
+        <p>
+            不考虑不指定色彩空间的情况，一是因为色彩空间<span class="type">VkColorSpaceKHR</span>的零值为<span class="enum">VK_COLOR_SPACE_SRGB_NONLINEAR_KHR</span>，是个有效的色彩空间，二是因为不同色彩空间对后续操作（比如贴图的图像格式、片段着色器最后的色调映射）影响很大，没理由允许任意的色彩空间。
+        </p>
+    </li>
+    <li>
+        <p>
+            这个函数有可能在已经开始渲染的情况下执行（比如运行过程中切换到HDR），因此要考虑交换链已存在的情况。
+        </p>
+    </li>
+</ul>
+<p>
+    接着继续填充vulkan::<span class="type">graphicsBase</span>::<span class="fn">CreateSwapchain</span>(...)，首先判断是否已获取surface格式，若尚未获取则调用<span class="fn">GetSurfaceFormats</span>()：
+</p>
+<pre class="code">
+<span class="kw">if</span> (!availableSurfaceFormats.<span class="fn">size</span>())
+    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">GetSurfaceFormats</span>())
+        <span class="kw">return</span> result;
+</pre>
+<ul>
+    <li>
+        <p>
+           <code>!availableSurfaceFormats.<span class="fn">size</span>()</code>的值等于<code>availableSurfaceFormats.<span class="fn">empty</span>()</code>，选择前一种写法纯粹是个人习惯。
+        </p>
+    </li>
+</ul>
+<p>
+    然后，若没有指定图像的格式和色彩空间（即没有在执行本函数前手动调用<span class="fn">SetSurfaceFormat</span>(...)），那么用<span class="fn">SetSurfaceFormat</span>(...)设置一个默认格式。
+    <br>
+    默认格式应当满足：RGBA四通道，每个通道8位的UNORM格式。8位表示每个通道有256个色阶，UNORM的U表示其底层数据是无符号整形，NORM表示在着色器中使用时，其数值会被转为[0, 1]区间内的小数（即被标准化）。这类格式最为普通，受到广泛支持且不会导致自动的色调映射/颜色校正。
+</p>
+<pre class="code">
+<span class="kw">if</span> (!swapchainCreateInfo.imageFormat)
+    <span class="cmt">//用&amp;&amp;操作符来短路执行</span>
+    <span class="kw">if</span> (<span class="fn">SetSurfaceFormat</span>({ <span class="enum">VK_FORMAT_R8G8B8A8_UNORM</span>, <span class="enum">VK_COLOR_SPACE_SRGB_NONLINEAR_KHR</span> }) &amp;&amp;
+        <span class="fn">SetSurfaceFormat</span>({ <span class="enum">VK_FORMAT_B8G8R8A8_UNORM</span>, <span class="enum">VK_COLOR_SPACE_SRGB_NONLINEAR_KHR</span> })) {
+        <span class="cmt">//如果找不到上述图像格式和色彩空间的组合，那只能有什么用什么，采用availableSurfaceFormats中的第一组</span>
+        swapchainCreateInfo.imageFormat = availableSurfaceFormats[0].format;
+        swapchainCreateInfo.imageColorSpace = availableSurfaceFormats[0].colorSpace;
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] WARNING\nFailed to select a four-component UNORM surface format!\n&quot;</span>);
+    }
+</pre>
+<ul>
+    <li>
+        <p>
+            <span class="enum">VK_FORMAT_R8G8B8A8_UNORM</span>和<span class="enum">VK_FORMAT_B8G8R8A8_UNORM</span>是仅有的两种满足前述条件的格式，其底层数据的RGBA通道排列顺序不同，但对后续的代码没有影响（除了需要操作底层数据的情况，比如截图并保存到文件），通常来说，物理设备至少会支持其中一种格式。
+        </p>
+    </li>
+    <li>
+        <p>
+            显然，因为<span class="enum">VK_SUCCESS</span>为0，对多个返回<span class="type">VkResult</span>的函数表达式做逻辑与意味着这堆函数表达式里只需有一个执行成功。
+        </p>
+    </li>
+</ul>
+<div class="admonition note">
+    <p class="admonition-title">Note</p>
+    <p>
+        一些早期的Vulkan教程中提到：
+        <br>
+        如果<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkGetPhysicalDeviceSurfaceFormatsKHR">vkGetPhysicalDeviceSurfaceFormatsKHR</a>(...)返回的<a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkSurfaceFormatKHR">VkSurfaceFormatKHR</a>数组只有一个元素且其成员变量format的数值为<span class="enum">VK_FORMAT_UNDEFINED</span>时，表示surface没有偏好的图像格式，此时可以使用任何格式。
+        <br>
+        然而，早在Vulkan1.0.14标准中便已明确：
+        <span class="ref">pSurfaceFormats <span class="strong">must</span> not contain an entry whose value for format is VK_FORMAT_UNDEFINED.</span>
+        <br>
+        因此哪怕对于Vulkan1.0而言（不关心patch版本号），前述说法也是不成立的。
+    </p>
+</div></section>
+<section id="id3">
+<h3>指定呈现模式<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<p>
+    首先用<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkGetPhysicalDeviceSurfacePresentModesKHR">vkGetPhysicalDeviceSurfacePresentModesKHR</a>(...)获取surface支持的呈现模式：
+</p>
+<pre class="code">
+<span class="type">uint32_t</span> surfacePresentModeCount;
+<span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfacePresentModesKHR</span>(physicalDevice, surface, &amp;surfacePresentModeCount, <span class="kw">nullptr</span>)) {
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of surface present modes!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+    <span class="kw">return</span> result;
+}
+<span class="kw">if</span> (!surfacePresentModeCount)
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to find any surface present mode!\n&quot;</span>),
+    abort();
+std::<span class="type">vector</span>&lt;<span class="type">VkPresentModeKHR</span>&gt; surfacePresentModes(surfacePresentModeCount);
+<span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfacePresentModesKHR</span>(physicalDevice, surface, &amp;surfacePresentModeCount, surfacePresentModes.<span class="fn">data</span>())) {
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get surface present modes!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+    <span class="kw">return</span> result;
+}
+</pre>
+<p>
+    呈现模式有如下几种（配图改自英特尔的API without Secrets系列教程配图）：
+</p>
+<div>
+    <img alt="_images/IMMEDIATE.png" src="_images/IMMEDIATE.png" width="320px">
+    <img alt="_images/FIFO.png" src="_images/FIFO.png" width="320px">
+    <img alt="_images/MAILBOX.png" src="_images/MAILBOX.png" width="320px">
+</div>
+<ul>
+    <li>
+        <p>
+            <span class="enum">VK_PRESENT_MODE_IMMEDIATE_KHR</span>表示立即模式，该模式下不限制帧率且帧率在所有模式中是最高的。该模式不等待垂直同步信号，一旦图片渲染完，用于呈现的图像就会被立刻替换掉，这可能导致画面撕裂。
+        </p>
+    </li>
+    <li>
+        <p>
+            <span class="enum">VK_PRESENT_MODE_FIFO_KHR</span>表示先入先出模式，该模式限制帧率与屏幕刷新率一致，这种模式是必定支持的。在该模式下，图像被推送进一个用于待呈现图像的队列，然后等待垂直同步信号，按顺序被推出队列并输出到屏幕，因此叫先入先出。
+        </p>
+    </li>
+    <li>
+        <p>
+            <span class="enum">VK_PRESENT_MODE_FIFO_RELAXED_KHR</span>同<span class="enum">VK_PRESENT_MODE_FIFO_KHR</span>的差别在于，若屏幕上图像的停留时间长于一个刷新间隔，呈现引擎可能在下一个垂直同步信号到来前便试图将呈现队列中的图像输出到屏幕，该模式相比<span class="enum">VK_PRESENT_MODE_FIFO_KHR</span>更不容易引起阻塞或迟滞，但在帧率较低时可能会导致画面撕裂。
+        </p>
+    </li>
+    <li>
+        <p>
+            <span class="enum">VK_PRESENT_MODE_MAILBOX_KHR</span>是一种类似于三重缓冲的模式。它的待呈现图像队列中只容纳一个元素，在等待垂直同步信号期间若有新的图像入队，那么旧的图像会直接出队而不被输出到屏幕（即出队不需要等待垂直同步信号，因此不限制帧率），出现在屏幕上的总会是最新的图像。
+        </p>
+    </li>
+</ul>
+<p>
+    由于<span class="enum">VK_PRESENT_MODE_IMMEDIATE_KHR</span>和<span class="enum">VK_PRESENT_MODE_FIFO_RELAXED_KHR</span>可能导致画面撕裂，在不需要限制帧率时应当选择<span class="enum">VK_PRESENT_MODE_MAILBOX_KHR</span>，需要限制帧率使其最大不超过屏幕刷新率时应选择<span class="enum">VK_PRESENT_MODE_FIFO_KHR</span>：
+</p>
+<pre class="code">
+swapchainCreateInfo.presentMode = <span class="enum">VK_PRESENT_MODE_FIFO_KHR</span>;
+<span class="kw">if</span> (!limitFrameRate)
+    <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; surfacePresentModeCount; i++)
+        <span class="kw">if</span> (surfacePresentModes[i] == <span class="enum">VK_PRESENT_MODE_MAILBOX_KHR</span>) {
+            swapchainCreateInfo.presentMode = <span class="enum">VK_PRESENT_MODE_MAILBOX_KHR</span>;
+            <span class="kw">break</span>;
+        }
+</pre></section>
+<section id="id4">
+<h3>填写剩余的参数<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<pre class="code">
+swapchainCreateInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR</span>;
+swapchainCreateInfo.pNext = pNext;
+swapchainCreateInfo.flags = flags;
+swapchainCreateInfo.surface = surface;
+swapchainCreateInfo.imageSharingMode = <span class="enum">VK_SHARING_MODE_EXCLUSIVE</span>;
+swapchainCreateInfo.clipped = <span class="mcr">VK_TRUE</span>;
+</pre></section>
+</section>
+<section id="id5">
+<h2>创建交换链<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<p>
+    填充vulkan::<span class="type">graphicsBase</span>::<span class="fn">CreateSwapchain_Internal</span>()，首先加入以下代码以创建交换链：
+</p>
+<pre class="code">
+<span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkCreateSwapchainKHR</span>(device, &amp;swapchainCreateInfo, <span class="kw">nullptr</span>, &amp;swapchain)) {
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a swapchain!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+    <span class="kw">return</span> result;
+}
+</pre>
+<p>
+    然后在vulkan::<span class="type">graphicsBase</span>::<span class="fn">CreateSwapchain</span>(...)中调用<span class="fn">CreateSwapchain_Internal</span>()：
+</p>
+<pre class="code">
+<span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">CreateSwapchain_Internal</span>())
+    <span class="kw">return</span> result;
+<span class="cmt">/*待后续填充*/</span>
+<span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
+</pre><section id="id6">
+<h3>获取交换链图像<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<p>
+    继续填充vulkan::<span class="type">graphicsBase</span>::<span class="fn">CreateSwapchain_Internal</span>()，用<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkGetSwapchainImagesKHR">vkGetSwapchainImagesKHR</a>(...)获取交换链图像：
+</p>
+<pre class="code">
+<span class="type">uint32_t</span> swapchainImageCount;
+<span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetSwapchainImagesKHR</span>(device, swapchain, &amp;swapchainImageCount, <span class="kw">nullptr</span>)) {
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of swapchain images!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+    <span class="kw">return</span> result;
+}
+swapchainImages.<span class="fn">resize</span>(swapchainImageCount);
+<span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetSwapchainImagesKHR</span>(device, swapchain, &amp;swapchainImageCount, swapchainImages.<span class="fn">data</span>())) {
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get swapchain images!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+    <span class="kw">return</span> result;
+}
+</pre></section>
+<section id="image-view">
+<h3>为交换链图像创建Image View<a class="headerlink" href="#image-view" title="Permalink to this heading"></a></h3>
+<p>
+    图像视图（<span class="type">VkImageView</span>）定义了图像的使用方式 。
+    <br>
+    <strong>注意这里所谓的“视图”不过是个编程术语，并不是实际用来观察图像的所谓视图，正如C++中的std::<span class="type">string_view</span>定义字符串的访问方式一样。</strong>为消歧义，后文以英语image view称呼。
+    <br>
+    关于image view的具体说明见<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html#image-view">Image View</a>（暂时不用对其做封装）。
+</p>
+<p>
+    填写<a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkImageViewCreateInfo">VkImageViewCreateInfo</a>，用<a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkCreateImageView">vkCreateImageView</a>(...)创建image view，整个vulkan::<span class="type">graphicsBase</span>::<span class="fn">CreateSwapchain_Internal</span>()如下：
+</p>
+<pre class="code">
+<span class="type">VkResult</span> <span class="fn">CreateSwapchain_Internal</span>() {
+    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkCreateSwapchainKHR</span>(device, &amp;swapchainCreateInfo, <span class="kw">nullptr</span>, &amp;swapchain)) {
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a swapchain!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+
+    <span class="cmt">//获取交换连图像</span>
+    <span class="type">uint32_t</span> swapchainImageCount;
+    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetSwapchainImagesKHR</span>(device, swapchain, &amp;swapchainImageCount, <span class="kw">nullptr</span>)) {
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of swapchain images!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    swapchainImages.<span class="fn">resize</span>(swapchainImageCount);
+    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetSwapchainImagesKHR</span>(device, swapchain, &amp;swapchainImageCount, swapchainImages.<span class="fn">data</span>())) {
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get swapchain images!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+
+    <span class="cmt">//创建image view</span>
+    swapchainImageViews.<span class="fn">resize</span>(swapchainImageCount);
+    <span class="type">VkImageViewCreateInfo</span> imageViewCreateInfo = {
+        .sType = <span class="enum">VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO</span>,
+        .viewType = <span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>,
+        .format = swapchainCreateInfo.imageFormat,
+        <span class="cmt">//.components = {},//四个成员皆为VK_COMPONENT_SWIZZLE_IDENTITY</span>
+        .subresourceRange = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, 1 }
+    };
+    <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; swapchainImageCount; i++) {
+        imageViewCreateInfo.image = swapchainImages[i];
+        <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkCreateImageView</span>(device, &amp;imageViewCreateInfo, <span class="kw">nullptr</span>, &amp;swapchainImageViews[i])) {
+            std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a swapchain image view!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            <span class="kw">return</span> result;
+        }
+    }
+    <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
+}
+</pre></section>
+</section>
+<section id="id7">
+<h2>重建交换链<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h2>
+<p>
+    有些情况下会需要重建交换链，比如开关HDR，或者窗口大小改变。
+    <br>
+    改变色彩空间的情况已经在vulkan::<span class="type">graphicsBase</span>::<span class="fn">SetSurfaceFormat</span>(...)中处理了，现在来处理窗口大小改变的情况，填充vulkan::<span class="type">graphicsBase</span>::<span class="fn">RecreateSwapchain</span>()：
+</p>
+<pre class="code">
+<span class="type">VkSurfaceCapabilitiesKHR</span> surfaceCapabilities = {};
+<span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfaceCapabilitiesKHR</span>(physicalDevice, surface, &amp;surfaceCapabilities)) {
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+    <span class="kw">return</span> result;
+}
+<span class="kw">if</span> (surfaceCapabilities.currentExtent.width == 0 ||
+    surfaceCapabilities.currentExtent.height == 0)
+    <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
+swapchainCreateInfo.imageExtent = surfaceCapabilities.currentExtent;
+</pre>
+<ul>
+    <li>
+        <p>
+            如果窗口显示区域的长或宽为0（通常发生在最小化到任务栏窗口时），不重建交换链（若所创建图像的大小为0，特定显卡驱动可能报错），留待窗口大小非0时重建，函数执行视为成功返回<span class="enum">VK_SUCCESS</span>。
+        </p>
+    </li>
+</ul>
+<p>
+    之后向<span class="var">swapchainCreateInfo.oldSwapchain</span>填入旧交换链的handle，这样可能会有利于重用一些资源。
+</p>
+<pre class="code">
+swapchainCreateInfo.oldSwapchain = swapchain;
+</pre>
+<p>
+    在重建交换链前，须确保程序没有正在使用旧的交换链，在渲染循环（rendering loop）中，交换链的使用并没有明确的停滞时机，因此需要等待逻辑设备闲置，或者更精细点，等待图形和呈现队列闲置（交换链图像被图形队列写入，被呈现队列读取），这么一来计算队列就可以在重建交换链时继续其任务。
+    <br>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkQueueWaitIdle">vkQueueWaitIdle</a>(...)等待队列闲置：
+</p>
+<pre class="code">
+<span class="type">VkResult</span> result = <span class="fn">vkQueueWaitIdle</span>(queue_graphics);
+<span class="cmt">//仅在等待图形队列成功，且图形与呈现所用队列不同时等待呈现队列</span>
+<span class="kw">if</span> (!result &amp;&amp;
+    queue_graphics != queue_presentation)
+    result = <span class="fn">vkQueueWaitIdle</span>(queue_presentation);
+<span class="kw">if</span> (result) {
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<spas class="str">&quot;[ graphicsBase ] ERROR\nFailed to wait for the queue to be idle!\nError code: {}\n&quot;</spas>, <span class="type">int32_t</span>(result));
+    <span class="kw">return</span> result;
+}
+</pre>
+<p>
+    接着用<a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkDestroyImageView">vkDestroyImageView</a>(...)销毁旧有的image view：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkDestroyImageView">vkDestroyImageView</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkImageView</span> imageView</p></td>
+            <td><p>被销毁的image view的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span>* pAllocator</p></td>
+            <td><p>如有必要，指向描述自定义内存分配方式的结构体</p></td>
+        </tr>
+    </tbody>
+</table>
+<pre class="code">
+<span class="cmt">/*待后续填充*/</span>
+<span class="kw">for</span> (<span class="kw">auto</span>&amp; i : swapchainImageViews)
+    <span class="kw">if</span> (i)
+        <span class="fn">vkDestroyImageView</span>(device, i, <span class="kw">nullptr</span>);
+swapchainImageViews.<span class="fn">resize</span>(0);
+</pre>
+<ul>
+    <li>
+        <p>
+            类似各种vkCreate函数，各种vkDestroy函数也有个pAllocator，本套教程中一概为<span class="kw">nullptr</span>。
+        </p>
+    </li>
+    <li>
+        <p>
+            销毁前验证handle的值，销毁后将<span class="var">swapchainImageViews</span>清空，防止本函数执行失败（虽然不太可能）后再次调用时发生重复销毁，此外，之后将0大小的<span class="var">swapchainImageViews</span>重新扩容到可容纳<span class="var">swapchainImageCount</span>个元素时，会填充<span class="var">swapchainImageCount</span>个<span class="mcr">VK_NULL_HANDLE</span>（零值）作为默认值。
+        </p>
+    </li>
+</ul>
+<p>
+    值得注意的是，这里只销毁了image view，而没销毁其对应的交换链图像，这是因为在销毁旧交换链时会被一并销毁交换链图像，而尽管图形和呈现队列都没有在使用旧图像，无法确保呈现引擎在CPU上做的操作或不会使用旧图像，因此销毁旧交换链的时机需要延后，见<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id3">Ch2-1 Rendering Loop</a>。
+</p>
+<p>
+    最后调用<span class="fn">CreateSwapchain_Internal</span>()来创建交换链：
+</p>
+<pre class="code">
+<span class="kw">if</span> (result = <span class="fn">CreateSwapchain_Internal</span>())
+    <span class="kw">return</span> result;
+<span class="cmt">/*待后续填充*/</span>
+<span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
+</pre></section>
+<section id="id8">
+<h2>创建和销毁交换链时的回调函数<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h2>
+<p>
+    重建交换链时，与之相关的各种资源也要一并重建，这种情况下使用回调函数是较好的做法。
+    <br>
+    使用回调函数有助于提升程序的可维护性，举例而言，不使用回调函数的话，若你想写一个可选择是否使用的渲染管线（且该管线直接使用交换链图像，或所用图像大小与交换链图像一致），你的代码可能会变成这样：
+</p>
+<pre class="code">
+<span class="cmt">/*...省略一堆相关Vulkan对象（着色器、管线布局、管线等）*/</span>
+<span class="kw">bool</span> useDeferredRendering = <span class="kw">false</span>;
+<span class="kw">void</span> <span class="fn">PreInitialization_UseDeferredRendering</span>() { useDeferredRendering = <span class="kw">true</span>; }
+<span class="kw">bool</span> <span class="fn">CreateDeferredRenderingPipeline</span>() { <span class="cmt">/*...*/</span> }
+<span class="kw">void</span> <span class="fn">DestroyDeferredRenderingPipeline</span>() { <span class="cmt">/*...*/</span> }
+
+<span class="kw">void</span> <span class="fn">InitializeVulkanApplication</span>(){
+    <span class="fn">InitializeWindow</span>(defaultWindowSize);
+    <span class="kw">if</span> (useDeferredRendering)
+        <span class="fn">CreateDeferredRenderingPipeline</span>();
+}
+<span class="kw">void</span> <span class="fn">CleanUpVulkanApplication</span>(){
+    <span class="kw">if</span> (useDeferredRendering)
+        <span class="fn">DestroyDeferredRenderingPipeline</span>();
+    <span class="fn">TerminateWindow</span>();
+}
+</pre>
+<p>
+    瞧见问题在哪了吗？按这种写法，如果你写了一堆这种管线的话，你需要在<span class="fn">InitializeVulkanApplication</span>()和<span class="fn">CleanUpVulkanApplication</span>()里做一堆判断，并且每增加一个新的可选管线都要修改这俩函数，并且为了在函数间传递信息，还不可避免地需要一个布尔值。
+</p>
+<p>
+    如果使用回调函数：
+</p>
+<pre class="code">
+std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; callbacks_createSwapchain;
+std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; callbacks_destroySwapchain;
+<span class="type">VkResult</span> <span class="fn">RecreateSwapchain</span>() {
+    <span class="cmt">/*...前面略*/</span>
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : callbacks_destroySwapchain)
+        i();
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : callbacks_createSwapchain)
+        i();
+}
+<span class="cmt">/*...省略管线对象的定义*/</span>
+<span class="kw">void</span> <span class="fn">PreInitialization_UseDeferredRendering</span>() {
+    <span class="kw">static bool</span> executed = <span class="kw">false</span>;
+    <span class="kw">if</span> (executed)
+        <span class="kw">return</span>;
+    <span class="cmt">/*...省略一堆声明为静态变量的相关Vulkan对象（着色器、管线布局等）*/</span>
+    <span class="kw">auto</span> CreateDeferredRenderingPipeline = [] { <span class="cmt">/*...*/</span> };
+    <span class="kw">auto</span> DestroyDeferredRenderingPipeline = [] { <span class="cmt">/*...*/</span> };
+    callbacks_createSwapchain.<span class="fn">push_back</span>(InitializeDeferredRendering);
+    callbacks_destroySwapchain.<span class="fn">push_back</span>(UninitializeDeferredRendering);
+}
+</pre>
+<p>
+    创建、销毁相关对象的函数用lambda表达式定义在一个函数内，并将这俩lambda作为回调函数存放在两个<span class="type">vector</span>中，至于那些不必暴露给外部的Vulkan对象则可以作为静态变量定义在同一个函数内。之后，<span class="fn">RecreateSwapchain</span>()每次执行时都会调用你设置的回调，也就是说每次你新增一套渲染管线，只需要在外部定义管线对象，并增加这样一个函数，而不需要修改程序的其他地方，也不必定义一些用于标明是否使用该管线的变量。
+</p>
+<p>
+    在vulkan::<span class="type">graphicsBase</span>中加入以下内容：
+</p>
+<pre class="code">
+<span class="kw">private</span>:
+std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; callbacks_createSwapchain;
+std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; callbacks_destroySwapchain;
+
+<span class="kw">public</span>:
+<span class="kw">void</span> <span class="fn">PushCallback_CreateSwapchain</span>(<span class="kw">void</span>(*function)()) {
+    callbacks_createSwapchain.<span class="fn">push_back</span>(function);
+}
+<span class="kw">void</span> <span class="fn">PushCallback_DestroySwapchain</span>(<span class="kw">void</span>(*function)()) {
+    callbacks_destroySwapchain.<span class="fn">push_back</span>(function);
+}
+</pre>
+<p>
+    然后在vulkan::<span class="type">graphicsBase</span>::<span class="fn">CreateSwapchain</span>(...)和vulkan::<span class="type">graphicsBase</span>::<span class="fn">RereateSwapchain</span>(...)中调用相应回调，最后两个函数如下：
+</p>
+<pre class="code">
+<span class="type">VkResult</span> <span class="fn">CreateSwapchain</span>(<span class="kw">bool</span> limitFrameRate = <span class="kw">true</span>, <span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkSwapchainCreateFlagsKHR</span> flags = 0) {
+    <span class="cmt">//VkSurfaceCapabilitiesKHR相关的参数</span>
+    <span class="type">VkSurfaceCapabilitiesKHR</span> surfaceCapabilities = {};
+    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfaceCapabilitiesKHR</span>(physicalDevice, surface, &amp;surfaceCapabilities)) {
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="cmt">//指定图像数量</span>
+    swapchainCreateInfo.minImageCount = surfaceCapabilities.minImageCount + (surfaceCapabilities.maxImageCount &gt; surfaceCapabilities.minImageCount);
+    <span class="cmt">//指定图像大小</span>
+    swapchainCreateInfo.imageExtent =
+        surfaceCapabilities.currentExtent.width == -1 ?
+        <span class="type">VkExtent2D</span>{
+            glm::<span class="fn">clamp</span>(defaultWindowSize.width, surfaceCapabilities.minImageExtent.width, surfaceCapabilities.maxImageExtent.width),
+            glm::<span class="fn">clamp</span>(defaultWindowSize.height, surfaceCapabilities.minImageExtent.height, surfaceCapabilities.maxImageExtent.height) } :
+        surfaceCapabilities.currentExtent;
+    <span class="cmt">//swapchainCreateInfo.imageArrayLayers = 1;//跟其他不需要判断的参数一起扔后面去</span>
+    <span class="cmt">//指定变换方式</span>
+    swapchainCreateInfo.preTransform = surfaceCapabilities.currentTransform;
+    <span class="cmt">//指定处理透明通道的方式</span>
+    <span class="kw">if</span> (surfaceCapabilities.supportedCompositeAlpha & <span class="enum">VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR</span>)
+        swapchainCreateInfo.compositeAlpha = <span class="enum">VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR</span>;
+    <span class="kw">else</span>
+        <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; 4; i++)
+            <span class="kw">if</span> (surfaceCapabilities.supportedCompositeAlpha &amp; 1 &lt;&lt; i) {
+                swapchainCreateInfo.compositeAlpha = <span class="type">VkCompositeAlphaFlagBitsKHR</span>(surfaceCapabilities.supportedCompositeAlpha &amp; 1 &lt;&lt; i);
+                <span class="kw">break</span>;
+            }
+    <span class="cmt">//指定图像用途</span>
+    swapchainCreateInfo.imageUsage = <span class="enum">VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT</span>;
+    <span class="kw">if</span> (surfaceCapabilities.supportedUsageFlags &amp; <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>)
+        swapchainCreateInfo.imageUsage |= <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>;
+    <span class="kw">if</span> (surfaceCapabilities.supportedUsageFlags &amp; <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>)
+        swapchainCreateInfo.imageUsage |= <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>;
+    <span class="kw">else</span>
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] WARNING\nVK_IMAGE_USAGE_TRANSFER_DST_BIT isn't supported!\n&quot;</span>);
+
+    <span class="cmt">//指定图像格式</span>
+    <span class="kw">if</span> (!availableSurfaceFormats.<span class="fn">size</span>())
+        <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">GetSurfaceFormats</span>())
+            <span class="kw">return</span> result;
+    <span class="kw">if</span> (!swapchainCreateInfo.imageFormat)
+        <span class="cmt">//用&amp;&amp;操作符来短路执行</span>
+        <span class="kw">if</span> (<span class="fn">SetSurfaceFormat</span>({ <span class="enum">VK_FORMAT_R8G8B8A8_UNORM</span>, <span class="enum">VK_COLOR_SPACE_SRGB_NONLINEAR_KHR</span> }) &amp;&amp;
+            <span class="fn">SetSurfaceFormat</span>({ <span class="enum">VK_FORMAT_B8G8R8A8_UNORM</span>, <span class="enum">VK_COLOR_SPACE_SRGB_NONLINEAR_KHR</span> })) {
+            <span class="cmt">//如果找不到上述图像格式和色彩空间的组合，那只能有什么用什么，采用availableSurfaceFormats中的第一组</span>
+            swapchainCreateInfo.imageFormat = availableSurfaceFormats[0].format;
+            swapchainCreateInfo.imageColorSpace = availableSurfaceFormats[0].colorSpace;
+            std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] WARNING\nFailed to select a four-component UNORM surface format!\n&quot;</span>);
+
+    <span class="cmt">//指定呈现模式</span>
+    <span class="type">uint32_t</span> surfacePresentModeCount;
+    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfacePresentModesKHR</span>(physicalDevice, surface, &amp;surfacePresentModeCount, <span class="kw">nullptr</span>)) {
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of surface present modes!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="kw">if</span> (!surfacePresentModeCount)
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to find any surface present mode!\n&quot;</span>),
+        abort();
+    std::<span class="type">vector</span>&lt;<span class="type">VkPresentModeKHR</span>&gt; surfacePresentModes(surfacePresentModeCount);
+    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfacePresentModesKHR</span>(physicalDevice, surface, &amp;surfacePresentModeCount, surfacePresentModes.<span class="fn">data</span>())) {
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get surface present modes!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    swapchainCreateInfo.presentMode = <span class="enum">VK_PRESENT_MODE_FIFO_KHR</span>;
+    <span class="kw">if</span> (!limitFrameRate)
+        <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; surfacePresentModeCount; i++)
+            <span class="kw">if</span> (surfacePresentModes[i] == <span class="enum">VK_PRESENT_MODE_MAILBOX_KHR</span>) {
+                swapchainCreateInfo.presentMode = <span class="enum">VK_PRESENT_MODE_MAILBOX_KHR</span>;
+                <span class="kw">break</span>;
+            }
+
+    <span class="cmt">//剩余参数</span>
+    swapchainCreateInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR</span>;
+    swapchainCreateInfo.pNext = pNext;
+    swapchainCreateInfo.flags = flags;
+    swapchainCreateInfo.surface = surface;
+    swapchainCreateInfo.imageArrayLayers = 1;
+    swapchainCreateInfo.imageSharingMode = <span class="enum">VK_SHARING_MODE_EXCLUSIVE</span>;
+    swapchainCreateInfo.clipped = <span class="mcr">VK_TRUE</span>;
+
+    <span class="cmt">//创建交换链</span>
+    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">CreateSwapchain_Internal</span>())
+        <span class="kw">return</span> result;
+    <span class="cmt">//执行回调函数</span>
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : callbacks_createSwapchain)
+        i();
+    <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
+}
+<span class="type">VkResult</span> <span class="fn">RecreateSwapchain</span>() {
+    <span class="type">VkSurfaceCapabilitiesKHR</span> surfaceCapabilities = {};
+    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfaceCapabilitiesKHR</span>(physicalDevice, surface, &amp;surfaceCapabilities)) {
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="kw">if</span> (surfaceCapabilities.currentExtent.width == 0 ||
+        surfaceCapabilities.currentExtent.height == 0)
+        <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
+    swapchainCreateInfo.imageExtent = surfaceCapabilities.currentExtent;
+    swapchainCreateInfo.oldSwapchain = swapchain;
+    <span class="type">VkResult</span> result = <span class="fn">vkQueueWaitIdle</span>(queue_graphics);
+    <span class="kw">if</span> (result == <span class="enum">VK_SUCCESS</span> &amp;&amp;
+        queue_graphics != queue_presentation)
+        result = <span class="fn">vkQueueWaitIdle</span>(queue_presentation);
+    <span class="kw">if</span> (result) {
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<spas class="str">&quot;[ graphicsBase ] ERROR\nFailed to wait for the queue to be idle!\nError code: {}\n&quot;</spas>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="cmt">//销毁旧交换链相关对象</span>
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : callbacks_destroySwapchain)
+        i();
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : swapchainImageViews)
+        <span class="kw">if</span> (i)
+            <span class="fn">vkDestroyImageView</span>(device, i, <span class="kw">nullptr</span>);
+    swapchainImageViews.<span class="fn">resize</span>(0);
+    <span class="cmt">//创建新交换链及与之相关的对象</span>
+    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">CreateSwapchain_Internal</span>())
+        <span class="kw">return</span> result;
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : callbacks_createSwapchain)
+        i();
+    <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
+}
+</pre>
+<p>
+    需要注意的是，因为<span class="fn">RecreateSwapchain</span>()会被其他看似与创建交换链无关的函数调用，因而没有参数，在调用<span class="fn">RecreateSwapchain</span>()重建交换链时，创建信息中的pNext仍旧为之前的值，因此但凡有重建交换链的必要，必须确保传入<span class="fn">CreateSwapchain</span>(...)的pNext具有够长的生存期。
+</p></section>
+<section id="id9">
+<h2>若需要重建逻辑设备<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h2>
+<p>
+    如果你需要重建逻辑设备（比如，运行过程中更换物理设备需要重建逻辑设备），也会需要相应的回调函数，在vulkan::<span class="type">graphicsBase</span>中加入以下内容：：
+</p>
+<pre class="code">
+<span class="kw">private</span>:
+std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; callbacks_createDevice;
+std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; callbacks_destroyDevice;
+
+<span class="kw">public</span>:
+<span class="kw">void</span> <span class="fn">PushCallback_CreateDevice</span>(<span class="kw">void</span>(*function)()) {
+    callbacks_createDevice.<span class="fn">push_back</span>(function);
+}
+<span class="kw">void</span> <span class="fn">PushCallback_DestroyDevice</span>(<span class="kw">void</span>(*function)()) {
+    callbacks_destroyDevice.<span class="fn">push_back</span>(function);
+}
+<span class="cmt">//该函数用于等待逻辑设备空闲</span>
+<span class="type">VkResult</span> <span class="fn">WaitIdle</span>() <span class="kw">const</span> {
+    <span class="type">VkResult</span> result = <span class="fn">vkDeviceWaitIdle</span>(device);
+    <span class="kw">if</span> (result)
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<spas class="str">&quot;[ graphicsBase ] ERROR\nFailed to wait for the device to be idle!\nError code: {}\n&quot;</spas>, <span class="type">int32_t</span>(result));
+    <span class="kw">return</span> result;
+}
+<span class="cmt">//该函数用于重建逻辑设备</span>
+<span class="type">VkResult</span> <span class="fn">RecreateDevice</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkDeviceCreateFlags</span> flags = 0) {
+    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">WaitIdle</span>())
+        <span class="kw">return</span> result;
+    <span class="cmt">/*待后续填充*/</span>
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            销毁逻辑设备前，当然要等它空闲，用<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkDeviceWaitIdle">vkDeviceWaitIdle</a>(...)等待逻辑设备空闲，用法应该一目了然，在此不做赘述。
+        </p>
+    </li>
+    <li>
+        <p>
+            与<span class="fn">RecreateSwapchain</span>()不同，<span class="fn">RecreateDevice</span>(...)会被手动调用，且其创建信息未被保存（考虑因更换物理设备而重建逻辑设备的情况，物理设备特性和队列创建信息都必须重新获取，所以没必要保存），所以带有参数。
+        </p>
+    </li>
+</ul>
+<p>
+    如果你不需要重建逻辑设备，书写<span class="fn">WaitIdle</span>()后即可看下一节。
+</p>
+<p>
+    填充<span class="fn">RecreateDevice</span>(...)，待逻辑设备空闲后首先销毁交换链相关的对象：
+</p>
+<pre class="code">
+<span class="kw">if</span> (swapchain) {
+    <span class="cmt">//调用销毁交换链时的回调函数</span>
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : callbacks_destroySwapchain)
+        i();
+    <span class="cmt">//销毁交换链图像的image view</span>
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : swapchainImageViews)
+        <span class="kw">if</span> (i)
+            <span class="fn">vkDestroyImageView</span>(device, i, <span class="kw">nullptr</span>);
+    swapchainImageViews.<span class="fn">resize</span>(0);
+    <span class="cmt">//销毁交换链</span>
+    <span class="fn">vkDestroySwapchainKHR</span>(device, swapchain, <span class="kw">nullptr</span>);
+    <span class="cmt">//重置交换链handle</span>
+    swapchain = <span class="mcr">VK_NULL_HANDLE</span>;
+    <span class="cmt">//重置交换链创建信息</span>
+    swapchainCreateInfo = {};
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            用<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkDestroySwapchainKHR">vkDestroySwapchainKHR</a>(...)销毁交换链，用法与<a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkDestroyImageView">vkDestroyImageView</a>(...)类似，在此不做赘述。
+        </p>
+    </li>
+</ul>
+<p>
+    接着调用销毁逻辑设备时的回调，并调用<a href="https://renderdoc.org/vkspec_chunked/chap5.html#vkDestroyDevice">vkDestroyDevice</a>(...)销毁逻辑设备相关的对象：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap5.html#vkDestroyDevice">vkDestroyDevice</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span>* pAllocator</p></td>
+            <td><p>如有必要，指向描述自定义内存分配方式的结构体</p></td>
+        </tr>
+    </tbody>
+</table>
+<pre class="code">
+<span class="kw">for</span> (<span class="kw">auto</span>&amp; i : callbacks_destroyDevice)
+    i();
+<span class="kw">if</span> (device)<span class="cmt">//防函数执行失败后再次调用时发生重复销毁</span>
+    <span class="fn">vkDestroyDevice</span>(device, <span class="kw">nullptr</span>),
+    device = <span class="mcr">VK_NULL_HANDLE</span>;
+</pre>
+<p>
+    最后调用<span class="fn">CreateLogicalDevice</span>(...)重建逻辑设备，整个vulkan::<span class="type">graphicsBase</span>::<span class="fn">RecreateDevice</span>()如下：
+</p>
+<pre class="code">
+<span class="type">VkResult</span> <span class="fn">RecreateDevice</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkDeviceCreateFlags</span> flags = 0) {
+    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">WaitIdle</span>())
+        <span class="kw">return</span> result;
+    <span class="kw">if</span> (swapchain) {
+        <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : callbacks_destroySwapchain)
+            i();
+        <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : swapchainImageViews)
+            <span class="kw">if</span> (i)
+                <span class="fn">vkDestroyImageView</span>(device, i, <span class="kw">nullptr</span>);
+        swapchainImageViews.<span class="fn">resize</span>(0);
+        <span class="fn">vkDestroySwapchainKHR</span>(device, swapchain, <span class="kw">nullptr</span>);
+        swapchain = <span class="mcr">VK_NULL_HANDLE</span>;
+        swapchainCreateInfo = {};
+    }
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : callbacks_destroyDevice)
+        i();
+    <span class="kw">if</span> (device)
+        <span class="fn">vkDestroyDevice</span>(device, <span class="kw">nullptr</span>),
+        device = <span class="mcr">VK_NULL_HANDLE</span>;
+    <span class="kw">return</span> <span class="fn">CreateLogicalDevice</span>(pNext, flags);
+}
+</pre>
+<p>
+    <strong>如果你要重建逻辑设备，那么剧本应该是这样的：</strong>
+    <br>
+    1.调用<span class="fn">RecreateDevice</span>(...)重建逻辑设备。
+    <br>
+    2.调用<span class="fn">CreateSwapchain</span>(...)创建交换链。
+</p></section>
+<section id="id10">
+<h2>销毁目前为止创建的对象<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h2>
+<p>
+    当应用程序结束时，通常来讲，操作系统会回收未释放的内存，而硬件驱动会回收未释放的显存，因此并非必须手动销毁目前为止创建的这些Vulkan对象。
+    <br>
+    不过，这里姑且还是填写一下<span class="type">graphicsBase</span>的析构器，一来确保debug messenger能在期望的时机析构（可以在销毁Vulkan实例前的任意位置销毁它，将其保留到销毁Vulkan实例前以便捕捉在销毁过程中可能因Vulkan函数引发的异常），二来也方便你今后可能会有在运行过程中终止Vulkan的需求（比如，切换图形API）。
+    <br>
+    首先判断是否创建了Vulkan实例：
+</p>
+<pre class="code">
+<span class="kw">if</span> (!instance)
+    <span class="kw">return</span>;
+</pre>
+<p>
+    然后在有逻辑设备的情况下等待逻辑设备空闲：
+</p>
+<pre class="code">
+<span class="kw">if</span> (device) {
+    <span class="fn">WaitIdle</span>();
+    <span class="cmt">/*待后续填充*/</span>;
+}
+</pre>
+<p>
+    销毁交换链和逻辑设备，基本如前一小节所写的那样，不过各类handle先不必置零：
+</p>
+<pre class="code">
+<span class="kw">if</span> (device) {
+    <span class="fn">WaitIdle</span>();
+    <span class="kw">if</span> (swapchain) {
+        <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : callbacks_destroySwapchain)
+            i();
+        <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : swapchainImageViews)
+            <span class="kw">if</span> (i)
+                <span class="fn">vkDestroyImageView</span>(device, i, <span class="kw">nullptr</span>);
+        <span class="fn">vkDestroySwapchainKHR</span>(device, swapchain, <span class="kw">nullptr</span>);
+    }
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : callbacks_destroyDevice)
+        i();
+    <span class="fn">vkDestroyDevice</span>(device, <span class="kw">nullptr</span>);
+}
+</pre>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkDestroySurfaceKHR">vkDestroySurfaceKHR</a>(...)销毁surface：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkDestroySurfaceKHR">vkDestroySurfaceKHR</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkInstance</span> instance</p></td>
+            <td><p>Vulkan实例的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkSurfaceKHR</span> surface</p></td>
+            <td><p>被销毁的window surface的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span>* pAllocator</p></td>
+            <td><p>如有必要，指向描述自定义内存分配方式的结构体</p></td>
+        </tr>
+    </tbody>
+</table>
+<pre class="code">
+<span class="kw">if</span> (surface)
+    <span class="fn">vkDestroySurfaceKHR</span>(instance, surface, <span class="kw">nullptr</span>);
+</pre>
+<p>
+    销毁debug messenger的函数<a href="https://renderdoc.org/vkspec_chunked/chap45.html#vkDestroyDebugUtilsMessengerEXT">vkDestroyDebugUtilsMessengerEXT</a>(...)同
+    <a href="https://renderdoc.org/vkspec_chunked/chap45.html#vkCreateDebugUtilsMessengerEXT">vkCreateDebugUtilsMessengerEXT</a>(...)一样，都需要用<a href="https://renderdoc.org/vkspec_chunked/chap4.html#vkGetInstanceProcAddr">vkGetInstanceProcAddr</a>(...)取得，<a href="https://renderdoc.org/vkspec_chunked/chap45.html#vkDestroyDebugUtilsMessengerEXT">vkDestroyDebugUtilsMessengerEXT</a>(...)用法与<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkDestroySurfaceKHR">vkDestroySurfaceKHR</a>(...)类似，不做赘述：
+</p>
+<pre class="code">
+<span class="kw">if</span> (debugUtilsMessenger) {
+    <span class="type">PFN_vkDestroyDebugUtilsMessengerEXT</span> DestroyDebugUtilsMessenger =
+        <span class="kw">reinterpret_cast</span>&lt;<span class="type">PFN_vkDestroyDebugUtilsMessengerEXT</span>&gt;(<span class="fn">vkGetInstanceProcAddr</span>(instance, <span class="str">&quot;vkDestroyDebugUtilsMessengerEXT&quot;</span>));
+    <span class="kw">if</span> (DestroyDebugUtilsMessenger)
+        DestroyDebugUtilsMessenger(instance, debugUtilsMessenger, <span class="kw">nullptr</span>);
+}
+</pre>
+<p>
+    最后销毁Vulkan实例，整个vulkan::<span class="type">graphicsBase</span>::~<span class="fn">graphicsBase</span>(...)函数如下：
+</p>
+<pre class="code">
+~<span class="fn">graphicsBase</span>() {
+    <span class="kw">if</span> (!instance)
+        <span class="kw">return</span>;
+    <span class="kw">if</span> (device) {
+        <span class="fn">WaitIdle</span>();
+        <span class="kw">if</span> (swapchain) {
+            <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : callbacks_destroySwapchain)
+                i();
+            <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : swapchainImageViews)
+                <span class="kw">if</span> (i)
+                    <span class="fn">vkDestroyImageView</span>(device, i, <span class="kw">nullptr</span>);
+            <span class="fn">vkDestroySwapchainKHR</span>(device, swapchain, <span class="kw">nullptr</span>);
+        }
+        <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : callbacks_destroyDevice)
+            i();
+        <span class="fn">vkDestroyDevice</span>(device, <span class="kw">nullptr</span>);
+    }
+    <span class="kw">if</span> (surface)
+        <span class="fn">vkDestroySurfaceKHR</span>(instance, surface, <span class="kw">nullptr</span>);
+    <span class="kw">if</span> (debugUtilsMessenger) {
+        <span class="type">PFN_vkDestroyDebugUtilsMessengerEXT</span> DestroyDebugUtilsMessenger =
+            <span class="kw">reinterpret_cast</span>&lt;<span class="type">PFN_vkDestroyDebugUtilsMessengerEXT</span>&gt;(<span class="fn">vkGetInstanceProcAddr</span>(instance, <span class="str">&quot;vkDestroyDebugUtilsMessengerEXT&quot;</span>));
+        <span class="kw">if</span> (DestroyDebugUtilsMessenger)
+            DestroyDebugUtilsMessenger(instance, debugUtilsMessenger, <span class="kw">nullptr</span>);
+    }
+    <span class="fn">vkDestroyInstance</span>(instance, <span class="kw">nullptr</span>);
+}
+</pre>
+<p>
+    因为vulkan::<span class="type">graphicsBase</span>是单例，其析构器是<span class="kw">private</span>的，上述函数也仅仅是用于在程序退出时确保期望的销毁顺序。
+    <br>
+    如果你要在运行过程中终止Vulkan，那么为了防止程序退出时重复销毁相关对象，还需要把相关对象重置为零值，你可以在<span class="type">graphicsBase</span>中加入以下函数：
+</p>
+<pre class="code">
+<span class="kw">public</span>:
+<span class="kw">void</span> <span class="fn">Terminate</span>() {
+    <span class="kw">this</span>->~<span class="fn">graphicsBase</span>();
+    instance = <span class="mcr">VK_NULL_HANDLE</span>;
+    physicalDevice = <span class="mcr">VK_NULL_HANDLE</span>;
+    device = <span class="mcr">VK_NULL_HANDLE</span>;
+    surface = <span class="mcr">VK_NULL_HANDLE</span>;
+    swapchain = <span class="mcr">VK_NULL_HANDLE</span>;
+    swapchainImages.<span class="fn">resize</span>(0);
+    swapchainImageViews.<span class="fn">resize</span>(0);
+    swapchainCreateInfo = {};
+    debugUtilsMessenger = <span class="mcr">VK_NULL_HANDLE</span>;
+}
+</pre>
+<p>
+    对于需要在运行过程中切换图形API的情况，我更推荐你单独写一个专用的函数，销毁其他对象但保留Vulkan实例，原因在于创建Vulkan实例是初始化过程中最耗时的一步（Release Bulid可能消耗1.4秒上下），而保留Vulkan实例并不会耗费你太多内存（30到40MB），方便来回切换。
+</p></section>
+<section id="id11">
+<h2>完成初始化<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h2>
+<p>
+    在<span class="fn">InitializeWindow</span>(...)中调用vulkan::<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">CreateSwapchain</span>(...)：
+</p>
+<pre class="code">
+<span class="kw">bool</span> <span class="fn">InitializeWindow</span>(<span class="type">VkExtent2D</span> size, <span class="kw">bool</span> fullScreen = <span class="kw">false</span>, <span class="kw">bool</span> isResizable = <span class="kw">true</span>, <span class="kw">bool</span> limitFrameRate = <span class="kw">true</span>) {
+    <span class="kw">using namespace</span> vulkan;
+
+    <span class="kw">if</span> (!<span class="fn">glfwInit</span>()) {
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ] ERROR\nFailed to initialize GLFW!\n&quot;</span>);
+        <span class="kw">return false</span>;
+    }
+    <span class="fn">glfwWindowHint</span>(<span class="mcr">GLFW_CLIENT_API</span>, <span class="mcr">GLFW_NO_API</span>);
+    <span class="fn">glfwWindowHint</span>(<span class="mcr">GLFW_RESIZABLE</span>, isResizable);
+    pMonitor = <span class="fn">glfwGetPrimaryMonitor</span>();
+    <span class="kw">const</span> <span class="type">GLFWvidmode</span>* pMode = <span class="fn">glfwGetVideoMode</span>(pMonitor);
+    pWindow = fullScreen ?
+        <span class="fn">glfwCreateWindow</span>(size.width, size.height, windowTitle, pMonitor, <span class="kw">nullptr</span>) :
+        <span class="fn">glfwCreateWindow</span>(size.width, size.height, windowTitle, <span class="kw">nullptr</span>, <span class="kw">nullptr</span>);
+    <span class="kw">if</span> (!pWindow) {
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ]\nFailed to create a glfw window!\n&quot;</span>);
+        <span class="fn">glfwTerminate</span>();
+        <span class="kw">return false</span>;
+    }
+
+<span class="pragma">#ifdef</span> <span class="mcr">_WIN32</span>
+    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushInstanceExtension</span>(<span class="str">&quot;VK_KHR_surface&quot;</span>);
+    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushInstanceExtension</span>(<span class="str">&quot;VK_KHR_win32_surface&quot;</span>);
+<span class="pragma">#else</span>
+    <span class="type">uint32_t</span> extensionCount = 0;
+    <span class="kw">const char</span>** extensionNames;
+    extensionNames = <span class="type">glfwGetRequiredInstanceExtensions</span>(&amp;extensionCount);
+    <span class="kw">if</span> (!extensionNames) {
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ]\nVulkan is not available on this machine!\n&quot;</span>);
+        <span class="fn">glfwTerminate</span>();
+        <span class="kw">return false</span>;
+    }
+    <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; extensionCount; i++)
+        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushInstanceExtension</span>(extensionNames[i]);
+<span class="pragma">#endif</span>
+    <span class="type">graphicsBase</span>::<span class="fn">Base</span>.<span class="fn">UseLatestApiVersion</span>()
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>.<span class="fn">CreateInstance</span>())
+        <span class="kw">return false</span>;
+
+    <span class="type">VkSurfaceKHR</span> surface = <span class="mcr">VK_NULL_HANDLE</span>;
+    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">glfwCreateWindowSurface</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Instance</span>(), pWindow, <span class="kw">nullptr</span>, &amp;surface)) {
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ] ERROR\nFailed to create a window surface!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="fn">glfwTerminate</span>();
+        <span class="kw">return false</span>;
+    }
+    <span class="type">graphicsBase</span>::<span class="fn">Base</span>.<span class="fn">Surface</span>(surface);
+
+    <span class="kw">if</span> (
+        <span class="type">graphicsBase</span>::<span class="fn">Base</span>.<span class="fn">GetPhysicalDevices</span>() ||
+        <span class="type">graphicsBase</span>::<span class="fn">Base</span>.<span class="fn">DeterminePhysicalDevice</span>(0, <span class="kw">true</span>, <span class="kw">false</span>) ||
+        <span class="type">graphicsBase</span>::<span class="fn">Base</span>.<span class="fn">CreateLogicalDevice</span>())
+        <span class="kw">return false</span>;
+
+    <span class="cmt">//本节新增--------------------------------</span>
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">CreateSwapchain</span>(limitFrameRate))
+        <span class="kw">return false</span>;
+    <span class="cmt">//----------------------------------------</span>
+
+    <span class="kw">return true</span>;
+}
+</pre>
+<p>
+    到此为止便完成了Vulkan程序的初始化代码，这意味着所有对于运行Vulkan程序而言必备的对象皆已创建，以及，销毁这些对象的函数也已经在书写在了正确的位置。
+</p></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html" class="btn btn-neutral float-left" title="Ch1-3 创建VK实例与逻辑设备" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html" class="btn btn-neutral float-right" title="Ch2-0 代码整理及一些辅助类" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

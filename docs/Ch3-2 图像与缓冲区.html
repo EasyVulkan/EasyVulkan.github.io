@@ -1,0 +1,2312 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch3-2 图像与缓冲区 &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ch3-3 管线布局和管线" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html" />
+    <link rel="prev" title="Ch3-1 同步原语" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch3-2 图像与缓冲区</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#device-memory">Device Memory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">分配设备内存</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">将设备内存绑定给缓冲区或图像</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">映射内存区</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">取消映射内存区</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#devicememory">封装为deviceMemory类</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#buffer">Buffer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">创建缓冲区</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">获取缓冲区的内存分配要求</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">将设备内存绑定到缓冲区</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">封装为buffer类</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#buffermemory">同设备内存一起封装为bufferMemory类</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#buffer-view">Buffer View</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id9">创建缓冲区视图</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bufferview">封装为bufferView类</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#image">Image</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id10">创建图像</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">获取图像的内存分配要求</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">将设备内存绑定到图像</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">封装为image类</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#imagememory">同设备内存一起封装为imageMemory类</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#image-view">Image View</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id14">创建图像视图</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#imageview">封装为imageView类</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id15">图像及数据的格式</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id16">非压缩颜色格式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id17">深度模板格式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vkformat-h">VkFormat.h</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id18">惰性初始化的设备内存</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch3-2 图像与缓冲区</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch3-2">
+<h1>Ch3-2 图像与缓冲区<a class="headerlink" href="#ch3-2" title="Permalink to this heading"></a></h1>
+<section id="device-memory">
+<h2>Device Memory<a class="headerlink" href="#device-memory" title="Permalink to this heading"></a></h2>
+<p>
+    设备内存（<span class="type">VkDeviceMemory</span>）是从相应的物理设备上分配的内存，由于通常会使用显卡作为图形处理设备，所以<span class="type">VkDeviceMemory</span>通常指代显存区域。
+</p><section id="id1">
+<h3>分配设备内存<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkAllocateMemory">vkAllocateMemory</a>分配设备内存：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkCreateImageView">vkCreateImageView</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkMemoryAllocateInfo</span>* pAllocateInfo</p></td>
+            <td><p>指向<span class="type">VkDeviceMemory</span>的分配信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span>* pAllocator</p></td>
+            <td><p>一个指向描述自定义内存分配方式的结构体的指针</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkDeviceMemory</span>* pMemory</p></td>
+            <td><p>若执行成功，将设备内存的handle写入*pMemory</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap11.html#VkMemoryAllocateInfo">VkMemoryAllocateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkDeviceSize</span> allocationSize</p></td>
+            <td><p>所需分配内存区的大小</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> memoryTypeIndex</p></td>
+            <td><p>内存类型索引</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            所需分配内存区的大小和内存类型索引需要根据与之对应的图像或缓冲区确定。
+        </p>
+    </li>
+</ul></section>
+<section id="id2">
+<h3>将设备内存绑定给缓冲区或图像<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<p>
+    通常会把连续的设备内存区域绑定给缓冲区/图像，一次性分配的大量设备内存可以拆分成几块进行绑定。
+    <br>
+    将多块不连续的内存区绑定给单一资源的做法称为“稀疏绑定”，本套教程中不会就其做讲解。
+    <br>
+</p>
+<p>
+    一块设备内存可以被绑定给多个资源/缓冲区，换言之可以混叠，这在一定的限制下是安全的。
+    <br>
+    比如，将相同的设备内存，同时绑定给缓冲区和线性排列的图像：
+</p>
+<p>
+    <span class="ref">
+        Buffers, and linear image subresources in either the VK_IMAGE_LAYOUT_PREINITIALIZED or VK_IMAGE_LAYOUT_GENERAL layouts, are host-accessible subresources. That is, the host has a well-defined addressing scheme to interpret the contents, and thus the layout of the data in memory can be consistently interpreted across aliases if each of those aliases is a host-accessible subresource. Non-linear images, and linear image subresources in other layouts, are not host-accessible.
+        <br>
+        If two aliases are both host-accessible, then they interpret the contents of the memory in consistent ways, and data written to one alias can be read by the other alias.
+    </span>
+    <br>
+    <a href="https://renderdoc.org/vkspec_chunked/chap12.html#resources-memory-aliasing">官方文档出处见此</a>。
+</p>
+<p>
+    这在某些情况下可以帮你省事，比方说，要将某个图像格式Fa的图像Ia，转成另一格式Fb的图像Ib时，一些入门教程的做法可能是：
+    <br>
+    CPU可写的缓冲区 → 最优排列、格式为Fa的Ia → 最优排列、格式为Fb的Ib。
+    <br>
+    但其实可以用更快的方式，减少一次数据传送：
+    <br>
+    CPU可写的缓冲区混叠线性排列、格式为Fa的Ia → 最优排列、格式为Fb的Ib。
+</p>
+<p>
+    关于绑定缓冲区或图像的具体函数，见其各自的段落。
+</p></section>
+<section id="id3">
+<h3>映射内存区<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<p>
+    对于具有<span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>内存属性的设备内存区（关于取得内存属性的方法见后文的封装代码），在对其进行映射（map）后，可以从CPU侧对其进行直接读写。
+    <br>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkMapMemory">vkMapMemory</a>(...)映射内存区：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkMapMemory">vkMapMemory</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkDeviceMemory</span> memory</p></td>
+            <td><p>设备内存的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkDeviceSize</span> offset</p></td>
+            <td><p>要被映射的内存块距离memory所指代内存区域起始位置的字节数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkDeviceSize</span> size</p></td>
+            <td><p>要被映射的内存块的大小，单位是字节</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkMemoryMapFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">void</span>** ppData</p></td>
+            <td><p>若执行成功，将用于访问内存区域的指针写入*pData</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    注意，如果内存属性中不具有<span class="enum">VK_MEMORY_PROPERTY_HOST_COHERENT_BIT</span>，那么你需要做两件事：
+    <br>
+    1.调整被映射缓冲区的offset和size，使offset为<a href="https://renderdoc.org/vkspec_chunked/chap5.html#VkPhysicalDeviceProperties">VkPhysicalDeviceProperties</a>::limits::nonCoherentAtomSize的整数倍，size同为<a href="https://renderdoc.org/vkspec_chunked/chap5.html#VkPhysicalDeviceProperties">VkPhysicalDeviceProperties</a>::limits::nonCoherentAtomSize的整数倍或offset到内存块末尾的距离，这可以用如下代码计算：
+</p>
+<pre class="code">
+<span class="kw">const</span> <span class="type">VkDeviceSize</span>&amp; nonCoherentAtomSize = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.nonCoherentAtomSize;
+size = size + offset;
+offset = (offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCoherentAtomSize;
+size = (size - offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCoherentAtomSize;
+<span class="kw">if</span> (size + offset > allocationSize)
+    size = allocationSize - offset;
+</pre>
+<p>
+    2.使用<a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkInvalidateMappedMemoryRanges">vkInvalidateMappedMemoryRanges</a>(...)确保物理设备对该片内存的写入结果可以被CPU侧正确读取：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkMapMemory">vkMapMemory</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> memoryRangeCount</p></td>
+            <td><p>要被invalidate的设备内存区域的数量</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkMappedMemoryRange</span>* pMemoryRanges</p></td>
+            <td><p>指向<span class="type">VkMappedMemoryRange</span>的数组，用于指定要被invalidate的设备内存区域</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap11.html#VkMappedMemoryRange">VkMappedMemoryRange</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkDeviceMemory</span> memory</p></td>
+            <td><p>设备内存的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkDeviceSize</span> offset</p></td>
+            <td><p>该内存区距离memory所指代内存区域起始位置的字节数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkDeviceSize</span> size</p></td>
+            <td><p>该内存区的大小，单位是字节</p></td>
+        </tr>
+    </tbody>
+</table></section>
+<section id="id4">
+<h3>取消映射内存区<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkUnmapMemory">vkUnmapMemory</a>(...)取消对内存区的映射：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkUnmapMemory">vkUnmapMemory</a>vkMapMemory</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkDeviceMemory</span> memory</p></td>
+            <td><p>设备内存的handle</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    如果内存属性中不具有<span class="enum">VK_MEMORY_PROPERTY_HOST_COHERENT_BIT</span>，使用<a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkFlushMappedMemoryRanges">vkInvalidateMappedMemoryRanges</a>(...)确保CPU侧对该片内存的写入结果可以被物理设备正确读取
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkFlushMappedMemoryRanges">vkInvalidateMappedMemoryRanges</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> memoryRangeCount</p></td>
+            <td><p>要被flush的设备内存区域的数量</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkMappedMemoryRange</span>* pMemoryRanges</p></td>
+            <td><p>指向<span class="type">VkMappedMemoryRange</span>的数组，用于指定要被flush的设备内存区域</p></td>
+        </tr>
+    </tbody>
+</table></section>
+<section id="devicememory">
+<h3>封装为deviceMemory类<a class="headerlink" href="#devicememory" title="Permalink to this heading"></a></h3>
+<p>
+    向<span class="path">VKBase.h</span>，vulkan命名空间中添加以下代码：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">deviceMemory</span> {
+    <span class="type">VkDeviceMemory</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
+    <span class="type">VkDeviceSize</span> allocationSize = 0;<span class="cmt">//实际分配的内存大小</span>
+    <span class="type">VkMemoryPropertyFlags</span> memoryProperties = 0;<span class="cmt">//内存属性</span>
+    <span class="cmt">//--------------------</span>
+    <span class="cmt">//该函数用于在映射内存区时，调整非host coherent的内存区域的范围</span>
+    <span class="kw">void</span> <span class="fn">AdjustNonCoherentMemoryRange</span>(<span class="type">VkDeviceSize</span>&amp; size, <span class="type">VkDeviceSize</span>&amp; offset) <span class="kw">const</span> {
+        <span class="kw">const</span> <span class="type">VkDeviceSize</span>&amp; nonCoherentAtomSize = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.nonCoherentAtomSize;
+        size = size + offset;
+        offset = (offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCoherentAtomSize;
+        size = (size - offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCoherentAtomSize;
+        <span class="kw">if</span> (size + offset &gt; allocationSize)
+            size = allocationSize - offset;
+    }
+<span class="kw">protected</span>:
+    <span class="cmt">//用于bufferMemory或imageMemory，定义于此以节省8个字节</span>
+    <span class="kw">class</span> {
+        <span class="kw">friend class</span> <span class="type">bufferMemory</span>;
+        <span class="kw">friend class</span> <span class="type">imageMemory</span>;
+        <span class="kw">bool</span> value = <span class="kw">false</span>;
+        <span class="kw">operator bool</span>() <span class="kw">const</span> { <span class="kw">return</span> value; }
+        <span class="kw">auto</span>&amp; <span class="kw">operator</span>=(<span class="kw">bool</span> value) { <span class="kw">this</span>-&gt;value = value; <span class="kw">return</span> *<span class="kw">this</span>; }
+    } areBound;
+<span class="kw">public</span>:
+    <span class="fn">deviceMemory</span>() = <span class="kw">default</span>;
+    <span class="fn">deviceMemory</span>(<span class="type">VkMemoryAllocateInfo</span>&amp; allocateInfo) {
+        <span class="fn">Allocate</span>(allocateInfo);
+    }
+    <span class="fn">deviceMemory</span>(<span class="type">deviceMemory</span>&amp;&amp; other) <span class="kw">noexcept</span> {
+        <span class="mcr">MoveHandle</span>;
+        allocationSize = other.allocationSize;
+        memoryProperties = other.memoryProperties;
+        other.allocationSize = 0;
+        other.memoryProperties = 0;
+    }
+    ~<span class="fn">deviceMemory</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkFreeMemory</span>); allocationSize = 0; memoryProperties = 0; }
+    <span class="cmt">//Getter</span>
+    <span class="mcr">DefineHandleTypeOperator</span>;
+    <span class="mcr">DefineAddressFunction</span>;
+    <span class="type">VkDeviceSize</span> <span class="fn">AllocationSize</span>() <span class="kw">const</span> { <span class="kw">return</span> allocationSize; }
+    <span class="type">VkMemoryPropertyFlags</span> <span class="fn">MemoryProperties</span>() <span class="kw">const</span> { <span class="kw">return</span> memoryProperties; }
+    <span class="cmt">//Const Function</span>
+    <span class="cmt">//映射host visible的内存区</span>
+    <span class="type">result_t</span> <span class="fn">MapMemory</span>(<span class="kw">void</span>*&amp; pData, <span class="type">VkDeviceSize</span> size, <span class="type">VkDeviceSize</span> offset = 0) <span class="kw">const</span> {
+        <span class="kw">if</span> (!(memoryProperties &amp; <span class="enum">VK_MEMORY_PROPERTY_HOST_COHERENT_BIT</span>))
+            <span class="fn">AdjustNonCoherentMemoryRange</span>(size, offset);
+        <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkMapMemory</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle, offset, size, 0, &amp;pData)) {
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ deviceMemory ] ERROR\nFailed to map the memory!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            <span class="kw">return</span> result;
+        }
+        <span class="kw">if</span> (!(memoryProperties &amp; <span class="enum">VK_MEMORY_PROPERTY_HOST_COHERENT_BIT</span>)) {
+            <span class="type">VkMappedMemoryRange</span> mappedMemoryRange = {
+                .sType = <span class="enum">VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE</span>,
+                .memory = handle,
+                .offset = offset,
+                .size = size
+            };
+            <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkInvalidateMappedMemoryRanges</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), 1, &amp;mappedMemoryRange)) {
+                outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ deviceMemory ] ERROR\nFailed to flush the memory!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+                <span class="kw">return</span> result;
+            }
+        }
+        <span class="kw">return</span> <span class="mcr">VK_SUCCESS</span>;
+    }
+    <span class="cmt">//取消映射host visible的内存区</span>
+    <span class="type">result_t</span> <span class="fn">UnmapMemory</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkDeviceSize</span> offset = 0) <span class="kw">const</span> {
+        <span class="kw">if</span> (!(memoryProperties &amp; <span class="enum">VK_MEMORY_PROPERTY_HOST_COHERENT_BIT</span>)) {
+            <span class="fn">AdjustNonCoherentMemoryRange</span>(size, offset);
+            <span class="type">VkMappedMemoryRange</span> mappedMemoryRange = {
+                .sType = <span class="enum">VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE</span>,
+                .memory = handle,
+                .offset = offset,
+                .size = size
+            };
+            <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkFlushMappedMemoryRanges</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), 1, &amp;mappedMemoryRange)) {
+                outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ deviceMemory ] ERROR\nFailed to flush the memory!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+                <span class="kw">return</span> result;
+            }
+        }
+        <span class="fn">vkUnmapMemory</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle);
+        <span class="kw">return</span> <span class="mcr">VK_SUCCESS</span>;
+    }
+    <span class="cmt">//BufferData(...)用于方便地更新设备内存区，适用于用memcpy(...)向内存区写入数据后立刻取消映射的情况</span>
+    <span class="type">result_t</span> <span class="fn">BufferData</span>(<span class="kw">const void</span>* pData_src, <span class="type">VkDeviceSize</span> size, <span class="type">VkDeviceSize</span> offset = 0) <span class="kw">const</span> {
+        <span class="kw">void</span>* pData_dst;
+        <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">MapMemory</span>(pData_dst, size, offset))
+            <span class="kw">return</span> result;
+        <span class="fn">memcpy</span>(pData_dst, pData_src, <span class="type">size_t</span>(size));
+        <span class="kw">return</span> <span class="fn">UnmapMemory</span>(size, offset);
+    }
+    <span class="type">result_t</span> <span class="fn">BufferData</span>(<span class="kw">const auto</span>&amp; data_src) <span class="kw">const</span> {
+        <span class="kw">return</span> <span class="fn">BufferData</span>(&amp;data_src, <span class="kw">sizeof</span> data_src);
+    }
+    <span class="cmt">//RetrieveData(...)用于方便地从设备内存区取回数据，适用于用memcpy(...)从内存区取得数据后立刻取消映射的情况</span>
+    <span class="type">result_t</span> <span class="fn">RetrieveData</span>(<span class="kw">void</span>* pData_dst, <span class="type">VkDeviceSize</span> size, <span class="type">VkDeviceSize</span> offset = 0) <span class="kw">const</span> {
+        <span class="kw">void</span>* pData_src;
+        <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">MapMemory</span>(pData_src, size, offset))
+            <span class="kw">return</span> result;
+            <span class="fn">memcpy</span>(pData_dst, pData_src, <span class="type">size_t</span>(size));
+        <span class="kw">return</span> <span class="fn">UnmapMemory</span>(size, offset);
+    }
+    <span class="cmt">//Non-const Function</span>
+    <span class="type">result_t</span> <span class="fn">Allocate</span>(<span class="type">VkMemoryAllocateInfo</span>&amp; allocateInfo) {
+        <span class="kw">if</span> (allocateInfo.memoryTypeIndex &gt;= <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceMemoryProperties</span>().memoryTypeCount) {
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ deviceMemory ] ERROR\nInvalid memory type index!\n&quot;</span>);
+            <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;<span class="cmt">//没有合适的错误代码，别用VK_ERROR_UNKNOWN</span>
+        }
+        allocateInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO</span>;
+        <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkAllocateMemory</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), &amp;allocateInfo, <span class="kw">nullptr</span>, &amp;handle)) {
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ deviceMemory ] ERROR\nFailed to allocate memory!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            <span class="kw">return</span> result;
+        }
+        <span class="cmt">//记录实际分配的内存大小</span>
+        allocationSize = allocateInfo.allocationSize;
+        <span class="cmt">//取得内存属性</span>
+        memoryProperties = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceMemoryProperties</span>().memoryTypes[allocateInfo.memoryTypeIndex].propertyFlags;
+        <span class="kw">return</span> <span class="mcr">VK_SUCCESS</span>;
+    }
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            <span class="var">areBound</span>用于记录设备内存是否被完整绑定到缓冲区或图像，用在后文的<span class="type">bufferMemory</span>和<span class="type">imageMemory</span>类中，定义在这里是因为成员变量<span class="var">memoryProperties</span>后有4个字节的空档（考虑到<span class="type">VkDeviceMemory</span>和<span class="type">VkDeviceSize</span>都是8字节大小，对齐当然也是8字节）。
+        </p>
+    </li>
+</ul></section>
+</section>
+<section id="buffer">
+<h2>Buffer<a class="headerlink" href="#buffer" title="Permalink to this heading"></a></h2>
+<p>
+    缓冲区（<span class="type">VkBuffer</span>）引用设备内存，指代缓冲区数据。缓冲区中的数据是线性排列的。
+</p><section id="id5">
+<h3>创建缓冲区<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkCreateBuffer">vkCreateBuffer</a>(...)创建缓冲区：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkCreateBuffer">vkCreateBuffer</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkBufferCreateInfo</span>* pCreateInfo</p></td>
+            <td><p>指向<span class="type">VkBuffer</span>的创建信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span>* pAllocator</p></td>
+            <td><p>一个指向描述自定义内存分配方式的结构体的指针</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkBuffer</span>* pBuffer</p></td>
+            <td><p>若执行成功，将缓冲区的handle写入*pBuffer</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkBufferCreateInfo">VkBufferCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkBufferCreateFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkDeviceSize</span> size</p></td>
+            <td><p>缓冲区的大小</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkBufferUsageFlags</span> usage</p></td>
+            <td><p>缓冲区的用途</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkSharingMode</span> sharingMode</p></td>
+            <td><p>分享访问模式，默认为单一队列族独占访问，若填入<span class="enum">VK_SHARING_MODE_CONCURRENT</span>，则允许不同队列族的队列同时访问</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> queueFamilyIndexCount</p></td>
+            <td><p>若sharingMode为<span class="enum">VK_SHARING_MODE_CONCURRENT</span>，则在此填入同时访问本缓冲区的队列族的个数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> pQueueFamilyIndices</p></td>
+            <td><p>若sharingMode为<span class="enum">VK_SHARING_MODE_CONCURRENT</span>，则指向同时访问本缓冲区的队列族的索引</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            sharingMode为<span class="enum">VK_SHARING_MODE_CONCURRENT</span>可能降低访问效率，其好处是可以免去资源的队列族所有权转移。
+        </p>
+    </li>
+    <li>
+        <p>
+            若sharingMode为默认的<span class="enum">VK_SHARING_MODE_EXCLUSIVE</span>，则pQueueFamilyIndices被无视。
+        </p>
+    </li>
+</ul>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr>
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkBufferCreateFlagBits">VkBufferCreateFlagBits</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BUFFER_CREATE_SPARSE_BINDING_BIT                </span>表示缓冲区会被稀疏绑定</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT              </span>表示会被稀疏绑定的缓冲区能被部分绑定</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BUFFER_CREATE_SPARSE_ALIASED_BIT                </span>表示会被稀疏绑定的缓冲区对应的内存会与其它缓冲区的内存混叠</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_BUFFER_CREATE_PROTECTED_BIT                     </span>表示创建受保护的缓冲区</p></td>
+        </tr>
+        <tr>
+            <td><p>1.2</p></td>
+            <td><p><span class="enum">VK_BUFFER_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT </span>表示缓冲区的在物理设备内存中的地址会被保存并用于下一次程序运行</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            上述bit所涉及内容在本套教程中皆不做解说。
+        </p>
+    </li>
+</ul>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr>
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkBufferUsageFlagBits">VkBufferUsageFlagBits</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BUFFER_USAGE_TRANSFER_SRC_BIT          </span>表示缓冲区会被用作数据传送命令的来源</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BUFFER_USAGE_TRANSFER_DST_BIT          </span>表示缓冲区会被用作数据传送命令的目标</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT  </span>表示缓冲区会被用作uniform纹素缓冲区（着色器中只读）</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT  </span>表示缓冲区会被用作storage纹素缓冲区（任意着色器可读，可在计算着色器中进行写入）</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT        </span>表示缓冲区会被用作uniform缓冲区（在着色器中只读）</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BUFFER_USAGE_STORAGE_BUFFER_BIT        </span>表示缓冲区会被用作storage缓冲区（可在任意着色器中指定其可读写性）</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BUFFER_USAGE_INDEX_BUFFER_BIT          </span>表示缓冲区会被用作索引缓冲区</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BUFFER_USAGE_VERTEX_BUFFER_BIT         </span>表示缓冲区会被用作顶点缓冲区</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT       </span>表示缓冲区会被用作间接绘制命令的参数缓冲区</p></td>
+        </tr>
+        <tr>
+            <td><p>1.2</p></td>
+            <td><p><span class="enum">VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT </span>表示缓冲区的在物理设备内存中的地址会被保存并用于下一次程序运行</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            纹素缓冲区可以被指定格式，如同1D图像，以及可按索引对纹素进行访问。
+        </p>
+    </li>
+    <li>
+        <p>
+            只读的storage缓冲区的优势是最大容量比uniform缓冲区大，甚至无上限，劣势是访问速度可能比uniform缓冲区慢。
+        </p>
+    </li>
+</ul></section>
+<section id="id6">
+<h3>获取缓冲区的内存分配要求<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkGetBufferMemoryRequirements">vkGetBufferMemoryRequirements</a>(...)获取缓冲区的内存分配信息：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="kw">void</span> <a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkGetBufferMemoryRequirements">vkGetBufferMemoryRequirements</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkBuffer</span> buffer</p></td>
+            <td><p>缓冲区的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkMemoryRequirements</span>* pMemoryRequirements</p></td>
+            <td><p>若执行成功，将内存分配要求写入到*pMemoryRequirements</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkMemoryRequirements">VkMemoryAllocateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDeviceSize</span> size</p></td>
+            <td><p>所需设备内存的大小</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkDeviceSize</span> alignment</p></td>
+            <td><p>内存的对其要求，一定是2的次方，除了dynamic uniform缓冲区等情况外，通常不必理会这个成员</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> memoryTypeBits</p></td>
+            <td><p>各个bit分别对应<a href="https://renderdoc.org/vkspec_chunked/chap11.html#VkPhysicalDeviceMemoryProperties">VkPhysicalDeviceMemoryProperties</a>::memoryTypes数组各成员表示的内存类型是否支持该缓冲区/图像</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    可用以下代码确定<a href="https://renderdoc.org/vkspec_chunked/chap11.html#VkMemoryAllocateInfo">VkMemoryAllocateInfo</a>::memoryTypeIndex，其中<span class="var">desiredMemoryProperties</span>是你所需的物理设备内存属性：
+</p>
+<pre class="code">
+<span class="type">VkMemoryAllocateInfo</span> memoryAllocateInfo = {
+    .sType = <span class="enum">VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO</span>
+};
+<span class="type">VkMemoryRequirements</span> memoryRequirements;
+<span class="fn">vkGetBufferMemoryRequirements</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle, &amp;ampmemoryRequirements);
+memoryAllocateInfo.allocationSize = memoryRequirements.size;<span class="cmt">//取得所需的内存分配大小</span>
+<span class="kw">auto</span>&amp; physicalDeviceMemoryProperties = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceMemoryProperties</span>();
+memoryAllocateInfo.memoryTypeIndex = -1;
+<span class="kw">for</span> (<span class="type">size_t</span> j = 0; j &lt; 2; j++)
+    <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; physicalDeviceMemoryProperties.memoryTypeCount; i++)<span class="cmt">//遍历所有设备内存类型</span>
+        <span class="kw">if</span> (<span class="cmt">//如果相应设备内存类型支持该缓冲区/图像，则继续执行后续代码</span>
+            memoryRequirements.memoryTypeBits &amp; 1 &lt;&lt; i &amp;&amp;
+            <span class="cmt">//如果相应设备内存类型支持所需的内存属性，则覆写memoryAllocateInfo.memoryTypeIndex</span>
+            (physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags &amp; desiredMemoryProperties) == desiredMemoryProperties) {
+            memoryAllocateInfo.memoryTypeIndex = i;
+            <span class="kw">break</span>;
+        }
+</pre></section>
+<section id="id7">
+<h3>将设备内存绑定到缓冲区<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkBindBufferMemory">vkBindBufferMemory</a>(...)将一块连续的设备内存绑定到缓冲区：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="kw">void</span> <a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkBindBufferMemory">vkBindBufferMemory</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkBuffer</span> buffer</p></td>
+            <td><p>缓冲区的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkDeviceMemory</span> deviceMemory</p></td>
+            <td><p>设备内存的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkDeviceSize</span> memoryOffset</p></td>
+            <td><p>要绑定的内存块距离deviceMemory所指代内存区域起始位置的字节数</p></td>
+        </tr>
+    </tbody>
+</table></section>
+<section id="id8">
+<h3>封装为buffer类<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<p>
+    向<span class="path">VKBase.h</span>，vulkan命名空间中，添加以下代码：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">buffer</span> {
+    <span class="type">VkBuffer</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
+<span class="kw">public</span>:
+    <span class="fn">buffer</span>() = <span class="kw">default</span>;
+    <span class="fn">buffer</span>(<span class="type">VkBufferCreateInfo</span>&amp; createInfo) {
+        <span class="fn">Create</span>(createInfo);
+    }
+    <span class="fn">buffer</span>(<span class="type">buffer</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    ~<span class="fn">buffer</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyBuffer</span>); }
+    <span class="cmt">//Getter</span>
+    <span class="mcr">DefineHandleTypeOperator</span>;
+    <span class="mcr">DefineAddressFunction</span>;
+    <span class="cmt">//Const Function</span>
+    <span class="type">VkMemoryAllocateInfo</span> <span class="fn">MemoryAllocateInfo</span>(<span class="type">VkMemoryPropertyFlags</span> desiredMemoryProperties) <span class="kw">const</span> {
+        <span class="type">VkMemoryAllocateInfo</span> memoryAllocateInfo = {
+            .sType = <span class="enum">VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO</span>
+        };
+        <span class="type">VkMemoryRequirements</span> memoryRequirements;
+        <span class="fn">vkGetBufferMemoryRequirements</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle, &amp;memoryRequirements);
+        memoryAllocateInfo.allocationSize = memoryRequirements.size;
+        <span class="kw">auto</span>&amp; physicalDeviceMemoryProperties = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceMemoryProperties</span>();
+        memoryAllocateInfo.memoryTypeIndex = -1;
+        <span class="kw">for</span> (<span class="type">size_t</span> j = 0; j &lt; 2; j++) {
+            <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; physicalDeviceMemoryProperties.memoryTypeCount; i++)
+                <span class="kw">if</span> (memoryRequirements.memoryTypeBits &amp; 1 &lt;&lt; i &amp;&amp;
+                    (physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags &amp; desiredMemoryProperties) == desiredMemoryProperties) {
+                    memoryAllocateInfo.memoryTypeIndex = i;
+                    <span class="kw">break</span>;
+                }
+            <span class="cmt">//若desiredMemoryProperties包含VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT，检查物理设备是否支持惰性分配</span>
+            <span class="cmt">//如不支持则从desiredMemoryProperties中去掉该bit</span>
+            <span class="kw">if</span> (memoryAllocateInfo.memoryTypeIndex == -1 &amp;&amp;
+                desiredMemoryProperties &amp; <span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>)
+                desiredMemoryProperties &amp;= ~<span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>;
+        }
+        <span class="cmt">//不在此检查是否成功取得内存类型索引，因为会把memoryAllocateInfo返回出去，交由外部检查</span>
+        <span class="cmt">//if (memoryAllocateInfo.memoryTypeIndex == -1)</span>
+        <span class="cmt">//    outStream &lt;&lt; std::format(&quot;[ buffer ] ERROR\nFailed to find any memory type satisfies all desired memory properties!\n&quot;);</span>
+        <span class="kw">return</span> memoryAllocateInfo;
+    }
+    <span class="type">result_t</span> <span class="fn">BindMemory</span>(<span class="type">VkDeviceMemory</span> deviceMemory, <span class="type">VkDeviceSize</span> memoryOffset = 0) <span class="kw">const</span> {
+        <span class="type">VkResult</span> result = <span class="fn">vkBindBufferMemory</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle, deviceMemory, memoryOffset);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ buffer ] ERROR\nFailed to attach the memory!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="cmt">//Non-const Function</span>
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkBufferCreateInfo</span>&amp; createInfo) {
+        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = vkCreateBuffer(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ buffer ] ERROR\nFailed to create a buffer!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+};
+</pre></section>
+<section id="buffermemory">
+<h3>同设备内存一起封装为bufferMemory类<a class="headerlink" href="#buffermemory" title="Permalink to this heading"></a></h3>
+<p>
+    向<span class="path">VKBase.h</span>，vulkan命名空间中，<span class="type">buffer</span>的定义后添加以下代码：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">bufferMemory</span> :<span class="type">buffer</span>, <span class="type">deviceMemory</span> {
+<span class="kw">public</span>:
+    <span class="fn">bufferMemory</span>() = <span class="kw">default</span>;
+    <span class="fn">bufferMemory</span>(<span class="type">VkBufferCreateInfo</span>&amp; createInfo, <span class="type">VkMemoryPropertyFlags</span> desiredMemoryProperties) {
+        <span class="fn">Create</span>(createInfo, desiredMemoryProperties);
+    }
+    <span class="fn">bufferMemory</span>(<span class="type">bufferMemory</span>&amp;&amp; other) <span class="kw">noexcept</span> :
+        <span class="type">buffer</span>(std::<span class="fn">move</span>(other)), <span class="type">deviceMemory</span>(std::<span class="fn">move</span>(other)) {
+        areBound = other.areBound;
+        other.areBound = <span class="kw">false</span>;
+    }
+    ~<span class="fn">bufferMemory</span>() { areBound = <span class="kw">false</span>; }
+    <span class="cmt">//Getter</span>
+    <span class="cmt">//不定义到VkBuffer和VkDeviceMemory的转换函数，因为32位下这俩类型都是uint64_t的别名，会造成冲突（虽然，谁他妈还用32位PC！）</span>
+    <span class="type">VkBuffer</span> <span class="fn">Buffer</span>() <span class="kw">const</span> { <span class="kw">return</span> <span class="kw">static_cast</span>&lt;<span class="kw">const</span> <span class="type">buffer</span>&amp;&gt;(*<span class="kw">this</span>); }
+    <span class="kw">const</span> <span class="type">VkBuffer</span>* <span class="fn">AddressOfBuffer</span>() <span class="kw">const</span> { <span class="kw">return</span> <span class="type">buffer</span>::<span class="fn">Address</span>(); }
+    <span class="type">VkDeviceMemory</span> <span class="fn">Memory</span>() <span class="kw">const</span> { <span class="kw">return</span> <span class="kw">static_cast</span>&lt;<span class="kw">const</span> <span class="type">deviceMemory</span>&amp;&gt;(*<span class="kw">this</span>); }
+    <span class="kw">const</span> <span class="type">VkDeviceMemory</span>* <span class="fn">AddressOfMemory</span>() <span class="kw">const</span> { <span class="kw">return</span> <span class="type">deviceMemory</span>::<span class="kw">Address</span>(); }
+    <span class="cmt">//若areBond为true，则成功分配了设备内存、创建了缓冲区，且成功绑定在一起</span>
+    <span class="kw">bool</span> <span class="fn">AreBound</span>() <span class="kw">const</span> { <span class="kw">return</span> areBound; }
+    <span class="kw">using</span> <span class="type">deviceMemory</span>::<span class="fn">AllocationSize</span>;
+    <span class="kw">using</span> <span class="type">deviceMemory</span>::<span class="fn">MemoryProperties</span>;
+    <span class="cmt">//Const Function</span>
+    <span class="kw">using</span> <span class="type">deviceMemory</span>::<span class="fn">MapMemory</span>;
+    <span class="kw">using</span> <span class="type">deviceMemory</span>::<span class="fn">UnmapMemory</span>;
+    <span class="kw">using</span> <span class="type">deviceMemory</span>::<span class="fn">BufferData</span>;
+    <span class="kw">using</span> <span class="type">deviceMemory</span>::<span class="fn">RetrieveData</span>;
+    <span class="cmt">//Non-const Function</span>
+    <span class="cmt">//以下三个函数仅用于Create(...)执行失败的情况</span>
+    <span class="type">result_t</span> <span class="fn">CreateBuffer</span>(<span class="type">VkBufferCreateInfo</span>&amp; createInfo) {
+        <span class="kw">return</span> <span class="type">buffer</span>::<span class="fn">Create</span>(createInfo);
+    }
+    <span class="type">result_t</span> <span class="fn">AllocateMemory</span>(<span class="type">VkMemoryPropertyFlags</span> desiredMemoryProperties) {
+        <span class="type">VkMemoryAllocateInfo</span> allocateInfo = <span class="fn">MemoryAllocateInfo</span>(desiredMemoryProperties);
+        <span class="kw">if</span> (allocateInfo.memoryTypeIndex &gt;= <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceMemoryProperties</span>().memoryTypeCount)
+            <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;<span class="cmt">//没有合适的错误代码，别用VK_ERROR_UNKNOWN</span>
+        <span class="kw">return</span> <span class="fn">Allocate</span>(allocateInfo);
+    }
+    <span class="type">result_t</span> <span class="fn">BindMemory</span>() {
+        <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="type">buffer</span>::<span class="fn">BindMemory</span>(<span class="fn">Memory</span>()))
+            <span class="kw">return</span> result;
+        areBound = <span class="kw">true</span>;
+        <span class="kw">return</span> <span class="mcr">VK_SUCCESS</span>;
+    }
+    <span class="cmt">//分配设备内存、创建缓冲、绑定</span>
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkBufferCreateInfo</span>&amp; createInfo, <span class="type">VkMemoryPropertyFlags</span> desiredMemoryProperties) {
+        <span class="type">VkResult</span> result;
+        <span class="kw">false</span> ||<span class="cmt">//这行用来应对Visual Studio中代码的对齐</span>
+            (result = <span class="fn">CreateBuffer</span>(createInfo)) ||<span class="cmt">//用||短路执行</span>
+            (result = <span class="fn">AllocateMemory</span>(desiredMemoryProperties)) ||
+            (result = <span class="fn">BindMemory</span>());
+        <span class="kw">return</span> result;
+    }
+};
+</pre></section>
+</section>
+<section id="buffer-view">
+<h2>Buffer View<a class="headerlink" href="#buffer-view" title="Permalink to this heading"></a></h2>
+<p>
+    缓冲区视图（<span class="type">VkBufferView</span>）定义了将纹素缓冲区作为1D图像使用的方式。
+</p><section id="id9">
+<h3>创建缓冲区视图<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkCreateBufferView">vkCreateBufferView</a>(...)创建缓冲区视图：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkCreateBufferView">vkCreateBufferView</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkBufferViewCreateInfo</span>* pCreateInfo</p></td>
+            <td><p>指向<span class="type">VkBufferView</span>的创建信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span>* pAllocator</p></td>
+            <td><p>一个指向描述自定义内存分配方式的结构体的指针</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkBufferView</span>* pBufferView</p></td>
+            <td><p>若执行成功，将缓冲区视图的handle写入*pBufferView</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkBufferViewCreateInfo">VkBufferViewCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkBufferViewCreateFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkBuffer</span> buffer</p></td>
+            <td><p>缓冲区的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkFormat</span> format</p></td>
+            <td><p>被用作的图像格式，关于图像格式见后文</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkDeviceSize</span> offset</p></td>
+            <td><p>要被用作图像的内存块距离绑定到缓冲区的内存区域起始位置的字节数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkDeviceSize</span> range</p></td>
+            <td><p>要被用作图像的内存块的大小，单位为字节，用特殊值<span class="mcr">VK_WHOLE_SIZE</span>表示使用从offset到缓冲区末尾的所有字节</p></td>
+        </tr>
+    </tbody>
+</table></section>
+<section id="bufferview">
+<h3>封装为bufferView类<a class="headerlink" href="#bufferview" title="Permalink to this heading"></a></h3>
+<p>
+    向<span class="path">VKBase.h</span>，vulkan命名空间中添加以下代码：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">bufferView</span> {
+    <span class="type">VkBufferView</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
+<span class="kw">public</span>:
+    <span class="fn">bufferView</span>() = <span class="kw">default</span>;
+    <span class="fn">bufferView</span>(<span class="type">VkBufferViewCreateInfo</span>&amp; createInfo) {
+        <span class="fn">Create</span>(createInfo);
+    }
+    <span class="fn">bufferView</span>(<span class="type">VkBuffer</span> buffer, <span class="type">VkFormat</span> format, <span class="type">VkDeviceSize</span> offset = 0, <span class="type">VkDeviceSize</span> range = 0) {
+        <span class="fn">Create</span>(buffer, format, offset, range);
+    }
+    <span class="fn">bufferView</span>(<span class="type">bufferView</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    ~<span class="fn">bufferView</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyBufferView</span>); }
+    <span class="cmt">//Getter</span>
+    <span class="mcr">DefineHandleTypeOperator</span>;
+    <span class="mcr">DefineAddressFunction</span>;
+    <span class="cmt">//Non-const Function</span>
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkBufferViewCreateInfo</span>&amp; createInfo) {
+        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateBufferView</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ bufferView ] ERROR\nFailed to create a buffer view!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkBuffer</span> buffer, <span class="type">VkFormat</span> format, <span class="type">VkDeviceSize</span> offset = 0, <span class="type">VkDeviceSize</span> range = 0) {
+        <span class="type">VkBufferViewCreateInfo</span> createInfo = {
+            .buffer = buffer,
+            .format = format,
+            .offset = offset,
+            .range = range
+        };
+        <span class="kw">return</span> <span class="fn">Create</span>(createInfo);
+    }
+};
+</pre></section>
+</section>
+<section id="image">
+<h2>Image<a class="headerlink" href="#image" title="Permalink to this heading"></a></h2>
+<p>
+    图像（<span class="type">VkImage</span>）引用设备内存，指代图像数据。图像同缓冲区的不同之处是，图像具有格式和内存布局，也就意味着其中的数据未必是线性排列的。
+</p><section id="id10">
+<h3>创建图像<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkCreateImage">vkCreateImage</a>(...)创建图像：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkCreateImage">vkCreateImage</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkImageCreateInfo</span>* pCreateInfo</p></td>
+            <td><p>指向<span class="type">VkImage</span>的创建信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span>* pAllocator</p></td>
+            <td><p>一个指向描述自定义内存分配方式的结构体的指针</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkImage</span>* pImage</p></td>
+            <td><p>若执行成功，将图像的handle写入*pImage</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkImageCreateInfo">VkImageCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkImageCreateFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkImageType</span> imageType</p></td>
+            <td><p>图像类型，可为<span class="enum">VK_IMAGE_TYPE_1D</span>或<span class="enum">VK_IMAGE_TYPE_2D</span>或<span class="enum">VK_IMAGE_TYPE_3D</span></p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkFormat</span> format</p></td>
+            <td><p>图像的格式，关于图像格式见后文</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkExtent3D</span> extent</p></td>
+            <td><p>图像的尺寸</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> mipLevels</p></td>
+            <td><p>图像的mipmap等级，应用于需要生成mipmap的图像</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> arrayLayers</p></td>
+            <td><p>图像的图层数，应用于图像数组</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkSampleCountFlagBits</span> samples</p></td>
+            <td><p>图像的采样点个数，必须是2的次数，可用值从<span class="enum">VK_SAMPLE_COUNT_1_BIT</span>到<span class="enum">VK_SAMPLE_COUNT_64_BIT</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkImageTiling</span> tiling</p></td>
+            <td><p>图像数据的排列方式，不涉及扩展的话，可以是<span class="enum">VK_IMAGE_TILING_OPTIMAL</span>（最优排列），<span class="enum">VK_IMAGE_TILING_LINEAR</span>（线性排列，可能影响读写效率）</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkImageUsageFlags</span> usage</p></td>
+            <td><p>图像的用途</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkSharingMode</span> sharingMode</p></td>
+            <td><p>分享访问模式，默认为单一队列族独占访问，若填入<span class="enum">VK_SHARING_MODE_CONCURRENT</span>，则允许不同队列族的队列同时访问</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> queueFamilyIndexCount</p></td>
+            <td><p>若sharingMode为<span class="enum">VK_SHARING_MODE_CONCURRENT</span>，则在此填入同时访问本缓冲区的队列族的个数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> pQueueFamilyIndices</p></td>
+            <td><p>若sharingMode为<span class="enum">VK_SHARING_MODE_CONCURRENT</span>，则指向同时访问本缓冲区的队列族的索引</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkImageLayout</span> layout</p></td>
+            <td><p>图像的初始内存布局</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr>
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkImageCreateFlagBits">VkImageCreateFlagBits</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_CREATE_SPARSE_BINDING_BIT              </span>表示图像会被稀疏绑定</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT            </span>表示会被稀疏绑定的图像能被部分绑定</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_CREATE_SPARSE_ALIASED_BIT              </span>表示会被稀疏绑定的图像对应的内存会与其它图像的内存混叠</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT              </span>表示为此图像创建的图像视图能具有与此图像不同的格式</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT             </span>表示为此2D图像创建的图像视图能被用作立方体贴图或立方体贴图数组</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_IMAGE_CREATE_ALIAS_BIT                       </span>见后文</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT </span>只知道与device group相关，我不知道这具体是干啥的</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT         </span>表示为此3D图像创建的图像视图能被用作2D贴图或2D贴图数组</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT </span>表示此图像的格式为压缩格式，但能用于创建非压缩格式的图像视图</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_IMAGE_CREATE_EXTENDED_USAGE_BIT              </span>表示usageFlags中能包含此图像的格式不支持，但此图像的图像视图的格式支持的用途</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_IMAGE_CREATE_PROTECTED_BIT                   </span>表示创建受保护的图像</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_IMAGE_CREATE_DISJOINT_BIT                    </span>表示多层面（multi-planar）图像格式的各个层面必须被分别绑定（通过向<a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkBindImageMemory2">vkBindImageMemory2</a>(...)提供多个绑定信息）</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            <span class="enum">VK_IMAGE_CREATE_ALIAS_BIT</span>表示存在与此图像以完全相同的参数创建并绑定到相同设备内存的另一图像，通过任一图像进行的读写会被连贯地反映到另一图像上。创建时注明了<span class="enum">VK_IMAGE_CREATE_DISJOINT_BIT</span>的多层面图像的一个层面，和同样注明了该bit的单层面图像也能混叠，这里不做进一步解释。
+        </p>
+    </li>
+</ul>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr>
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkImageUsageFlagBits">VkImageUsageFlagBits</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT             </span>表示图像会被用作数据传送命令的来源</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT             </span>表示图像会被用作数据传送命令的目标</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_USAGE_SAMPLED_BIT                  </span>表示图像会被用于采样</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_USAGE_STORAGE_BIT                  </span>表示图像会被用作storage图像（任意着色器可读，可在计算着色器中进行写入）</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT         </span>表示图像会被用作颜色附件</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT </span>表示图像会被用作深度模板附件</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT     </span>表示绑定到图像的设备内存会是惰性分配的（见本节末尾）</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT         </span>表示图像会被用作输入附件</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    关于图像的内存布局，参见<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#id12">图像内存屏障</a>。
+</p></section>
+<section id="id11">
+<h3>获取图像的内存分配要求<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkGetImageMemoryRequirements">vkGetImageMemoryRequirements</a>(...)获取图像的内存分配信息：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="kw">void</span> <a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkGetImageMemoryRequirements">vkGetImageMemoryRequirements</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkImage</span> image</p></td>
+            <td><p>图像的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkMemoryRequirements</span>* pMemoryRequirements</p></td>
+            <td><p>若执行成功，将内存分配要求写入到*pMemoryRequirements</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            关于<span class="type">VkMemoryRequirements</span>和确定<a href="https://renderdoc.org/vkspec_chunked/chap11.html#VkMemoryAllocateInfo">VkMemoryAllocateInfo</a>::memoryTypeIndex的方式与前文//TODO 获取缓冲区的内存分配要求 中一致。
+        </p>
+    </li>
+</ul></section>
+<section id="id12">
+<h3>将设备内存绑定到图像<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkBindImageMemory">vkBindImageMemory</a>(...)将一块连续的设备内存绑定到图像：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="kw">void</span> <a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkBindImageMemory">vkBindImageMemory</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkImage</span> image</p></td>
+            <td><p>图像的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkDeviceMemory</span> deviceMemory</p></td>
+            <td><p>设备内存的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkDeviceSize</span> memoryOffset</p></td>
+            <td><p>要绑定的内存块距离deviceMemory所指代内存区域起始位置的字节数</p></td>
+        </tr>
+    </tbody>
+</table></section>
+<section id="id13">
+<h3>封装为image类<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h3>
+<p>
+    向<span class="path">VKBase.h</span>，vulkan命名空间中，添加以下代码：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">image</span> {
+    <span class="type">VkImage</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
+<span class="kw">public</span>:
+    <span class="fn">image</span>() = <span class="kw">default</span>;
+    <span class="fn">image</span>(<span class="type">VkImageCreateInfo</span>&amp; createInfo) {
+        <span class="fn">Create</span>(createInfo);
+    }
+    <span class="fn">image</span>(<span class="type">image</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    ~<span class="fn">image</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyImage</span>); }
+    <span class="cmt">//Getter</span>
+    <span class="mcr">DefineHandleTypeOperator</span>;
+    <span class="mcr">DefineAddressFunction</span>;
+    <span class="cmt">//Const Function</span>
+    <span class="type">VkMemoryAllocateInfo</span> <span class="fn">MemoryAllocateInfo</span>(<span class="type">VkMemoryPropertyFlags</span> desiredMemoryProperties) <span class="kw">const</span> {
+        <span class="type">VkMemoryAllocateInfo</span> memoryAllocateInfo = {
+            .sType = <span class="enum">VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO</span>
+        };
+        <span class="enum">VkMemoryRequirements</span> memoryRequirements;
+        <span class="enum">vkGetImageMemoryRequirements</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle, &amp;memoryRequirements);
+        memoryAllocateInfo.allocationSize = memoryRequirements.size;
+        <span class="kw">auto</span>&amp; physicalDeviceMemoryProperties = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceMemoryProperties</span>();
+        memoryAllocateInfo.memoryTypeIndex = -1;
+        <span class="kw">for</span> (<span class="type">size_t</span> j = 0; j &lt; 2; j++) {
+            <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; physicalDeviceMemoryProperties.memoryTypeCount; i++)
+                <span class="kw">if</span> (memoryRequirements.memoryTypeBits &amp; 1 &lt;&lt; i &amp;&amp;
+                    (physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags &amp; desiredMemoryProperties) == desiredMemoryProperties) {
+                    memoryAllocateInfo.memoryTypeIndex = i;
+                    <span class="kw">break</span>;
+                }
+            <span class="cmt">//若desiredMemoryProperties包含VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT，检查物理设备是否支持惰性分配</span>
+            <span class="cmt">//如不支持则从desiredMemoryProperties中去掉该bit</span>
+            <span class="kw">if</span> (memoryAllocateInfo.memoryTypeIndex == -1 &amp;&amp;
+                desiredMemoryProperties &amp; <span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>)
+                desiredMemoryProperties &amp;= ~<span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>;
+        }
+        <span class="cmt">//不在此检查是否成功取得内存类型索引，因为会把memoryAllocateInfo返回出去，交由外部检查</span>
+        <span class="cmt">//if (memoryAllocateInfo.memoryTypeIndex == -1)</span>
+        <span class="cmt">//    outStream << std::format("[ image ] ERROR\nFailed to find any memory type satisfies all desired memory properties!\n");</span>
+        <span class="kw">return</span> memoryAllocateInfo;
+    }
+    <span class="type">result_t</span> <span class="fn">BindMemory</span>(<span class="type">VkDeviceMemory</span> deviceMemory, <span class="type">VkDeviceSize</span> memoryOffset = 0) const {
+        <span class="type">VkResult</span> result = <span class="fn">vkBindImageMemory</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle, deviceMemory, memoryOffset);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ image ] ERROR\nFailed to attach the memory!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="cmt">//Non-const Function</span>
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkImageCreateInfo</span>&amp; createInfo) {
+        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = vkCreateImage(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ image ] ERROR\nFailed to create an image!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+};
+</pre></section>
+<section id="imagememory">
+<h3>同设备内存一起封装为imageMemory类<a class="headerlink" href="#imagememory" title="Permalink to this heading"></a></h3>
+<p>
+    向<span class="path">VKBase.h</span>，vulkan命名空间中，<span class="type">buffer</span>的定义后添加以下代码：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">imageMemory</span> :<span class="type">image</span>, <span class="type">deviceMemory</span> {
+<span class="kw">public</span>:
+    <span class="fn">imageMemory</span>() = <span class="kw">default</span>;
+    <span class="fn">imageMemory</span>(<span class="type">VkImageCreateInfo</span>&amp; createInfo, <span class="type">VkMemoryPropertyFlags</span> desiredMemoryProperties) {
+        <span class="fn">Create</span>(createInfo, desiredMemoryProperties);
+    }
+    <span class="fn">imageMemory</span>(<span class="type">imageMemory</span>&amp;&amp; other) <span class="kw">noexcept</span> :
+        <span class="type">image</span>(std::<span class="fn">move</span>(other)), <span class="type">deviceMemory</span>(std::<span class="fn">move</span>(other)) {
+        areBound = other.areBound;
+        other.areBound = <span class="kw">>false</span>;
+    }
+    ~<span class="fn">imageMemory</span>() { areBound = <span class="kw">>false</span>; }
+    <span class="cmt">//Getter</span>
+    <span class="type">VkImage</span> <span class="fn">Image</span>() <span class="kw">const</span> { <span class="kw">return</span> <span class="kw">static_cast</span>&lt;<span class="kw">const</span> <span class="type">image</span>&amp;&gt;(*<span class="kw">this</span>); }
+    <span class="kw">const</span> <span class="type">VkImage</span>* <span class="fn">AddressOfImage</span>() <span class="kw">const</span> { <span class="kw">return</span> <span class="type">image</span>::<span class="fn">Address</span>(); }
+    <span class="type">VkDeviceMemory</span> <span class="fn">Memory</span>() <span class="kw">const</span> { <span class="kw">return</span> <span class="kw">static_cast</span>&lt;<span class="kw">const</span> <span class="type">deviceMemory</span>&amp;&gt;(*<span class="kw">this</span>); }
+    <span class="kw">const</span> <span class="type">VkDeviceMemory</span>* <span class="fn">AddressOfMemory</span>() <span class="kw">const</span> { <span class="kw">return</span> <span class="type">deviceMemory</span>::<span class="fn">Address</span>(); }
+    <span class="kw">bool</span> <span class="fn">AreBound</span>() <span class="kw">const</span> { <span class="kw">return</span> areBound; }
+    <span class="kw">using</span> <span class="type">deviceMemory</span>::<span class="fn">AllocationSize</span>;
+    <span class="kw">using</span> <span class="type">deviceMemory</span>::<span class="fn">MemoryProperties</span>;
+    <span class="cmt">//Non-const Function</span>
+    <span class="cmt">//以下三个函数仅用于Create(...)执行失败的情况</span>
+    <span class="type">result_t</span> <span class="fn">CreateImage</span>(<span class="type">VkImageCreateInfo</span>&amp; createInfo) {
+        <span class="kw">return</span> <span class="type">image</span>::<span class="fn">Create</span>(createInfo);
+    }
+    <span class="type">result_t</span> <span class="fn">AllocateMemory</span>(<span class="type">VkMemoryPropertyFlags</span> desiredMemoryProperties) {
+        <span class="type">VkMemoryAllocateInfo</span> allocateInfo = <span class="fn">MemoryAllocateInfo</span>(desiredMemoryProperties);
+        <span class="kw">if</span> (allocateInfo.memoryTypeIndex &gt;= <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceMemoryProperties</span>().memoryTypeCount)
+            <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;<span class="cmt">//没有合适的错误代码，别用VK_ERROR_UNKNOWN</span>
+        <span class="kw">return</span> <span class="fn">Allocate</span>(allocateInfo);
+    }
+    <span class="type">result_t</span> <span class="fn">BindMemory</span>() {
+        <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="type">buffer</span>::<span class="fn">BindMemory</span>(<span class="fn">Memory</span>()))
+            <span class="kw">return</span> result;
+        areBound = <span class="kw">true</span>;
+        <span class="kw">return</span> <span class="mcr">VK_SUCCESS</span>;
+    }
+    <span class="cmt">//分配设备内存、创建图像、绑定</span>
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkImageCreateInfo</span>&amp; createInfo, <span class="type">VkMemoryPropertyFlags</span> desiredMemoryProperties) {
+        <span class="type">VkResult</span> result;
+        <span class="kw">>false</span> ||<span class="cmt">//这行用来应对Visual Studio中代码的对齐</span>
+            (result = <span class="type">CreateImage</span>(createInfo)) ||<span class="cmt">//用||短路执行</span>
+            (result = <span class="type">AllocateMemory</span>(desiredMemoryProperties)) ||
+            (result = <span class="type">BindMemory</span>());
+        <span class="kw">return</span> result;
+    }
+};
+</pre></section>
+</section>
+<section id="image-view">
+<h2>Image View<a class="headerlink" href="#image-view" title="Permalink to this heading"></a></h2>
+<p>
+    图像视图（<span class="type">VkImageView</span>）定义了图像的使用方式。
+</p><section id="id14">
+<h3>创建图像视图<a class="headerlink" href="#id14" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkCreateImageView">vkCreateImageView</a>(...)创建图像视图，参数如下：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkCreateImageView">vkCreateImageView</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkImageViewCreateInfo</span>* pCreateInfo</p></td>
+            <td><p>指向<span class="type">VkImageView</span>的创建信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span>* pAllocator</p></td>
+            <td><p>一个指向描述自定义内存分配方式的结构体的指针</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkImageView</span>* pView</p></td>
+            <td><p>若执行成功，将图像视图的handle写入*pView</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkImageViewCreateInfo">VkImageViewCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkImageViewCreateFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkImage</span> image</p></td>
+            <td><p>图像的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkImageViewType</span> viewType</p></td>
+            <td><p>图像视图的类型</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkFormat</span> format</p></td>
+            <td><p>图像视图的格式，通常与图像的格式一致</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkComponentMapping</span> components</p></td>
+            <td><p>指定各通道的映射关系</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkImageSubresourceRange</span> subresourceRange</p></td>
+            <td><p>子资源范围</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr>
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkImageViewType">VkImageViewType</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_VIEW_TYPE_1D         </span>表示将图像用作1D图像</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_VIEW_TYPE_2D         </span>表示将图像用作2D图像</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_VIEW_TYPE_3D         </span>表示将图像用作3D图像</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_VIEW_TYPE_CUBE       </span>表示将图像用作立方体图像</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_VIEW_TYPE_1D_ARRAY   </span>表示将图像用作1D图像数组</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_VIEW_TYPE_2D_ARRAY   </span>表示将图像用作2D图像数组</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_VIEW_TYPE_CUBE_ARRAY </span>表示将图像用作立方体图像数组</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    <a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkComponentMapping">VkComponentMapping</a>由四个<a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkComponentSwizzle">VkComponentSwizzle</a>构成。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkComponentSwizzle">VkComponentSwizzle</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_COMPONENT_SWIZZLE_IDENTITY </span>表示使用该通道原本对应的通道，即不改变映射关系</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_COMPONENT_SWIZZLE_ZERO     </span>表示使用该通道的数值一概归0</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_COMPONENT_SWIZZLE_ONE      </span>表示使用该通道的数值一概归1</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_COMPONENT_SWIZZLE_R        </span>表示将R通道映射到该通道</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_COMPONENT_SWIZZLE_G        </span>表示将G通道映射到该通道</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_COMPONENT_SWIZZLE_B        </span>表示将B通道映射到该通道</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_COMPONENT_SWIZZLE_A        </span>表示将A通道映射到该通道</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    <a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkImageSubresourceRange">VkImageSubresourceRange</a>指定能通过view访问image的哪部分资源，先来看其成员：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkImageSubresourceRange">VkImageSubresourceRange</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkImageAspectFlags</span> aspectMask</p></td>
+            <td><p>所使用图像的层面（即aspect，我想不到更好的翻译了）</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> baseMipLevel</p></td>
+            <td><p>初始mip等级</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> levelCount</p></td>
+            <td><p>mip等级总数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> baseArrayLayer</p></td>
+            <td><p>初始图层</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> layerCount</p></td>
+            <td><p>图层总数</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkImageAspectFlagBits">VkImageAspectFlagBits</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_IMAGE_ASPECT_NONE         </span>表示不使用任何层面</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_ASPECT_COLOR_BIT    </span>表示颜色层面</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_ASPECT_DEPTH_BIT    </span>表示深度层面</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_ASPECT_STENCIL_BIT  </span>表示模板层面</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_IMAGE_ASPECT_METADATA_BIT </span>表示元数据层面（用于稀疏绑定）</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_IMAGE_ASPECT_PLANE_0_BIT  </span>表示多层面（multi-planar）图像格式的0号平面</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_IMAGE_ASPECT_PLANE_1_BIT  </span>表示多层面（multi-planar）图像格式的1号平面</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_IMAGE_ASPECT_PLANE_2_BIT  </span>表示多层面（multi-planar）图像格式的2号平面</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            为什么要指定aspectMask？举例而言，图像格式中存在同时存储深度值和模板值的格式，你不能同时对深度值和模板值进行采样，那么当你要实现阴影贴图时（这是通过采样深度值实现的），应当将aspectMask设置为<span class="enum">VK_IMAGE_ASPECT_DEPTH_BIT</span>。
+        </p>
+    </li>
+</ul>
+<p>
+    baseMipLevel和levelCount应用于有mipmap（见//TODO 生成Mipmap）的图像。在着色器中以0为LOD（level of detail）进行采样时，采样得到的是图像中mip等级为baseMipLevel的mipmap，有效的采样范围对应图像中mip范围在闭区间 [baseMipLevel, baseMipLevel + levelCount - 1] 内的mipmap。
+</p>
+<p>
+    baseArrayLayer和layerCount应用于贴图数组。此处图层的概念并非是类似Photoshop中的图层，一个图层指代数组中的一张图像。在着色器中以0为w坐标（w是采样坐标的第三个分量）进行采样时，采样得到的是图像中索引为baseArrayLayer的图层，有效的采样范围对应原image中索引范围在闭区间 [baseArrayLayer, baseArrayLayer + layerCount - 1] 内的图层。
+</p></section>
+<section id="imageview">
+<h3>封装为imageView类<a class="headerlink" href="#imageview" title="Permalink to this heading"></a></h3>
+<p>
+    向<span class="path">VKBase.h</span>，vulkan命名空间中，添加以下代码：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">imageView</span> {
+    <span class="type">VkImageView</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
+<span class="kw">public</span>:
+    <span class="fn">imageView</span>() = <span class="kw">default</span>;
+    <span class="fn">imageView</span>(<span class="type">VkImageViewCreateInfo</span>&amp; createInfo) {
+        <span class="fn">Create</span>(createInfo);
+    }
+    <span class="fn">imageView</span>(<span class="type">VkImage</span> image, <span class="type">VkImageViewType</span> viewType, <span class="type">VkFormat</span> format, <span class="kw">const</span> <span class="type">VkImageSubresourceRange</span>&amp; subresourceRange) {
+        <span class="fn">Create</span>(image, viewType, format, subresourceRange);
+    }
+    <span class="fn">imageView</span>(<span class="type">imageView</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    ~<span class="fn">imageView</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyImageView</span>); }
+    <span class="cmt">//Getter</span>
+    <span class="mcr">DefineHandleTypeOperator</span>;
+    <span class="mcr">DefineAddressFunction</span>;
+    <span class="cmt">//Non-const Function</span>
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkImageViewCreateInfo</span>&amp; createInfo) {
+        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateImageView</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ imageView ] ERROR\nFailed to create an image view!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkImage</span> image, <span class="type">VkImageViewType</span> viewType, <span class="type">VkFormat</span> format, <span class="kw">const</span> <span class="type">VkImageSubresourceRange</span>&amp; subresourceRange) {
+        <span class="type">VkImageViewCreateInfo</span> createInfo = {
+            .image = image,
+            .viewType = viewType,
+            .format = format,
+            .subresourceRange = subresourceRange
+        };
+        <span class="kw">return</span> <span class="fn">Create</span>(createInfo);
+    }
+};
+</pre></section>
+</section>
+<section id="id15">
+<h2>图像及数据的格式<a class="headerlink" href="#id15" title="Permalink to this heading"></a></h2>
+<p>
+    Vulkan中的<a href="https://renderdoc.org/vkspec_chunked/chap43.html#VkFormat">VkFormat</a>即适用于图像格式，也适用于描述数据格式（比如顶点属性）。
+    <br>
+    由于<a href="https://renderdoc.org/vkspec_chunked/chap43.html#VkFormat">VkFormat</a>的枚举值过多，这里不一一解释，仅对非压缩颜色格式和深度格式做简单提要。
+</p><section id="id16">
+<h3>非压缩颜色格式<a class="headerlink" href="#id16" title="Permalink to this heading"></a></h3>
+<p>
+    非压缩颜色格式有两个部分，以<span class="enum">VK_FORMAT_R8G8B8A8_UNORM</span>为例，是R8G8B8A8和UNORM，前者是作为图像格式的各个通道名称与该通道所占据的比特数的组合，后者叫做数字格式（numeric format）。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 15%">
+        <col style="width: 15%">
+        <col style="width: 15%">
+        <col style="width: 55%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>数字格式</p></th>
+            <th class="head"><p>对应的C++底层类型</p></th>
+            <th class="head"><p>在着色器中读取为</p></th>
+            <th class="head"><p>说明（记任意通道占据的比特数为N）</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p>UNORM</p></td>
+            <td><p>无符号整型</p></td>
+            <td><p><span class="kw">float</span></p></td>
+            <td><p>在着色器中被标准化到[ 0, 1]的范围</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p>SNORM</p></td>
+            <td><p>无符号整型</p></td>
+            <td><p><span class="kw">float</span></p></td>
+            <td><p>在着色器中被标准化到[-1, 1]的范围</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p>USCALED</p></td>
+            <td><p>无符号整型</p></td>
+            <td><p><span class="kw">float</span></p></td>
+            <td><p>在着色器中数值不变，但被转为浮点数，数值范围为[0, 2^N-1]</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p>SSCALED</p></td>
+            <td><p>有符号整型</p></td>
+            <td><p><span class="kw">float</span></p></td>
+            <td><p>在着色器中数值不变，但被转为浮点数，数值范围为[-2^(N-1), 2^(N-1)-1]</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p>UINT</p></td>
+            <td><p>无符号整型</p></td>
+            <td><p><span class="kw">int</span></p></td>
+            <td><p>在着色器中数值不变，数值范围为[0, 2^N-1]</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p>SINT</p></td>
+            <td><p>有符号整型</p></td>
+            <td><p><span class="kw">int</span></p></td>
+            <td><p>在着色器中数值不变，数值范围为[-2^(N-1), 2^(N-1)-1]</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p>UFLOAT</p></td>
+            <td><p>无符号浮点数（C++里没这东西）</p></td>
+            <td><p><span class="kw">float</span></p></td>
+            <td><p>在着色器中数值不变</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p>SFLOAT</p></td>
+            <td><p>有符号浮点数</p></td>
+            <td><p><span class="kw">float</span></p></td>
+            <td><p>在着色器中数值不变</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p>SRGB</p></td>
+            <td><p>无符号整型</p></td>
+            <td><p><span class="kw">float</span></p></td>
+            <td><p>在着色器中被标准化到[ 0, 1]的范围，RGB通道被映射到sRGB色彩空间</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            用作顶点属性时，RGBA各通道对应xyzw各分量。
+        </p>
+    </li>
+    <li>
+        <p>
+            数值不变的前提是没超出相应的有效数值范围，着色器中的<span class="kw">float</span>是32位浮点数。
+        </p>
+    </li>
+    <li>
+        <p>
+            关于sRGB色彩空间，参见//TODO Ch8-7 HDR与sRGB色彩空间。
+        </p>
+    </li>
+</ul>
+<p>
+    关于标准化，举例而言：
+    <br>
+    <span class="enum">VK_FORMAT_R8G8B8A8_UNORM</span>的任一通道，若数值为0，则着色器中读取为0.f，若数值为255，则着色器中读取为1.f。
+    <br>
+    <span class="enum">VK_FORMAT_R16G16B16A16_SNORM</span>的任一通道，若数值为32767，则着色器中读取为1.f，若数值为-32768，则着色器中读取为-1.f。
+</p></section>
+<section id="id17">
+<h3>深度模板格式<a class="headerlink" href="#id17" title="Permalink to this heading"></a></h3>
+<p>
+    深度模板格式有以下几种：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>格式名称</p></th>
+            <th class="head"><p>说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="enum">VK_FORMAT_D16_UNORM</span></p></td>
+            <td><p>只有深度值，16位无符号整型，被标准化到[ 0, 1]的范围</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="enum">VK_FORMAT_X8_D24_UNORM_PACK32</span></p></td>
+            <td><p>共32位，8个比特未使用，只有深度值，24位无符号整型，被标准化到[ 0, 1]的范围</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="enum">VK_FORMAT_D32_SFLOAT</span></p></td>
+            <td><p>只有深度值，32位有符号浮点数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="enum">VK_FORMAT_S8_UINT</span></p></td>
+            <td><p>只有模板值，8位无符号整型</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="enum">VK_FORMAT_D16_UNORM_S8_UINT</span></p></td>
+            <td><p>16位无符号整型作为深度值，被标准化到[ 0, 1]的范围，8位无符号整型作为模板值</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="enum">VK_FORMAT_D24_UNORM_S8_UINT</span></p></td>
+            <td><p>24位无符号整型作为深度值，被标准化到[ 0, 1]的范围，8位无符号整型作为模板值</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="enum">VK_FORMAT_D32_SFLOAT_S8_UINT</span></p></td>
+            <td><p>32位有符号浮点数作为深度值，8位无符号整型作为模板值</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            出于对齐的考虑，<span class="enum">VK_FORMAT_D32_SFLOAT_S8_UINT</span>格式下每个像素很可能是8字节大小（尤其是，当数据线性排列时），即有24位不被使用。
+        </p>
+    </li>
+</ul></section>
+<section id="vkformat-h">
+<h3>VkFormat.h<a class="headerlink" href="#vkformat-h" title="Permalink to this heading"></a></h3>
+<p>
+    为了在从文件读取/存入文件时正确计算图像的大小，这里给出我的<span class="path">VkFormat.h</span>文件，其中记录了各种格式（仅包含Vulkan1.0且不算扩展提供的格式）对应的通道数、每个通道的大小、单个像素的大小，以及数据类型。
+</p>
+<p>
+    你也可以使用Vulkan官方提供的<span class="path">vulkan_format_traits.hpp</span>，你可以在以下安装目录找到它：<span class="path">VulkanSDK\版本号\Include\vulkan</span>。
+    <br>
+    注意我的<span class="path">VkFormat.h</span>与<span class="cmt">vulkan_format_traits.hpp</span>有所不同，在<span class="path">vulkan_format_traits.hpp</span>中<span class="enum">VK_FORMAT_D32_SFLOAT_S8_UINT</span>格式的blockSize是5，在我的<span class="path">VkFormat.h</span>中<span class="enum">VK_FORMAT_D32_SFLOAT_S8_UINT</span>格式的单个像素大小是8（其实有些格式不应适用“单个像素”这个概念），这种差别是由于我的<span class="path">VkFormat.h</span>的用处是计算线性排列的数据大小。
+</p>
+<pre class="code">
+<span class="pragma">#pragma once</span>
+<span class="pragma">#include</span> <span class="str">"EasyVKStart.h"</span>
+
+<span class="kw">struct</span> <span class="type">formatInfo</span> {
+    <span class="kw">enum</span> <span class="type">rawDataType</span> :<span class="type">uint8_t</span> {
+        <span class="enum">other</span>,        <span class="cmt">//0，没数据或各个通道不同</span>
+        <span class="enum">integer</span>,      <span class="cmt">//1，数据类型为整型</span>
+        <span class="enum">floatingPoint</span> <span class="cmt">//1，数据类型为浮点数</span>
+    };
+    <span class="type">uint8_t</span> componentCount;   <span class="cmt">//通道数</span>
+    <span class="type">uint8_t</span> sizePerComponent; <span class="cmt">//每个通道的大小，0意味着压缩，或不均等，或少于1</span>
+    <span class="type">uint8_t</span> sizePerPixel;     <span class="cmt">//每个像素的大小，0意味着压缩</span>
+    <span class="type">uint8_t</span> rawDataType;      <span class="cmt">//底层数据类型</span>
+};
+<span class="kw">constexpr</span> <span class="type">formatInfo</span> formatInfos_v1_0[] = {
+    { 0, 0, 0, 0 },<span class="cmt">//VK_FORMAT_UNDEFINED = 0,</span>
+
+    { 2, 0, 1, 1 },<span class="cmt">//VK_FORMAT_R4G4_UNORM_PACK8 = 1,</span>
+
+    { 4, 0, 2, 1 },<span class="cmt">//VK_FORMAT_R4G4B4A4_UNORM_PACK16 = 2,</span>
+    { 4, 0, 2, 1 },<span class="cmt">//VK_FORMAT_B4G4R4A4_UNORM_PACK16 = 3,</span>
+
+    { 3, 0, 2, 1 },<span class="cmt">//VK_FORMAT_R5G6B5_UNORM_PACK16 = 4,</span>
+    { 3, 0, 2, 1 },<span class="cmt">//VK_FORMAT_B5G6R5_UNORM_PACK16 = 5,</span>
+
+    { 4, 0, 2, 1 },<span class="cmt">//VK_FORMAT_R5G5B5A1_UNORM_PACK16 = 6,</span>
+    { 4, 0, 2, 1 },<span class="cmt">//VK_FORMAT_B5G5R5A1_UNORM_PACK16 = 7,</span>
+    { 4, 0, 2, 1 },<span class="cmt">//VK_FORMAT_A1R5G5B5_UNORM_PACK16 = 8,</span>
+
+    { 1, 1, 1, 1 },<span class="cmt">//VK_FORMAT_R8_UNORM = 9,</span>
+    { 1, 1, 1, 1 },<span class="cmt">//VK_FORMAT_R8_SNORM = 10,</span>
+    { 1, 1, 1, 1 },<span class="cmt">//VK_FORMAT_R8_USCALED = 11,</span>
+    { 1, 1, 1, 1 },<span class="cmt">//VK_FORMAT_R8_SSCALED = 12,</span>
+    { 1, 1, 1, 1 },<span class="cmt">//VK_FORMAT_R8_UINT = 13,</span>
+    { 1, 1, 1, 1 },<span class="cmt">//VK_FORMAT_R8_SINT = 14,</span>
+    { 1, 1, 1, 1 },<span class="cmt">//VK_FORMAT_R8_SRGB = 15,</span>
+
+    { 2, 1, 2, 1 },<span class="cmt">//VK_FORMAT_R8G8_UNORM = 16,</span>
+    { 2, 1, 2, 1 },<span class="cmt">//VK_FORMAT_R8G8_SNORM = 17,</span>
+    { 2, 1, 2, 1 },<span class="cmt">//VK_FORMAT_R8G8_USCALED = 18,</span>
+    { 2, 1, 2, 1 },<span class="cmt">//VK_FORMAT_R8G8_SSCALED = 19,</span>
+    { 2, 1, 2, 1 },<span class="cmt">//VK_FORMAT_R8G8_UINT = 20,</span>
+    { 2, 1, 2, 1 },<span class="cmt">//VK_FORMAT_R8G8_SINT = 21,</span>
+    { 2, 1, 2, 1 },<span class="cmt">//VK_FORMAT_R8G8_SRGB = 22,</span>
+
+    { 3, 1, 3, 1 },<span class="cmt">//VK_FORMAT_R8G8B8_UNORM = 23,</span>
+    { 3, 1, 3, 1 },<span class="cmt">//VK_FORMAT_R8G8B8_SNORM = 24,</span>
+    { 3, 1, 3, 1 },<span class="cmt">//VK_FORMAT_R8G8B8_USCALED = 25,</span>
+    { 3, 1, 3, 1 },<span class="cmt">//VK_FORMAT_R8G8B8_SSCALED = 26,</span>
+    { 3, 1, 3, 1 },<span class="cmt">//VK_FORMAT_R8G8B8_UINT = 27,</span>
+    { 3, 1, 3, 1 },<span class="cmt">//VK_FORMAT_R8G8B8_SINT = 28,</span>
+    { 3, 1, 3, 1 },<span class="cmt">//VK_FORMAT_R8G8B8_SRGB = 29,</span>
+    { 3, 1, 3, 1 },<span class="cmt">//VK_FORMAT_B8G8R8_UNORM = 30,</span>
+    { 3, 1, 3, 1 },<span class="cmt">//VK_FORMAT_B8G8R8_SNORM = 31,</span>
+    { 3, 1, 3, 1 },<span class="cmt">//VK_FORMAT_B8G8R8_USCALED = 32,</span>
+    { 3, 1, 3, 1 },<span class="cmt">//VK_FORMAT_B8G8R8_SSCALED = 33,</span>
+    { 3, 1, 3, 1 },<span class="cmt">//VK_FORMAT_B8G8R8_UINT = 34,</span>
+    { 3, 1, 3, 1 },<span class="cmt">//VK_FORMAT_B8G8R8_SINT = 35,</span>
+    { 3, 1, 3, 1 },<span class="cmt">//VK_FORMAT_B8G8R8_SRGB = 36,</span>
+
+    { 4, 1, 4, 1 },<span class="cmt">//VK_FORMAT_R8G8B8A8_UNORM = 37,</span>
+    { 4, 1, 4, 1 },<span class="cmt">//VK_FORMAT_R8G8B8A8_SNORM = 38,</span>
+    { 4, 1, 4, 1 },<span class="cmt">//VK_FORMAT_R8G8B8A8_USCALED = 39,</span>
+    { 4, 1, 4, 1 },<span class="cmt">//VK_FORMAT_R8G8B8A8_SSCALED = 40,</span>
+    { 4, 1, 4, 1 },<span class="cmt">//VK_FORMAT_R8G8B8A8_UINT = 41,</span>
+    { 4, 1, 4, 1 },<span class="cmt">//VK_FORMAT_R8G8B8A8_SINT = 42,</span>
+    { 4, 1, 4, 1 },<span class="cmt">//VK_FORMAT_R8G8B8A8_SRGB = 43,</span>
+    { 4, 1, 4, 1 },<span class="cmt">//VK_FORMAT_B8G8R8A8_UNORM = 44,</span>
+    { 4, 1, 4, 1 },<span class="cmt">//VK_FORMAT_B8G8R8A8_SNORM = 45,</span>
+    { 4, 1, 4, 1 },<span class="cmt">//VK_FORMAT_B8G8R8A8_USCALED = 46,</span>
+    { 4, 1, 4, 1 },<span class="cmt">//VK_FORMAT_B8G8R8A8_SSCALED = 47,</span>
+    { 4, 1, 4, 1 },<span class="cmt">//VK_FORMAT_B8G8R8A8_UINT = 48,</span>
+    { 4, 1, 4, 1 },<span class="cmt">//VK_FORMAT_B8G8R8A8_SINT = 49,</span>
+    { 4, 1, 4, 1 },<span class="cmt">//VK_FORMAT_B8G8R8A8_SRGB = 50,</span>
+    { 4, 1, 4, 1 },<span class="cmt">//VK_FORMAT_A8B8G8R8_UNORM_PACK32 = 51,</span>
+    { 4, 1, 4, 1 },<span class="cmt">//VK_FORMAT_A8B8G8R8_SNORM_PACK32 = 52,</span>
+    { 4, 1, 4, 1 },<span class="cmt">//VK_FORMAT_A8B8G8R8_USCALED_PACK32 = 53,</span>
+    { 4, 1, 4, 1 },<span class="cmt">//VK_FORMAT_A8B8G8R8_SSCALED_PACK32 = 54,</span>
+    { 4, 1, 4, 1 },<span class="cmt">//VK_FORMAT_A8B8G8R8_UINT_PACK32 = 55,</span>
+    { 4, 1, 4, 1 },<span class="cmt">//VK_FORMAT_A8B8G8R8_SINT_PACK32 = 56,</span>
+    { 4, 1, 4, 1 },<span class="cmt">//VK_FORMAT_A8B8G8R8_SRGB_PACK32 = 57,</span>
+
+    { 4, 0, 4, 1 },<span class="cmt">//VK_FORMAT_A2R10G10B10_UNORM_PACK32 = 58,</span>
+    { 4, 0, 4, 1 },<span class="cmt">//VK_FORMAT_A2R10G10B10_SNORM_PACK32 = 59,</span>
+    { 4, 0, 4, 1 },<span class="cmt">//VK_FORMAT_A2R10G10B10_USCALED_PACK32 = 60,</span>
+    { 4, 0, 4, 1 },<span class="cmt">//VK_FORMAT_A2R10G10B10_SSCALED_PACK32 = 61,</span>
+    { 4, 0, 4, 1 },<span class="cmt">//VK_FORMAT_A2R10G10B10_UINT_PACK32 = 62,</span>
+    { 4, 0, 4, 1 },<span class="cmt">//VK_FORMAT_A2R10G10B10_SINT_PACK32 = 63,</span>
+    { 4, 0, 4, 1 },<span class="cmt">//VK_FORMAT_A2B10G10R10_UNORM_PACK32 = 64,</span>
+    { 4, 0, 4, 1 },<span class="cmt">//VK_FORMAT_A2B10G10R10_SNORM_PACK32 = 65,</span>
+    { 4, 0, 4, 1 },<span class="cmt">//VK_FORMAT_A2B10G10R10_USCALED_PACK32 = 66,</span>
+    { 4, 0, 4, 1 },<span class="cmt">//VK_FORMAT_A2B10G10R10_SSCALED_PACK32 = 67,</span>
+    { 4, 0, 4, 1 },<span class="cmt">//VK_FORMAT_A2B10G10R10_UINT_PACK32 = 68,</span>
+    { 4, 0, 4, 1 },<span class="cmt">//VK_FORMAT_A2B10G10R10_SINT_PACK32 = 69,</span>
+
+    { 1, 2, 2, 1 },<span class="cmt">//VK_FORMAT_R16_UNORM = 70,</span>
+    { 1, 2, 2, 1 },<span class="cmt">//VK_FORMAT_R16_SNORM = 71,</span>
+    { 1, 2, 2, 1 },<span class="cmt">//VK_FORMAT_R16_USCALED = 72,</span>
+    { 1, 2, 2, 1 },<span class="cmt">//VK_FORMAT_R16_SSCALED = 73,</span>
+    { 1, 2, 2, 1 },<span class="cmt">//VK_FORMAT_R16_UINT = 74,</span>
+    { 1, 2, 2, 1 },<span class="cmt">//VK_FORMAT_R16_SINT = 75,</span>
+    { 1, 2, 2, 2 },<span class="cmt">//VK_FORMAT_R16_SFLOAT = 76,</span>
+
+    { 2, 2, 4, 1 },<span class="cmt">//VK_FORMAT_R16G16_UNORM = 77,</span>
+    { 2, 2, 4, 1 },<span class="cmt">//VK_FORMAT_R16G16_SNORM = 78,</span>
+    { 2, 2, 4, 1 },<span class="cmt">//VK_FORMAT_R16G16_USCALED = 79,</span>
+    { 2, 2, 4, 1 },<span class="cmt">//VK_FORMAT_R16G16_SSCALED = 80,</span>
+    { 2, 2, 4, 1 },<span class="cmt">//VK_FORMAT_R16G16_UINT = 81,</span>
+    { 2, 2, 4, 1 },<span class="cmt">//VK_FORMAT_R16G16_SINT = 82,</span>
+    { 2, 2, 4, 2 },<span class="cmt">//VK_FORMAT_R16G16_SFLOAT = 83,</span>
+
+    { 3, 2, 6, 1 },<span class="cmt">//VK_FORMAT_R16G16B16_UNORM = 84,</span>
+    { 3, 2, 6, 1 },<span class="cmt">//VK_FORMAT_R16G16B16_SNORM = 85,</span>
+    { 3, 2, 6, 1 },<span class="cmt">//VK_FORMAT_R16G16B16_USCALED = 86,</span>
+    { 3, 2, 6, 1 },<span class="cmt">//VK_FORMAT_R16G16B16_SSCALED = 87,</span>
+    { 3, 2, 6, 1 },<span class="cmt">//VK_FORMAT_R16G16B16_UINT = 88,</span>
+    { 3, 2, 6, 1 },<span class="cmt">//VK_FORMAT_R16G16B16_SINT = 89,</span>
+    { 3, 2, 6, 2 },<span class="cmt">//VK_FORMAT_R16G16B16_SFLOAT = 90,</span>
+
+    { 4, 2, 8, 1 },<span class="cmt">//VK_FORMAT_R16G16B16A16_UNORM = 91,</span>
+    { 4, 2, 8, 1 },<span class="cmt">//VK_FORMAT_R16G16B16A16_SNORM = 92,</span>
+    { 4, 2, 8, 1 },<span class="cmt">//VK_FORMAT_R16G16B16A16_USCALED = 93,</span>
+    { 4, 2, 8, 1 },<span class="cmt">//VK_FORMAT_R16G16B16A16_SSCALED = 94,</span>
+    { 4, 2, 8, 1 },<span class="cmt">//VK_FORMAT_R16G16B16A16_UINT = 95,</span>
+    { 4, 2, 8, 1 },<span class="cmt">//VK_FORMAT_R16G16B16A16_SINT = 96,</span>
+    { 4, 2, 8, 2 },<span class="cmt">//VK_FORMAT_R16G16B16A16_SFLOAT = 97,</span>
+
+    { 1, 4, 4, 1 },<span class="cmt">//VK_FORMAT_R32_UINT = 98,</span>
+    { 1, 4, 4, 1 },<span class="cmt">//VK_FORMAT_R32_SINT = 99,</span>
+    { 1, 4, 4, 2 },<span class="cmt">//VK_FORMAT_R32_SFLOAT = 100,</span>
+
+    { 2, 4, 8, 1 },<span class="cmt">//VK_FORMAT_R32G32_UINT = 101,</span>
+    { 2, 4, 8, 1 },<span class="cmt">//VK_FORMAT_R32G32_SINT = 102,</span>
+    { 2, 4, 8, 2 },<span class="cmt">//VK_FORMAT_R32G32_SFLOAT = 103,</span>
+
+    { 3, 4, 12, 1 },<span class="cmt">//VK_FORMAT_R32G32B32_UINT = 104,</span>
+    { 3, 4, 12, 1 },<span class="cmt">//VK_FORMAT_R32G32B32_SINT = 105,</span>
+    { 3, 4, 12, 2 },<span class="cmt">//VK_FORMAT_R32G32B32_SFLOAT = 106,</span>
+
+    { 4, 4, 16, 1 },<span class="cmt">//VK_FORMAT_R32G32B32A32_UINT = 107,</span>
+    { 4, 4, 16, 1 },<span class="cmt">//VK_FORMAT_R32G32B32A32_SINT = 108,</span>
+    { 4, 4, 16, 2 },<span class="cmt">//VK_FORMAT_R32G32B32A32_SFLOAT = 109,</span>
+
+    { 1, 8, 8, 1 },<span class="cmt">//VK_FORMAT_R64_UINT = 110,</span>
+    { 1, 8, 8, 1 },<span class="cmt">//VK_FORMAT_R64_SINT = 111,</span>
+    { 1, 8, 8, 2 },<span class="cmt">//VK_FORMAT_R64_SFLOAT = 112,</span>
+
+    { 2, 8, 16, 1 },<span class="cmt">//VK_FORMAT_R64G64_UINT = 113,</span>
+    { 2, 8, 16, 1 },<span class="cmt">//VK_FORMAT_R64G64_SINT = 114,</span>
+    { 2, 8, 16, 2 },<span class="cmt">//VK_FORMAT_R64G64_SFLOAT = 115,</span>
+
+    { 3, 8, 24, 1 },<span class="cmt">//VK_FORMAT_R64G64B64_UINT = 116,</span>
+    { 3, 8, 24, 1 },<span class="cmt">//VK_FORMAT_R64G64B64_SINT = 117,</span>
+    { 3, 8, 24, 2 },<span class="cmt">//VK_FORMAT_R64G64B64_SFLOAT = 118,</span>
+
+    { 4, 8, 32, 1 },<span class="cmt">//VK_FORMAT_R64G64B64A64_UINT = 119,</span>
+    { 4, 8, 32, 1 },<span class="cmt">//VK_FORMAT_R64G64B64A64_SINT = 120,</span>
+    { 4, 8, 32, 2 },<span class="cmt">//VK_FORMAT_R64G64B64A64_SFLOAT = 121,</span>
+
+    { 3, 0, 4, 2 },<span class="cmt">//VK_FORMAT_B10G11R11_UFLOAT_PACK32 = 122,</span>
+    { 3, 0, 4, 2 },<span class="cmt">//VK_FORMAT_E5B9G9R9_UFLOAT_PACK32 = 123,//'E' is a 5-bit shared exponent</span>
+
+    { 1, 2, 2, 1 },<span class="cmt">//VK_FORMAT_D16_UNORM = 124,</span>
+    { 1, 3, 4, 1 },<span class="cmt">//VK_FORMAT_X8_D24_UNORM_PACK32 = 125,//8 bits are unused therefore componentCount is 1, sizePerComponent is 3</span>
+    { 1, 4, 4, 2 },<span class="cmt">//VK_FORMAT_D32_SFLOAT = 126,</span>
+    { 1, 1, 1, 1 },<span class="cmt">//VK_FORMAT_S8_UINT = 127,</span>
+    { 2, 0, 3, 1 },<span class="cmt">//VK_FORMAT_D16_UNORM_S8_UINT = 128,</span>
+    { 2, 0, 4, 1 },<span class="cmt">//VK_FORMAT_D24_UNORM_S8_UINT = 129,</span>
+    { 2, 0, 8, 0 },<span class="cmt">//VK_FORMAT_D32_SFLOAT_S8_UINT = 130,//24 bits are unused if data is of linear tiling therefore sizePerPixel is 8</span>
+
+    <span class="cmt">//压缩格式</span>
+    { 3, 0, 0, 1 },<span class="cmt">//VK_FORMAT_BC1_RGB_UNORM_BLOCK = 131,</span>
+    { 3, 0, 0, 1 },<span class="cmt">//VK_FORMAT_BC1_RGB_SRGB_BLOCK = 132,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_BC1_RGBA_UNORM_BLOCK = 133,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_BC1_RGBA_SRGB_BLOCK = 134,</span>
+
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_BC2_UNORM_BLOCK = 135,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_BC2_SRGB_BLOCK = 136,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_BC3_UNORM_BLOCK = 137,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_BC3_SRGB_BLOCK = 138,</span>
+
+    { 1, 0, 0, 1 },<span class="cmt">//VK_FORMAT_BC4_UNORM_BLOCK = 139,</span>
+    { 1, 0, 0, 1 },<span class="cmt">//VK_FORMAT_BC4_SNORM_BLOCK = 140,</span>
+    { 2, 0, 0, 1 },<span class="cmt">//VK_FORMAT_BC5_UNORM_BLOCK = 141,</span>
+    { 2, 0, 0, 1 },<span class="cmt">//VK_FORMAT_BC5_SNORM_BLOCK = 142,</span>
+    { 3, 0, 0, 2 },<span class="cmt">//VK_FORMAT_BC6H_UFLOAT_BLOCK = 143,</span>
+    { 3, 0, 0, 2 },<span class="cmt">//VK_FORMAT_BC6H_SFLOAT_BLOCK = 144,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_BC7_UNORM_BLOCK = 145,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_BC7_SRGB_BLOCK = 146,</span>
+
+    { 3, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ETC2_R8G8B8_UNORM_BLOCK = 147,</span>
+    { 3, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ETC2_R8G8B8_SRGB_BLOCK = 148,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ETC2_R8G8B8A1_UNORM_BLOCK = 149,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ETC2_R8G8B8A1_SRGB_BLOCK = 150,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ETC2_R8G8B8A8_UNORM_BLOCK = 151,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ETC2_R8G8B8A8_SRGB_BLOCK = 152,</span>
+
+    { 1, 0, 0, 1 },<span class="cmt">//VK_FORMAT_EAC_R11_UNORM_BLOCK = 153,</span>
+    { 1, 0, 0, 1 },<span class="cmt">//VK_FORMAT_EAC_R11_SNORM_BLOCK = 154,</span>
+    { 2, 0, 0, 1 },<span class="cmt">//VK_FORMAT_EAC_R11G11_UNORM_BLOCK = 155,</span>
+    { 2, 0, 0, 1 },<span class="cmt">//VK_FORMAT_EAC_R11G11_SNORM_BLOCK = 156,</span>
+
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_4x4_UNORM_BLOCK = 157,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_4x4_SRGB_BLOCK = 158,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_5x4_UNORM_BLOCK = 159,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_5x4_SRGB_BLOCK = 160,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_5x5_UNORM_BLOCK = 161,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_5x5_SRGB_BLOCK = 162,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_6x5_UNORM_BLOCK = 163,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_6x5_SRGB_BLOCK = 164,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_6x6_UNORM_BLOCK = 165,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_6x6_SRGB_BLOCK = 166,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_8x5_UNORM_BLOCK = 167,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_8x5_SRGB_BLOCK = 168,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_8x6_UNORM_BLOCK = 169,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_8x6_SRGB_BLOCK = 170,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_8x8_UNORM_BLOCK = 171,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_8x8_SRGB_BLOCK = 172,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_10x5_UNORM_BLOCK = 173,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_10x5_SRGB_BLOCK = 174,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_10x6_UNORM_BLOCK = 175,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_10x6_SRGB_BLOCK = 176,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_10x8_UNORM_BLOCK = 177,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_10x8_SRGB_BLOCK = 178,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_10x10_UNORM_BLOCK = 179,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_10x10_SRGB_BLOCK = 180,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_12x10_UNORM_BLOCK = 181,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_12x10_SRGB_BLOCK = 182,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_12x12_UNORM_BLOCK = 183,</span>
+    { 4, 0, 0, 1 },<span class="cmt">//VK_FORMAT_ASTC_12x12_SRGB_BLOCK = 184,</span>
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            压缩格式写在这里是凑数的。
+        </p>
+    </li>
+</ul></section>
+</section>
+<section id="id18">
+<h2>惰性初始化的设备内存<a class="headerlink" href="#id18" title="Permalink to this heading"></a></h2>
+<p>
+    若分配的设备内存具有<span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>内存属性，那么它是可以被惰性分配的。
+    <br>
+    所谓惰性分配，就是指若暂时用不着这部分内存，那么就先不对其进行分配，或只分配很小的容量。
+    <br>
+    惰性分配的设备内存配合<span class="enum">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</span>，可能可以（取决于显卡驱动）使得，一旦渲染通道结束后就没用的图像不需要实际占用设备内存。比如先被用作图像附件，然后在下一个子通道中被用作输入附件的图像。
+    <br>
+    <a href="https://renderdoc.org/vkspec_chunked/chap11.html#memory-device-lazy_allocation">Vulkan官方标准11.2.15. Lazily Allocated Memory</a>的Note中的原文：
+</p>
+<p>
+    <span class="ref">
+        Using lazily allocated memory objects for framebuffer attachments that are not needed once a render pass instance has completed <strong>may</strong> allow some implementations to never allocate memory for such attachments.
+    </span>
+</p>
+<p>
+    注意，惰性分配的设备内存只能被绑定给创建时注明了<span class="enum">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</span>的图像，不得被用于缓冲区。
+</p></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html" class="btn btn-neutral float-left" title="Ch3-1 同步原语" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html" class="btn btn-neutral float-right" title="Ch3-3 管线布局和管线" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

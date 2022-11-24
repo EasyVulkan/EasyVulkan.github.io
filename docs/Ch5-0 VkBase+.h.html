@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch5-0 VkBase+.h &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ch5-1 各种缓冲区" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html" />
+    <link rel="prev" title="Ch4-3 片段着色器" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch5-0 VkBase+.h</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#graphicsbaseplus">graphicsBasePlus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">图像格式相关</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch5-0 VkBase+.h</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch5-0-vkbase-h">
+<h1>Ch5-0 VkBase+.h<a class="headerlink" href="#ch5-0-vkbase-h" title="Permalink to this heading"></a></h1>
+<p>
+    之前在<a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a>中应当创建过<span class="path">VkBase+.h</span>，并且在里面定义了<span class="type">graphicsPipelineCreateInfoPack</span>类。
+    <br>
+    第五章中各种常用对象的封装会被放在<span class="path">VkBase+.h</span>当中。
+    <br>
+    在这一节定义<span class="type">graphicsBasePlus</span>类，以及图像格式相关的一些函数，方便后续编程。
+</p>
+<p>
+    在<span class="path">VkBase+.h</span>中包含<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a>一节中写的<span class="path">VkFormat.h</span>，于是<span class="path">VkBase+.h</span>的内容应当如下：
+</p>
+<pre class="code">
+<span class="pragma">#pragma once</span>
+<span class="pragma">#include</span> <span class="str">"VKBase.h"</span>
+<span class="pragma">#include</span> <span class="str">"VKFormat.h"</span>
+
+<span class="kw">namespace</span> vulkan {
+    <span class="kw">struct</span> <span class="type">graphicsPipelineCreateInfoPack</span> { <span class="cmt">/*内容略*/</span> };
+}
+</pre><section id="graphicsbaseplus">
+<h2>graphicsBasePlus<a class="headerlink" href="#graphicsbaseplus" title="Permalink to this heading"></a></h2>
+<p>
+    <span class="type">graphicsBasePlus</span>扩展<span class="type">graphicsBase</span>的功能，用于默认创建一些对于Vulkan图形编程有必要的对象。
+    <br>
+    首先通过pimpl（不知道这是啥的请自行百度）来实现这个<span class="type">graphicsBase</span>的“扩展”：
+</p>
+<pre class="code">
+<span class="cmt">//前置声明</span>
+<span class="kw">class</span> <span class="type">graphicsBasePlus</span>;
+
+<span class="kw">class</span> <span class="type">graphicsBase</span> {
+    <span class="cmt">/*其他成员变量略*/</span>
+    <span class="type">graphicsBasePlus</span>* pPlus = <span class="kw">nullptr</span>;<span class="cmt">//=nullptr可以省略，因为是单例类的成员，自动零初始化</span>
+<span class="kw">public</span>:
+    <span class="cmt">/*其他成员函数略*/</span>
+    <span class="cmt">//*pPlus的Getter</span>
+    <span class="kw">static</span> <span class="type">graphicsBasePlus</span>&amp; <span class="fn">Plus</span>() { <span class="kw">return</span> *singleton.pPlus; }
+    <span class="cmt">//*pPlus的Setter，只允许设置pPlus一次</span>
+    <span class="kw">static void</span> <span class="fn">Plus</span>(<span class="type">graphicsBasePlus</span>&amp; plus) { <span class="kw">if</span> (!singleton.pPlus) singleton.pPlus = &amp;plus; }
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            这么一来你就可以用<span class="type">graphicsBase</span>::<span class="fn">Plus</span>()来访问<span class="type">graphicsBasePlus</span>::<span class="var">singleton</span>，虽然这么做有点多此一举。。。
+        </p>
+    </li>
+</ul>
+<p>
+    <span class="type">graphicsBasePlus</span>当然也是单例：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">graphicsBasePlus</span> {
+    <span class="cmt">//静态变量</span>
+    <span class="kw">static</span> <span class="type">graphicsBasePlus</span> singleton;
+    <span class="cmt">//--------------------</span>
+    <span class="fn">graphicsBasePlus</span>() {
+        <span class="cmt">/*待后续填充*/</span>
+    }
+    <span class="fn">graphicsBasePlus</span>(<span class="type">graphicsBasePlus</span>&amp;&amp;) = <span class="kw">delete</span>;
+    ~<span class="fn">graphicsBasePlus</span>() = <span class="kw">default</span>;
+};
+<span class="kw">inline</span> <span class="type">graphicsBasePlus</span> <span class="type">graphicsBasePlus</span>::singleton;
+</pre>
+<p>
+    首先使<span class="type">graphicsBasePlus</span>::<span class="var">singleton</span>能在初始化时自动设置<span class="type">graphicsBase</span>::<span class="var">pPlus</span>，填充<span class="fn">graphicsBasePlus</span>()：
+</p>
+<pre class="code">
+<span class="fn">graphicsBasePlus</span>() {
+    <span class="cmt">/*待后续填充*/</span>
+    <span class="type">graphicsBase</span>::<span class="fn">Plus</span>(singleton);
+    <span class="cmt">/*待后续填充*/</span>
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            定义时以<span class="kw">inline</span>修饰的静态成员变量（<span class="type">graphicsBase</span>::<span class="var">singleton</span>和<span class="type">graphicsBasePlus</span>::<span class="var">singleton</span>都以<span class="kw">inline</span>修饰）首先发生静态初始化，数值变为零值或默认值，然后按定义顺序发生动态初始化（若有必要），全局/静态变量逆初始化顺序发生析构。由于<span class="path">VkBase+.h</span>包含了<span class="path">VkBase.h</span>，<span class="type">graphicsBasePlus</span>::<span class="var">singleton</span>的初始化器在<span class="type">graphicsBase</span>::<span class="var">singleton</span>初始化后执行，由此可以确保<span class="type">graphicsBase</span>::<span class="var">pPlus</span>不会在被设置后又被刷成<span class="kw">nullptr</span>。
+        </p>
+    </li>
+</ul>
+<p>
+    Vulkan程序必然需要命令池以及命令缓冲区，这里为图形、呈现、计算队列定义不同的<span class="type">commandPool</span>对象，以及由于之后的一些常用对象封装当中经常需要数据传送，定义一个<span class="type">commandBuffer</span>对象专用于此，若图形与呈现的队列族不同，那么还需要一个能被提交给呈现队列的命令缓冲区。
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">graphicsBasePlus</span> {
+    <span class="type">commandPool</span> commandPool_graphics;
+    <span class="type">commandPool</span> commandPool_presentation;
+    <span class="type">commandPool</span> commandPool_compute;
+    <span class="type">commandBuffer</span> commandBuffer_transfer;<span class="cmt">//从commandPool_graphics分配</span>
+    <span class="type">commandBuffer</span> commandBuffer_presentation;
+    <span class="cmt">//静态变量</span>
+    <span class="kw">static</span> <span class="type">graphicsBasePlus</span> singleton;
+    <span class="cmt">//--------------------</span>
+    <span class="fn">graphicsBasePlus</span>() {
+        <span class="cmt">/*待后续填充*/</span>
+        <span class="type">graphicsBase</span>::<span class="fn">Plus</span>(singleton);
+        <span class="cmt">/*待后续填充*/</span>
+   }
+    <span class="fn">graphicsBasePlus</span>(<span class="type">graphicsBasePlus</span>&amp;&amp;) = <span class="kw">delete</span>;
+    ~<span class="fn">graphicsBasePlus</span>() = <span class="kw">default</span>;
+<span class="kw">public</span>:
+    <span class="cmt">//Getter</span>
+    <span class="kw">const</span> <span class="type">commandPool</span>&amp; <span class="fn">CommandPool_Graphics</span>() const { <span class="kw">return</span> commandPool_graphics; }
+    <span class="kw">const</span> <span class="type">commandPool</span>&amp; <span class="fn">CommandPool_Compute</span>() const { <span class="kw">return</span> commandPool_compute; }
+    <span class="kw">const</span> <span class="type">commandBuffer</span>&amp; <span class="fn">CommandBuffer_Transfer</span>() const { <span class="kw">return</span> commandBuffer_transfer; }
+    <span class="cmt">//Const Function</span>
+    <span class="cmt">//该函数专用于向呈现队列提交用于接受交换链图像的队列族所有权的命令缓冲区</span>
+    <span class="type">result_t</span> <span class="fn">AcquireImageOwnership_Presentation</span>(<span class="type">VkSemaphore</span> semaphore_renderingIsOver, <span class="type">VkSemaphore</span> semaphore_ownershipIsTransfered, <span class="type">VkFence</span> fence = <span class="mcr">VK_NULL_HANDLE</span>) <span class="kw">const</span> {
+        <span class="kw">if</span> (<span class="type">VkResult</span> result = commandBuffer_presentation.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>))
+            <span class="kw">return</span> result;
+        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">CmdTransferImageOwnership</span>(commandBuffer_presentation);
+        <span class="kw">if</span> (<span class="type">VkResult</span> result = commandBuffer_presentation.<span class="fn">End</span>())
+            <span class="kw">return</span> result;
+        <span class="kw">return</span> <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SubmitCommandBuffer_Presentation</span>(commandBuffer_presentation, semaphore_renderingIsOver, semaphore_ownershipIsTransfered, fence);
+    }
+};
+<span class="kw">inline</span> <span class="type">graphicsBasePlus</span> <span class="type">graphicsBasePlus</span>::singleton;
+</pre>
+<ul>
+    <li>
+        <p>
+            由于专用于呈现队列的命令缓冲区只会进行交换链图像的队列族所有权，不必暴露相应的命令池和命令缓冲的handle。
+        </p>
+    </li>
+</ul>
+<p>
+    我打算无论图形和计算的队列是否相同，让它们有各自的命令池，而若负责呈现的队列与图形队列不同，才为其创建命令池：
+</p>
+<pre class="code">
+<span class="fn">graphicsBasePlus</span>() {
+    <span class="cmt">//在创建逻辑设备时执行Initialize()</span>
+    <span class="kw">auto</span> Initialize = [] {
+        <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>() != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
+            singleton.commandPool_graphics.<span class="fn">Create</span>(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>()),
+            singleton.commandPool_graphics.<span class="fn">AllocateBuffers</span>(singleton.commandBuffer_transfer);
+        <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Compute</span>() != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
+            singleton.commandPool_compute.<span class="fn">Create</span>(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Compute</span>());
+        <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>() != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp;
+            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>() != <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>() &amp;&amp;
+            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageSharingMode == <span class="enum">VK_SHARING_MODE_EXCLUSIVE</span>)
+            singleton.commandPool_presentation.<span class="fn">Create</span>(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>()),
+            singleton.commandPool_presentation.<span class="fn">AllocateBuffers</span>(singleton.commandBuffer_presentation);
+        <span class="cmt">/*待后续填充*/</span>
+    };
+    <span class="cmt">//在销毁逻辑设备时执行CleanUp()</span>
+    <span class="cmt">//如果你不需要更换物理设备或在运行中重启Vulkan（皆涉及重建逻辑设备），那么此CleanUp回调非必要</span>
+    <span class="cmt">//程序运行结束时，无论是否有这个回调，graphicsBasePlus中的对象必会在析构graphicsBase前被析构掉</span>
+    <span class="kw">auto</span> CleanUp = [] {
+        singleton.commandPool_graphics.~<span class="fn">commandPool</span>();
+        singleton.commandPool_presentation.~<span class="fn">commandPool</span>();
+        singleton.commandPool_compute.~<span class="fn">commandPool</span>();
+    };
+    <span class="type">graphicsBase</span>::<span class="fn">Plus</span>(singleton);
+    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_CreateDevice</span>(Initialize);
+    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_DestroyDevice</span>(CleanUp);
+}
+</pre>
+<p>
+    于是乎，利用静态成员变量的初始化机制，上述代码使得在创建逻辑设备后，程序会自动创建前文所述的命令池和命令缓冲区。
+</p></section>
+<section id="id1">
+<h2>图像格式相关<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>
+    <a href="https://renderdoc.org/vkspec_chunked/chap43.html#VkFormatProperties">VkFormatProperties</a>类型记录了对于某一图像格式，数据线性排列的图像、数据最优排列的图像，以及存储该格式数据的缓冲区所支持的格式特性：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap43.html#VkFormatProperties">VkFormatProperties</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkFormatFeatureFlagBits</span> linearTilingFeatures</p></td>
+            <td><p>数据线性排列的图像所支持的格式特性</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkFormatFeatureFlagBits</span> optimalTilingFeatures</p></td>
+            <td><p>数据最优排列的图像所支持的格式特性</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkFormatFeatureFlagBits</span> bufferFeatures</p></td>
+            <td><p>存储该格式数据的缓冲区所支持的格式特性</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap43.html#VkFormatProperties">VkFormatProperties</a> 的枚举值（略去跟YCbCr色彩空间相关的枚举值）</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT               </span>表示该格式支持作为被采样图像的格式</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT               </span>表示该格式支持作为storage图像的格式</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_FORMAT_FEATURE_STORAGE_IMAGE_ATOMIC_BIT        </span>表示该格式支持作为storage图像的格式，且支持原子性操作</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_FORMAT_FEATURE_UNIFORM_TEXEL_BUFFER_BIT        </span>表示该格式支持作为uniform纹素缓冲区的格式</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_BIT        </span>表示该格式支持作为storage纹素缓冲区的格式</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_ATOMIC_BIT </span>表示该格式支持作为storage纹素缓冲区的格式，且支持原子性操作</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_FORMAT_FEATURE_VERTEX_BUFFER_BIT               </span>表示该格式支持作为顶点缓冲区的格式</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT            </span>表示该格式支持作为颜色附件的格式</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BLEND_BIT      </span>表示该格式支持作为颜色附件的格式，并且支持混色</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT    </span>表示该格式支持作为深度模板附件的格式</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_FORMAT_FEATURE_BLIT_SRC_BIT                    </span>表示该格式支持作为blit命令的来源图像的格式</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_FORMAT_FEATURE_BLIT_DST_BIT                    </span>表示该格式支持作为blit命令的目标图像的格式</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT </span>表示该格式支持作为被采样图像的格式，且支持线性插值过滤</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_FORMAT_FEATURE_TRANSFER_SRC_BIT                </span>表示该格式支持作为copy命令的来源图像的格式</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_FORMAT_FEATURE_TRANSFER_DST_BIT                </span>表示该格式支持作为copy命令的目标图像的格式</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_FORMAT_FEATURE_DISJOINT_BIT                    </span>表示该格式的多层面（multi-planar）图像可以在创建时注明<span class="enum">VK_IMAGE_CREATE_DISJOINT_BIT</span></p></td>
+        </tr>
+        <tr>
+            <td><p>1.2</p></td>
+            <td><p><span class="enum">VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_MINMAX_BIT </span>表示该格式支持作为被采样图像的格式，且支持minmax过滤</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            Blit命令是专用于图像的数据传送命令，可以在不同大小的图像间进行。
+        </p>
+    </li>
+    <li>
+        <p>
+            minmax过滤需要在Vulkan1.2以上版本中使得<a href="https://renderdoc.org/vkspec_chunked/chap13.html#VkSamplerCreateInfo">VkSamplerCreateInfo</a>::pNext指向<a href="https://renderdoc.org/vkspec_chunked/chap13.html#VkSamplerReductionModeCreateInfo">VkSamplerReductionModeCreateInfo</a>结构体，本套教程中不会用使用（也不需要教怎么用，很简单没啥要点），有兴趣请自行了解。
+        </p>
+    </li>
+</ul>
+<p>
+    在后续的编程中，许多情况下会出现需要检查图像格式所支持格式特性的情况，有必要在创建逻辑设备后事先取得各个格式的<a href="https://renderdoc.org/vkspec_chunked/chap43.html#VkFormatProperties">VkFormatProperties</a>：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">graphicsBasePlus</span> {
+    <span class="cmt">/*新增*/</span><span class="type">VkFormatProperties</span> formatProperties[std::<span class="fn">size</span>(formatInfos_v1_0)] = {};
+    <span class="type">commandPool</span> commandPool_graphics;
+    <span class="type">commandPool</span> commandPool_presentation;
+    <span class="type">commandPool</span> commandPool_compute;
+    <span class="type">commandBuffer</span> commandBuffer_transfer;<span class="cmt">//从commandPool_graphics分配</span>
+    <span class="type">commandBuffer</span> commandBuffer_presentation;
+    <span class="cmt">//静态变量</span>
+    <span class="kw">static</span> <span class="type">graphicsBasePlus</span> singleton;
+    <span class="cmt">//--------------------</span>
+    <span class="fn">graphicsBasePlus</span>() {
+        <span class="kw">auto</span> Initialize = [] {
+            <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>() != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
+                singleton.commandPool_graphics.<span class="fn">Create</span>(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>()),
+                singleton.commandPool_graphics.<span class="fn">AllocateBuffers</span>(singleton.commandBuffer_transfer);
+            <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Compute</span>() != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
+                singleton.commandPool_compute.<span class="fn">Create</span>(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Compute</span>());
+            <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>() != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp;
+                <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>() != <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>() &amp;&amp;
+                <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageSharingMode == <span class="enum">VK_SHARING_MODE_EXCLUSIVE</span>)
+                singleton.commandPool_presentation.<span class="fn">Create</span>(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>()),
+                singleton.commandPool_presentation.<span class="fn">AllocateBuffers</span>(singleton.commandBuffer_presentation);
+            <span class="cmt">//新增------------------------------------</span>
+            <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; std::<span class="fn">size</span>(singleton.formatProperties); i++)
+                <span class="fn">vkGetPhysicalDeviceFormatProperties</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDevice</span>(), <span class="type">VkFormat</span>(i), &amp;singleton.formatProperties[i]);
+            <span class="cmt">//----------------------------------------</span>
+        };
+        <span class="kw">auto</span> CleanUp = [] {
+            singleton.commandPool_graphics.~<span class="fn">commandPool</span>();
+            singleton.commandPool_presentation.~<span class="fn">commandPool</span>();
+            singleton.commandPool_compute.~<span class="fn">commandPool</span>();
+        };
+        <span class="type">graphicsBase</span>::<span class="fn">Plus</span>(singleton);
+        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_CreateDevice</span>(Initialize);
+        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_DestroyDevice</span>(CleanUp);
+    }
+    <span class="fn">graphicsBasePlus</span>(<span class="type">graphicsBasePlus</span>&amp;&amp;) = <span class="kw">delete</span>;
+    ~<span class="fn">graphicsBasePlus</span>() = <span class="kw">default</span>;
+<span class="kw">public</span>:
+    <span class="cmt">//Getter</span>
+    <span class="cmt">/*新增*/</span><span class="kw">const</span> <span class="type">VkFormatProperties</span>&amp; <span class="fn">FormatProperties</span>(<span class="type">VkFormat</span> format) <span class="kw">const</span> {
+<span class="pragma">#ifndef</span> <span class="mcr">NDEBUG</span>
+       <span class="kw">if</span> (<span class="type">uint32_t</span>(format) &gt;= std::<span class="fn">size</span>(formatInfos_v1_0))
+           outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ FormatInfo ] ERROR\nThis function only supports definite formats provided by VK_VERSION_1_0.\n&quot;</span>),
+           <span class="fn">abort</span>();
+<span class="pragma">#endif</span>
+        <span class="kw">return</span> formatProperties[format];
+    }
+    <span class="kw">const</span> <span class="type">commandPool</span>&amp; <span class="fn">CommandPool_Graphics</span>() const { <span class="kw">return</span> commandPool_graphics; }
+    <span class="kw">const</span> <span class="type">commandPool</span>&amp; <span class="fn">CommandPool_Compute</span>() const { <span class="kw">return</span> commandPool_compute; }
+    <span class="kw">const</span> <span class="type">commandBuffer</span>&amp; <span class="fn">CommandBuffer_Transfer</span>() const { <span class="kw">return</span> commandBuffer_transfer; }
+    <span class="cmt">//Const Function</span>
+    <span class="type">result_t</span> <span class="fn">AcquireImageOwnership_Presentation</span>(<span class="type">VkSemaphore</span> semaphore_renderingIsOver, <span class="type">VkSemaphore</span> semaphore_ownershipIsTransfered, <span class="type">VkFence</span> fence = <span class="mcr">VK_NULL_HANDLE</span>) <span class="kw">const</span> {
+        <span class="kw">if</span> (<span class="type">VkResult</span> result = commandBuffer_presentation.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>))
+            <span class="kw">return</span> result;
+        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">CmdTransferImageOwnership</span>(commandBuffer_presentation);
+        <span class="kw">if</span> (<span class="type">VkResult</span> result = commandBuffer_presentation.<span class="fn">End</span>())
+            <span class="kw">return</span> result;
+        <span class="kw">return</span> <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SubmitCommandBuffer_Presentation</span>(commandBuffer_presentation, semaphore_renderingIsOver, semaphore_ownershipIsTransfered, fence);
+    }
+};
+<span class="kw">inline</span> <span class="type">graphicsBasePlus</span> <span class="type">graphicsBasePlus</span>::singleton;
+</pre>
+<ul>
+    <li>
+        <p>
+            <span class="var">formatInfos_v1_0</span>来源于<span class="path">VkFormat.h</span>，这里仅获取Vulkan1.0中所提供格式的格式特性。
+        </p>
+    </li>
+</ul>
+<p>
+    再在vulkan命名空间中添加三个函数：
+    <br>
+    1.对<span class="var">formatInfos_v1_0</span>进一步包装，函数<span class="fn">FormatInfo</span>(...)使得能直接以格式（而不是还要转到<span class="type">uint32_t</span>）为参数获取格式信息。
+    <br>
+    2.<span class="fn">Corresponding16BitFloatFormat</span>(...)获取32位浮点数格式对应的16位浮点数格式类型，这会在之后将32位浮点数的hdr图像数据转到16位浮点数数据时发挥作用。
+    <br>
+    3.<span class="fn">FormatProperties</span>(...)用于简化<span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">FormatProperties</span>(...)。
+</p>
+<pre class="code">
+<span class="kw">constexpr</span> <span class="type">formatInfo</span> <span class="fn">FormatInfo</span>(<span class="type">VkFormat</span> format) {
+<span class="pragma">#ifndef</span> <span class="mcr">NDEBUG</span>
+    <span class="kw">if</span> (<span class="type">uint32_t</span>(format) &gt;= std::<span class="fn">size</span>(formatInfos_v1_0))
+        outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ FormatInfo ] ERROR\nThis function only supports definite formats provided by VK_VERSION_1_0.\n&quot;</span>),
+        <span class="fn">abort</span>();
+<span class="pragma">#endif</span>
+    <span class="kw">return</span> formatInfos_v1_0[<span class="type">uint32_t</span>(format)];
+}
+<span class="kw">constexpr</span> <span class="type">VkFormat</span> <span class="fn">Corresponding16BitFloatFormat</span>(<span class="type">VkFormat</span> format_32BitFloat) {
+    <span class="kw">switch</span> (format_32BitFloat) {
+    <span class="kw">case</span> <span class="enum">VK_FORMAT_R32_SFLOAT</span>:
+        <span class="kw">return</span> <span class="enum">VK_FORMAT_R16_SFLOAT</span>;
+    <span class="kw">case</span> <span class="enum">VK_FORMAT_R32G32_SFLOAT</span>:
+        <span class="kw">return</span> <span class="enum">VK_FORMAT_R16G16_SFLOAT</span>;
+    <span class="kw">case</span> <span class="enum">VK_FORMAT_R32G32B32_SFLOAT</span>:
+        <span class="kw">return</span> <span class="enum">VK_FORMAT_R16G16B16_SFLOAT</span>;
+    <span class="kw">case</span> <span class="enum">VK_FORMAT_R32G32B32A32_SFLOAT</span>:
+        <span class="kw">return</span> <span class="enum">VK_FORMAT_R16G16B16A16_SFLOAT</span>;
+    }
+    <span class="kw">return</span> format_32BitFloat;
+}
+<span class="kw">constexpr</span> <span class="type">VkFormatProperties</span>&amp; <span class="fn">FormatProperties</span>(<span class="type">VkFormat</span> format) {
+    <span class="kw">return</span> <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">FormatProperties</span>(format);
+}
+</pre></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html" class="btn btn-neutral float-left" title="Ch4-3 片段着色器" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-right" title="Ch5-1 各种缓冲区" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

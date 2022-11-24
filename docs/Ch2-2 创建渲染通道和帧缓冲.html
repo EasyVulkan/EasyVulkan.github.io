@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch2-2 创建渲染通道和帧缓冲 &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ch2-3 创建管线并绘制三角形" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html" />
+    <link rel="prev" title="Ch2-1 Rendering Loop" href="Ch2-1%20Rendering%20Loop.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch2-2 创建渲染通道和帧缓冲</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">到三角形为止的流程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#easyvulkan-hpp">EasyVulkan.hpp</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">渲染通道和帧缓冲</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">创建一个最简单的渲染通道</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">创建一组最简单的帧缓冲</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">更新主函数并测试</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch2-2 创建渲染通道和帧缓冲</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch2-2">
+<h1>Ch2-2 创建渲染通道和帧缓冲<a class="headerlink" href="#ch2-2" title="Permalink to this heading"></a></h1>
+<section id="id1">
+<h2>到三角形为止的流程<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>
+    构建完渲染循环后，直到渲染出三角形为止需经历以下步骤：
+    <br>
+    1.创建渲染通道
+    <br>
+    2.为每张交换链图像创建对应的帧缓冲
+    <br>
+    3.书写顶点和片段着色器
+    <br>
+    4.创建着色器模组
+    <br>
+    5.创建渲染管线
+    <br>
+    6.在命令缓冲区中录制命令
+</p>
+<p>
+    以下Q&A仅为简要说明，以便理解所涉及的各个Vulkan对象的必要性，具体概念会在后文详述。
+</p>
+<p>
+    <strong>什么是渲染通道？</strong>
+    <br>
+    渲染通道（render pass）指定渲染过程中，所绑定帧缓冲的参数（格式、//TODO 内存布局）及各个渲染步骤之间的关系。
+    <br>
+    举例而言，实现延迟渲染会涉及两个步骤，各为一个子通道（subpass），第一个通道中生成G-buffer，第二个通道中渲染到屏幕。
+</p>
+<p>
+    <strong>什么是帧缓冲？</strong>
+    <br>
+    帧缓冲是在一个渲染通道中所必要的一组图像附件（attachment）的集合。
+</p>
+<p>
+    <strong>什么是着色器？</strong>
+    <br>
+    着色器是在渲染过程中的可编程阶段运行的程序，书写完后在Vulkan程序中将其读取为着色器模组，然后提供给管线使用。
+</p>
+<p>
+    <strong>什么是管线？</strong>
+    <br>
+    这里只解释图形管线，一条图形管线指定渲染过程中所用的着色器模组及各种状态参数（混色方式、模板和深度测试方式、视口等）。
+</p>
+<p>
+    在命令缓冲区中录制命令时，首先开始一个渲染通道并同时指定所用的帧缓冲，然后绑定渲染管线，由此便指定了渲染所必须的所有参数。
+</p></section>
+<section id="easyvulkan-hpp">
+<h2>EasyVulkan.hpp<a class="headerlink" href="#easyvulkan-hpp" title="Permalink to this heading"></a></h2>
+<p>
+    创建<span class="path">EasyVulkan.hpp</span>，这个文件会用于书写本套教程中一些常用的渲染通道和帧缓冲的创建函数。
+    <br>
+    然后在其中包含<span class="path">VkBase.h</span>，并加入以下代码：
+</p>
+<pre class="code">
+<span class="pragma">#include</span> <span class="str">&quot;VkBase.h&quot;</span>
+
+<span class="kw">const</span> <span class="type">VkExtent2D</span>&amp; windowSize = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageExtent;
+
+<span class="kw">namespace</span> easyVulkan {
+    <span class="kw">using namespace</span> vulkan;
+    <span class="cmt">/*待填充*/</span>
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            之后会不止一处用到交换链图像大小，实在太长了点，为其创建别名。
+        </p>
+    </li>
+</ul></section>
+<section id="id2">
+<h2>渲染通道和帧缓冲<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<p>
+    参见<a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a>，我在该节中具体叙述了何为渲染通道及帧缓冲，并对它们进行了简单封装，请先阅览该节并完成封装。
+    <br>
+    向<span class="path">EasyVulkan.hpp</span>，easyVulkan命名空间中，定义<span class="type">renderPassWithFramebuffers</span>结构体，将渲染通道与其对应的帧缓冲放在一起：
+</p>
+<pre class="code">
+<span class="kw">namespace</span> easyVulkan {
+    <span class="kw">using namespace</span> vulkan;
+    <span class="kw">struct</span> <span class="type">renderPassWithFramebuffers</span> {
+        <span class="type">renderPass</span> renderPass;
+        std::<span class="type">vector</span>&lt;<span class="type">framebuffer</span>&gt; framebuffers;
+    };
+}
+</pre></section>
+<section id="id3">
+<h2>创建一个最简单的渲染通道<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<p>
+   在easyVulkan命名空间中，定义函数<span class="fn">CreateRpwf_Screen</span>()，这个函数会创建一个直接渲染到交换链图像，且不做深度测试等任何测试的渲染通道，及其对应的帧缓冲：
+</p>
+<pre class="code">
+<span class="kw">namespace</span> easyVulkan {
+    <span class="kw">using namespace</span> vulkan;
+    <span class="kw">struct</span> <span class="type">renderPassWithFramebuffers</span> {
+        <span class="type">renderPass</span> renderPass;
+        std::<span class="type">vector</span>&lt;<span class="type">framebuffer</span>&gt; framebuffers;
+    };
+    <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Screen</span>() {
+        <span class="kw">static</span> <span class="type">renderPassWithFramebuffers</span> rpwf_screen;
+        <span class="kw">if</span> (rpwf_screen.renderPass)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ easyVulkan ] WARNING\nDon't call CreateRpwf_Screen() twice!\n&quot;</span>);
+        <span class="kw">else</span> {
+            <span class="cmt">/*待后续填充*/</span>
+        }
+        <span class="kw">return</span> rpwf_screen;
+    }
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            <span class="type">renderPassWithFramebuffers</span>类型的对象<span class="var">rpwf_screen</span>（rpwf当然是<span class="type">renderPassWithFramebuffers</span>的缩写）被定义为函数内的静态变量，并且函数返回其常引用。
+        </p>
+    </li>
+</ul>
+<p>
+    首先描述图像附件，这里描述的是交换链图像：
+</p>
+<pre class="code">
+<span class="type">VkAttachmentDescription</span> attachmentDescription = {
+    .format = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat,
+    .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+    .loadOp = <span class="enum">VK_ATTACHMENT_LOAD_OP_CLEAR</span>,
+    .storeOp = <span class="enum">VK_ATTACHMENT_STORE_OP_STORE</span>,
+    .initialLayout = <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>,
+    .finalLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            将initialLayout设定为<span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>可能导致丢弃图像附件原有的内容，因为我们会在每个渲染循环中清空图像，此举无妨。
+        </p>
+    </li>
+    <li>
+        <p>
+            将finalLayout设定为<span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>，以便将交换链图像用于呈现。
+        </p>
+    </li>
+</ul>
+<p>
+    只有一个子通道，该子通道只使用一个颜色附件，于是很容易地写完子通道描述：
+</p>
+<pre class="code">
+<span class="type">VkAttachmentReference</span> attachmentReference = { 0, <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span> };
+<span class="type">VkSubpassDescription</span> subpassDescription = {
+    .pipelineBindPoint = <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>,
+    .colorAttachmentCount = 1,
+    .pColorAttachments = &amp;attachmentReference
+};
+</pre>
+<p>
+    书写子通道依赖，覆盖渲染通道开始时的隐式依赖：
+</p>
+<pre class="code">
+<span class="type">VkSubpassDependency</span> subpassDependency = {
+    .srcSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
+    .dstSubpass = 0,
+    .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+    .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,<span class="cmt">//不早于提交命令缓冲区时等待semaphore对应的waitDstStageMask</span>
+    .srcAccessMask = 0,
+    .dstAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
+    .dependencyFlags = <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span>
+};
+</pre>
+<p>
+    <a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html#id4">渲染通道开始时的隐式依赖</a>使得图像的内存布局转换在读写任何图像附件之前发生，并且不对先前的访问进行同步（因为srcStageMask是<span class="enum">VK_PIPELINE_STAGE_NONE</span>），这倒也没什么问题，因为可以有其他同步手段来确保先前的操作已经结束。
+    <br>
+    因此上文所写的子通道依赖并非必要的，但它更精细。这里使用<span class="mcr">VK_SUBPASS_EXTERNAL</span>为srcSubpass，实质上是指代前一次使用同一图像附件的渲染，确保前一次的颜色附件输出（color attachment output）阶段在本次的同一阶段前完成，由于每次向交换链图像渲染时，先前的内容都可以被舍弃，srcAccessMask可以为0（srcAccessMask的用途是用来确保写入操作的结果可以被后续操作安全访问）。
+</p>
+<p>
+    书写渲染通道的创建信息，以创建渲染通道：
+</p>
+<pre class="code">
+<span class="type">VkRenderPassCreateInfo</span> renderPassCreateInfo = {
+    .attachmentCount = 1,
+    .pAttachments = &amp;attachmentDescription,
+    .subpassCount = 1,
+    .pSubpasses = &amp;subpassDescription,
+    .dependencyCount = 1,
+    .pDependencies = &amp;subpassDependency
+};
+rpwf_screen.renderPass.<span class="fn">Create</span>(renderPassCreateInfo);
+</pre></section>
+<section id="id4">
+<h2>创建一组最简单的帧缓冲<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<p>
+    为每张交换链图像创建帧缓冲，首先将<span class="var">rpwf_screen.framebuffers</span>的元素数量<span class="fn">resize</span>(...)到与交换链图像一样多：
+</p>
+<pre class="code">
+rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageCount</span>());
+</pre>
+<p>
+    填写帧缓冲的创建信息，为每张交换链图像创建对应的帧缓冲：
+</p>
+<pre class="code">
+<span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
+    .renderPass = rpwf_screen.renderPass,
+    .attachmentCount = 1,
+    .width = windowSize.width,
+    .height = windowSize.height,
+    .layers = 1
+};
+<span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageCount</span>(); i++) {
+    <span class="type">VkImageView</span> attachment = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageView</span>(i);
+    framebufferCreateInfo.pAttachments = &amp;attachment;
+    rpwf_screen.framebuffers[i].<span class="fn">Create</span>(framebufferCreateInfo);
+}
+</pre>
+<p>
+    由于帧缓冲的大小与交换链图像相关，重建交换链时也会需要重建帧缓冲，于是将创建和销毁帧缓冲的代码扔进各自的lambda表达式，以作为回调函数：
+</p>
+<pre class="code">
+<span class="kw">auto</span> CreateFramebuffers = [] {
+    rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageCount</span>());
+    <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
+        .renderPass = rpwf_screen.renderPass,
+        .attachmentCount = 1,
+        .width = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageExtent.width,
+        .height = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageExtent.height,
+        .layers = 1
+    };
+    <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span        class="fn">SwapchainImageCount</span>(); i++) {
+        <span class="type">VkImageView</span> attachment = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageView</span>(i);
+        framebufferCreateInfo.pAttachments = &amp;attachment;
+        rpwf_screen.framebuffers[i].<span class="fn">Create</span>(framebufferCreateInfo);
+    }
+};
+<span class="kw">auto</span> DestroyFramebuffers = [] {
+    rpwf_screen.framebuffers.<span class="fn">clear</span>();<span class="cmt">//清空vector中的元素时会逐一执行析构函数</span>
+};
+<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_CreateSwapchain</span>(CreateFramebuffers);
+<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_DestroySwapchain</span>(DestroyFramebuffers);
+</pre>
+<p>
+    最后调用<span class="var">CreateFramebuffers</span>()来创建帧缓冲，整个<span class="fn">CreateRpwf_Screen</span>()函数如下：
+</p>
+<pre class="code">
+<span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Screen</span>() {
+    <span class="kw">static</span> <span class="type">renderPassWithFramebuffers</span> rpwf_screen;
+    <span class="kw">if</span> (rpwf_screen.renderPass)
+        outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ easyVulkan ] WARNING\nDon't call CreateRpwf_Screen() twice!\n&quot;</span>);
+    <span class="kw">else</span> {
+        <span class="type">VkAttachmentDescription</span> attachmentDescription = {
+            .format = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat,
+            .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+            .loadOp = <span class="enum">VK_ATTACHMENT_LOAD_OP_CLEAR</span>,
+            .storeOp = <span class="enum">VK_ATTACHMENT_STORE_OP_STORE</span>,
+            .initialLayout = <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>,
+            .finalLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>
+        };
+        <span class="type">VkAttachmentReference</span> attachmentReference = { 0, <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span> };
+        <span class="type">VkSubpassDescription</span> subpassDescription = {
+            .pipelineBindPoint = <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>,
+            .colorAttachmentCount = 1,
+            .pColorAttachments = &amp;attachmentReference
+        };
+        <span class="type">VkSubpassDependency</span> subpassDependency = {
+            .srcSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
+            .dstSubpass = 0,
+            .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+            .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,<span class="cmt">//不早于提交命令缓冲区时对应的waitDstStageMask</span>
+            .srcAccessMask = 0,
+            .dstAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
+            .dependencyFlags = <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span>
+        };
+        <span class="type">VkRenderPassCreateInfo</span> renderPassCreateInfo = {
+            .attachmentCount = 1,
+            .pAttachments = &amp;attachmentDescription,
+            .subpassCount = 1,
+            .pSubpasses = &amp;subpassDescription,
+            .dependencyCount = 1,
+            .pDependencies = &amp;subpassDependency
+        };
+        rpwf_screen.renderPass.<span class="fn">Create</span>(renderPassCreateInfo);
+        <span class="kw">auto</span> CreateFramebuffers = [] {
+            rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageCount</span>());
+            <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
+                .renderPass = rpwf_screen.renderPass,
+                .attachmentCount = 1,
+                .width = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageExtent.width,
+                .height = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageExtent.height,
+                .layers = 1
+            };
+            <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span        class="fn">SwapchainImageCount</span>(); i++) {
+                <span class="type">VkImageView</span> attachment = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageView</span>(i);
+                framebufferCreateInfo.pAttachments = &amp;attachment;
+                rpwf_screen.framebuffers[i].<span class="fn">Create</span>(framebufferCreateInfo);
+            }
+        };
+        <span class="kw">auto</span> DestroyFramebuffers = [] {
+            rpwf_screen.framebuffers.<span class="fn">clear</span>();<span class="cmt">//清空vector中的元素时会逐一执行析构函数</span>
+        };
+        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_CreateSwapchain</span>(CreateFramebuffers);
+        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_DestroySwapchain</span>(DestroyFramebuffers);
+        CreateFramebuffers();
+    }
+    <span class="kw">return</span> rpwf_screen;
+}
+</pre></section>
+<section id="id5">
+<h2>更新主函数并测试<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<p>
+    现在可以去主函数中调用easyVulkan::<span class="fn">CreateRpwf_Screen</span>()，并测试一下清屏值是否有效了：
+</p>
+<pre class="code">
+<span class="pragma">#include</span> <span class="str">&quot;GlfwGeneral.hpp&quot;</span>
+<span class="pragma">#include</span> <span class="str">&quot;EasyVulkan.hpp&quot;</span>
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
+        <span class="kw">return</span> -1;
+
+    <span class="cmt">/*新增*/</span><span class="kw">const auto</span>&amp; [renderPass, framebuffers] = easyVulkan::<span class="fn">CreateRpwf_Screen</span>();
+
+    <span class="type">fence</span> fence(<span class="kw">true</span>);
+    <span class="type">semaphore</span> semaphore_imageIsAvailable;
+    <span class="type">semaphore</span> semaphore_renderingIsOver;
+
+    <span class="type">commandBuffer</span> commandBuffer;
+    <span class="type">commandPool</span> commandPool(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>());
+    commandPool.<span class="type">AllocateBuffers</span>(commandBuffer);
+
+    <span class="cmt">/*新增*/</span><span class="type">VkClearValue</span> clearColor = { .color = { 1.f, 0.f, 0.f, 1.f } };<span class="cmt">//红色</span>
+
+    <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
+        <span class="fn">TitleFps</span>();
+
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+        <span class="cmt">//因为帧缓冲与所获取的交换链图像一一对应，获取交换链图像索引</span>
+        <span class="cmt">/*新增*/</span><span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
+
+        fence.<span class="fn">WaitAndReset</span>();
+
+        <span class="cmt">/*操作过程，本章中不会有键鼠操作*/</span>
+
+        commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
+        <span class="cmt">/*新增*/</span>renderPass.<span class="fn">CmdBegin</span>(commandBuffer, framebuffers[i], clearColor);
+        <span class="cmt">/*渲染命令，待填充*/</span>
+        <span class="cmt">/*新增*/</span>renderPass.<span class="fn">CmdEnd</span>(commandBuffer);
+        commandBuffer.<span class="fn">End</span>();
+
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
+
+        <span class="fn">glfwPollEvents</span>();
+    }
+    <span class="fn">TerminateWindow</span>();
+    <span class="kw">return</span> 0;
+}
+</pre>
+<p>
+    上文代码中使用的清屏值为纯红色，运行程序，你应该会看到一个全红的画面。
+</p></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch2-1%20Rendering%20Loop.html" class="btn btn-neutral float-left" title="Ch2-1 Rendering Loop" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html" class="btn btn-neutral float-right" title="Ch2-3 创建管线并绘制三角形" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

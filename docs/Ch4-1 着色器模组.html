@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch4-1 着色器模组 &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ch4-2 顶点着色器" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html" />
+    <link rel="prev" title="Ch3-6 描述符" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch4-1 着色器模组</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">着色器模组</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">创建着色器模组</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">管线着色器阶段的创建信息</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#shadermodule">封装为shaderModule类</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">标准化设备坐标系</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#glslspir-v">从GLSL编译到SPIR-V</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">着色器类型判别</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">基础命令行语法</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#glsl">GLSL着色器的通用语法</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">版本声明</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">接入点函数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">数据类型</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">图形着色器中通用的输入输出声明方式</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id11">插值修饰符</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#push-constant">Push Constant的声明方式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#uniform">Uniform缓冲区的声明方式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#storage">Storage缓冲区的声明</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">块成员的内存布局</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">可特化常量的声明方式和使用</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch4-1 着色器模组</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch4-1">
+<h1>Ch4-1 着色器模组<a class="headerlink" href="#ch4-1" title="Permalink to this heading"></a></h1>
+<p>
+    着色器是在管线的可编程阶段运行的GPU程序。
+    <br>
+    通常使用适合人类阅读和书写的编程语言GLSL编写着色器（也可以用微软的HLSL），然后将着色器编译到SPIR-V这一中间语言，后缀名为.spv。
+    <br>
+    之后再由Vulkan程序读取.spv文件，由显卡驱动提供的Vulkan实现将其编译为着色器模组（<span class="type">VkShaderModule</span>）。
+    <br>
+    为什么不事先一步到位地编译？因为不同的显卡驱动所提供的Vulkan实现的编译结果可能不同。
+</p>
+<p>
+    本节先讲述Vulkan API中与着色器模组相关的接口，再说明编写用于Vulkan的GLSL着色器时的一些通用常识。
+</p><section id="id1">
+<h2>着色器模组<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<section id="id2">
+<h3>创建着色器模组<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap9.html#vkCreateShaderModule">vkCreateShaderModule</a>(...)创建着色器模组：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap9.html#vkCreateShaderModule">vkCreateShaderModule</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkShaderModuleCreateInfo</span>* pCreateInfo</p></td>
+            <td><p>指向<span class="type">VkFramebuffer</span>的创建信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span>* pAllocator</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkShaderModule</span>* pShaderModule</p></td>
+            <td><p>若创建成功，将着色器模组的handle写入*pShaderModule</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap9.html#VkShaderModuleCreateInfo">VkShaderModuleCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkShaderModuleCreateFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">size_t</span> codeSize</p></td>
+            <td><p>SPIR-V代码的大小，单位是字节，必须是4的倍数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">uint32_t</span>* pCode</p></td>
+            <td><p>指向SPIR-V代码</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    <a href="https://renderdoc.org/vkspec_chunked/chap9.html#VkShaderModuleCreateInfo">VkShaderModuleCreateInfo</a>中没有任何有必要特地说明的地方。关于如何从.spv文件读取SPIR-V代码到内存，这里给出C++代码：
+</p>
+<pre class="code">
+std::<span class="type">ifstream</span> file(filepath, std::<span class="type">ios</span>::ate | std::<span class="type">ios</span>::binary);
+<span class="kw">if</span> (!file) {
+    <span class="cmt">/*错误信息，此处略*/</span>
+}
+<span class="type">size_t</span> fileSize = <span class="type">size_t</span>(file.<span class="fn">tellg</span>());
+std::<span class="type">vector</span>&lt;<span class="type">uint32_t</span>&gt; binaries(fileSize / 4);
+file.<span class="fn">seekg</span>(0);
+file.<span class="fn">read</span>(<span class="kw">reinterpret_cast</span>&lt;<span class="kw">char</span>*&gt;(binaries.<span class="fn">data</span>()), fileSize);
+file.<span class="fn">close</span>();
+</pre></section>
+<section id="id3">
+<h3>管线着色器阶段的创建信息<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<p>
+    创建渲染管线时需要着色器阶段的创建信息（<a href="https://renderdoc.org/vkspec_chunked/chap10.html#VkPipelineShaderStageCreateInfo">VkPipelineShaderStageCreateInfo</a>）：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap10.html#VkPipelineShaderStageCreateInfo">VkPipelineShaderStageCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkPipelineShaderStageCreateFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkShaderStageFlagBits</span> stage</p></td>
+            <td><p>着色器对应的可编程管线阶段</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkShaderModule</span> module</p></td>
+            <td><p>着色器模组的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const char</span>* pName</p></td>
+            <td><p>接入点函数名称，比如通常的主函数为<span class="str">&quot;main&quot;</span></p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkSpecializationInfo</span>* pSpecializationInfo</p></td>
+            <td><p>常量的特化信息，若不需要特化常量，则为<span class="kw">nullptr</span></p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            自Vulkan1.3起可以将flags指定为与计算着色器相关的<span class="enum">VK_PIPELINE_SHADER_STAGE_CREATE_ALLOW_VARYING_SUBGROUP_SIZE_BIT</span>或<span class="enum">VK_PIPELINE_SHADER_STAGE_CREATE_REQUIRE_FULL_SUBGROUPS_BIT</span>，本套教程中不作讲解。
+        </p>
+    </li>
+</ul>
+<p>
+    可以用<a href="https://renderdoc.org/vkspec_chunked/chap10.html#VkSpecializationInfo">VkSpecializationInfo</a>对管线中着色器的特定常量进行独有的特化：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap10.html#VkSpecializationInfo">VkSpecializationInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> mapEntryCount</p></td>
+            <td><p>需被特化的常量的个数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkSpecializationMapEntry</span>* pMapEntries</p></td>
+            <td><p>各个常量的特化信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">size_t</span> dataSize</p></td>
+            <td><p>特化数据的总大小，单位为字节</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pData</p></td>
+            <td><p>所有特化数据所在的内存地址</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap10.html#VkSpecializationMapEntry">VkSpecializationMapEntry</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> constantID</p></td>
+            <td><p>被特化常量的ID</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> offset</p></td>
+            <td><p>对应的特化数据在<span class="type">VkSpecializationInfo</span>::pData中的起始位置</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">size_t</span> size</p></td>
+            <td><p>对应的特化数据的大小，单位为字节</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            如果对应的常量是布尔类型，size为4（一个<span class="type">VkBool32</span>的大小）。
+        </p>
+    </li>
+</ul>
+<p>
+    这里以具体代码为例，说明常量特化的具体写法：
+</p>
+<pre class="code">
+<span class="cmt">//GLSL代码</span>
+<span class="kw">layout</span>(constant_id = 0) <span class="kw">const uint</span> maxLightCount = 32;
+<span class="kw">layout</span>(constant_id = 1) <span class="kw">const uint</span> shininess = 32;
+</pre>
+<ul>
+    <li>
+        <p>
+            对于需要被特化的常量，在声明前加上<code><span class="kw">layout</span>(constant_id = ID编号)</code>
+        </p>
+    </li>
+</ul>
+<p>
+    以上代码声明了两个常量，其默认值皆指定为32。
+    <br>
+    试着在创建管线时对它们进行特化，将<span class="var">maxLightCount</span>变为48，<span class="var">shininess</span>变为64：
+</p>
+<pre class="code">
+<span class="cmt">//函数体内部的C++代码</span>
+<span class="kw">static constexpr struct</span> {
+    <span class="type">int32_t</span> maxLightCount = 48;
+    <span class="type">int32_t</span> shininess = 64;
+} constants;
+<span class="type">VkSpecializationMapEntry</span> specializationMapEntries[] = {
+    { 0, 0, 4 },<span class="cmt">//开头的0对应constant_id = 0，之后的0对应结构体变量constants中成员maxLightCount的起始位置</span>
+    { 1, 4, 4 } <span class="cmt">//开头的1对应constant_id = 1，之后的4对应结构体变量constants中成员shininess的起始位置</span>
+};
+<span class="type">VkSpecializationInfo</span> specializationInfo = {
+    .mapEntryCount = 2,
+    .pMapEntries = specializationMapEntries,
+    .dataSize = <span class="kw">sizeof</span> constants,
+    .pData = &amp;constants
+};
+</pre></section>
+<section id="shadermodule">
+<h3>封装为shaderModule类<a class="headerlink" href="#shadermodule" title="Permalink to this heading"></a></h3>
+<p>
+    向<span class="path">VKBase.h</span>，vulkan命名空间中添加以下代码：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">shaderModule</span> {
+    <span class="type">VkShaderModule</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
+<span class="kw">public</span>:
+    <span class="fn">shaderModule</span>() = <span class="kw">default</span>;
+    <span class="fn">shaderModule</span>(<span class="type">VkShaderModuleCreateInfo</span>&amp; createInfo) {
+        <span class="fn">Create</span>(createInfo);
+    }
+    <span class="fn">shaderModule</span>(<span class="kw">const char</span>* filepath) {
+        <span class="fn">Create</span>(filepath);
+    }
+    <span class="fn">shaderModule</span>(<span class="type">shaderModule</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    ~<span class="fn">shaderModule</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyShaderModule</span>); }
+    <span class="cmt">//Getter</span>
+    <span class="mcr">DefineHandleTypeOperator</span>;
+    <span class="mcr">DefineAddressFunction</span>;
+    <span class="cmt">//Const Function</span>
+    <span class="type">VkPipelineShaderStageCreateInfo</span> <span class="fn">StageCreateInfo</span>(<span class="type">VkShaderStageFlagBits</span> stage, <span class="kw">const char</span>* entry = <span class="str">&quot;main&quot;</span>) <span class="kw">const</span> {
+        <span class="kw">return</span> {
+            <span class="enum">VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO</span>,<span class="cmt">//sType</span>
+            <span class="kw">nullptr</span>,                                            <span class="cmt">//pNext</span>
+            0,                                                  <span class="cmt">//flags</span>
+            stage,                                              <span class="cmt">//stage</span>
+            handle,                                             <span class="cmt">//module</span>
+            entry,                                              <span class="cmt">//pName</span>
+            <span class="kw">nullptr</span>                                             <span class="cmt">//pSpecializationInfo</span>
+        };
+    }
+    <span class="cmt">//Non-const Function</span>
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkShaderModuleCreateInfo</span>&amp; createInfo) {
+        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateShaderModule</span>((<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ shader ] ERROR\nFailed to create a shader module!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="kw">const char</span>* filepath) {
+        std::<span class="type">ifstream</span> file(filepath, std::<span class="type">ios</span>::ate | std::<span class="type">ios</span>::binary);
+        <span class="kw">if</span> (!file) {
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ shader ] ERROR\nFailed to open the file: {}\n&quot;</span>, filepath);
+            <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;<span class="cmt">//没有合适的错误代码，别用VK_ERROR_UNKNOWN</span>
+        }
+        <span class="type">size_t</span> fileSize = <span class="type">size_t</span>(file.<span class="fn">tellg</span>());
+        std::<span class="type">vector</span>&lt;<span class="type">uint32_t</span>&gt; binaries(fileSize / 4);
+        file.<span class="fn">seekg</span>(0);
+        file.<span class="fn">read</span>(<span class="kw">reinterpret_cast</span>&lt;<span class="kw">char</span>*&gt;(binaries.<span class="fn">data</span>()), fileSize);
+        file.<span class="fn">close</span>();
+        <span class="type">VkShaderModuleCreateInfo</span> createInfo = {
+            .codeSize = fileSize,
+            .pCode = binaries.<span class="fn">data</span>()
+        };
+        <span class="kw">return</span> <span class="fn">Create</span>(createInfo);<span class="cmt">//binaries的生存期延续到Create(createInfo)返回后</span>
+    }
+};
+</pre></section>
+</section>
+<section id="id4">
+<h2>标准化设备坐标系<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<p>
+    编写Vulkan用的GLSL着色器时，首先需要注意的是其NDC（标准化设备坐标系，normalized device coordinates）。
+    <br>
+    场景中的顶点数据，经过投影矩阵变换后，被转换到NDC坐标系内，NDC坐标落在屏幕范围及容许的深度范围内的顶点会被显示。
+</p>
+<p>
+    对比Vulkan与OpenGL的NDC：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 40%" />
+        <col style="width: 20%" />
+        <col style="width: 20%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p></p></th>
+            <th class="head"><p>Vulkan</p></th>
+            <th class="head"><p>OpenGL</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p>会被显示的x坐标的范围</p></td>
+            <td><p>[-1, 1]</p></td>
+            <td><p>[-1, 1]</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p>+x方向</p></td>
+            <td><p>向右</p></td>
+            <td><p>向右</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p>会被显示的y坐标的范围</p></td>
+            <td><p>[-1, 1]</p></td>
+            <td><p>[-1, 1]</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p>+y方向</p></td>
+            <td><p>向下</p></td>
+            <td><p>向上</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p>会被显示的z坐标的范围</p></td>
+            <td><p>[ 0, 1]</p></td>
+            <td><p>[-1, 1]</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p>+z方向</p></td>
+            <td><p>通常认为朝屏幕向内</p></td>
+            <td><p>通常认为朝屏幕向内</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            xy平面的原点在屏幕中间，可以显示的xy平面的范围对应整个显示区域。
+        </p>
+    </li>
+    <li>
+        <p>
+            +z方向无关紧要，远近的定义取决于如何进行深度测试。
+        </p>
+    </li>
+</ul>
+<p>
+    之前在<a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html#id1">Ch1-1 创建GLFW窗口</a>中已经定义了<span class="mcr">GLM_FORCE_DEPTH_ZERO_TO_ONE</span>来指定深度范围为[ 0, 1]。由于GLM生成的投影矩阵适用于OpenGL，对于Vulkan程序还需要解决+y方向问题，通过以下函数对投影矩阵略作修改即可：
+</p>
+<pre class="code">
+<span class="kw">inline</span> <span class="type">mat4</span> <span class="fn">FlipVertical</span>(<span class="kw">const</span> <span class="type">mat4</span>&amp; projection) {
+    <span class="type">mat4</span> _projection = projection;
+    <span class="kw">for</span> (<span class="type">uint32_t</span> i = 0; i &lt; 4; i++)
+        _projection[i][1] *= -1;
+    <span class="kw">return</span> _projection;
+}
+</pre></section>
+<section id="glslspir-v">
+<h2>从GLSL编译到SPIR-V<a class="headerlink" href="#glslspir-v" title="Permalink to this heading"></a></h2>
+<p>
+    你所下载到的Vulkan SDK中应该附带<span class="path">Bin/glslc.exe</span>，这是谷歌提供的工具（<a href="https://github.com/google/shaderc/tree/main/glslc">官方Github文档见此</a>），用于将由GLSL书写的着色器编译到.spv文件。
+</p><section id="id5">
+<h3>着色器类型判别<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<p>
+    编译GLSL着色器到SPIR-V时，需要告诉<span class="path">glslc.exe</span>该着色器对应的可编程阶段。
+    <br>
+    以下三种方式之一即可：
+    <br>
+    1.通过文件扩展名表示着色器类型
+    <br>
+    2.通过着色器中的预编译指令表示着色器类型，语法为<code><span class="pragma">#pragma shader_stage</span>(着色器对应的阶段名称)</code>
+    <br>
+    3.编译时显式指定，语法为<code>-fshader-stage=着色器对应的阶段名称</code>
+    <br>
+    以上三条按优先级从低到高排序，即显式指定的优先级最高，预编译指令其次。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 30%" />
+        <col style="width: 40%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>管线阶段</p></th>
+            <th class="head"><p>文件扩展名</p></th>
+            <th class="head"><p>预编译指令/显式指定的阶段名称</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p>顶点</p></td>
+            <td><p>.vert</p></td>
+            <td><p>vertex</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p>片段</p></td>
+            <td><p>.frag</p></td>
+            <td><p>fragment</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p>细分控制</p></td>
+            <td><p>.tesc</p></td>
+            <td><p>tesscontrol</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p>细分求值</p></td>
+            <td><p>.tese</p></td>
+            <td><p>tesseval</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p>几何</p></td>
+            <td><p>.geom</p></td>
+            <td><p>geometry</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p>计算</p></td>
+            <td><p>.comp</p></td>
+            <td><p>compute</p></td>
+        </tr>
+    </tbody>
+</table></section>
+<section id="id6">
+<h3>基础命令行语法<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<p>
+    指定文件名：
+</p>
+<pre class="code">
+glslc.exe路径 着色器文件路径 -o 输出文件路径
+<span class="cmt">//若显式指定着色器对应的阶段名称</span>
+glslc.exe路径 着色器文件路径 -fshader-stage=阶段名称 -o 输出文件路径
+</pre>
+<p>
+    自动命名：
+</p>
+<pre class="code">
+glslc.exe路径 着色器文件路径 -c
+<span class="cmt">//若显式指定着色器对应的阶段名称</span>
+glslc.exe路径 着色器文件路径 -fshader-stage=阶段名称 -c
+</pre>
+<ul>
+    <li>
+        <p>
+            其实<code>-fshader-stage=阶段名称</code>和<code>-c</code>或<code>-o 输出文件路径</code>之间不分先后。
+        </p>
+    </li>
+    <li>
+        <p>
+            若着色器文件的后缀为着色器类型（.vert等），自动命名的方式是在其后添加.spv，比如foo.vert变为foo.vert.spv。否则，自动命名的方式是替代扩展名为.spv，比如foo.vert.shader变为foo.vert.spv。
+        </p>
+    </li>
+</ul></section>
+</section>
+<section id="glsl">
+<h2>GLSL着色器的通用语法<a class="headerlink" href="#glsl" title="Permalink to this heading"></a></h2>
+<section id="id7">
+<h3>版本声明<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<p>
+    在着色器的开头须声明其版本，语法为：
+</p>
+<pre class="code">
+<span class="pragma">#version</span> 三位数版本号
+</pre>
+<p>
+    截至我撰写这套教程为止，最新的GLSL版本为4.60，如下所示：
+</p>
+<pre class="code">
+<span class="pragma">#version</span> 460
+</pre></section>
+<section id="id8">
+<h3>接入点函数<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<p>
+    同C++程序需要主函数一样，着色器需要一个主函数作为程序接入点，通常我会把它也称作<span class="fn">main</span>()。
+    <br>
+    注意着色器的接入点函数的返回值只能是<span class="kw">void</span>类型，即不能返回值，但你能在函数体中使用<span class="kw">return</span>关键字显式返回。
+    <br>
+    除了主函数外，你当然还能声明其它的函数。
+</p></section>
+<section id="id9">
+<h3>数据类型<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<p>
+    着色器中可用以下标量类型：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>类型名</p></th>
+            <th class="head"><p>说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="kw">bool</span></p></td>
+            <td><p>4字节，对应<span class="type">VkBool32</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">int</span></p></td>
+            <td><p>32位有符号整形</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">uint</span></p></td>
+            <td><p>32位无符号整形</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">float</span></p></td>
+            <td><p>32位浮点数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">double</span></p></td>
+            <td><p>64位浮点数</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    着色器中可用以下矢量类型：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>类型名</p></th>
+            <th class="head"><p>说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">bvec2</span></p></td>
+            <td><p>分量是<span class="kw">bool</span>类型，每个分量4字节</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">bvec3</span></p></td>
+            <td><p>同上</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">bvec4</span></p></td>
+            <td><p>同上</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">ivec2</span></p></td>
+            <td><p>分量是<span class="kw">int</span>类型</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">ivec3</span></p></td>
+            <td><p>同上</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">ivec4</span></p></td>
+            <td><p>同上</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uvec2</span></p></td>
+            <td><p>分量是<span class="kw">uint</span>类型</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uvec3</span></p></td>
+            <td><p>同上</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uvec4</span></p></td>
+            <td><p>同上</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">vec2</span></p></td>
+            <td><p>分量是<span class="kw">float</span>类型</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">vec3</span></p></td>
+            <td><p>同上</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">vec4</span></p></td>
+            <td><p>同上</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">dvec2</span></p></td>
+            <td><p>分量是<span class="kw">double</span>类型</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">dvec3</span></p></td>
+            <td><p>同上</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">dvec4</span></p></td>
+            <td><p>同上</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            以四维矢量为例，各个分量元素分别为x、y、z、w（通常用于表示坐标），或r、g、b、a（通常用于表示颜色），或者s、t、p、q（通常用于表示贴图坐标），这三种写法可以根据用途以示语义差别（写给人看），但语法上不存在差别。若要访问<code><span class="type">vec4</span> vector</code>的第一个元素，应为<code>vector.x</code>或<code>vector.r</code>或<code>vector.s</code>。
+        </p>
+    </li>
+    <li>
+        <p>
+            通过在<code>.</code>后面连写分量名称，可以构成新的矢量。再以<code><span class="type">vec4</span> vector</code>为例，<code>vector.yxy</code>表示一个<span class="type">vec3</span>类型的矢量，其x和z分量的值等于<span class="var">vector</span>的y分量，其y分量的值等于<span class="var">vector</span>的x分量。注意类似<code>vector.xrs</code>的表达式不合法，连写的分量名称必须对应单种语义的写法。
+        </p>
+    </li>
+    <li>
+        <p>
+            通过在<code>.</code>后面连写分量名称，标量也可以构成新的矢量。以<code><span class="type">float</span> scalar</code>为例，<code>scalar.xx</code>表示一个<span class="type">vec2</span>类型的矢量，每个分量都等于<span class="var">scalar</span>。
+        </p>
+    </li>
+</ul>
+<p>
+    着色器中可用以下单精度浮点数矩阵类型：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>类型名</p></th>
+            <th class="head"><p>说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">mat2</span></p></td>
+            <td><p>2列2行，等价于<span class="type">mat2x2</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">mat2x3</span></p></td>
+            <td><p>2列3行</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">mat2x4</span></p></td>
+            <td><p>2列4行</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">mat3x2</span></p></td>
+            <td><p>3列2行</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">mat3</span></p></td>
+            <td><p>3列3行，等价于<span class="type">mat3x3</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">mat3x4</span></p></td>
+            <td><p>3列4行</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">mat4x2</span></p></td>
+            <td><p>4列2行</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">mat4x3</span></p></td>
+            <td><p>4列3行</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">mat4</span></p></td>
+            <td><p>4列4行，等价于<span class="type">mat4x4</span></p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            GLSL中的矩阵默认是列主矩阵（但可以通过在类型前添加<code><span class="kw">layout</span>(row_major)</code>来使用行主矩阵），GLM生成的变换矩阵也是列主矩阵。
+        </p>
+    </li>
+    <li>
+        <p>
+            在类型名前加d，即为相应双精度浮点数矩阵类型。
+        </p>
+    </li>
+</ul>
+<p>
+    访问矩阵元素时的格式为：矩阵变量名[列索引][行索引]，比如：
+</p>
+<pre class="code">
+<span class="type">mat3</span> matrix;
+matrix[1] = <span class="kw">vec3</span>(3.0, 3.0, 3.0);<span class="cmt">//第二列元素全赋值为3.0</span>
+matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</span>
+</pre>
+<p>
+    着色器中可以定义数组类型，比如<code><span class="kw">int</span> a[2][3]</code>，同C语言中类似。
+    <br>
+    此外，着色器中也可以定义结构体类型，同C语言中类似。
+</p></section>
+<section id="id10">
+<h3>图形着色器中通用的输入输出声明方式<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
+<p>
+    用以下语法在着色器中声明输入输出：
+</p>
+<pre class="code">
+<span class="cmt">//输入</span>
+<span class="kw">layout</span>(location = 索引) 插值修饰符 <span class="kw">in</span> 类型 名称;
+<span class="cmt">//输出，若为片段着色器的输出，location为颜色附件索引</span>
+<span class="kw">layout</span>(location = 索引) 插值修饰符 <span class="kw">out</span> 类型 名称;
+</pre>
+<ul>
+    <li>
+        <p>
+            可对特定阶段的输入输出使用插值修饰符，若省略插值修饰符，则默认为<span class="kw">smooth</span>。
+        </p>
+    </li>
+    <li>
+        <p>
+            输入来源于先前的阶段，输出则是输出到之后的阶段。当前阶段的输入要与先前阶段的输出匹配，需要匹配索引、插值修饰符、类型，名称可以不同。
+        </p>
+    </li>
+    <li>
+        <p>
+            相应索引的颜色附件对应创建渲染通道时，<a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkSubpassDescription">VkSubpassDescription</a>::pColorAttachments所指数组中相应<a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkAttachmentReference">VkAttachmentReference</a>元素代表的颜色附件。
+        </p>
+    </li>
+</ul><section id="id11">
+<h4>插值修饰符<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h4>
+<p>
+    可以对以下阶段的输入使用插值修饰符：
+    <br>
+    1.细分控制着色器（从顶点着色器到细分控制着色器本就不会插值，写插值修饰符为了跟顶点着色器中的修饰符匹配）
+    <br>
+    2.几何着色器（同样，写插值修饰符为了跟先前着色器中的修饰符匹配）
+    <br>
+    3.片段着色器
+    <br>
+    着色器的代码可能适用于某个阶段的着色器可有可无的情况，比如你可以构造出一组着色器，既能走“顶点→几何→片段”的流程，也能走“顶点→片段”的流程，如果片段着色器中需要特定插值修饰符的输入，那么顶点着色器中就得使用相应插值修饰符的输出，而为了匹配，尽管“顶点→几何”不需要插值，这里头几何着色器也得有同样插值修饰符的输入。
+</p>
+<p>
+    可以对以下阶段的输出使用插值修饰符：
+    <br>
+    1.顶点着色器
+    <br>
+    2.细分求值着色器
+    <br>
+    3.几何着色器
+</p>
+<p>
+    插值修饰符有以下三种：
+    <br>
+    1.<span class="kw">smooth</span>是默认的插值方式，它进行双曲插值，会根据gl_Position的w分量考虑透视的影响（经<strong>三维相机效果的投影矩阵</strong>变换后生成的顶点，透视的影响会反映在其w值上）。
+    <br>
+    2.<span class="kw">flat</span>不进行插值，对某一片段调用片段着色器时，<span class="kw">flat</span>的输入取得先前阶段中，该片段对应图元的激发顶点（provoking vertex）的相应值。
+    <br>
+    3.<span class="kw">noperspective</span>进行简单粗暴的线性插值，不考虑透视的影响。
+    <br>
+    //TODO 所谓激发顶点，参照//TODO 绘制模式。
+    <br>
+    下图左侧为通过<span class="kw">noperspective</span>插值的uv坐标绘制的正方体的两个面，右侧则是通过<span class="kw">smooth</span>插值的uv坐标绘制：
+</p>
+<img alt="_images/ch4-1-1.png" src="_images/ch4-1-1.png"></section>
+</section>
+<section id="push-constant">
+<h3>Push Constant的声明方式<a class="headerlink" href="#push-constant" title="Permalink to this heading"></a></h3>
+<p>
+    Push constant是在着色器中使用可变更（由CPU侧）常量的两种方式之一。
+    <br>
+    Push constant适用于少量数据，Vulkan的实现通常会确保你能在push constant块中使用128个字节。
+    <br>
+    这里介绍如何在着色器中声明push constant，关于更新push constant，参见//TODO 描述符与常量。
+</p>
+<pre class="code">
+<span class="kw">layout</span>(内存布局修饰符, push_constant) <span class="kw">uniform</span> 块名称 {
+    成员声明
+} 实例名称;
+</pre>
+<ul>
+    <li>
+        <p>
+            若省略<code>内存布局修饰符,</code>，则默认为std430，详见后文。
+        </p>
+    </li>
+    <li>
+        <p>
+            可以没有实例名称，如此一来能直接用成员名称访问块成员。否则用<code>实例名称.成员名称</code>来访问块成员。
+        </p>
+    </li>
+</ul>
+<p>
+    块当中的成员可以前缀<code><span class="kw">layout</span>(offset = 距离整块数据起始位置的字节数)</code>修饰，其具体用例：
+</p>
+<pre class="code">
+<span class="cmt">//顶点着色器中</span>
+<span class="kw">layout</span>(push_constant) <span class="kw">uniform</span> pushConstants {
+    <span class="type">mat4</span> proj;
+    <span class="type">vec2</span> view;
+    <span class="type">vec2</span> scale;
+};
+<span class="cmt">//片段着色器中</span>
+<span class="kw">layout</span>(push_constant) <span class="kw">uniform</span> pushConstants {
+    <span class="kw">layout</span>(offset = 80)
+    <span class="type">vec4</span> color;
+};
+</pre>
+<p>
+    以上代码摘自一组很简单的用于2D渲染的着色器，其中，顶点着色器中需要<span class="var">proj</span>矩阵、<span class="var">view</span>和<span class="var">scale</span>两个矢量，而片段着色器只需要<span class="var">color</span>，它们加在一起一共96个字节，可以全部放进push constant中，片段着色器中只需要声明<span class="var">color</span>，但它和<span class="var">proj</span>、<span class="var">view</span>和<span class="var">scale</span>在同一整块数据中，若不想在片段着色器中声明<span class="var">proj</span>、<span class="var">view</span>和<span class="var">scale</span>，则必须写明<span class="var">color</span>的offset。
+</p></section>
+<section id="uniform">
+<h3>Uniform缓冲区的声明方式<a class="headerlink" href="#uniform" title="Permalink to this heading"></a></h3>
+<p>
+    Uniform缓冲区（uniform buffer）是在着色器中使用可变更（由CPU侧）常量的两种方式之一，类似于HLSL中的常量缓冲区。
+    <br>
+    相比push constant，uniform缓冲区适用于大量数据。
+    <br>
+    这里介绍如何在着色器中声明uniform缓冲区，关于如何绑定uniform缓冲区，参见//TODO 描述符与常量。
+</p>
+<pre class="code">
+<span class="kw">layout</span>(set = 描述符集索引, binding = 绑定索引) <span class="kw">uniform</span> 块名称 {
+    成员声明
+} 实例名称;
+</pre>
+<ul>
+    <li>
+        <p>
+            若省略<code>set = 描述符集索引,</code>，则默认为0号描述符集。
+        </p>
+    </li>
+    <li>
+        <p>
+            实例可以为数组，对应的描述符亦构成数组（创建相应描述符布局时<a href="https://renderdoc.org/vkspec_chunked/chap14.html#VkDescriptorSetLayoutBinding">VkDescriptorSetLayoutBinding</a>::descriptorCount大于1）。
+        </p>
+    </li>
+    <li>
+        <p>
+            同push constant一样，可以没有实例名称，如此一来能直接用成员名称访问块成员。
+        </p>
+    </li>
+    <li>
+        <p>
+            同push constant一样，块当中的成员可以前缀<code><span class="kw">layout</span>(offset = 距离缓冲区起始位置的字节数)</code>修饰。
+        </p>
+    </li>
+</ul></section>
+<section id="storage">
+<h3>Storage缓冲区的声明<a class="headerlink" href="#storage" title="Permalink to this heading"></a></h3>
+<p>
+    //TODO 等写计算着色器的示例再写。
+</p></section>
+<section id="id12">
+<h3>块成员的内存布局<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h3>
+<p>
+    Vulkan的GLSL着色器中，对于块，允许两种内存布局：std140和std430。不同的内存布局遵循不同的对齐规则。
+    <br>
+    Uniform缓冲区的内存布局只能为std140。Storage缓冲区和push constant的默认内存布局为std430，可以指定为std140。
+</p>
+<p>
+    内存布局涉及到的对齐规则十分重要，关系到如何在C++中定义相应的结构体。
+    <br>
+    先来看一个简单的例子：
+</p>
+<pre class="code">
+<span class="kw">layout</span>(push_constant) <span class="kw">uniform</span> pushConstants {
+    <span class="type">mat4</span> proj;         <span class="cmt">//offset为0</span>
+    <span class="type">vec2</span> view;         <span class="cmt">//offset为64</span>
+    <span class="type">vec2</span> scale;        <span class="cmt">//offset为72</span>
+    <span class="kw">float</span> width;       <span class="cmt">//offset为80</span>
+    <span class="kw">float</span> cornerRadius;<span class="cmt">//offset为84</span>
+    <span class="type">vec4</span> color0;       <span class="cmt">//offset为96</span>
+    <span class="type">vec4</span> color1;       <span class="cmt">//offset为112</span>
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            <span class="var">cornerRadius</span>的大小是4，但<span class="var">color0</span>的offset一下子从88变成了96，这是因为<span class="type">vec4</span>的对齐是16，它距离缓冲区开头的位置必须为16的整数倍。
+        </p>
+    </li>
+</ul>
+<p>
+    std430的对齐遵循以下规则：
+    <br>
+    1.大小为N的标量，对齐为N。
+    <br>
+    2.二维矢量，每个分量大小为N，则对齐为2N。
+    <br>
+    3.三维及四维矢量，每个分量大小为N，则对齐为4N（注意，没有12字节对齐）。
+    <br>
+    4.C列R行的列主矩阵的对齐，相当于R维矢量的对齐。
+    <br>
+    5.结构体的对齐，取其成员大小中最大的对齐。
+    <br>
+    6.数组的对齐，取其单个元素大小的对齐。
+</p>
+<p>
+    std140的对齐比std430更严格：
+    <br>
+    1.结构体的对齐，取其成员大小中最大的对齐并凑整到16的倍数。
+    <br>
+    2.数组的对齐，取其单个元素大小的对齐并凑整到16的倍数，且数组的每个元素之间的步长等于数组的对齐（即步长也凑整到16的倍数，这会导致由16个<span class="kw">int</span>构成的数组的大小是256字节而不是64字节）。
+</p>
+<p>
+    在C++中，可以通过前缀<span class="kw">alignas</span>(...)来指定对齐：
+</p>
+<pre class="code">
+<span class="kw">struct</span> {
+    <span class="kw">alignas</span>(16) <span class="type">mat4</span> proj;         <span class="cmt">//offset为0</span>
+    <span class="kw">alignas</span>( 8) <span class="type">vec2</span> view;         <span class="cmt">//offset为64</span>
+    <span class="kw">alignas</span>( 8) <span class="type">vec2</span> scale;        <span class="cmt">//offset为72</span>
+    <span class="kw">alignas</span>( 4) <span class="kw">float</span> width;       <span class="cmt">//offset为80</span>
+    <span class="kw">alignas</span>( 4) <span class="kw">float</span> cornerRadius;<span class="cmt">//offset为84</span>
+    <span class="kw">alignas</span>(16) <span class="type">vec4</span> color0;       <span class="cmt">//offset为96</span>
+    <span class="kw">alignas</span>(16) <span class="type">vec4</span> color1;       <span class="cmt">//offset为112</span>
+} constant;
+</pre>
+<p>
+    GLM中提供了的aligned type来帮你在一定程度上省事：
+</p>
+<pre class="code">
+<span class="pragma">#define</span> <span class="mcr">GLM_FORCE_ALIGNED_GENTYPES</span>
+<span class="pragma">#include</span> <span class="str">&lt;gtc/type_aligned.hpp&gt;</span>
+<span class="cmt">//通过using来简化太长的名称</span>
+<span class="kw">using</span>  <span class="type">vec2a</span> = glm::<span class="type">aligned_vec2</span>; <span class="cmt">//对齐为 8</span>
+<span class="kw">using</span>  <span class="type">vec3a</span> = glm::<span class="type">aligned_vec3</span>; <span class="cmt">//对齐为16</span>
+<span class="kw">using</span>  <span class="type">vec4a</span> = glm::<span class="type">aligned_vec4</span>; <span class="cmt">//对齐为16</span>
+
+<span class="kw">using</span> <span class="type">dvec2a</span> = glm::<span class="type">aligned_dvec2</span>;<span class="cmt">//对齐为16</span>
+<span class="kw">using</span> <span class="type">dvec3a</span> = glm::<span class="type">aligned_dvec3</span>;<span class="cmt">//对齐为32</span>
+<span class="kw">using</span> <span class="type">dvec4a</span> = glm::<span class="type">aligned_dvec4</span>;<span class="cmt">//对齐为32</span>
+
+<span class="kw">using</span> <span class="type">ivec2a</span> = glm::<span class="type">aligned_ivec2</span>;<span class="cmt">//对齐为 8</span>
+<span class="kw">using</span> <span class="type">ivec3a</span> = glm::<span class="type">aligned_ivec3</span>;<span class="cmt">//对齐为16</span>
+<span class="kw">using</span> <span class="type">ivec4a</span> = glm::<span class="type">aligned_ivec4</span>;<span class="cmt">//对齐为16</span>
+
+<span class="kw">using</span> <span class="type">uvec2a</span> = glm::<span class="type">aligned_uvec2</span>;<span class="cmt">//对齐为 8</span>
+<span class="kw">using</span> <span class="type">uvec3a</span> = glm::<span class="type">aligned_uvec3</span>;<span class="cmt">//对齐为16</span>
+<span class="kw">using</span> <span class="type">uvec4a</span> = glm::<span class="type">aligned_uvec4</span>;<span class="cmt">//对齐为16</span>
+
+<span class="kw">using</span>  <span class="type">mat3a</span> = glm::<span class="type">aligned_mat3</span>; <span class="cmt">//对齐为16</span>
+<span class="kw">using</span>  <span class="type">mat4a</span> = glm::<span class="type">aligned_mat4</span>; <span class="cmt">//对齐为16</span>
+</pre>
+<p>
+    注意GLM提供的aligned type也存在问题：
+</p>
+<pre class="code">
+<span class="cmt">//GLSL代码，块大小为16</span>
+<span class="kw">layout</span>(push_constant) <span class="kw">uniform</span> pushConstants {
+    <span class="type">vec3</span> color;
+    <span class="kw">float</span> alpha;
+};
+<span class="cmt">//C++代码，结构体大小为32</span>
+<span class="kw">struct</span> {
+    glm::<span class="type">aligned_vec3</span> color;
+    <span class="kw">float</span> alpha;
+} constant;
+</pre>
+<p>
+    因为glm::<span class="type">aligned_vec3</span>的大小和对齐都是16（理想的情况是，大小为12，但对齐为16），所以C++代码中<span class="var">float</span>没有填入12~16字节间的空位上。
+    <br>
+    我建议始终手动<span class="kw">alignas</span>(...)而非使用GLM的aligned type。
+</p></section>
+<section id="id13">
+<h3>可特化常量的声明方式和使用<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h3>
+<p>
+    如前文所述，用以下语法声明可特化的常量：
+</p>
+<pre class="code">
+<span class="kw">layout</span>(constant_id = ID编号) <span class="kw">const</span> 类型 常量名称;
+</pre>
+<p>
+    需要注意的是，若在uniform块中声明数组时，应当只有一个数组的大小被可特化常量指定，且该数组应该位于块的最后：
+</p>
+<pre class="code">
+<span class="cmt">//声明一个可以被特化的常量</span>
+<span class="kw">layout</span>(constant_id = 0) <span class="kw">const uint</span> maxLightCount = 32;
+<span class="cmt">//Case 1: 这么做可以</span>
+<span class="kw">layout</span>(binding = 0) <span class="kw">uniform</span> descriptorConstants {
+    <span class="type">vec3</span> cameraPosition;
+    <span class="kw">int</span> lightCount;
+    <span class="type">light</span> lights[maxLightCount];<span class="cmt">//light是自定义结构体类型，定义略</span>
+};
+<span class="cmt">//Case 2: 不要这么做</span>
+<span class="kw">layout</span>(binding = 0) <span class="kw">uniform</span> descriptorConstants {
+    <span class="type">light</span> lights[maxLightCount];
+    <span class="type">vec3</span> cameraPosition;
+    <span class="kw">int</span> lightCount;
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            各个块成员的offset是被静态计算的，也就是说，Case 2这种情况，<span class="var">cameraPosition</span>在缓冲区中的位置是根据<span class="var">maxLightCount</span>的默认值进行计算的。假设可以在创建管线时改变<span class="var">maxLightCount</span>（所谓假设，是因为这种情况下创建管线时Vulkan的验证层会报错），<span class="var">cameraPosition</span>也总是在32个<span class="type">light</span>的大小之后的位置。
+        </p>
+    </li>
+</ul></section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html" class="btn btn-neutral float-left" title="Ch3-6 描述符" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html" class="btn btn-neutral float-right" title="Ch4-2 顶点着色器" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

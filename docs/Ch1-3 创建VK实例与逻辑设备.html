@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch1-3 创建VK实例与逻辑设备 &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ch1-4 创建交换链" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html" />
+    <link rel="prev" title="Ch1-2 初始化流程" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch1-3 创建VK实例与逻辑设备</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">指定所需的层和扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vulkan">使用Vulkan的最新版本</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">创建一个Vulkan实例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">检查层和实例级别扩展是否可用</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">检查层是否可用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">检查实例级别扩展是否可用</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#debug-messenger">创建Debug Messenger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#window-surface">创建Window Surface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">获取并选择物理设备</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">获取物理设备列表</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">检查并取得所需的队列族索引</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">创建逻辑设备</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">汇总并测试</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch1-3 创建VK实例与逻辑设备</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch1-3-vk">
+<h1>Ch1-3 创建VK实例与逻辑设备<a class="headerlink" href="#ch1-3-vk" title="Permalink to this heading"></a></h1>
+<p>
+    从本节开始，我们将正式接触Vulkan SDK，开始书写Vulkan代码。
+    <br>
+    本节的示例代码参见：
+    <a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan/GlfwGeneral.hpp">GlfwGeneral.hpp</a>
+    <a href="">VKBase.h</a>
+</p><section id="id1">
+<h2>指定所需的层和扩展<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>
+    首先来获取实例级别扩展。之前在<a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html#id2">Ch1-1</a>书写了<span class="fn">InitializeWindow</span>(...)，现在其中，在<code><span class="fn">glfwWindowHint</span>(<span class="mcr">GLFW_RESIZABLE</span>, isResizable);</code>后加入以下代码：
+</p>
+<pre class="code">
+<span class="type">uint32_t</span> extensionCount = 0;
+<span class="kw">const char</span>** extensionNames;
+extensionNames = <span class="type">glfwGetRequiredInstanceExtensions</span>(&amp;extensionCount);
+<span class="kw">if</span> (!extensionNames) {
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ]\nVulkan is not available on this machine!\n&quot;</span>);
+    <span class="fn">glfwTerminate</span>();
+    <span class="kw">return false</span>;
+}
+<span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; extensionCount; i++)
+    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushInstanceExtension</span>(extensionNames[i]);
+</pre>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">const char</span>** <a href="https://www.glfw.org/docs/latest/group__vulkan.html#ga99ad342d82f4a3421e2864978cb6d1d6">glfwGetRequiredInstanceExtensions</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span>* count</p></td>
+            <td><p>若执行成功，将所需扩展的数量写入到*count</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            用<a href="https://www.glfw.org/docs/latest/group__vulkan.html#ga99ad342d82f4a3421e2864978cb6d1d6">glfwGetRequiredInstanceExtensions</a>(...)获取平台所需的扩展，若执行成功，返回一个指针，指向一个由所需扩展的名称为元素的数组，失败则返回<span class="kw">nullptr</span>，并意味着此设备不支持Vulkan。
+        </p>
+    </li>
+</ul>
+<div class="admonition important">
+    <p class="admonition-title">Important</p>
+    <p>
+        注意，你不需要手动 <span class="kw">delete</span> <span class="var">extensionNames</span>，GLFW的注释及官方文档中写到：
+        <br>
+        <span class="ref">The returned array is allocated and freed by GLFW. You should not free it yourself. It is guaranteed to be valid only until the library is terminated.</span>
+    </p>
+</div>
+<p>
+    在Windows上取得的扩展名称有两个，<span class="str">&quot;VK_KHR_surface&quot;</span>和<span class="str">&quot;VK_KHR_win32_surface&quot;</span>。
+    如果明知运行环境是Windows，那么也可以直接push而不需要调用<a href="https://www.glfw.org/docs/latest/group__vulkan.html#ga99ad342d82f4a3421e2864978cb6d1d6">glfwGetRequiredInstanceExtensions</a>(...)：
+</p>
+<pre class="code">
+<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushInstanceExtension</span>(<span class="str">&quot;VK_KHR_surface&quot;</span>);
+<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushInstanceExtension</span>(<span class="str">&quot;VK_KHR_win32_surface&quot;</span>);
+</pre>
+<p>
+    接着是设备级别的扩展，所需的只有<span class="str">&quot;VK_KHR_swapchain&quot;</span>：
+</p>
+<pre class="code">
+<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushDeviceExtension</span>(<span class="mcr">VK_KHR_SWAPCHAIN_EXTENSION_NAME</span>);
+</pre>
+<ul>
+    <li>
+        <p>
+            因为编译器会检查符号是否已定义，GLFW提供了<span class="mcr">VK_KHR_SWAPCHAIN_EXTENSION_NAME</span>宏来避免你写错<span class="str">&quot;VK_KHR_swapchain&quot;</span>。
+        </p>
+    </li>
+</ul>
+<p>
+    除此之外仅需要验证层及debug messenger的扩展，来填充前一节中定义在<span class="path">VKBase.h</span>中的<span class="type">graphicsBase</span>::<span class="fn">CreateInstance</span>(...)：
+</p>
+<pre class="code">
+<span class="type">VkResult</span> <span class="fn">CreateInstance</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkInstanceCreateFlags</span> flags = 0) {
+<span class="pragma">#ifndef</span> <span class="mcr">NDEBUG</span>
+    <span class="kw">static constexpr const char</span>* validationLayerName = <span class="str">&quot;VK_LAYER_KHRONOS_validation&quot;</span>;
+    <span class="kw">static constexpr const char</span>* debugUtilsExtensionName = <span class="mcr">VK_EXT_DEBUG_UTILS_EXTENSION_NAME</span>;
+    <span class="kw">if</span> (instanceLayers.<span class="fn">size</span>() &amp;&amp; instanceLayers.<span class="fn">back</span>() != validationLayerName)
+        instanceLayers.<span class="fn">push_back</span>(validationLayerName);
+    <span class="kw">if</span> (instanceExtensions.<span class="fn">size</span>() &amp;&amp; instanceExtensions.<span class="fn">back</span>() != validationLayerName)
+        instanceExtensions.<span class="fn">push_back</span>(debugUtilsExtensionName);
+<span class="pragma">#endif</span>
+    <span class="cmt">/*待后续填充*/</span>
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            <code><span class="pragma">#ifndef</span> <span class="mcr">NDEBUG</span></code>是照标准库中的<span class="path">assert.h</span>学的写法，<span class="mcr">NDEBUG</span>是C标准库中的宏。
+        </p>
+    </li>
+    <li>
+        <p>
+            <span class="path">vulkan_core.h</span>提供了<span class="mcr">VK_EXT_DEBUG_UTILS_EXTENSION_NAME</span>宏来避免你写错写错<span class="str">&quot;VK_EXT_debug_utils&quot;</span>。
+        </p>
+    </li>
+</ul>
+<p>
+    这段代码说明仅在编译选项为DEBUG时，在<span class="var">instanceLayers</span>和<span class="var">instanceExtensions</span>尾部加上所需的名称。
+    <br>
+    之所以先验证尾部是否已有相应名称再<span class="fn">push_back</span>(...)，是因为按照前一节中<a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html#vulkan">创建Vulkan实例的剧本流程</a>，创建Vulkan失败时会先复制一份<span class="var">instanceLayers</span>或<span class="var">instanceExtensions</span>，进行检查后筛选掉不可用且非必要的层或扩展，然后再将结果赋值回<span class="var">instanceLayers</span>或<span class="var">instanceExtensions</span>，这里防止重复加入相同的名称。
+</p></section>
+<section id="vulkan">
+<h2>使用Vulkan的最新版本<a class="headerlink" href="#vulkan" title="Permalink to this heading"></a></h2>
+<p>
+    如果你想使用Vulkan的最新版本，须在创建Vulkan实例前，用<a href="https://renderdoc.org/vkspec_chunked/chap4.html#vkEnumerateInstanceVersion">vkEnumerateInstanceVersion</a>(...)取得取得当前运行环境所支持的最新Vulkan版本，然而，Vulkan1.0版本中是不支持这个函数的（尽管你下的SDK是新版本，程序在用户电脑上运行时连接的dll可能是Vulkan1.0的），所以要先用<a href="https://renderdoc.org/vkspec_chunked/chap4.html#vkGetInstanceProcAddr">vkGetInstanceProcAddr</a>(...)尝试取得该函数的指针，若返回非空指针，则说明可以执行该函数且Vulkan版本至少为1.1，否则说明当前运行环境中Vulkan的最高版本为1.0。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">PFN_vkVoidFunction</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap4.html#vkGetInstanceProcAddr">vkGetInstanceProcAddr</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkInstance</span> instance</p></td>
+            <td><p>Vulkan实例的handle，若要取得的函数指针不依赖Vulkan实例，可为<span class="mcr">VK_NULL_HANDLE</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const char</span>* pName</p></td>
+            <td><p>所要取得的函数的名称</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            若无法取得相应名称的函数，返回<span class="kw">nullptr</span>。
+        </p>
+    </li>
+</ul>
+<p>
+    填充<span class="fn">UseLatestApiVersion</span>()：
+</p>
+<pre class="code">
+<span class="type">VkResult</span> <span class="fn">UseLatestApiVersion</span>() {
+    <span class="kw">if</span> (<span class="fn">vkGetInstanceProcAddr</span>(<span class="mcr">VK_NULL_HANDLE</span>, <span class="str">&quot;vkEnumerateInstanceVersion&quot;</span>))
+        <span class="kw">return</span> <span class="fn">vkEnumerateInstanceVersion</span>(&amp;apiVersion);
+    <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
+}
+</pre></section>
+<section id="id2">
+<h2>创建一个Vulkan实例<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<p>
+    几乎创建任何Vulkan对象都得填写一个创建信息结构体，对于<span class="type">VkInstance</span>，这个结构体叫<a href="https://renderdoc.org/vkspec_chunked/chap4.html#VkInstanceCreateInfo">VkInstanceCreateInfo</a>：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap4.html#VkInstanceCreateInfo">VkInstanceCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkInstanceCreateFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkApplicationInfo</span>* pApplicationInfo</p></td>
+            <td><p>指向描述本程序相关信息的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> enabledLayerCount</p></td>
+            <td><p>所需额外开启的实例级别层数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const char</span>* <span class="kw">const</span>* ppEnabledLayerNames</p></td>
+            <td><p>指向由所需开启的层的名称构成的数组</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> enabledExtensionCount</p></td>
+            <td><p>所需额外开启的实例级别扩展数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const char</span>* <span class="kw">const</span>* ppEnabledExtensionNames</p></td>
+            <td><p>指向由所需开启的扩展的名称构成的数组</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            Vulkan的各种创建信息结构体中皆有个pNext，这是为了可扩展性设置的，它指向一些Vulkan1.0后的版本或与特定厂商的扩展相关的结构体。今后如无必要不做特意说明，其值填写为<span class="kw">nullptr</span>。
+        </p>
+    </li>
+    <li>
+        <p>
+            flags也是个很常见的东西，它被用于指定一些特殊要求，有些创建信息中的flags可以填写内容，有些目前没有任何可用的flag bit。这里flags只有一个与扩展相关的可用的bit。今后如无必要亦不做特意说明，其值填写为0。
+        </p>
+    </li>
+</ul>
+<p>
+    于是来看一下这个<a href="https://renderdoc.org/vkspec_chunked/chap4.html#VkApplicationInfo">VkApplicationInfo</a>：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap4.html#VkApplicationInfo">VkApplicationInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_APPLICATION_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>无用，必须为<span class="kw">nullptr</span></p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const void</span>* pApplicationName</p></td>
+            <td><p>应用程序的名称</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> applicationVersion</p></td>
+            <td><p>应用程序的版本号</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const void</span>* pEngineName</p></td>
+            <td><p>引擎的名称</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> engineVersion</p></td>
+            <td><p>引擎的版本号</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> apiVersion</p></td>
+            <td><p>VulkanAPI的版本号，必填</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    这个结构体很水，你可以用它描述你的应用程序名称和版本号，如果你写的程序是某种引擎，比如游戏引擎，可以描述其引擎名称和版本号，随你喜欢即可，毕竟这对程序的运行不构成任何影响，可以直接省略。
+    <br>
+    重要的是apiVersion，这个参数决定了所用的VulkanAPI版本号。版本号总是能有三个部分，你可以用<span class="mcr">VK_MAKE_VERSION</span>(major, minor, patch)计算版本号。apiVersion不关心patch版本号，所以请直接使用宏<span class="mcr">VK_API_VERSION_1_0</span>或<span class="mcr">VK_API_VERSION_1_1</span>或<span class="mcr">VK_API_VERSION_1_2</span>或<span class="mcr">VK_API_VERSION_1_3</span>。
+</p>
+<p>
+    填写了以上两个结构体后，使用<a href="https://renderdoc.org/vkspec_chunked/chap4.html#vkCreateInstance">vkCreateInstance</a>(...)来创建Vulkan实例：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap4.html#vkCreateInstance">vkCreateInstance</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkInstanceCreateInfo</span>* pCreateInfo</p></td>
+            <td><p>指向<span class="type">VkInstance</span>的创建信息</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span>* pAllocator</p></td>
+            <td><p>如有必要，指向描述自定义内存分配方式的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkInstance</span>* pInstance</p></td>
+            <td><p>若执行成功，将Vulkan实例的handle写入*pInstance</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            pAlloctar在本教程中一概不用，其值填写为<span class="kw">nullptr</span>。
+        </p>
+    </li>
+    <li>
+        <p>
+            若函数执行成功，返回值只可能是<span class="enum">VK_SUCCESS</span>，其值为0。若函数在成功时除了<span class="enum">VK_SUCCESS</span>外没有其他可能的返回值，今后不再赘述。
+        </p>
+    </li>
+</ul>
+<p>
+    于是继续填充<span class="type">graphicsBase</span>::<span class="fn">CreateInstance</span>(...)，最后整个函数如下：
+</p>
+<pre class="code">
+<span class="type">VkResult</span> <span class="fn">CreateInstance</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkInstanceCreateFlags</span> flags = 0) {
+<span class="pragma">#ifndef</span> <span class="mcr">NDEBUG</span>
+    <span class="kw">static constexpr const char</span>* validationLayerName = <span class="str">&quot;VK_LAYER_KHRONOS_validation&quot;</span>;
+    <span class="kw">static constexpr const char</span>* debugUtilsExtensionName = <span class="mcr">VK_EXT_DEBUG_UTILS_EXTENSION_NAME</span>;
+    <span class="kw">if</span> (instanceLayers.<span class="fn">size</span>() &amp;&amp; instanceLayers.<span class="fn">back</span>() != validationLayerName)
+        instanceLayers.<span class="fn">push_back</span>(validationLayerName);
+    <span class="kw">if</span> (instanceExtensions.<span class="fn">size</span>() &amp;&amp; instanceExtensions.<span class="fn">back</span>() != validationLayerName)
+        instanceExtensions.<span class="fn">push_back</span>(debugUtilsExtensionName);
+<span class="pragma">#endif</span>
+    <span class="type">VkApplicationInfo</span> applicatianInfo = {
+        .sType = <span class="enum">VK_STRUCTURE_TYPE_APPLICATION_INFO</span>,
+        .apiVersion = apiVersion
+    };
+    <span class="type">VkInstanceCreateInfo</span> instanceCreateInfo = {
+        .sType = <span class="enum">VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO</span>,
+        .pNext = pNext,
+        .flags = flags,
+        .pApplicationInfo = &amp;applicatianInfo,
+        .enabledLayerCount = <span class="type">uint32_t</span>(instanceLayers.<span class="fn">size</span>()),
+        .ppEnabledLayerNames = instanceLayers.data(),
+        .enabledExtensionCount = <span class="type">uint32_t</span>(instanceExtensions.<span class="fn">size</span>()),
+        .ppEnabledExtensionNames = instanceExtensions.<span class="fn">data</span>()
+    };
+    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkCreateInstance</span>(&amp;instanceCreateInfo, <span class="kw">nullptr</span>, &amp;instance)) {
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a vulkan instance!\nError code: {}\n&quot;</span>, <span  class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="cmt">//成功创建Vulkan实例后，输出Vulkan版本</span>
+    std::cout &lt;&lt; std::<span class="fn">format</span>(
+        <span class="str">&quot;Vulkan API Version: {}.{}.{}\n&quot;</span>,
+        <span class="mcr">VK_VERSION_MAJOR</span>(apiVersion),
+        <span class="mcr">VK_VERSION_MINOR</span>(apiVersion),
+        <span class="mcr">VK_VERSION_PATCH</span>(apiVersion));
+<span class="pragma">#ifndef</span> <span class="mcr">NDEBUG</span>
+    <span class="cmt">//创建完Vulkan实例后紧接着创建debug messenger</span>
+    <span class="fn">CreateDebugMessenger</span>();
+<span class="pragma">#endif</span>
+    <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            <code><span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkCreateInstance</span>(&amp;instanceCreateInfo, <span class="kw">nullptr</span>, &amp;instance))</code>
+            <br>
+            以上这种写法不太直观，如果你比较介意的话，写成：
+            <br>
+            <code><span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkCreateInstance</span>(&amp;instanceCreateInfo, <span class="kw">nullptr</span>, &amp;instance); result != <span class="enum">VK_SUCCESS</span>)</code>
+            <br>
+        </p>
+    </li>
+    <li>
+        <p>
+            这里我在聚合初始化中使用了指派符，对于C语言式的结构体（所有成员为<span class="kw">public</span>且没有构造函数），没有被指派的成员被零初始化。
+        </p>
+    </li>
+    <li>
+        <p>
+            如果初始化失败，把<span class="var">result</span>返回出去。错误处理在函数外部进行。
+        </p>
+    </li>
+</ul>
+<p>
+    之后是在<span class="fn">InitializeWindow</span>(...)中调用<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">CreateInstance</span>(...)，相应代码我会汇总在本节最后。
+</p></section>
+<section id="id3">
+<h2>检查层和实例级别扩展是否可用<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<p>
+    入门教程中的所有层和扩展都是必须的，不过这里先准备好相应的函数，以在创建Vulkan实例失败时检查是否可以去掉一些非必要的层或扩展。
+</p><section id="id4">
+<h3>检查层是否可用<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap40.html#vkEnumerateInstanceLayerProperties">vkEnumerateInstanceLayerProperties</a>(...)取得可用层的列表。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap40.html#vkEnumerateInstanceLayerProperties">vkEnumerateInstanceLayerProperties</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span>* pPropertyCount</p></td>
+            <td><p>若pProperties为<span class="kw">nullptr</span>，则将可用层的数量返回到*pPropertyCount，否则由*pPropertyCount指定所需获取的<span class="type">VkLayerProperties</span>的数量</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkLayerProperties</span>* pProperties</p></td>
+            <td><p>若pProperties非<span class="kw">nullptr</span>，则将*pPropertyCount个可用层的<span class="type">VkLayerProperties</span>返回到*pProperties</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            若传入的*pPropertyCount等于所有可用层的总数，函数成功时返回<span class="enum">VK_SUCCESS</span>，若传入的*pPropertyCount小于可用层总数，返回<span class="enum">VK_INCOMPLETE</span>。
+        </p>
+    </li>
+</ul>
+<p>
+    填充<span class="type">graphicsBase</span>::<span class="fn">CheckInstanceLayers</span>(...)，首先取得可用层的总数：
+</p>
+<pre class="code">
+<span class="type">uint32_t</span> layerCount;
+std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
+<span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkEnumerateInstanceLayerProperties</span>(&amp;layerCount, <span class="kw">nullptr</span>)) {
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of instance layers!\n&quot;</span>);
+    <span class="kw">return</span> result;
+}
+</pre>
+<p>
+    接着，若<span class="var">layerCount</span>为0，则说明没有任何可用层（虽然没这个可能），否则嵌套循环逐个比较字符串，若没有找到某个层的名称，将<span class="var">layersToCheck</span>中对应的字符串指针设置为<span class="kw">nullptr</span>：
+</p>
+<pre class="code">
+<span class="kw">if</span> (layerCount) {
+    availableLayers.<span class="fn">resize</span>(layerCount);
+    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkEnumerateInstanceLayerProperties</span>(&amp;layerCount, availableLayers.<span class="fn">data</span>())) {
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to enumerate instance layer properties!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : layersToCheck) {
+        <span class="kw">bool</span> found = <span class="kw">false</span>;
+        <span class="kw">for</span> (<span class="kw">auto</span>&amp; j : availableLayers)
+            <span class="kw">if</span> (!<span class="fn">strcmp</span>(i, j.layerName)) {
+                found = <span class="kw">true</span>;
+                <span class="kw">break</span>;
+            }
+        <span class="kw">if</span> (!found)
+            i = <span class="kw">nullptr</span>;
+    }
+}
+<span class="kw">else</span>
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : layersToCheck)
+        i = <span class="kw">nullptr</span>;
+<span class="cmt">//一切顺利则返回<span class="enum">VK_SUCCESS</span></span>
+<span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
+</pre>
+<ul>
+    <li>
+        <p>
+            两次调用<a href="https://renderdoc.org/vkspec_chunked/chap40.html#vkEnumerateInstanceLayerProperties">vkEnumerateInstanceLayerProperties</a>(...)，第一次取得layerCount，第二次取得layerCount个<span class="type">VkLayerProperties</span>，因此第二次调用该函数时若执行成功，必然只可能返回<span class="enum">VK_SUCCESS</span>，于是这里就只需要验证<span class="var">result</span>是否为<span class="enum">VK_SUCCESS</span>而不需要验证是否为<span class="enum">VK_INCOMPLETE</span>了。
+        </p>
+    </li>
+</ul></section>
+<section id="id5">
+<h3>检查实例级别扩展是否可用<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<p>
+    <a href="https://renderdoc.org/vkspec_chunked/chap40.html#vkEnumerateInstanceExtensionProperties">vkEnumerateInstanceExtensionProperties</a>(...)取得可用扩展的列表：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap40.html#vkEnumerateInstanceExtensionProperties">vkEnumerateInstanceExtensionProperties</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="kw">const char</span>* pLayerName</p></td>
+            <td><p>因有些扩展隶属于特定的层，在此填入层的名称，若为<span class="kw">nullptr</span>，则取得所有默认提供或隐式开启的层的扩展</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span>* pPropertyCount</p></td>
+            <td><p>若pProperties为<span class="kw">nullptr</span>，则将可用扩展的数量返回到*pPropertyCount，否则由*pPropertyCount指定所需获取的<span class="type">VkExtensionProperties</span>的数量</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkExtensionProperties</span>* pProperties</p></td>
+            <td><p>若pProperties非<span class="kw">nullptr</span>，则将*pPropertyCount个可用扩展的<span class="type">VkExtensionProperties</span>返回到*pProperties</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    用几乎换汤不换药的写法填充<span class="type">graphicsBase</span>::<span class="fn">CheckInstanceExtensions</span>(...)：
+</p>
+<pre class="code">
+<span class="type">VkResult</span> <span class="fn">CheckInstanceExtensions</span>(std::<span class="type">span</span>&lt;<span class="kw">const char</span>*&gt; extensionsToCheck, <span    class="kw">const char</span>* layerName) <span class="kw">const</span> {
+    <span class="type">uint32_t</span> extensionCount;
+    std::<span class="type">vector</span>&lt;VkExtensionProperties&gt; availableExtensions;
+    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkEnumerateInstanceExtensionProperties</span>(layerName, &amp;extensionCount, <span class="kw">nullptr</span>)) {
+        layerName ?
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of instance extensions!\nLayer name:{}\n&quot;</span>, layerName) :
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of instance extensions!\n&quot;</span>);
+        <span class="kw">return</span> result;
+    }
+    <span class="kw">if</span> (extensionCount) {
+        availableExtensions.<span class="fn">resize</span>(extensionCount);
+        <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkEnumerateInstanceExtensionProperties</span>(layerName, &amp;extensionCount, availableExtensions.<span class="fn">data</span>())) {
+            std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to enumerate instance extension properties!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            <span class="kw">return</span> result;
+        }
+        <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : extensionsToCheck) {
+            <span class="kw">bool</span> found = <span class="kw">false</span>;
+            <span class="kw">for</span> (<span class="kw">auto</span>&amp; j : availableExtensions)
+                <span class="kw">if</span> (!<span class="fn">strcmp</span>(i, j.extensionName)) {
+                    found = <span class="kw">true</span>;
+                    <span class="kw">break</span>;
+                }
+            <span class="kw">if</span> (!found)
+                i = <span class="kw">nullptr</span>;
+        }
+    }
+    <span class="kw">else</span>
+        <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : extensionsToCheck)
+            i = <span class="kw">nullptr</span>;
+    <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
+}
+</pre></section>
+</section>
+<section id="debug-messenger">
+<h2>创建Debug Messenger<a class="headerlink" href="#debug-messenger" title="Permalink to this heading"></a></h2>
+<p>
+    Vulkan中，扩展相关的函数，若非设备特定，大都通过<a href="https://renderdoc.org/vkspec_chunked/chap4.html#vkGetInstanceProcAddr">vkGetInstanceProcAddr</a>(...)来获取（虽然在<span class="path">vulkan_core.h</span>里有定义，但<span class="path">vulkan-1.lib</span>里没有其binary code），创建debug messenger也不例外：
+</p>
+<pre class="code">
+<span class="type">PFN_vkCreateDebugUtilsMessengerEXT</span> CreateDebugUtilsMessenger =
+        <span class="kw">reinterpret_cast</span>&lt;<span class="type">PFN_vkCreateDebugUtilsMessengerEXT</span>&gt;(<span class="fn">vkCreateDebugUtilsMessengerEXT</span>(instance, <span class="str">&quot;vkCreateDebugUtilsMessengerEXT&quot;</span>));
+</pre>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap45.html#vkCreateDebugUtilsMessengerEXT">vkCreateDebugUtilsMessengerEXT</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkInstance</span> instance</p></td>
+            <td><p>Vulkan实例的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkDebugUtilsMessengerCreateInfoEXT</span>* pCreateInfo</p></td>
+            <td><p>指向<span class="type">VkDebugUtilsMessengerEXT</span>的创建信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span>* pAllocator</p></td>
+            <td><p>如有必要，指向描述自定义内存分配方式的结构体</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkDebugUtilsMessengerEXT</span>* pMessenger</p></td>
+            <td><p>若执行成功，将debug messenger的handle写入*pMessenger</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    于是来看一下这个<a href="https://renderdoc.org/vkspec_chunked/chap45.html#VkDebugUtilsMessengerCreateInfoEXT">VkDebugUtilsMessengerCreateInfoEXT</a>：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap45.html#VkDebugUtilsMessengerCreateInfoEXT">VkDebugUtilsMessengerCreateInfoEXT</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkDebugUtilsMessengerCreateFlagsEXT</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkDebugUtilsMessageSeverityFlagsEXT</span> messageSeverity</p></td>
+            <td><p>表明所需获取debug信息的严重性</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkDebugUtilsMessageTypeFlagsEXT</span> messageType</p></td>
+            <td><p>表明需要获取哪些类型的debug信息</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">PFN_vkDebugUtilsMessengerCallbackEXT</span> pfnUserCallback</p></td>
+            <td><p>产生debug信息后，所调用自定义回调函数的指针</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">void</span>* pUserData</p></td>
+            <td><p>提供一个地址，之后如有需要，可以让自定义回调函数将数据存入该地址</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            请自行在VS中将光标移动到<span class="type">VkDebugUtilsMessengerCreateFlagsEXT</span>或<span class="type">VkDebugUtilsMessageSeverityFlagsEXT</span>，然后按F12来查询他们有哪些flag bit。
+        </p>
+    </li>
+    <li>
+        <p>
+            如果错误发生在程序能正常渲染的情况下，那么你可能希望把debug信息渲染到窗口画面中，而不是即刻输出到控制台，这就是pUserData的存在意义。
+        </p>
+    </li>
+</ul>
+<p>
+    自定义回调函数的类型声明如下：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">typedef</span> <span class="type">VkBool32</span>
+            (<span class="mcr">VKAPI_PTR</span> <a href="https://renderdoc.org/vkspec_chunked/chap45.html#PFN_vkDebugUtilsMessengerCallbackEXT">PFN_vkDebugUtilsMessengerCallbackEXT</a>) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDebugUtilsMessageSeverityFlagBitsEXT</span> messageSeverity</p></td>
+            <td><p>所获取到的debug信息的严重性</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkDebugUtilsMessengerCreateInfoEXT</span> messageTypes</p></td>
+            <td><p>所获取到的debug信息的类型</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkDebugUtilsMessengerCallbackDataEXT</span>* pCallbackData</p></td>
+            <td><p>所获取到的相关回调信息，包含debug信息、涉及到的队列、命令缓冲区、Vulkan对象</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">void</span>* pUserData</p></td>
+            <td><p>对应<span class="type">VkDebugUtilsMessengerCreateInfoEXT</span>中的pUserData</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            至少到Vulkan1.3为止，要求本函数必须返回<span class="mcr">VK_FALSE</span>，其值为0;
+        </p>
+    </li>
+    <li>
+        <p>
+            这里对<a href="https://renderdoc.org/vkspec_chunked/chap45.html#VkDebugUtilsMessengerCallbackDataEXT">VkDebugUtilsMessengerCallbackDataEXT</a>不做详细展开，请自行点击超链接了解。
+        </p>
+    </li>
+</ul>
+<p>
+    于是剧本流程很清晰了，填充<span class="type">graphicsBase</span>::<span class="fn">CreateDebugMessenger</span>(...)，首先定义这个自定义回调函数：
+</p>
+<pre class="code">
+<span class="kw">static</span> <span class="type">PFN_vkDebugUtilsMessengerCallbackEXT</span> DebugUtilsMessengerCallback = [](
+    <span class="type">VkDebugUtilsMessageSeverityFlagBitsEXT</span> messageSeverity,
+    <span class="type">VkDebugUtilsMessageTypeFlagsEXT</span> messageTypes,
+    <span class="kw">const</span> <span class="type">VkDebugUtilsMessengerCallbackDataEXT</span>* pCallbackData,
+    <span class="kw">void</span>* pUserData)-><span class="type">VkBool32</span> {
+        std::cout &lt;&lt; std::<span class="type">format</span>(<span class="str">&quot;{}\n\n&quot;</span>, pCallbackData->pMessage);
+        <span class="kw">return</span> <span class="mcr">VK_FALSE</span>;
+};
+</pre>
+<p>
+    我让这个lambda表达式除了输出debug信息到控制台外啥都不干。然后来填写<a href="https://renderdoc.org/vkspec_chunked/chap45.html#VkDebugUtilsMessengerCreateInfoEXT">VkDebugUtilsMessengerCreateInfoEXT</a>：
+</p>
+<pre class="code">
+<span class="type">VkDebugUtilsMessengerCreateInfoEXT</span> debugUtilsMessengerCreateInfo = {
+    .sType = <span class="enum">VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT</span>,
+    .messageSeverity =
+        <span class="enum">VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT</span> |
+        <span class="enum">VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT</span>,
+    .messageType =
+        <span class="enum">VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT</span> |
+        <span class="enum">VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT</span> |
+        <span class="enum">VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT</span>,
+    .pfnUserCallback = DebugUtilsMessengerCallback
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            我对messageSeverity设置了<span class="enum">VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT</span>和<span class="enum">VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT</span>，对messageType设置了所有可用的bit，这意味着将获取所有警告和错误信息。
+        </p>
+    </li>
+</ul>
+<p>
+    这之后就是获取并调用<a href="https://renderdoc.org/vkspec_chunked/chap45.html#vkCreateDebugUtilsMessengerEXT">vkCreateDebugUtilsMessengerEXT</a>(...)，整个<span class="fn">CreateDebugMessenger</span>(...)如下：
+</p>
+<pre class="code">
+<span class="type">VkResult</span> <span class="fn">CreateDebugMessenger</span>() {
+    <span class="kw">static</span> <span class="type">PFN_vkDebugUtilsMessengerCallbackEXT</span> DebugUtilsMessengerCallback = [](
+        <span class="type">VkDebugUtilsMessageSeverityFlagBitsEXT</span> messageSeverity,
+        <span class="type">VkDebugUtilsMessageTypeFlagsEXT</span> messageTypes,
+        <span class="kw">const</span> <span class="type">VkDebugUtilsMessengerCallbackDataEXT</span>* pCallbackData,
+        <span class="kw">void</span>* pUserData)-><span class="type">VkBool32</span> {
+            std::cout &lt;&lt; std::<span class="type">format</span>(<span class="str">&quot;{}\n\n&quot;</span>, pCallbackData->pMessage);
+            <span class="kw">return</span> <span class="mcr">VK_FALSE</span>;
+    };
+    <span class="type">VkDebugUtilsMessengerCreateInfoEXT</span> debugUtilsMessengerCreateInfo = {
+        .sType = <span class="enum">VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT</span>,
+        .messageSeverity =
+            <span class="enum">VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT</span> |
+            <span class="enum">VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT</span>,
+        .messageType =
+            <span class="enum">VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT</span> |
+            <span class="enum">VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT</span> |
+            <span class="enum">VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT</span>,
+        .pfnUserCallback = DebugUtilsMessengerCallback
+    };
+    <span class="type">PFN_vkCreateDebugUtilsMessengerEXT</span> CreateDebugUtilsMessenger =
+        <span class="kw">reinterpret_cast</span>&lt;<span class="type">PFN_vkCreateDebugUtilsMessengerEXT</span>&gt;(<span class="fn">vkGetInstanceProcAddr</span>(instance, <span class="str">&quot;vkCreateDebugUtilsMessengerEXT&quot;</span>));
+    <span class="kw">if</span> (CreateDebugUtilsMessenger) {
+        <span class="type">VkResult</span> result = <span class="type">CreateDebugUtilsMessenger</span>(instance, &amp;debugUtilsMessengerCreateInfo, <span class="kw">nullptr</span>, &amp;debugUtilsMessenger);
+        <span class="kw">if</span> (result)
+            std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a debug messenger!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the function pointer of vkCreateDebugUtilsMessengerEXT!\n&quot;</span>);
+    <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            虽然在正确书写函数名字符串的情况下应当不可能，如果无法取得<a href="https://renderdoc.org/vkspec_chunked/chap45.html#vkCreateDebugUtilsMessengerEXT">vkCreateDebugUtilsMessengerEXT</a>(...)，返回<span class="enum">VK_RESULT_MAX_ENUM</span>，其值为<span class="mcr">INT32_MAX</span>。这并不是个有效的错误代码，正是因此才使用这个数值，一来因为<a href="https://renderdoc.org/vkspec_chunked/chap3.html#VkResult">VkResult</a>的枚举值中没有任何符合该种情况的返回值，二来这个数值不会跟任何Vulkan函数的返回值重合。注意，不要使用<span class="enum">VK_ERROR_UNKNOWN</span>，一些函数在失败时能返回这个数值。<strong>因没有合适的错误代码而返回<span class="enum">VK_RESULT_MAX_ENUM</span>的情况在这套教程中还会出现很多次。</strong>
+        </p>
+    </li>
+</ul></section>
+<section id="window-surface">
+<h2>创建Window Surface<a class="headerlink" href="#window-surface" title="Permalink to this heading"></a></h2>
+<p>
+    用<a href="https://www.glfw.org/docs/3.3/group__vulkan.html#ga1a24536bec3f80b08ead18e28e6ae965">glfwCreateWindowSurface</a>(...)为GLFW窗口创建window surface。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span>** <a href="https://www.glfw.org/docs/3.3/group__vulkan.html#ga1a24536bec3f80b08ead18e28e6ae965">glfwCreateWindowSurface</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkInstance</span> instance</p></td>
+            <td><p>Vulkan实例的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">GLFWwindow</span>* window</p></td>
+            <td><p>窗口的指针</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span>* allocator</p></td>
+            <td><p>一个指向描述自定义内存分配方式的结构体的指针</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkSurfaceKHR</span> surface</p></td>
+            <td><p>Window surface的handle</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    于是在<span class="fn">InitializeWindow</span>(...)中，在之前所写的创建窗口的代码后加入以下代码：
+</p>
+<pre class="code">
+<span class="type">VkSurfaceKHR</span> surface = <span class="mcr">VK_NULL_HANDLE</span>;
+<span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">glfwCreateWindowSurface</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Instance</span>(), pWindow, <span class="kw">nullptr</span>, &amp;surface)) {
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ] ERROR\nFailed to create a window surface!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+    <span class="fn">glfwTerminate</span>();
+    <span class="kw">return false</span>;
+}
+<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Surface</span>(surface);
+</pre></section>
+<section id="id6">
+<h2>获取并选择物理设备<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
+<section id="id7">
+<h3>获取物理设备列表<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap5.html#vkEnumeratePhysicalDevices">vkEnumeratePhysicalDevices</a>(...)获取物理设备列表：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap5.html#vkEnumeratePhysicalDevices">vkEnumeratePhysicalDevices</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkInstance</span> instance</p></td>
+            <td><p>Vulkan实例的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span>* pPhysicalDeviceCount</p></td>
+            <td><p>若pPhysicalDevices为<span class="kw">nullptr</span>，则将物理设备的数量返回到*pPhysicalDeviceCount，否则由*pPhysicalDeviceCount指定所需获取的<span class="type">VkPhysicalDevice</span>的数量</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkPhysicalDevice</span>* pPhysicalDevices</p></td>
+            <td><p>若pPhysicalDevices非<span class="kw">nullptr</span>，则将*pPhysicalDeviceCount个物理设备的<span class="type">VkPhysicalDevice</span>返回到*pPhysicalDevices</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    从函数参数可以看出，获取物理设备列表的方法，相比获取实例级别层和扩展的方法可谓完全换汤不换药，填充<span class="type">graphicsBase</span>::<span class="fn">GetPhysicalDevices</span>()：
+</p>
+<pre class="code">
+<span class="type">VkResult</span> <span class="fn">GetPhysicalDevices</span>() {
+    <span class="type">uint32_t</span> deviceCount;
+    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkEnumeratePhysicalDevices</span>(instance, &amp;deviceCount, <span class="kw">nullptr</span>)) {
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of physical devices!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="kw">if</span> (!deviceCount)
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to find any physical device supports vulkan!\n&quot;</span>),
+        <span class="fn">abort</span>();
+    availablePhysicalDevices.<span class="fn">resize</span>(deviceCount);
+    <span class="type">VkResult</span> result = <span class="fn">vkEnumeratePhysicalDevices</span>(instance, &amp;deviceCount, availablePhysicalDevices.<span class="fn">data</span>());
+    <span class="kw">if</span> (result)
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to enumerate physical devices!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+    <span class="kw">return</span> result;
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            要是一个物理设备都没有，显然程序跑不了，直接<span class="fn">abort</span>()。
+        </p>
+    </li>
+</ul>
+<div class="admonition note">
+    <p class="admonition-title">Note</p>
+    <p>
+        如果<a href="https://renderdoc.org/vkspec_chunked/chap5.html#vkEnumeratePhysicalDevices">vkEnumeratePhysicalDevices</a>(...)只给你返回一个设备，尝试更新所有显卡的驱动（虽然不清楚具体原因，我在刚开始写这个教程的时候遇到过这个问题，但是如今已经没这个问题了）。
+        <br>
+        如果无论如何都只能查找到一张显卡，你可以去独立显卡的控制面板（比如Nvidia控制面板）里指定使用独显来运行程序。
+    </p>
+</div></section>
+<section id="id8">
+<h3>检查并取得所需的队列族索引<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap5.html#vkGetPhysicalDeviceQueueFamilyProperties">vkGetPhysicalDeviceQueueFamilyProperties</a>(...)取得物理设备所具有的队列族的列表：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap5.html#vkGetPhysicalDeviceQueueFamilyProperties">vkGetPhysicalDeviceQueueFamilyProperties</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkPhysicalDevice</span> physicalDevice</p></td>
+            <td><p>物理设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span>* pQueueFamilyPropertyCount</p></td>
+            <td><p>若pQueueFamilyProperties为<span class="kw">nullptr</span>，则将队列族的数量返回到*pQueueFamilyPropertyCount，否则由*pQueueFamilyPropertyCount指定所需获取的<span class="type">VkQueueFamilyProperties</span>的数量</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkQueueFamilyProperties</span>* pQueueFamilyProperties</p></td>
+            <td><p>若pQueueFamilyProperties非<span class="kw">nullptr</span>，则将*pQueueFamilyPropertyCount个物理设备的<span class="type">VkQueueFamilyProperties</span>返回到*pQueueFamilyProperties</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    于是填充<span class="type">graphicsBase</span>::<span class="fn">GetQueueFamilyIndices</span>(...)，依旧是换汤不换药的写法：
+</p>
+<pre class="code">
+<span class="type">VkResult</span> <span class="fn">GetQueueFamilyIndices</span>(<span class="type">VkPhysicalDevice</span> physicalDevice, <span class="kw">bool</span> enableGraphicsQueue, <span class="kw">bool</span> enableComputeQueue, <span class="type">uint32_t</span> (&queueFamilyIndices)[3]) {
+    <span class="type">uint32_t</span> queueFamilyCount = 0;
+    <span class="fn">vkGetPhysicalDeviceQueueFamilyProperties</span>(physicalDevice, &amp;queueFamilyCount, <span class="kw">nullptr</span>);
+    <span class="kw">if</span> (!queueFamilyCount)
+        <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;
+    std::<span class="type">vector</span>&lt;<span class="type">VkQueueFamilyProperties</span>&gt; queueFamilyPropertieses(queueFamilyCount);
+    <span class="fn">vkGetPhysicalDeviceQueueFamilyProperties</span>(physicalDevice, &amp;queueFamilyCount, queueFamilyPropertieses.<span class="fn">data</span>());
+    <span class="cmt">/*待后续填充*/</span>
+}
+</pre>
+<p>
+    <a href="https://renderdoc.org/vkspec_chunked/chap5.html#VkQueueFamilyProperties">VkQueueFamilyProperties</a>::queueFlags与<a href="https://renderdoc.org/vkspec_chunked/chap5.html#VkQueueFlagBits">VkQueueFlagBits</a>的枚举值做位与，即可确定队列族支持的操作类型。
+</p>
+<p>
+    于是遍历所有队列族，从中找出符合条件的队列族的索引。
+    <br>
+    遍历过程中将所找到的队列族索引存到<span class="var">queueFamilyIndices</span>中（传入这个引用变量的原因见后文的<span class="fn">DeterminePhysicalDevice</span>(...)），仅在所需的队列族被全部找齐时，覆写<span class="type">graphicsBase</span>成员变量中的<span class="var">queueFamilyIndex_graphics</span>、<span class="var">queueFamilyIndex_presentation</span>、<span class="var">queueFamilyIndex_compute</span>：
+</p>
+<pre class="code">
+<span class="kw">auto</span>& [ig, ip, ic] = queueFamilyIndices;<span class="cmt">//分别对应图形、呈现、计算</span>
+ig = ip = ic = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>;
+<span class="cmt">//遍历所有队列族的索引</span>
+<span class="kw">for</span> (<span class="type">uint32_t</span> i = 0; i &lt; queueFamilyCount; i++) {
+    <span class="cmt">/*待后续填充*/</span>
+}
+<span class="cmt">//若任何需要被取得的队列族索引尚未被取得，则函数执行失败</span>
+<span class="kw">if</span> (ig == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp; enableGraphicsQueue ||
+    ip == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp; surface ||
+    ic == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span></span> &amp;&amp; enableComputeQueue)
+    <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;
+<span class="cmt">//函数执行成功时，将所取得的队列族索引写入到成员变量</span>
+queueFamilyIndex_graphics = ig;
+queueFamilyIndex_presentation = ip;
+queueFamilyIndex_compute = ic;
+<span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
+</pre>
+<ul>
+    <li>
+        <p>
+            显然，用不着的队列族索引对应的成员变量会被覆写为<span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>。
+        </p>
+    </li>
+</ul>
+<p>
+    继续填充<span class="type">graphicsBase</span>::<span class="fn">GetQueueFamilyIndices</span>(...)，整个函数如下：
+</p>
+<pre class="code">
+<span class="type">VkResult</span> <span class="fn">GetQueueFamilyIndices</span>(<span class="type">VkPhysicalDevice</span> physicalDevice, <span class="kw">bool</span> enableGraphicsQueue, <span class="kw">bool</span> enableComputeQueue, <span class="type">uint32_t</span> (&queueFamilyIndices)[3]) {
+    <span class="type">uint32_t</span> queueFamilyCount = 0;
+    <span class="fn">vkGetPhysicalDeviceQueueFamilyProperties</span>(physicalDevice, &amp;queueFamilyCount, <span class="kw">nullptr</span>);
+    <span class="kw">if</span> (!queueFamilyCount)
+        <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;
+    std::<span class="type">vector</span>&lt;<span class="type">VkQueueFamilyProperties</span>&gt; queueFamilyPropertieses(queueFamilyCount);
+    <span class="fn">vkGetPhysicalDeviceQueueFamilyProperties</span>(physicalDevice, &amp;queueFamilyCount, queueFamilyPropertieses.<span class="fn">data</span>());
+    <span class="kw">auto</span>& [ig, ip, ic] = queueFamilyIndices;
+    ig = ip = ic = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>;
+    <span class="kw">for</span> (<span class="type">uint32_t</span> i = 0; i &lt; queueFamilyCount; i++) {
+        <span class="cmt">//这三个VkBool32变量指示是否可获取（指应该被获取且能获取）相应队列族索引</span>
+        <span class="type">VkBool32</span>
+            <span class="cmt">//只在enableGraphicsQueue为true时获取支持图形操作的队列族的索引</span>
+            supportGraphics = enableGraphicsQueue &amp;&amp; queueFamilyPropertieses[i].queueFlags &amp; <span class="enum">VK_QUEUE_GRAPHICS_BIT</span>,
+            supportPresentation = <span class="kw">false</span>,
+            <span class="cmt">//只在enableComputeQueue为true时获取支持计算的队列族的索引</span>
+            supportCompute = enableComputeQueue &amp;&amp; queueFamilyPropertieses[i].queueFlags &amp; <span class="enum">VK_QUEUE_COMPUTE_BIT</span>;
+            <span class="cmt">//只在创建了window surface时获取支持呈现的队列族的索引</span>
+        <span class="kw">if</span> (surface)
+            <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfaceSupportKHR</span>(physicalDevice, i, surface, &amp;supportPresentation)) {
+                std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to determine if the queue family supports presentation!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+                <span class="kw">return</span> result;
+            }
+        <span class="cmt">//若某队列族同时支持图形操作和计算</span>
+        <span class="kw">if</span> (supportGraphics &amp;&amp; supportCompute) {
+            <span class="cmt">//若需要呈现，最好是三个队列族索引全部相同</span>
+            <span class="kw">if</span> (supportPresentation) {
+                ig = ip = ic = i;
+                <span class="kw">break</span>;
+            }
+            <span class="cmt">//除非ig和ic都已取得且相同，否则将它们的值覆写为i，以确保两个队列族索引相同</span>
+            <span class="kw">if</span> (ig != ic ||
+                ig == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
+                ig = ic = i;
+            <span class="cmt">//如果不需要呈现，那么已经可以break了</span>
+            <span class="kw">if</span> (!surface)
+                <span class="kw">break</span>;
+        }
+        <span class="cmt">//若任何一个队列族索引可以被取得但尚未被取得，将其值覆写为i</span>
+        <span class="kw">if</span> (supportGraphics &amp;&amp;
+            ig == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
+            ig = i;
+        <span class="kw">if</span> (supportPresentation &amp;&amp;
+            ip == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
+            ip = i;
+        <span class="kw">if</span> (supportCompute &amp;&amp;
+            ic == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
+            ic = i;
+    }
+    <span class="kw">if</span> (ig == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp; enableGraphicsQueue ||
+        ip == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp; surface ||
+        ic == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span></span> &amp;&amp; enableComputeQueue)
+        <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;
+    queueFamilyIndex_graphics = ig;
+    queueFamilyIndex_presentation = ip;
+    queueFamilyIndex_compute = ic;
+    <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            用<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkGetPhysicalDeviceSurfaceSupportKHR">vkGetPhysicalDeviceSurfaceSupportKHR</a>(...)查询队列族是否支持将图像呈现到该surface，各个参数含义应该一目了然，在此不做赘述。
+        </p>
+    </li>
+    <li>
+        <p>
+            当图像或缓冲区要被另一个队列族的队列使用时，可能需要做资源的<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id7">队列族所有权转移</a>（所谓可能是因为并非所有硬件都有此要求），所以尽量使用相同的队列族来省去这一麻烦。而优先确保图形和计算的队列族相同，是因为无论程序多么复杂，资源的所有权在图形和呈现队列之间转移的情况至多只会在渲染循环中发生，但在图形和计算队列之间转移的情况可能发生在所有你想做间接渲染（此处姑且不解释）的场合，而且图形和计算队列不同的话，计算和图形命令也不得不在各自的命令缓冲区中完成（而不是在同一个命令缓冲区中），即，图形和计算的列族不同，比图形和呈现的队列族不同更费事。
+        </p>
+    </li>
+</ul>
+<p>
+    （如果你觉得上述代码已经够啰嗦了的话，往下拉直到看见粗体字）
+    <br>
+    然后填充<span class="type">graphicsBase</span>::<span class="fn">DeterminePhysicalDevice</span>(...)，在该函数中对<span class="fn">GetQueueFamilyIndices</span>(...)做进一步包装，为每个物理设备保存一份所需队列族索引的组合：
+</p>
+<pre class="code">
+<span class="type">VkResult</span> <span class="fn">DeterminePhysicalDevice</span>(<span class="type">uint32_t</span> deviceIndex = 0, <span class="kw"></span>bool</span> enableGraphicsQueue = <span class="kw">true</span>, <span class="kw">bool</span> enableComputeQueue = <span class="kw">true</span>) {
+    <span class="cmt">//定义一个特殊值用于标记一个队列族索引已被找过但未找到</span>
+    <span class="kw">static constexpr</span> <span class="type">uint32_t</span> notFound = <span class="mcr">INT32_MAX</span>;<span class="cmt">//== VK_QUEUE_FAMILY_IGNORED & INT32_MAX</span>
+    <span class="cmt">//定义队列族索引组合的结构体</span>
+    <span class="kw">struct</span> queueFamilyIndexCombination {
+        <span class="type">uint32_t</span> graphics = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>;
+        <span class="type">uint32_t</span> presentation = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>;
+        <span class="type">uint32_t</span> compute = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>;
+    };
+    <span class="cmt">//queueFamilyIndexCombinations用于为各个物理设备保存一份队列族索引组合</span>
+    <span class="kw">static</span> std::<span class="type">vector</span>&lt;<span class="type">queueFamilyIndexCombination</span>&gt; queueFamilyIndexCombinations(availablePhysicalDevices.<span class="fn">size</span>());
+    <span class="kw">auto</span>&amp; [ig, ip, ic] = queueFamilyIndexCombinations[deviceIndex];
+
+    <span class="cmt">//如果有任何队列族索引已被找过但未找到，返回VK_RESULT_MAX_ENUM</span>
+    <span class="kw">if</span> (ig == notFound &amp;&amp; enableGraphicsQueue ||
+        ip == notFound &amp;&amp; surface ||
+        ic == notFound &amp;&amp; enableComputeQueue)
+        <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;
+
+    <span class="cmt">//如果有任何队列族索引应被获取但还未被找过</span>
+    <span class="kw">if</span> (ig == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp; enableGraphicsQueue ||
+        ip == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp; surface ||
+        ic == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp; enableComputeQueue) {
+        <span class="type">uint32_t</span> indices[3];
+        <span class="type">VkResult</span> result = <span class="fn">GetQueueFamilyIndices</span>(availablePhysicalDevices[deviceIndex], enableGraphicsQueue, enableComputeQueue, indices);
+        <span class="cmt">//若GetQueueFamilyIndices(...)返回VK_SUCCESS或VK_RESULT_MAX_ENUM（vkGetPhysicalDeviceSurfaceSupportKHR(...)执行成功但没找齐所需队列族），</span>
+        <span class="cmt">//说明对所需队列族索引已有结论，保存结果到queueFamilyIndexCombinations[deviceIndex]中相应变量</span>
+        <span class="cmt">//应被获取的索引若仍为VK_QUEUE_FAMILY_IGNORED，说明未找到相应队列族，VK_QUEUE_FAMILY_IGNORED（~0u）与INT32_MAX做位与得到的数值等于notFound</span>
+        <span class="kw">if</span> (result == <span class="enum">VK_SUCCESS</span> ||
+            result == <span class="enum">VK_RESULT_MAX_ENUM</span>) {
+            <span class="kw">if</span> (enableGraphicsQueue)
+                ig = indices[0] &amp; <span class="mcr">INT32_MAX</span>;
+            <span class="kw">if</span> (surface)
+                ip = indices[1] &amp; <span class="mcr">INT32_MAX</span>;
+            <span class="kw">if</span> (enableComputeQueue)
+                ic = indices[2] &amp; <span class="mcr">INT32_MAX</span>;
+        }
+        <span class="cmt">//如果GetQueueFamilyIndices(...)执行失败，return</span>
+        <span class="kw">if</span> (result)
+            <span class="kw">return</span> result;
+    }
+
+    <span class="cmt">//若以上两个if分支皆不执行，则说明所需的队列族索引皆已被获取，从queueFamilyIndexCombinations[deviceIndex]中取得索引</span>
+    <span class="kw">else</span> {
+        queueFamilyIndex_graphics = enableGraphicsQueue ? ig : <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>;
+        queueFamilyIndex_presentation = surface ? ip : <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>;
+        queueFamilyIndex_compute = enableComputeQueue ? ic : <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>;
+    }
+    physicalDevice = availablePhysicalDevices[deviceIndex];
+    <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            我打算之后在<span class="type">graphicsBase</span>::<span class="fn">CreateLogicalDevice</span>(...)中会判断队列族索引是否为<span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>以确定是否要创建相应队列，因此这里应当将不需要的队列族索引覆写为<span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>。
+        </p>
+    </li>
+</ul>
+<p>
+    <b>上述代码会这么啰嗦，是因为严格按照Vulkan标准而言，无法断言是否一定能找到一个同时支持图形、计算、呈现的队列族。</b>
+    <br>
+    如果你程序的目标平台一定能跑DirectX12的图形程序（能装Win11的电脑皆在此列，嘛不是老古董电脑就没问题），那么你可以大胆假定一定会有这么一个队列族，以上两个函数就可以简化为：
+</p>
+<pre class="code">
+<span class="type">VkResult</span> <span class="fn">GetQueueFamilyIndices</span>(<span class="type">VkPhysicalDevice</span> physicalDevice) {
+    <span class="type">uint32_t</span> queueFamilyCount = 0;
+    <span class="fn">vkGetPhysicalDeviceQueueFamilyProperties</span>(physicalDevice, &amp;queueFamilyCount, <span class="kw">nullptr</span>);
+    <span class="kw">if</span> (!queueFamilyCount)
+        <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;
+    std::<span class="type">vector</span>&lt;<span class="type">VkQueueFamilyProperties</span>&gt; queueFamilyPropertieses(queueFamilyCount);
+    <span class="fn">vkGetPhysicalDeviceQueueFamilyProperties</span>(physicalDevice, &amp;queueFamilyCount, queueFamilyPropertieses.<span class="fn">data</span>());
+    <span class="kw">for</span> (<span class="type">uint32_t</span> i = 0; i &lt; queueFamilyCount; i++) {
+        <span class="type">VkBool32</span>
+            supportGraphics = queueFamilyPropertieses[i].queueFlags &amp; <span class="enum">VK_QUEUE_GRAPHICS_BIT</span>,
+            supportPresentation = <span class="kw">false</span>,
+            supportCompute = queueFamilyPropertieses[i].queueFlags &amp; <span class="enum">VK_QUEUE_COMPUTE_BIT</span>;
+        <span class="kw">if</span> (surface)
+            <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfaceSupportKHR</span>(physicalDevice, i, surface, &amp;supportPresentation)) {
+                std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to determine if the queue family supports presentation!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+                <span class="kw">return</span> result;
+            }
+        <span class="kw">if</span> (supportGraphics &amp;&amp; supportCompute &amp;&amp;
+            (!surface || supportPresentation)) {<span class="cmt">//短路执行，需要呈现的时候才需要判断supportPresentation</span>
+            queueFamilyIndex_graphics = queueFamilyIndex_compute = i;
+            <span class="kw">if</span> (surface)
+                queueFamilyIndex_presentation = i;
+            <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
+        }
+    }
+    <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;
+}
+<span class="type">VkResult</span> <span class="fn">DeterminePhysicalDevice</span>(<span class="type">uint32_t</span> deviceIndex = 0) {
+    <span class="cmt">//定义一个特殊值用于标记一个队列族索引已被找过但未找到</span>
+    <span class="kw">static constexpr</span> <span class="type">uint32_t</span> notFound = <span class="mcr">INT32_MAX</span>;<span class="cmt">//== VK_QUEUE_FAMILY_IGNORED & INT32_MAX</span>
+    <span class="cmt">//queueFamilyIndices用于为各个物理设备保存一份队列族索引</span>
+    <span class="kw">static</span> std::<span class="type">vector</span>&lt;<span class="type">uint32_t</span>&gt; queueFamilyIndices(availablePhysicalDevices.<span class="fn">size</span>());
+
+    <span class="cmt">//如果队列族索引已被找过但未找到，返回VK_RESULT_MAX_ENUM</span>
+    <span class="kw">if</span> (queueFamilyIndices[deviceIndex] == notFound)
+        <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;
+
+    <span class="cmt">//如果队列族索引应被获取但还未被找过</span>
+    <span class="kw">if</span> (queueFamilyIndices[deviceIndex] == VK_QUEUE_FAMILY_IGNORED) {
+        <span class="type">VkResult</span> result = <span class="fn">GetQueueFamilyIndices</span>(availablePhysicalDevices[deviceIndex]);
+        <span class="cmt">//若GetQueueFamilyIndices(...)返回VK_SUCCESS或VK_RESULT_MAX_ENUM（vkGetPhysicalDeviceSurfaceSupportKHR(...)执行成功但没找齐所需队列族），</span>
+        <span class="cmt">//说明对所需队列族索引已有结论，保存结果到queueFamilyIndexCombinations[deviceIndex]中相应变量</span>
+        <span class="kw">if</span> (result) {
+            <span class="kw">if</span> (result == <span class="enum">VK_RESULT_MAX_ENUM</span>)
+                queueFamilyIndices[deviceIndex] = notFound;
+            <span class="kw">return</span> result;
+        }
+        <span class="kw">else</span>
+            queueFamilyIndices[deviceIndex] = queueFamilyIndex_graphics;
+    }
+
+    <span class="cmt">//若以上两个if分支皆不执行，则说明队列族索引已被获取，从queueFamilyIndices[deviceIndex]取得索引</span>
+    <span class="kw">else</span> {
+        queueFamilyIndex_graphics = queueFamilyIndex_compute = queueFamilyIndices[deviceIndex];
+        queueFamilyIndex_presentation = surface ? queueFamilyIndices[deviceIndex] : <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>;
+    }
+    physicalDevice = availablePhysicalDevices[deviceIndex];
+    <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
+}
+</pre></section>
+</section>
+<section id="id9">
+<h2>创建逻辑设备<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h2>
+<p>
+    首先来看一下逻辑设备的创建信息：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap5.html#VkDeviceCreateInfo">VkDeviceCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkDeviceCreateFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> queueCreateInfoCount</p></td>
+            <td><p>队列的创建信息的个数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkDeviceQueueCreateInfo</span>* pQueueCreateInfos</p></td>
+            <td><p>指向由队列的创建信息构成的数组</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> enabledLayerCount</p></td>
+            <td><p>（已弃用，无视之）所需额外开启的设备级别层数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const char</span>* <span class="kw">const</span>* ppEnabledLayerNames</p></td>
+            <td><p>（已弃用，无视之）指向由所需开启的层的名称构成的数组</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> enabledExtensionCount</p></td>
+            <td><p>所需额外开启的设备级别扩展数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const char</span>* <span class="kw">const</span>* ppEnabledExtensionNames</p></td>
+            <td><p>指向由所需开启的扩展的名称构成的数组</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkPhysicalDeviceFeatures</span>* pEnabledFeatures</p></td>
+            <td><p>指向一个<span class="type">VkPhysicalDeviceFeatures</span>结构体，指明需要开启哪些特性</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    队列的创建信息：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap5.html#VkDeviceQueueCreateInfo">VkDeviceQueueCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkDeviceQueueCreateFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> queueFamilyIndex</p></td>
+            <td><p>队列族索引</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> queueCount</p></td>
+            <td><p>在该队列族索引下，所须创建的队列个数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const float</span>* pQueuePriorities</p></td>
+            <td><p>指向浮点数的数组，用于指定各个队列的优先级，浮点数范围在0到1之间，1最大</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            从Vulkan1.1开始可以将flags指定为<span class="enum">VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT</span>，说明该队列受保护。虽然本套教程不会对Vulkan1.0以上版本的功能做过分展开，由于受保护内存（protected memory）相关的说明在官方标准中很常见（尽管通常不会被使用），这里还是做一下简单提要。Vulkan的设备内存（物理设备为GPU则等同显存）对主机（指CPU一侧）可以是可见的，这就导致有能力的程序员可以通过一些手段，使得一个程序读写其它程序的设备内存，而受保护设备内存则被严格限制只能被设备写入，受保护队列则是能执行受保护操作的队列，这里头还有一些很麻烦的读写守则，这里不做展开，有兴趣请自行参考官方标准。受保护设备内存的主要应用场景是防止从内存中读取DRM内容（也就是防止盗版加密图像啦！DLsite和Fanza的新版电子书阅读器有这种特性），游戏程序员是用不着的。
+        </p>
+    </li>
+</ul>
+<p>
+    于是乎，首先在<span class="type">graphicsBase</span>::<span class="fn">CreateLogicalDevice</span>(...)中为所需的队列族填写相应的<a href="https://renderdoc.org/vkspec_chunked/chap5.html#VkDeviceQueueCreateInfo">VkDeviceQueueCreateInfo</a>，并记录所需队列的个数：
+</p>
+<pre class="code">
+<span class="type">VkResult</span> <span class="fn">CreateLogicalDevice</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkDeviceCreateFlags</span> flags = 0) {
+    <span class="kw">float</span> queuePriority = 1.f;
+    <span class="type">VkDeviceQueueCreateInfo</span> queueCreateInfos[3] = {
+        {
+            .sType = <span class="enum">VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO</span>,
+            .queueCount = 1,
+            .pQueuePriorities = &amp;queuePriority },
+        {
+            .sType = <span class="enum">VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO</span>,
+            .queueCount = 1,
+            .pQueuePriorities = &amp;queuePriority },
+        {
+            .sType = <span class="enum">VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO</span>,
+            .queueCount = 1,
+            .pQueuePriorities = &amp;queuePriority } };
+    <span class="type">uint32_t</span> queueCreateInfoCount = 0;
+    <span class="kw">if</span> (queueFamilyIndex_graphics != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
+        queueCreateInfos[queueCreateInfoCount++].queueFamilyIndex = queueFamilyIndex_graphics;
+    <span class="kw">if</span> (queueFamilyIndex_presentation != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp;
+        queueFamilyIndex_presentation != queueFamilyIndex_graphics)
+        queueCreateInfos[queueCreateInfoCount++].queueFamilyIndex = queueFamilyIndex_presentation;
+    <span class="kw">if</span> (queueFamilyIndex_compute != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp;
+        queueFamilyIndex_compute != queueFamilyIndex_graphics &amp;&amp;
+        queueFamilyIndex_compute != queueFamilyIndex_presentation)
+        queueCreateInfos[queueCreateInfoCount++].queueFamilyIndex = queueFamilyIndex_compute;
+    <span class="cmt">/*待后续填充*/</span>
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            因为优先级如何影响队列是实现特定的，出于保险，我对优先级一概使用了1.f。
+        </p>
+    </li>
+    <li>
+        <p>
+            显然，以上代码说明创建信息的个数由所需队列的个数决定。
+        </p>
+    </li>
+</ul>
+<p>
+    接着用<a href="https://renderdoc.org/vkspec_chunked/chap41.html#vkGetPhysicalDeviceFeatures">vkGetPhysicalDeviceFeatures</a>(...)获取物理设备特性：
+</p>
+<pre class="code">
+<span class="type">VkPhysicalDeviceFeatures</span> physicalDeviceFeatures;
+<span class="fn">vkGetPhysicalDeviceFeatures</span>(physicalDevice, &amp;physicalDeviceFeatures);
+</pre>
+<ul>
+    <li>
+        <p>
+            这里获取到的是Vulkan1.0的特性，若要使用新版本特性，见//TODO Ch6-0。
+        </p>
+    </li>
+</ul>
+<p>
+    填写<a href="https://renderdoc.org/vkspec_chunked/chap5.html#VkDeviceCreateInfo">VkDeviceCreateInfo</a>：
+</p>
+<pre class="code">
+<span class="type">VkDeviceCreateInfo</span> deviceCreateInfo = {
+    .sType = <span class="enum">VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO</span>,
+    .pNext = pNext,
+    .flags = flags,
+    .queueCreateInfoCount = queueCreateInfoCount,
+    .pQueueCreateInfos = queueCreateInfos,
+    .enabledExtensionCount = <span class="type">uint32_t</span>(deviceExtensions.<span class="fn">size</span>()),
+    .ppEnabledExtensionNames = deviceExtensions.<span class="fn">data</span>(),
+    .pEnabledFeatures = &amp;physicalDeviceFeatures
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            这里不修改获取到的物理设备特性列表，即开启所有能开的特性，这并不会减慢程序初始化速度或在实时渲染中产生额外负担。
+        </p>
+    </li>
+</ul>
+<p>
+    接着调用<a href="https://renderdoc.org/vkspec_chunked/chap5.html#vkCreateDevice">vkCreateDevice</a>(...)来创建逻辑设备：
+</p>
+<pre class="code">
+<span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkCreateDevice</span>(physicalDevice, &amp;deviceCreateInfo, <span class="kw">nullptr</span>, &amp;device)) {
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a vulkan logical device!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+    <span class="kw">return</span> result;
+}
+</pre>
+<p>
+    接着用<a href="https://renderdoc.org/vkspec_chunked/chap5.html#vkGetDeviceQueue">vkGetDeviceQueue</a>(...)取得队列：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="macro">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap5.html#vkGetDeviceQueue">vkGetDeviceQueue</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> queueFamilyIndex</p></td>
+            <td><p>队列族索引</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> queueIndex</p></td>
+            <td><p>所需获取的队列在其所属队列族中的索引</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkQueue</span>* pQueue</p></td>
+            <td><p>所接收队列的handle被写入*pQueue</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    由于之前在填写队列的创建信息时，指定了每个队列族中只创建一个队列，所以获取队列时，参数queueIndex为0：
+</p>
+<pre class="code">
+<span class="kw">if</span> (queueFamilyIndex_graphics != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
+    <span class="fn">vkGetDeviceQueue</span>(device, queueFamilyIndex_graphics, 0, &amp;queue_graphics);
+<span class="kw">if</span> (queueFamilyIndex_presentation != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
+    <span class="fn">vkGetDeviceQueue</span>(device, queueFamilyIndex_presentation, 0, &amp;queue_presentation);
+<span class="kw">if</span> (queueFamilyIndex_compute != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
+    <span class="fn">vkGetDeviceQueue</span>(device, queueFamilyIndex_compute, 0, &amp;queue_compute);
+</pre>
+<ul>
+    <li>
+        <p>
+            很显然，如果之前所取得的队列族索引<span class="var">queueFamilyIndex_graphics</span>、<span class="var">queueFamilyIndex_presentation</span>、<span class="var">queueFamilyIndex_compute</span>中有相同的，那么这里获取到的各个队列中也会有相同的。
+        </p>
+    </li>
+</ul>
+<p>
+    成功创建逻辑设备后，已没有必要变更物理设备，于是用<a href="https://renderdoc.org/vkspec_chunked/chap5.html#vkGetPhysicalDeviceProperties">vkGetPhysicalDeviceProperties</a>(...)获取物理设备属性，用<a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkGetPhysicalDeviceMemoryProperties">vkGetPhysicalDeviceMemoryProperties</a>(...)获取物理设备内存属性，整个<span class="type">graphicsBase</span>::<span class="fn">CreateLogicalDevice</span>()函数如下：
+</p>
+<pre class="code">
+<span class="type">VkResult</span> <span class="fn">CreateLogicalDevice</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkDeviceCreateFlags</span> flags = 0) {
+    <span class="kw">float</span> queuePriority = 1.f;
+    <span class="type">VkDeviceQueueCreateInfo</span> queueCreateInfos[3] = {
+        {
+            .sType = <span class="enum">VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO</span>,
+            .queueCount = 1,
+            .pQueuePriorities = &amp;queuePriority },
+        {
+            .sType = <span class="enum">VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO</span>,
+            .queueCount = 1,
+            .pQueuePriorities = &amp;queuePriority },
+        {
+            .sType = <span class="enum">VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO</span>,
+            .queueCount = 1,
+            .pQueuePriorities = &amp;queuePriority } };
+    <span class="type">uint32_t</span> queueCreateInfoCount = 0;
+    <span class="kw">if</span> (queueFamilyIndex_graphics != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
+        queueCreateInfos[queueCreateInfoCount++].queueFamilyIndex = queueFamilyIndex_graphics;
+    <span class="kw">if</span> (queueFamilyIndex_presentation != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp;
+        queueFamilyIndex_presentation != queueFamilyIndex_graphics)
+        queueCreateInfos[queueCreateInfoCount++].queueFamilyIndex = queueFamilyIndex_presentation;
+    <span class="kw">if</span> (queueFamilyIndex_compute != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp;
+        queueFamilyIndex_compute != queueFamilyIndex_graphics &amp;&amp;
+        queueFamilyIndex_compute != queueFamilyIndex_presentation)
+        queueCreateInfos[queueCreateInfoCount++].queueFamilyIndex = queueFamilyIndex_compute;
+    <span class="type">VkPhysicalDeviceFeatures</span> physicalDeviceFeatures;
+    <span class="fn">vkGetPhysicalDeviceFeatures</span>(physicalDevice, &amp;physicalDeviceFeatures);
+    <span class="type">VkDeviceCreateInfo</span> deviceCreateInfo = {
+        .sType = <span class="enum">VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO</span>,
+        .pNext = pNext,
+        .flags = flags,
+        .queueCreateInfoCount = queueCreateInfoCount,
+        .pQueueCreateInfos = queueCreateInfos,
+        .enabledExtensionCount = <span class="type">uint32_t</span>(deviceExtensions.<span class="fn">size</span>()),
+        .ppEnabledExtensionNames = deviceExtensions.<span class="fn">data</span>(),
+        .pEnabledFeatures = &amp;physicalDeviceFeatures
+    };
+    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkCreateDevice</span>(physicalDevice, &amp;deviceCreateInfo, <span class="kw">nullptr</span>, &amp;device)) {
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a vulkan logical device!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="kw">if</span> (queueFamilyIndex_graphics != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
+        <span class="fn">vkGetDeviceQueue</span>(device, queueFamilyIndex_graphics, 0, &amp;queue_graphics);
+    <span class="kw">if</span> (queueFamilyIndex_presentation != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
+        <span class="fn">vkGetDeviceQueue</span>(device, queueFamilyIndex_presentation, 0, &amp;queue_presentation);
+    <span class="kw">if</span> (queueFamilyIndex_compute != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
+        <span class="fn">vkGetDeviceQueue</span>(device, queueFamilyIndex_compute, 0, &amp;queue_compute);
+    <span class="fn">vkGetPhysicalDeviceProperties</span>(physicalDevice, &amp;physicalDeviceProperties);
+    <span class="fn">vkGetPhysicalDeviceMemoryProperties</span>(physicalDevice, &amp;physicalDeviceMemoryProperties);
+    <span class="cmt">//输出所用的物理设备名称</span>
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;Renderer: {}\n&quot;</span>, physicalDeviceProperties.deviceName);
+    <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
+}
+</pre>
+    <ul>
+    <li>
+        <p>
+            <span class="var">physicalDeviceProperties.deviceName</span>是物理设备的名称，这里将物理设备名称输出到控制台，以便之后测试。
+        </p>
+    </li>
+</ul></section>
+<section id="id10">
+<h2>汇总并测试<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h2>
+<p>
+    在<span class="fn">InitializeWindow</span>(...)中按顺序调用本节中填充的函数：
+</p>
+<pre class="code">
+<span class="kw">bool</span> <span class="fn">InitializeWindow</span>(<span class="type">VkExtent2D</span> size, <span class="kw">bool</span> fullScreen = <span class="kw">false</span>, <span class="kw">bool</span> isResizable = <span class="kw">true</span>, <span class="kw">bool</span> limitFrameRate = <span class="kw">true</span>) {
+    <span class="cmt">//using命名空间</span>
+    <span class="kw">using namespace</span> vulkan;
+
+    <span class="kw">if</span> (!<span class="fn">glfwInit</span>()) {
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ] ERROR\nFailed to initialize GLFW!\n&quot;</span>);
+        <span class="kw">return false</span>;
+    }
+    <span class="fn">glfwWindowHint</span>(<span class="mcr">GLFW_CLIENT_API</span>, <span class="mcr">GLFW_NO_API</span>);
+    <span class="fn">glfwWindowHint</span>(<span class="mcr">GLFW_RESIZABLE</span>, isResizable);
+    pMonitor = <span class="fn">glfwGetPrimaryMonitor</span>();
+    <span class="kw">const</span> <span class="type">GLFWvidmode</span>* pMode = <span class="fn">glfwGetVideoMode</span>(pMonitor);
+    pWindow = fullScreen ?
+        <span class="fn">glfwCreateWindow</span>(size.width, size.height, windowTitle, pMonitor, <span class="kw">nullptr</span>) :
+        <span class="fn">glfwCreateWindow</span>(size.width, size.height, windowTitle, <span class="kw">nullptr</span>, <span class="kw">nullptr</span>);
+    <span class="kw">if</span> (!pWindow) {
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ]\nFailed to create a glfw window!\n&quot;</span>);
+        <span class="fn">glfwTerminate</span>();
+        <span class="kw">return false</span>;
+    }
+
+    <span class="cmt">//本节新增--------------------------------</span>
+<span class="pragma">#ifdef</span> <span class="mcr">_WIN32</span>
+    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushInstanceExtension</span>(<span class="str">&quot;VK_KHR_surface&quot;</span>);
+    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushInstanceExtension</span>(<span class="str">&quot;VK_KHR_win32_surface&quot;</span>);
+<span class="pragma">#else</span>
+    <span class="type">uint32_t</span> extensionCount = 0;
+    <span class="kw">const char</span>** extensionNames;
+    extensionNames = <span class="type">glfwGetRequiredInstanceExtensions</span>(&amp;extensionCount);
+    <span class="kw">if</span> (!extensionNames) {
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ]\nVulkan is not available on this machine!\n&quot;</span>);
+        <span class="fn">glfwTerminate</span>();
+        <span class="kw">return false</span>;
+    }
+    <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; extensionCount; i++)
+        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushInstanceExtension</span>(extensionNames[i]);
+<span class="pragma">#endif</span>
+    <span class="cmt">//在创建window surface前创建Vulkan实例</span>
+    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">UseLatestApiVersion</span>()
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">CreateInstance</span>())
+        <span class="kw">return false</span>;
+
+    <span class="cmt">//创建window surface</span>
+    <span class="type">VkSurfaceKHR</span> surface = <span class="mcr">VK_NULL_HANDLE</span>;
+    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">glfwCreateWindowSurface</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Instance</span>(), pWindow, <span class="kw">nullptr</span>, &amp;surface)) {
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ] ERROR\nFailed to create a window surface!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="fn">glfwTerminate</span>();
+        <span class="kw">return false</span>;
+    }
+    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Surface</span>(surface);
+
+    <span class="cmt">//通过用||操作符短路执行来省去几行</span>
+    <span class="kw">if</span> (<span class="cmt">//获取物理设备，并使用列表中的第一个物理设备，这里不考虑以下任意函数失败后更换物理设备的情况</span>
+        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">GetPhysicalDevices</span>() ||
+        <span class="cmt">//一个true一个false，暂时不需要计算用的队列</span>
+        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">DeterminePhysicalDevice</span>(0, <span class="kw">true</span>, <span class="kw">false</span>) ||
+        <span class="cmt">//创建逻辑设备</span>
+        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">CreateLogicalDevice</span>())
+        <span class="kw">return false</span>;
+    <span class="cmt">//----------------------------------------</span>
+
+    <span class="cmt">/*待Ch1-4填充*/</span>
+    <span class="kw">return true</span>;
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            显然，因为<span class="enum">VK_SUCCESS</span>为0，对多个返回<span class="type">VkResult</span>的函数表达式做逻辑或意味着需要一路执行这堆表达式，尽管不够直观，（因为个人比较喜欢）这种利用短路执行的写法在本套教程中还会出现很多次。
+        </p>
+    </li>
+</ul>
+<p>
+    主函数中不做改变，执行程序，如果控制台中成功输出了物理设备名称且没有错误信息，那么便是一切正常。
+</p></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html" class="btn btn-neutral float-left" title="Ch1-2 初始化流程" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html" class="btn btn-neutral float-right" title="Ch1-4 创建交换链" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

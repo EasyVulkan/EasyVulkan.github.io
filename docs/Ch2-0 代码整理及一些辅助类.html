@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch2-0 代码整理及一些辅助类 &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ch2-1 Rendering Loop" href="Ch2-1%20Rendering%20Loop.html" />
+    <link rel="prev" title="Ch1-4 创建交换链" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch2-0 代码整理及一些辅助类</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">辅助类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#result-t">result_t</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#arrayparameter">arrayParameter</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">实用的宏</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#enable-debug-messenger">ENABLE_DEBUG_MESSENGER</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vulkan">封装Vulkan对象用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#executeonce">ExecuteOnce(...)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">错误信息的输出位置</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch2-0 代码整理及一些辅助类</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch2-0">
+<h1>Ch2-0 代码整理及一些辅助类<a class="headerlink" href="#ch2-0" title="Permalink to this heading"></a></h1>
+<p>
+    从下一节开始，就将逐步对各种Vulkan对象进行封装，在这一节定义一些会让书写代码变得方便的宏及辅助类。
+    <br>
+    此外，在事情变得更复杂之前，有必要说明一下这套教程中所用的错误处理策略。
+</p><section id="id1">
+<h2>辅助类<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<section id="result-t">
+<h3>result_t<a class="headerlink" href="#result-t" title="Permalink to this heading"></a></h3>
+<p>
+    当程序出现问题时，理应让它抛出异常以停止运行，并且不光是在Debug Build下需要如此，因此<span class="mcr">assert</span>(...)不作考虑。
+    <br>
+    那么，有没有什么办法可以让函数执行失败时总是抛出异常，或者如果你想处理错误的话（尽管很多错误一旦发生便很可能无法处理），总是提醒你处理错误？这当然是可行的，通过使用一个可从<span class="type">VkResult</span>构造的自定义类型即可实现，我将其称为<span class="type">result_t</span>：
+</p>
+<pre class="code">
+<span class="cmt">//情况1：根据函数返回值确定是否抛异常</span>
+<span class="pragma">#ifdef</span> <span class="mcr">VK_RESULT_THROW</span>
+<span class="kw">class</span> <span class="type">result_t</span> {
+    <span class="type">VkResult</span> result;
+<span class="kw">public</span>:
+    <span class="kw">static</span> <span class="kw">void</span>(*callback_throw)(<span class="type">VkResult</span>);
+    <span class="fn">result_t</span>(<span class="type">VkResult</span> result) :result(result) {}
+    <span class="fn">result_t</span>(<span class="type">result_t</span>&amp;&amp; other) <span class="kw">noexcept</span> :result(other.result) { other.result = <span class="enum">VK_SUCCESS</span>; }
+    ~<span class="fn">result_t</span>() <span class="kw">noexcept</span>(<span class="kw">false</span>) {
+        <span class="kw">if</span> (<span class="type">uint32_t</span>(result) < <span class="enum">VK_RESULT_MAX_ENUM</span>)
+            <span class="kw">return</span>;
+        <span class="kw">if</span> (callback_throw)
+            callback_throw(result);
+        <span class="kw">throw</span> result;
+    }
+    <span class="kw">operator</span> <span class="type">VkResult</span>() {
+        <span class="type">VkResult</span> result = <span class="kw">this</span>->result;
+        <span class="kw">this</span>->result = <span class="enum">VK_SUCCESS</span>;
+        <span class="kw">return</span> result;
+    }
+};
+<span class="kw">inline</span> <span class="kw">void</span>(*<span class="type">result_t</span>::callback_throw)(<span class="type">VkResult</span>);
+
+<span class="cmt">//情况2：若抛弃函数返回值，让编译器发出警告</span>
+<span class="pragma">#elif defined</span> <span class="mcr">VK_RESULT_NODISCARD</span>
+<span class="kw">struct</span> [[nodiscard]] <span class="type">result_t</span> {
+    <span class="type">VkResult</span> result;
+    <span class="fn">result_t</span>(<span class="type">VkResult</span> result) :result(result) {}
+    <span class="kw">operator</span> <span class="type">VkResult</span>() <span class="kw">const</span> { <span class="kw">return</span> result; }
+};
+<span class="cmt">//在本文件中关闭弃值提醒（因为我懒得做处理）</span>
+<span class="pragma">#pragma warning</span>(disable:4834)
+<span class="pragma">#pragma warning</span>(disable:6031)
+
+<span class="cmt">//情况3：啥都不干</span>
+<span class="pragma">#else</span>
+<span class="kw">using</span> <span class="type">result_t</span> = <span class="type">VkResult</span>;
+<span class="pragma">#endif</span>
+</pre>
+<p>
+    <span class="mcr">VK_RESULT_NODISCARD</span>分支中的<span class="type">result_t</span>没什么好说的，简要说明下<span class="mcr">VK_RESULT_THROW</span>分支中的<span class="type">result_t</span>：
+</p>
+<ul>
+    <li>
+        <p>
+            <span class="var">callback_throw</span>是回调函数的指针，因为光是抛出异常可能不够，你可能想在抛出异常前干某些事，比如输出错误代码（不过光有错误代码难以知道问题出在哪，这一点会在本节的后文中得到解决）。
+        </p>
+    </li>
+    <li>
+        <p>
+            当一个<span class="type">result_t</span>中的<span class="var">result</span>被处理时，由于<span class="type">result_t</span>无法被直接转到<span class="kw">bool</span>或整型，必定会执行<span class="kw">operator</span> <span class="type">VkResult</span>()，该函数返回原先保有的<span class="var">result</span>，并将<span class="var">result</span>置为<span class="enum">VK_SUCCESS</span>，这意味着，若一个<span class="type">result_t</span>类型对象在析构时仍旧保有一个错误代码，那么说明错误没有得到任何处理，抛出异常。
+        </p>
+    </li>
+</ul>
+<p>
+    之后将目前为止写过的函数的返回值类型从<span class="type">VkResult</span>改为<span class="type">result_t</span>即可。
+</p></section>
+<section id="arrayparameter">
+<h3>arrayParameter<a class="headerlink" href="#arrayparameter" title="Permalink to this heading"></a></h3>
+<p>
+    一些Vulkan创建信息或函数会要求提供一个指向某类型数组的指针和数组元素个数，比如：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkFreeCommandBuffers">vkFreeCommandBuffers</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkCommandPool</span> commandPool</p></td>
+            <td><p>命令池的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> commandBufferCount</p></td>
+            <td><p>要被释放的命令缓冲区的个数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkCommandBuffer</span>* pCommandBuffers</p></td>
+            <td><p>指向要被释放的命令缓冲区构成的数组</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    如果将<a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkFreeCommandBuffers">vkFreeCommandBuffers</a>(...)封装在commandPool类型的成员函数中，那么可能会是这样：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">commandPool</span> {
+    <span class="type">VkCommandPool</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
+<span class="kw">public</span>:
+    <span class="cmt">//省略其他函数</span>
+    <span class="kw">void</span> <span class="fn">FreeBuffers</span>(<span class="type">uint32_t</span> commandBufferCount, <span class="kw">const</span> <span class="type">VkCommandBuffer</span>* pCommandBuffers) <span class="kw">const</span> {
+        <span class="fn">vkFreeCommandBuffers</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle, commandBufferCount, pCommandBuffers);
+        <span class="fn">memset</span>(pCommandBuffers, 0, commandBufferCount * <span class="kw">sizeof</span>(<span class="type">VkCommandPool</span>));
+    }
+};
+</pre>
+<p>
+    这里的问题在于，即便你只要释放一个命令缓冲区，你也不得不对其取地址并将<span class="var">commandBufferCount</span>指定为1。
+    <br>
+    编程中常用的一种技巧是，把一系列相关参数放到一个类或结构体中，并为其提供多种构造器，这样就能以多种方式指定这些参数。
+    <br>
+    于是，引入我的<span class="type">arrayParameter</span>类：
+</p>
+<pre class="code">
+<span class="kw">template</span>&lt;<span class="kw">typename</span> <span class="type">T</span>&gt;
+<span class="kw">class</span> arrayParameter {
+    <span class="type">T</span>* pArray = <span class="kw">nullptr</span>;
+    <span class="type">size_t</span> count = 0;
+<span class="kw">public</span>:
+    <span class="cmt">//从空参数构造，count为0</span>
+    <span class="fn">arrayParameter</span>() = <span class="kw">default</span>;
+    <span class="cmt">//从单个对象构造，count为1</span>
+    <span class="fn">arrayParameter</span>(<span class="type">T</span>&amp; data) :pArray(&amp;data), count(1) {}
+    <span class="cmt">//从顶级数组构造</span>
+    <span class="kw">template</span>&lt;<span class="type">size_t</span> elementCount&gt;
+    <span class="fn">arrayParameter</span>(<span class="type">T</span>(&amp;data)[elementCount]) : pArray(data), count(elementCount) {}
+    <span class="cmt">//从指针和元素个数构造</span>
+    <span class="fn">arrayParameter</span>(<span class="type">T</span>* pData, <span class="type">size_t</span> elementCount) :pArray(pData), count(elementCount) {}
+    <span class="cmt">//Getter</span>
+    <span class="type">T</span>* <span class="fn">Pointer</span>() <span class="kw">const</span> { <span class="kw">return</span> pArray; }
+    <span class="type">size_t</span> <span class="fn">Count</span>() <span class="kw">const</span> { <span class="kw">return</span> count; }
+    <span class="cmt">//Const Function</span>
+    <span class="type">T</span>&amp; <span class="kw">operator</span>[](<span class="type">size_t</span> index) <span class="kw">const</span> { <span class="kw">return</span> pArray[index]; }
+    <span class="type">T</span>* <span class="fn">begin</span>() <span class="kw">const</span> { <span class="kw">return</span> pArray; }
+    <span class="type">T</span>* <span class="fn">end</span>() <span class="kw">const</span> { <span class="kw">return</span> pArray + count; }
+};
+</pre>
+<div class="admonition note">
+    <p class="admonition-title">Note</p>
+    <p>
+        C++标准库中提供了std::<span class="type">span</span>类型，这东西可以从数组构造，具有与我的<span class="type">arrayParameter</span>类相似的功能，但是不支持从单个对象构造。
+    </p>
+</div></section>
+</section>
+<section id="id2">
+<h2>实用的宏<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<section id="enable-debug-messenger">
+<h3>ENABLE_DEBUG_MESSENGER<a class="headerlink" href="#enable-debug-messenger" title="Permalink to this heading"></a></h3>
+<p>
+    这个宏的目的纯粹是为了把预编译指令<code><span class="pragma">#ifdef</span></code>的分支改成常量表达式if语句<code><span class="kw">if constexpr</span></code>分支。
+    <br>
+    这么做使得代码会被编译器诊断，并且在Visual Studio中总是维持正常的代码着色：
+</p>
+<pre class="code">
+<span class="pragma">#ifndef</span> <span class="mcr">NDEBUG</span>
+<span class="pragma">#define</span> <span class="mcr">ENABLE_DEBUG_MESSENGER</span> <span class="kw">true</span>
+<span class="pragma">#else</span>
+<span class="pragma">#define</span> <span class="mcr">ENABLE_DEBUG_MESSENGER</span> <span class="kw">false</span>
+<span class="pragma">#endif</span>
+</pre>
+<p>
+    于是之前的vulkan::<span class="type">graphicsBase</span>::<span class="fn">CreateInstance</span>(...)变成这样：
+</p>
+<pre class="code">
+<span class="type">result_t</span> <span class="fn">CreateInstance</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkInstanceCreateFlags</span> flags = 0) {
+    <span class="kw">if constexpr</span> (<span class="mcr">ENABLE_DEBUG_MESSENGER</span>) {
+        <span class="kw">static constexpr const char</span>* validationLayerName = <span class="str">&quot;VK_LAYER_KHRONOS_validation&quot;</span>;
+        <span class="kw">static constexpr const char</span>* debugUtilsExtensionName = <span class="mcr">VK_EXT_DEBUG_UTILS_EXTENSION_NAME</span>;
+        <span class="kw">if</span> (instanceLayers.<span class="fn">size</span>() &amp;&amp; instanceLayers.<span class="fn">back</span>() != validationLayerName)
+            instanceLayers.<span class="fn">push_back</span>(validationLayerName);
+        <span class="kw">if</span> (instanceExtensions.<span class="fn">size</span>() &amp;&amp; instanceExtensions.<span class="fn">back</span>() != validationLayerName)
+            instanceExtensions.<span class="fn">push_back</span>(debugUtilsExtensionName);
+    }
+    <span class="type">VkApplicationInfo</span> applicatianInfo = {
+        .sType = <span class="enum">VK_STRUCTURE_TYPE_APPLICATION_INFO</span>,
+        .apiVersion = apiVersion
+    };
+    <span class="type">VkInstanceCreateInfo</span> instanceCreateInfo = {
+        .sType = <span class="enum">VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO</span>,
+        .pNext = pNext,
+        .flags = flags,
+        .pApplicationInfo = &amp;applicatianInfo,
+        .enabledLayerCount = <span class="type">uint32_t</span>(instanceLayers.<span class="fn">size</span>()),
+        .ppEnabledLayerNames = instanceLayers.data(),
+        .enabledExtensionCount = <span class="type">uint32_t</span>(instanceExtensions.<span class="fn">size</span>()),
+        .ppEnabledExtensionNames = instanceExtensions.<span class="fn">data</span>()
+    };
+    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkCreateInstance</span>(&amp;instanceCreateInfo, <span class="kw">nullptr</span>, &amp;instance)) {
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a vulkan instance!\nError code: {}\n&quot;</span>, <span  class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    std::cout &lt;&lt; <span class="fn">format</span>(
+        <span class="str">&quot;Vulkan API Version: {}.{}.{}\n&quot;</span>,
+        <span class="mcr">VK_VERSION_MAJOR</span>(apiVersion),
+        <span class="mcr">VK_VERSION_MINOR</span>(apiVersion),
+        <span class="mcr">VK_VERSION_PATCH</span>(apiVersion));
+    <span class="kw">if constexpr</span> (<span class="mcr">ENABLE_DEBUG_MESSENGER</span>)
+        <span class="fn">CreateDebugMessenger</span>();
+    <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
+}
+</pre></section>
+<section id="vulkan">
+<h3>封装Vulkan对象用<a class="headerlink" href="#vulkan" title="Permalink to this heading"></a></h3>
+<p>
+    用于析构器中销毁Vulkan对象的宏，该宏调用相应Destroy函数后将handle设置为<span class="mcr">VK_NULL_HANDLE</span>，以防止重复析构：
+</p>
+<pre class="code">
+<span class="pragma">#define</span> <span class="mcr">DestroyHandleBy</span>(Func) <span class="kw">if</span> (handle) { Func(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle, <span class="kw">nullptr</span>); handle = <span class="mcr">VK_NULL_HANDLE</span>; }
+</pre>
+<ul>
+    <li>
+        <p>
+            这里的<span class="kw">nullptr</span>对应的参数是pAllocator。
+        </p>
+    </li>
+</ul>
+<p>
+    用于移动构造器中的宏，该宏复制来自另一对象的handle后，将另一对象的handle设置为<span class="mcr">VK_NULL_HANDLE</span>，转移析构权限：
+</p>
+<pre class="code">
+<span class="pragma">#define</span> <span class="mcr">MoveHandle</span> handle = other.handle; other.handle = <span class="mcr">VK_NULL_HANDLE</span>;
+</pre>
+<ul>
+    <li>
+        <p>
+            如之前在<a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html#id1">单例类</a>所说，定义移动构造器后若不定义复制构造器、复制赋值、移动赋值，那么这三个函数一概不可用，你不应该在封装Vulkan对象的类中定义复制构造/赋值（因为重复析构会导致重复销毁同一Vulkan对象最终导致非法访问），但是移动赋值函数可能在一些场合下有用，本教程后续的示例代码中没有写任何移动赋值函数，有需要请自行添加：
+            <br>
+            <code><span class="pragma">#define</span> <span class="mcr">DefineMoveAssignmentOperator</span>(type) type&amp; <span class="kw">operator</span>=(type&amp;&amp; other) { <span class="kw">this</span>->~type(); <span class="mcr">MoveHandle</span>; <span class="kw">return</span> *<span class="kw">this</span>; }</code>
+        </p>
+    </li>
+</ul>
+<p>
+    该宏定义转换函数，通过返回handle将封装类型对象隐式转换到被封装handle的原始类型：
+</p>
+<pre class="code">
+<span class="pragma">#define</span> <span class="mcr">DefineHandleTypeOperator</span> <span class="kw">operator decltype</span>(handle)() <span class="kw">const</span> { <span class="kw">return</span> handle; }
+</pre>
+<ul>
+    <li>
+        <p>
+            别把<code><span class="kw">operator decltype</span>(handle)</span></code>写成<code><span class="kw">operator auto</span></code>（除非你是对继承深恶痛绝的的程序员），到占位类型的类型转换函数不能在子类中被<span class="kw">using</span>重设其访问级别。
+        </p>
+    </li>
+</ul>
+<p>
+    该宏定义转换函数，用于取得被封装handle的地址：
+</p>
+<pre class="code">
+<span class="pragma">#define</span> <span class="mcr">DefineAddressFunction</span> <span class="kw">const decltype</span>(handle)* <span class="fn">Address</span>() <span class="kw">const</span> { <span class="kw">return</span> &handle; }
+</pre>
+<ul>
+    <li>
+        <p>
+            你可以把<code><span class="kw">const decltype</span>(handle)*</code>简化成<code><span class="kw">auto</span></code>
+        </p>
+    </li>
+</ul></section>
+<section id="executeonce">
+<h3>ExecuteOnce(...)<a class="headerlink" href="#executeonce" title="Permalink to this heading"></a></h3>
+<p>
+    这个宏用来把函数分割成能被多次执行，以及只执行一次的两个部分：
+</p>
+<pre class="code">
+<span class="pragma">#define</span> <span class="mcr">ExecuteOnce</span>(...) { <span class="kw">static bool</span> executed = <span class="kw">false</span>; <span class="kw">if</span> (executed) <span class="kw">return</span> __VA_ARGS__; executed = <span class="kw">true</span>; }
+</pre>
+<p>
+    于是，这个宏能如同函数般被使用，在其之上的部分可以被多次执行，在其之下的部分只会被执行一次，如果在其之下的部分已经执行过了，那么就直接返回。
+    <br>
+    //TODO 用例
+</p></section>
+</section>
+<section id="id3">
+<h2>错误信息的输出位置<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<p>
+    之前一直将错误信息直接输出到<span class="var">std::cout</span>，现在定义<span class="var">outStream</span>：
+</p>
+<pre class="code">
+<span class="kw">inline auto</span>&amp; outStream = std::cout;<span class="cmt">//不是constexpr，因为std::cout具有外部链接</span>
+</pre>
+<p>
+    然后将目前为止写的<span class="var">std::cout</span>全部变更为<span class="var">outStream</span>。
+</p>
+<p>
+    效果上跟原先也没啥差别嘛，那么这么做意义何在？重点不在把<span class="var">outStream</span>定义为<span class="var">std::cout</span>，将<span class="var">std::cout</span>替换成<span class="var">outStream</span>方便你把错误信息输出到自定义的位置，毕竟程序可能没有控制台（如果你不想要的话），在Windows系统上你可能会想把错误信息输出到信息弹窗，比如，将<span class="var">outStream</span>定义为如下形式：
+</p>
+<pre class="code">
+<span class="kw">constexpr struct</span> <span class="type">outStream_t</span> {
+    <span class="kw">static</span> std::<span class="type">stringstream</span> ss;
+    <span class="kw">struct</span> <span class="type">returnedStream_t</span> {
+        <span class="type">returnedStream_t</span> <span class="kw">operator</span>&lt;&lt;(<span class="kw">const</span> std::<span class="type">string</span>&amp; string) <span class="kw">const</span> {
+            ss &lt;&lt; string;
+            <span class="kw">return</span> {};
+        }
+    };
+    <span class="type">returnedStream_t</span> <span class="kw">operator</span>&lt;&lt;(<span class="kw">const</span> std::<span class="type">string</span>&amp; string) <span class="kw">const</span> {
+        ss.<span class="fn">clear</span>();
+        ss &lt;&lt; string;
+        <span class="kw">return</span> {};
+    }
+} outStream;
+<span class="kw">inline </span> std::<span class="type">stringstream</span> <span class="type">outStream_t</span>::ss;
+</pre>
+<p>
+    前面定义了用于抛出异常的<span class="type">result_t</span>，如果在主函数中指定它里头的回调函数：
+</p>
+<pre class="code">
+<span class="cmt">//需要windows.h和Win32窗口，hWindow是窗口的handle</span>
+<span class="type">result_t</span>::callback_throw = [](<span class="type">VkResult</span>) {
+    <span class="type">MessageBoxA</span>(hWindow, outStream.ss.<span class="fn">str</span>().<span class="fn">c_str</span>(), <span class="kw">nullptr</span>, <span class="mcr">MB_OK</span>);
+};
+</pre>
+<p>
+    这么一来，每次发生未被处理的异常时，都会有信息弹窗显示书写在代码中的错误信息了。
+</p></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html" class="btn btn-neutral float-left" title="Ch1-4 创建交换链" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch2-1%20Rendering%20Loop.html" class="btn btn-neutral float-right" title="Ch2-1 Rendering Loop" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

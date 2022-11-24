@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch4-2 顶点着色器 &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ch4-3 片段着色器" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html" />
+    <link rel="prev" title="Ch4-1 着色器模组" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch4-2 顶点着色器</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">顶点着色器的内置输入</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">顶点着色器的内置输出</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#gl-position">gl_Position</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gl-clipdistancegl-culldistance">gl_ClipDistance和gl_CullDistance</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch4-2 顶点着色器</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch4-2">
+<h1>Ch4-2 顶点着色器<a class="headerlink" href="#ch4-2" title="Permalink to this heading"></a></h1>
+<p>
+    顶点着色器（vertex shader）是图形管线中的一个着色器，用于处理和生成顶点。若非Task/Mesh管线，那么顶点着色器是图形管线中最初执行的着色器。
+    <br>
+    顶点着色器对每个顶点执行一次。
+</p><section id="id1">
+<h2>顶点着色器的内置输入<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>
+    用GLSL编写的顶点着色器有以下内置输入：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p>全局变量</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="kw">int</span> gl_VertexIndex</p></td>
+            <td><p>表示当前顶点的索引</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">int</span> gl_InstanceIndex</p></td>
+            <td><p>表示当前实例的索引</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">int</span> gl_DrawID</p></td>
+            <td><p>在多重绘制或间接绘制命令中，表示当前绘制的索引</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">int</span> gl_BaseVertex</p></td>
+            <td><p>表示本次绘制中的起始顶点索引</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">int</span> gl_BaseInstance</p></td>
+            <td><p>表示本次绘制中的起始实例索引</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    对于非索引绘制命令，比如<a href="https://renderdoc.org/vkspec_chunked/chap21.html#vkCmdDraw">vkCmdDraw</a>(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance)，gl_BaseVertex值为firstVertex，gl_VertexIndex必然不小于该值，类似地，gl_BaseInstance值为firstInstance，gl_InstanceIndex必然不小于该值。
+    <br>
+    对于索引绘制命令，比如<a href="https://renderdoc.org/vkspec_chunked/chap21.html#vkCmdDrawIndexed">vkCmdDrawIndexed</a>(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance)，gl_BaseVertex值为vertexOffset，gl_VertexIndex为命令缓冲区中的与firstIndex相应的索引加上vertexOffset。
+</p>
+<p>
+    从OpenGL转来的程序员注意gl_InstanceIndex语义同gl_InstanceID不同（gl_InstanceID从0开始，不计算gl_BaseInstance）。
+    <br>
+    gl_DrawID是从OpenGL所使用的GLSL继承而来的，因此不写作gl_DrawIndex。
+</p></section>
+<section id="id2">
+<h2>顶点着色器的内置输出<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<p>
+    用GLSL编写的顶点着色器有以下内置输出：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p>预定义块gl_PerVertex 的成员</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">vec4</span> gl_Position</p></td>
+            <td><p>顶点位置</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">float</span> gl_PointSize</p></td>
+            <td><p>点的大小，适用于绘制点</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">float</span> gl_ClipDistance[]</p></td>
+            <td><p>自定义剪裁参数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">float</span> gl_CullDistance[]</p></td>
+            <td><p>自定义剔除参数</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            所有的输出都是可选的，非必须输出。
+        </p>
+    </li>
+    <li>
+        <p>
+            gl_PerVertex意味着这些输出是相对于每个顶点而言的，gl_PerVertex是没有实例名称的预定义块，意味着你不需要使用任何前缀就可以直接使用它的成员，即直接写<code>gl_Position</code>而不是写<code>gl_PerVertex.gl_Position</code>。
+        </p>
+    </li>
+</ul><section id="gl-position">
+<h3>gl_Position<a class="headerlink" href="#gl-position" title="Permalink to this heading"></a></h3>
+<p>
+    gl_Position的数值是被标准化的，即<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id4">NDC坐标</a>。
+    <br>
+    如果顶点着色器之后只有一个片段着色器或没有任何着色器（因为不输出颜色，可以只输出深度值到片段所在位置），应当输出gl_Position（考虑到连gl_Position都不必输出的情形应当是纯粹的计算和数据存储，应当用计算着色器）。
+    <br>
+    gl_Position在栅格化时发生线性插值。
+</p></section>
+<section id="gl-clipdistancegl-culldistance">
+<h3>gl_ClipDistance和gl_CullDistance<a class="headerlink" href="#gl-clipdistancegl-culldistance" title="Permalink to this heading"></a></h3>
+<p>
+    gl_ClipDistance和gl_CullDistance名称中有distance是因为：在概念上这两组数值各是到自定义剪裁平面和自定义剔除平面的距离。
+    <br>
+    对于gl_ClipDistance，剪裁平面这一概念略微繁琐，简而言之：
+    <br>
+    <strong>对于任意片段，若gl_ClipDistance数组中的任一元素数值小于0，则该片段被丢弃。</strong>
+    <br>
+    对于gl_CullDistance，数组中每个元素代表着到不同剔除平面的距离，则：
+    <br>
+    <strong>对于任意图元，若构成其图形的所有顶点皆满足到某一剔除平面的距离小于0（比如gl_CullDistance[0]都小于0），则图元被整个丢弃。</strong>
+    <br>
+    在栅格化前，根据图元中所有顶点的gl_CullDistance决定是否保留图元，
+    <br>
+    在栅格化时，gl_ClipDistance发生线性插值，根据结果决定是否保留片段。
+    <br>
+    gl_CullDistance也是片段着色器中逐片段的输入，即对于保留下来的片段，gl_CullDistance的线性插值结果会被传入片段着色器。
+</p>
+<p>
+    要使gl_ClipDistance起效，需开启硬件特性中的shaderClipDistance，gl_ClipDistance数组元素个数最大不超过硬件限制中的maxClipDistances。
+    <br>
+    要使gl_CullDistance起效，需开启硬件特性中的shaderCullDistance，gl_CullDistance数组元素个数最大不超过硬件限制中的maxCullDistances。
+    <br>
+    如果你忘了什么是硬件特性，参见<a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html#id9">创建逻辑设备</a>。
+</p>
+<p>
+    绘制三角形的三条边，令gl_ClipDistance[0]为gl_Position.x的效果如下：
+</p>
+<img alt="_images/ch4-2-1.png" src="_images/ch4-2-1.png" class="align-left">
+<p>
+    在英伟达显卡上你可能会看到中央被截断的地方也构成了一条边，那是硬件特定的行为。
+</p></section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html" class="btn btn-neutral float-left" title="Ch4-1 着色器模组" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html" class="btn btn-neutral float-right" title="Ch4-3 片段着色器" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

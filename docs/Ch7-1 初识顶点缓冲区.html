@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch7-1 初识顶点缓冲区 &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ch7-2 初识索引缓冲区" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html" />
+    <link rel="prev" title="Ch5-1 各种缓冲区" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch7-1 初识顶点缓冲区</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">使用顶点缓冲区绘制三角形的流程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">创建顶点缓冲区并指定顶点属性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#firsttriangle-vertexbuffer-vert-shader">FirstTriangle_VertexBuffer.vert.shader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#firsttriangle-vertexbuffer-frag-shader">FirstTriangle_VertexBuffer.frag.shader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">绑定顶点缓冲区</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">另一种写法</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch7-1 初识顶点缓冲区</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch7-1">
+<h1>Ch7-1 初识顶点缓冲区<a class="headerlink" href="#ch7-1" title="Permalink to this heading"></a></h1>
+<p>
+    在你成功仅用着色器绘制出一个无法变更的三角形后，是时候使用顶点缓冲区来绘制三角形了。
+</p><section id="id1">
+<h2>使用顶点缓冲区绘制三角形的流程<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>
+    在之前绘制三角形代码的基础上，使用顶点缓冲区绘制三角形需要经历以下步骤：
+    <br>
+    1.创建一个暂存缓冲区（staging buffer），具有<span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>内存属性（CPU侧可读写，但对GPU而言读取效率并非最佳）
+    <br>
+    2.映射内存区后，用<span class="fn">memcpy</span>(...)将顶点数据拷贝到暂存缓冲区
+    <br>
+    3.创建一个顶点缓冲区（vertex buffer），具有<span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>内存属性（对GPU侧读写效率最佳）
+    <br>
+    4.用<a href="https://renderdoc.org/vkspec_chunked/chap20.html#vkCmdCopyBuffer">vkCmdCopyBuffer</a>(...)将数据从暂存缓冲区拷贝到顶点缓冲区
+    <br>
+    5.创建管线时，书写顶点属性
+    <br>
+    6.书写新的顶点着色器
+    <br>
+    7.在命令缓冲区中绑定顶点缓冲区并绘制
+</p>
+<ul>
+    <li>
+        <p>
+            第1~4步请参阅<a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a>，并先完成对各种缓冲区的封装。
+        </p>
+    </li>
+    <li>
+        <p>
+            设备内存可以同时具有<span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>和<span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>内存属性，但这里不做考虑，以演示如何使用暂存缓冲区，以及写出更通用的代码。
+        </p>
+    </li>
+</ul>
+<p>
+    这一节里不光会用顶点缓冲区指定顶点的位置，也会指定各个顶点的颜色。
+</p></section>
+<section id="id2">
+<h2>创建顶点缓冲区并指定顶点属性<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<p>
+    要使得顶点缓冲区中包含位置和颜色信息，数据的摆放方式可以有两种：
+    <br>
+    1.把每个顶点的位置和颜色放一起，所有顶点数据放在单个缓冲区中。
+    <br>
+    2.把所有顶点的位置依序放在单独的缓冲区中、所有顶点的颜色依序放在单独的缓冲区中。
+</p>
+<p>
+    这里首先介绍以第一种方式书写代码，第二种方式的写法留到本节最后。
+    <br>
+    修改<a href="https://www.baidu.com/baidu?tn=monline_7_dg&ie=utf-8&wd=Ch2-3+%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2">Ch2-3 创建管线并绘制三角形</a>中的主函数，在全局范围内加入如下结构体定义：
+</p>
+<pre class="code">
+<span class="kw">struct</span> <span class="type">vertex</span> {
+    glm::<span class="type">vec2</span> position;
+    glm::<span class="type">vec4</span> color;
+};
+</pre>
+<p>
+    在主函数中，渲染循环前创建顶点缓冲区：
+</p>
+<pre class="code">
+<span class="type">vertex</span> vertices[] = {
+    { {  .0f, -.5f }, { 1, 0, 0, 1 } },<span class="cmt">//红色</span>
+    { { -.5f,  .5f }, { 0, 1, 0, 1 } },<span class="cmt">//绿色</span>
+    { {  .5f,  .5f }, { 0, 0, 1, 1 } } <span class="cmt">//蓝色</span>
+};
+<span class="type">vertexBuffer</span> vertexBuffer(<span class="kw">sizeof</span> vertices);
+vertexBuffer.<span class="fn">TransferData</span>(vertices);
+</pre>
+<p>
+    这种情况下，对应的顶点输入绑定和顶点属性应当为（代码加在<span class="type">CreatePipeline</span>()中lambda表达式<span class="var">Create</span>内）：
+</p>
+<pre class="code">
+<span class="cmt">//数据来自0号顶点缓冲区，输入频率是逐顶点输入</span>
+pipelineCiPack.vertexInputBindings.<span class="fn">emplace_back</span>(0, <span class="kw">sizeof</span>(vertex), <span class="enum">VK_VERTEX_INPUT_RATE_VERTEX</span>);
+<span class="cmt">//location为0，数据来自0号顶点缓冲区，vec2对应VK_FORMAT_R32G32_SFLOAT，用offsetof计算position在vertex中的起始位置</span>
+pipelineCiPack.vertexInputAttributes.<span class="fn">emplace_back</span>(0, 0, <span class="enum">VK_FORMAT_R32G32_SFLOAT</span>, <span class="mcr">offsetof</span>(<span class="type">vertex</span>, position));
+<span class="cmt">//location为1，数据来自0号顶点缓冲区，vec4对应VK_FORMAT_R32G32B32A32_SFLOAT，用offsetof计算color在vertex中的起始位置</span>
+pipelineCiPack.vertexInputAttributes.<span class="fn">emplace_back</span>(1, 0, <span class="enum">VK_FORMAT_R32G32B32A32_SFLOAT</span>, <span class="mcr">offsetof</span>(<span class="type">vertex</span>, color));
+</pre></section>
+<section id="firsttriangle-vertexbuffer-vert-shader">
+<h2>FirstTriangle_VertexBuffer.vert.shader<a class="headerlink" href="#firsttriangle-vertexbuffer-vert-shader" title="Permalink to this heading"></a></h2>
+<p>
+    新建<span class="path">FirstTriangle_VertexBuffer.vert.shader</span>，首先定义输入输出：
+</p>
+<pre class="code">
+<span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(fragment)
+
+<span class="kw">layout</span>(location = 0) <span class="kw">in</span> <span class="type">vec2</span> i_Position;
+<span class="kw">layout</span>(location = 1) <span class="kw">in</span> <span class="type">vec4</span> i_Color;
+<span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec4</span> o_Color;
+</pre>
+<ul>
+    <li>
+        <p>
+            需要输出颜色，然后在栅格化阶段会进行插值，构成渐变效果。
+        </p>
+    </li>
+</ul>
+<p>
+    主函数为：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">main</span>() {
+    gl_Position = <span class="type">vec4</span>(i_Position, 0, 1);
+    o_Color = i_Color;<span class="cmt">//直接输出</span>
+}
+</pre>
+<p>
+    写完后编译。
+</p></section>
+<section id="firsttriangle-vertexbuffer-frag-shader">
+<h2>FirstTriangle_VertexBuffer.frag.shader<a class="headerlink" href="#firsttriangle-vertexbuffer-frag-shader" title="Permalink to this heading"></a></h2>
+<p>
+    新建<span class="path">FirstTriangle_VertexBuffer.vert.shader</span>，将输入的颜色直接输出：
+</p>
+<pre class="code">
+<span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(fragment)
+
+<span class="kw">layout</span>(location = 0) <span class="kw">in</span> <span class="type">vec4</span> i_Color;<span class="cmt">//location要与顶点着色器中的o_Color匹配</span>
+<span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec4</span> o_Color;
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    o_Color = i_Color;
+}
+</pre>
+<p>
+    编译，然后别忘了在创建管线时更改要读取的文件。
+</p></section>
+<section id="id3">
+<h2>绑定顶点缓冲区<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<p>
+    在渲染循环中，渲染通道开始后用<a href="https://renderdoc.org/vkspec_chunked/chap22.html#vkCmdBindVertexBuffers">vkCmdBindVertexBuffers</a>(...)绑定顶点缓冲区：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap22.html#vkCmdBindVertexBuffers">vkCmdBindVertexBuffers</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandBuffer</span> commandBuffer</p></td>
+            <td><p>命令缓冲区的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> firstBinding</p></td>
+            <td><p>要绑定到的首个绑定位置</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> bindingCount</p></td>
+            <td><p>要绑定的顶点缓冲区的数量</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkBuffer</span>* pBuffers</p></td>
+            <td><p>指向<span class="type">VkBuffer</span>类型的数组，用于指定要绑定的顶点缓冲区</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkDeviceSize</span>* pOffsets</p></td>
+            <td><p>指向<span class="type">VkDeviceSize</span>类型的数组，用于指定各个顶点缓冲区中被绑定范围到顶点缓冲区开头的距离，单位是字节</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            如之前在<a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html#vkpipelinevertexinputstatecreateinfo">VkPipelineVertexInputStateCreateInfo</a>中所说，这里的绑定位置与着色器中的binding修饰符无关。
+        </p>
+    </li>
+</ul>
+<p>
+    先前创建管线时，在顶点输入绑定信息中，指定的binding为0，因此这里firstBinding为0。
+    <br>
+    于是用以下代码绑定顶点缓冲区：
+</p>
+<pre class="code">
+<span class="type">VkDeviceSize</span> offset = 0;
+<span class="fn">vkCmdBindVertexBuffers</span>(commandBuffer_graphics, 0, 1, vertexBuffer.<span class="fn">Address</span>(), &amp;offset);
+</pre>
+<p>
+    运行程序，你应该会看到以下图像：
+</p>
+<img alt="_images/ch7-1-1.png" src="_images/ch7-1-1.png"></section>
+<section id="id4">
+<h2>另一种写法<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<p>
+    于是来看看将顶点的位置数据和颜色数据放在分别的缓冲区中的话，代码会有什么不同。
+    <br>
+    以如下方式创建顶点缓冲区：
+</p>
+<pre class="code">
+glm::<span class="type">vec2</span> positions[] = {
+    {  .0f, -.5f },
+    { -.5f,  .5f },
+    {  .5f,  .5f }
+};
+glm::<span class="type">vec4</span> colors[] = {
+    { 1, 0, 0, 1 },
+    { 0, 1, 0, 1 },
+    { 0, 0, 1, 1 }
+};
+<span class="type">vertexBuffer</span> vertexBuffer_position(<span class="kw">sizeof</span> positions);
+vertexBuffer_position.<span class="fn">TransferData</span>(positions);
+<span class="type">vertexBuffer</span> vertexBuffer_color(<span class="kw">sizeof</span> colors);
+vertexBuffer_color.<span class="fn">TransferData</span>(colors);
+</pre>
+<p>
+    对应的顶点输入绑定和顶点属性应当为：
+</p>
+<pre class="code">
+pipelineCiPack.vertexInputBindings.<span class="type">emplace_back</span>(0, sizeof(glm::<span class="type">vec2</span>), <span class="enum">VK_VERTEX_INPUT_RATE_VERTEX</span>);
+pipelineCiPack.vertexInputBindings.<span class="type">emplace_back</span>(1, sizeof(glm::<span class="type">vec4</span>), <span class="enum">VK_VERTEX_INPUT_RATE_VERTEX</span>);
+pipelineCiPack.vertexInputAttributes.<span class="type">emplace_back</span>(0, 0, <span class="enum">VK_FORMAT_R32G32_SFLOAT</span>, 0);
+pipelineCiPack.vertexInputAttributes.<span class="type">emplace_back</span>(1, 1, <span class="enum">VK_FORMAT_R32G32B32A32_SFLOAT</span>, 0);
+</pre>
+<p>
+    顶点着色器不需要更改。用以下代码绑定顶点缓冲区：
+</p>
+<pre class="code">
+<span class="type">VkDeviceSize</span> offset = 0;
+<span class="fn">vkCmdBindVertexBuffers</span>(commandBuffer_graphics, 0, 1, vertexBuffer_position.<span class="fn">Address</span>(), &amp;offset);
+<span class="fn">vkCmdBindVertexBuffers</span>(commandBuffer_graphics, 1, 1, vertexBuffer_color.<span class="fn">Address</span>(), &amp;offset);
+</pre>
+<p>
+    最终运行结果应当与前文的图像一致。
+</p></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-left" title="Ch5-1 各种缓冲区" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-right" title="Ch7-2 初识索引缓冲区" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

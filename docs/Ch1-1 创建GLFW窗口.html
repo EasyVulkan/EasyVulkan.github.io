@@ -1,396 +1,559 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="chs" >
+<html class="writer-html5" lang="zh" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Ch1-1 创建GLFW窗口 &mdash; EasyVulkan</title>
-  
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/theme.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Ch1-2 创建Vk实例与逻辑设备" href="Ch1-2%20%E5%88%9B%E5%BB%BAVk%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html" />
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ch1-2 初始化流程" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html" />
     <link rel="prev" title="Ch1-0 准备工作" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="index.html" class="icon icon-home"> EasyVulkan
-          
-
-          
-            
             <img src="_static/logo1.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="在文档中搜索" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
-              <p class="caption"><span class="caption-text">第一章 从零到交换链</span></p>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Ch1-1 创建GLFW窗口</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id1">包含并链接必要的文件</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id2">创建窗口</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">试着运行一下吧！</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">在窗口标题上显示帧率</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">试着运行一下吧！</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">在全屏和窗口模式间切换</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9B%E5%BB%BAVk%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-2 创建Vk实例与逻辑设备</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-3 创建交换链</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E6%89%BF%E5%89%8D%E5%90%AF%E5%90%8E.html">Ch1-4 承前启后</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
 </ul>
-<p class="caption"><span class="caption-text">第二章 基础绘制</span></p>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93.html">Ch2-1 创建渲染通道</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20Rendering%20Loop.html">Ch2-2 Rendering Loop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%A4%A9%E5%93%AA%EF%BC%8C%E6%98%AF%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 天哪，是三角形</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch2-4%20%E5%8D%B3%E6%97%B6%E5%B8%A7%E4%B8%8E%E9%98%9F%E5%88%97%E6%97%8F%E6%89%80%E6%9C%89%E6%9D%83%E8%BD%AC%E7%A7%BB.html">Ch2-4 即时帧与队列族所有权转移</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">EasyVulkan</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-        
       <li>Ch1-1 创建GLFW窗口</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="ch1-1-glfw">
-<h1>Ch1-1 创建GLFW窗口<a class="headerlink" href="#ch1-1-glfw" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="id1">
-<h2>包含并链接必要的文件<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<div class="line-block">
-<div class="line">在一切开始之前，来创建一个用于包含各种库的头文件，名称随你喜欢，我就决定叫它 <span class="str">EasyVKStart.h</span> 。</div>
-<div class="line">然后加入以下代码：</div>
-</div>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
-<span class="c1">//C++标准库的内容</span>
-<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;sstream&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;fstream&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
-<span class="cp">#define _USE_MATH_DEFINES</span>
-<span class="cp">#include</span> <span class="cpf">&lt;math.h&gt;</span><span class="cp"></span>
+             
+  <section id="ch1-1-glfw">
+<h1>Ch1-1 创建GLFW窗口<a class="headerlink" href="#ch1-1-glfw" title="Permalink to this heading"></a></h1>
+<p>
+    本节的示例代码参见<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan/GlfwGeneral.hpp">GlfwGeneral.hpp</a>。
+    如果你倾向于直接使用WindowsAPI来创建窗口，你也可以参考示例代码中的<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan/WinGeneral.hpp">WinGeneral.hpp</a>。
+</p><section id="id1">
+<h2>包含并链接必要的文件<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>
+    在一切开始之前，来创建一个用于包含各种库的头文件，名称随你喜欢，我就决定叫它<span class="path">EasyVKStart.h</span>。
+    <br>
+    然后加入以下代码：
+</p>
+<pre class="code">
+<span class="pragma">#pragma once</span>
+<span class="cmt">//可能会用上的C++标准库</span>
+<span class="pragma">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="pragma">#include</span> <span class="str">&lt;fstream&gt;</span>
+<span class="pragma">#include</span> <span class="str">&lt;sstream&gt;</span>
+<span class="pragma">#include</span> <span class="str">&lt;vector&gt;</span>
+<span class="pragma">#include</span> <span class="str">&lt;stack&gt;</span>
+<span class="pragma">#include</span> <span class="str">&lt;map&gt;</span>
+<span class="pragma">#include</span> <span class="str">&lt;unordered_map&gt;</span>
+<span class="pragma">#include</span> <span class="str">&lt;span&gt;</span>
+<span class="pragma">#include</span> <span class="str">&lt;memory&gt;</span>
+<span class="pragma">#include</span> <span class="str">&lt;functional&gt;</span>
+<span class="pragma">#include</span> <span class="str">&lt;concepts&gt;</span>
+<span class="pragma">#include</span> <span class="str">&lt;format&gt;</span>
+<span class="pragma">#include</span> <span class="str">&lt;chrono&gt;</span>
+<span class="pragma">#include</span> <span class="str">&lt;numeric&gt;</span>
+<span class="pragma">#include</span> <span class="str">&lt;numbers&gt;</span>
 
-<span class="c1">//GLM</span>
-<span class="cp">#define  GLM_FORCE_DEPTH_ZERO_TO_ONE</span>
-<span class="cp">#include</span> <span class="cpf">&lt;glm.hpp&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;gtc/matrix_transform.hpp&gt;</span><span class="cp"></span>
+<span class="cmt">//GLM</span>
+<span class="pragma">#define</span> <span class="mcr">GLM_FORCE_DEPTH_ZERO_TO_ONE</span>
+<span class="cmt">//如果你惯用左手坐标系，在此定义GLM_FORCE_LEFT_HANDED</span>
+<span class="pragma">#include</span> <span class="str">&lt;glm.hpp&gt;</span>
+<span class="pragma">#include</span> <span class="str">&lt;gtc/matrix_transform.hpp&gt;</span>
 
-<span class="c1">//stb_image.h</span>
-<span class="cp">#include</span> <span class="cpf">&lt;stb_image.h&gt;</span><span class="cp"></span>
+<span class="cmt">//stb_image.h</span>
+<span class="pragma">#include</span> <span class="str">&lt;stb_image.h&gt;</span>
 
-<span class="c1">//Vulkan</span>
-<span class="cp">#include</span> <span class="cpf">&lt;vulkan/vulkan.h&gt;</span><span class="cp"></span>
-<span class="cp">#pragma comment(lib, &quot;vulkan-1.lib&quot;)</span>
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>宏 <span class="macro">_USE_MATH_DEFINES</span> 可以让你使用圆周率 <span class="macro">M_PI</span> ，或者你也可以使用 glm::pi&lt;float&gt;() ，不过我觉得 <span class="macro">M_PI</span> 省事些。</p></li>
-<li><p>GLM本为是OpenGL设计的，在OpenGL中，NDC（标准化设备坐标系）的深度范围为[-1, 1]，而Vulkan中这个范围为[0, 1]，因此我们必须用宏 <span class="macro">GLM_FORCE_DEPTH_ZERO_TO_ONE</span> 来指定深度范围，这样才能获得正确的投影矩阵（如果你从没有学习过计算机图形学，上述内容对你来说可能会过于跳跃，我会在之后的篇章中给出更详细的解释，目前就放心照抄吧）。</p></li>
+<span class="cmt">//Vulkan</span>
+<span class="pragma">#include</span> <span class="str">&lt;vulkan/vulkan.h&gt;</span>
+<span class="pragma">#pragma comment</span>(<span class="pragma">lib</span>, <span class="str">&quot;vulkan-1.lib&quot;</span>)
+</pre>
+<ul>
+    <li>
+        <p>
+            GLM本为是OpenGL设计的，在OpenGL中，NDC（标准化设备坐标系）的深度范围为[-1, 1]，而Vulkan中这个范围为[0, 1]，因此我们必须用宏<span class="mcr">GLM_FORCE_DEPTH_ZERO_TO_ONE</span>来指定深度范围，这样才能获得正确的投影矩阵。
+        </p>
+    </li>
 </ul>
-<div class="line-block">
-<div class="line">由于你以后可能会想要将你的程序移植到其他平台，出于通用性的考虑，GLFW相关的内容会被单独拿出来。</div>
-</div>
-<div class="line-block">
-<div class="line">接着创建 <span class="str">VKBase.h</span> ，并在其中包含 <span class="str">EasyVKStart.h</span> 。</div>
-<div class="line">这个文件会用来写Vulkan相关的基本内容。</div>
-</div>
-<div class="line-block">
-<div class="line">最后创建一个 <span class="str">GlfwClientGeneral.hpp</span> 。</div>
-<div class="line">顾名思义，这个文件用来写一些Glfw客户端的通用内容。</div>
-<div class="line">加入以下代码：</div>
-</div>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;VKBase.h&quot;</span><span class="cp"></span>
-<span class="cp">#define GLFW_INCLUDE_VULKAN</span>
-<span class="cp">#include</span> <span class="cpf">&lt;GLFW/glfw3.h&gt;</span><span class="cp"></span>
-<span class="cp">#pragma comment(lib, &quot;glfw3.lib&quot;)</span>
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>要将GLFW用于Vulkan，必须在包含GLFW之前，定义 <span class="macro">GLFW_INCLUDE_VULKAN</span> 宏。</p></li>
-</ul>
-<div class="line-block">
-<div class="line">以上代码全部抄完之后，如果VS提示你有任何文件打不开，检查一下你的附加包含目录和附加库目录。</div>
-</div>
-</div>
-<div class="section" id="id2">
-<h2>创建窗口<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
-<div class="line-block">
-<div class="line">在  <span class="str">GlfwClientGeneral.hpp</span> 添加以下变量：</div>
-</div>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">//全局变量自动初始化为NULL，不用赋初值也行</span>
-<span class="n">GLFWwindow</span><span class="o">*</span> <span class="n">pWindow</span><span class="p">;</span>
-<span class="c1">//窗口标题</span>
-<span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">windowTitle</span> <span class="o">=</span> <span class="s">&quot;EasyVK&quot;</span><span class="p">;</span>
-</pre></div>
-</div>
-<div class="line-block">
-<div class="line">接着我们来写两个函数：</div>
-</div>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">bool</span> <span class="nf">InitializeWindow</span><span class="p">(</span><span class="n">VkExtent2D</span> <span class="n">windowSize</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">resizable</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">limit_framerate</span><span class="p">)</span> <span class="p">{}</span>
-<span class="kt">void</span> <span class="nf">TerminateWindow</span><span class="p">()</span> <span class="p">{}</span>
-</pre></div>
-</div>
-<div class="line-block">
-<div class="line">第一个函数，用于初始化窗口，我打算让它在初始话成功时返回 <span class="kw">true</span> ，否则返回 <span class="kw">false</span> 。</div>
-<div class="line">参数1：窗口大小， <span class="type">VkExtent2D</span> 类型，这个结构体类型由两个 <span class="type">uint32_t</span> 变量构成。</div>
-<div class="line">参数2：窗口是否可拉伸。</div>
-<div class="line">参数3：是否限制帧数，使帧数与屏幕刷新率一致。我们暂时不会使用这个参数，先写在这里。</div>
-<div class="line">返回值：初始化成功时返回 <span class="kw">true</span> 。</div>
-</div>
-<div class="line-block">
-<div class="line">第二个函数，用于终止窗口时，清理GLFW。</div>
-</div>
-<div class="line-block">
-<div class="line">函数的内容如下：</div>
-</div>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">bool</span> <span class="nf">InitializeWindow</span><span class="p">(</span><span class="n">VkExtent2D</span> <span class="n">windowSize</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">resizable</span> <span class="o">=</span> <span class="nb">true</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">limit_framerate</span> <span class="o">=</span> <span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c1">//用glfwInit()初始化窗口，若执行失败，返回0</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">glfwInit</span><span class="p">())</span>
-        <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
-    <span class="n">glfwWindowHint</span><span class="p">(</span><span class="n">GLFW_CLIENT_API</span><span class="p">,</span> <span class="n">GLFW_NO_API</span><span class="p">);</span>
-    <span class="n">glfwWindowHint</span><span class="p">(</span><span class="n">GLFW_RESIZABLE</span><span class="p">,</span> <span class="n">resizable</span><span class="p">);</span>
-    <span class="cm">/*待填充*/</span>
-    <span class="n">pWindow</span> <span class="o">=</span> <span class="n">glfwCreateWindow</span><span class="p">(</span><span class="n">windowSize</span><span class="p">.</span><span class="n">width</span><span class="p">,</span> <span class="n">windowSize</span><span class="p">.</span><span class="n">height</span><span class="p">,</span> <span class="n">windowTitle</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">,</span> <span class="k">nullptr</span><span class="p">);</span><span class="c1">//若执行失败，返回NULL</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">pWindow</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ InitializeWindow ]</span><span class="se">\n</span><span class="s">Failed to create a glfw window!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
-        <span class="n">glfwTerminate</span><span class="p">();</span>
-        <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="cm">/*待填充*/</span>
-    <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
-<span class="p">}</span>
-<span class="kt">void</span> <span class="nf">TerminateWindow</span><span class="p">()</span> <span class="p">{</span>
-    <span class="cm">/*待填充*/</span>
-    <span class="n">glfwTerminate</span><span class="p">();</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>在创建窗口前，必须调用 <code class="docutils literal notranslate"><span class="pre">glfwWindowHint(GLFW_CLIENT_API,</span> <span class="pre">GLFW_NO_API);</span></code> ，GLFW同GLM一样最初是为OpenGL设计的，<span class="macro">GLFW_CLIENT_API</span> 的默认设置是 <span class="macro">GLFW_OPENGL_API</span> ，这种情况下，GLFW会在创建窗口时创建OpenGL的上下文，这对于Vulkan而言是多余的，所以必须先调用上述语句以向GLFW说明不需要OpenGL的API。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">glfwCreateWindow</span></code> 的第四个参数用于指定全屏模式的显示器，若为 <span class="kw">nullptr</span> ，则使用窗口模式。如果你日后想使用全屏模式，使用 <code class="docutils literal notranslate"><span class="pre">glfwGetPrimaryMonitor</span></code> 来获取主显示器。第五个参数可传入一个其它窗口的handle，用于与其他窗口分享内容。</p></li>
-</ul>
-<div class="line-block">
-<div class="line">这段代码应该无需太多说明。</div>
-<div class="line">代码中留有很多待填充的部分，在接下来两节中，我们还会回过头来向其中添加内容。</div>
-</div>
-<div class="line-block">
-<div class="line">下面是一个用于在标题上显示帧率的函数，我并不打算解释它，这纯粹是C++相关的内容：</div>
-</div>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">TitleFps</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">static</span> <span class="kt">double</span> <span class="n">time0</span> <span class="o">=</span> <span class="n">glfwGetTime</span><span class="p">();</span>
-    <span class="k">static</span> <span class="kt">double</span> <span class="n">time1</span><span class="p">;</span>
-    <span class="k">static</span> <span class="kt">double</span> <span class="n">dt</span><span class="p">;</span>
-    <span class="k">static</span> <span class="kt">int</span> <span class="n">dframe</span> <span class="o">=</span> <span class="mi">-1</span><span class="p">;</span>
-    <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">stringstream</span> <span class="n">info</span><span class="p">;</span>
-    <span class="n">time1</span> <span class="o">=</span> <span class="n">glfwGetTime</span><span class="p">();</span>
-    <span class="n">dframe</span><span class="o">++</span><span class="p">;</span>
-    <span class="k">if</span> <span class="p">((</span><span class="n">dt</span> <span class="o">=</span> <span class="n">time1</span> <span class="o">-</span> <span class="n">time0</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="n">info</span><span class="p">.</span><span class="n">precision</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-        <span class="n">info</span> <span class="o">&lt;&lt;</span> <span class="n">windowTitle</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;    &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">fixed</span> <span class="o">&lt;&lt;</span> <span class="n">dframe</span> <span class="o">/</span> <span class="n">dt</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; FPS&quot;</span><span class="p">;</span>
-        <span class="n">glfwSetWindowTitle</span><span class="p">(</span><span class="n">pWindow</span><span class="p">,</span> <span class="n">info</span><span class="p">.</span><span class="n">str</span><span class="p">().</span><span class="n">c_str</span><span class="p">());</span>
-        <span class="n">info</span><span class="p">.</span><span class="n">str</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">);</span>
-        <span class="n">time0</span> <span class="o">=</span> <span class="n">time1</span><span class="p">;</span>
-        <span class="n">dframe</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="id3">
-<h2>试着运行一下吧！<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;GlfwClientGeneral.hpp&quot;</span><span class="cp"></span>
+<p>
+    由于你以后可能会想要将你的程序移植到其他平台，出于通用性的考虑，GLFW相关的内容会被单独拿出来。
+</p>
+<p>
+    接着创建<span class="path">VKBase.h</span>，该文件会用来写Vulkan相关的基本内容。
+    <br>
+    在<span class="path">VKBase.h</span>中加入以下代码：
+</p>
+<pre class="code">
+<span class="pragma">#pragma once</span>
+<span class="pragma">#include</span> <span class="str">&quot;EasyVKStart.h&quot;</span>
+<span class="cmt">//定义vulkan命名空间，之后会把Vulkan中一些基本对象的封装写在其中</span>
+<span class="kw">namespace</span> vulkan {
 
-<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">InitializeWindow</span><span class="p">({</span><span class="mi">1280</span><span class="p">,</span><span class="mi">720</span><span class="p">}))</span>
-        <span class="k">return</span> <span class="mi">-1</span><span class="p">;</span><span class="c1">//来个你讨厌的返回值，不讨厌的也行，总之不该是0</span>
-    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">glfwWindowShouldClose</span><span class="p">(</span><span class="n">pWindow</span><span class="p">))</span><span class="c1">//若glfwWindowShouldClose返回true，说明应该关闭窗口</span>
-    <span class="p">{</span>
-        <span class="n">TitleFps</span><span class="p">();</span>
-        <span class="cm">/*渲染及操作过程，待填充*/</span>
-        <span class="n">glfwPollEvents</span><span class="p">();</span>
-    <span class="p">}</span>
-    <span class="n">TerminateWindow</span><span class="p">();</span>
-    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">glfwPollEvents</span></code> 用于处理glfw相关的事件，比如回调函数，相关细节在日后使用回调函数时再做解释。</p></li>
+}
+</pre>
+<p>
+    最后创建一个<span class="path">GlfwGeneral.hpp</span>，顾名思义，这个hpp用来写一些GLFW的通用内容及相关的全局变量。
+    <br>
+    在<span class="path">GlfwGeneral.hpp</span>中加入以下代码：
+</p>
+<pre class="code">
+<span class="pragma">#include</span> <span class="str">&quot;VKBase.h&quot;</span>
+<span class="pragma">#define</span> <span class="mcr">GLFW_INCLUDE_VULKAN</span>
+<span class="pragma">#include</span> <span class="str">&lt;GLFW/glfw3.h&gt;</span>
+<span class="pragma">#pragma comment</span>(<span class="pragma">lib</span>, <span class="str">&quot;glfw3.lib&quot;</span>)
+</pre>
+<ul>
+    <li>
+        <p>
+            要将GLFW用于Vulkan，必须在包含GLFW之前，定义<span class="mcr">GLFW_INCLUDE_VULKAN</span>宏。
+        </p>
+    </li>
 </ul>
-<div class="line-block">
-<div class="line">如果你看到了一个全白的窗口，并且帧率还炸了，那就算是一切顺利！</div>
-</div>
-</div>
-</div>
+<p>
+    想必以上代码无需多做解释，全部抄完后，如果VS提示你有任何文件打不开，检查一下你的附加包含目录和附加库目录。
+</p></section>
+<section id="id2">
+<h2>创建窗口<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<p>
+    在<span class="path">GlfwGeneral.hpp</span>添加以下全局变量：
+</p>
+<pre class="code">
+<span class="cmt">//窗口的指针，全局变量自动初始化为NULL</span>
+<span class="type">GLFWwindow</span>* pWindow;
+<span class="cmt">//显示器信息的指针</span>
+<span class="type">GLFWmonitor</span>* pMonitor;
+<span class="cmt">//窗口标题</span>
+<span class="kw">const char</span>* windowTitle = <span class="str">&quot;EasyVK&quot;</span>;
+</pre>
+<p>接着来写两个函数</p>
+<pre class="code">
+<span class="kw">bool</span> <span class="fn">InitializeWindow</span>(<span class="type">VkExtent2D</span> size, <span class="kw">bool</span> fullScreen = <span class="kw">false</span>, <span class="kw">bool</span> isResizable = <span class="kw">true</span>, <span class="kw">bool</span> limitFrameRate = <span class="kw">true</span>) {
+<span class="cmt">/*待后续填充*/</span>
+}
+<span class="kw">void</span> <span class="fn">TerminateWindow</span>() {
+<span class="cmt">/*待后续填充*/</span>
+}
+</pre>
+<p>
+    <span class="fn">InitializeWindow</span>(...)用于初始化窗口，我打算让它在初始化成功时返回<span class="kw">true</span>，否则返回<span class="kw">false</span>。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p>参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p>size</p></td>
+            <td><p>窗口大小</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p>fullScreen</p></td>
+            <td><p>指定是否以全屏初始化窗口</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p>isResizable</p></td>
+            <td><p>指定窗口是否可拉伸，游戏窗口通常是不可任意拉伸的</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p>limitFrameRate</p></td>
+            <td><p>指定是否将帧数限制到不超过屏幕刷新率，在本节先不实现这个参数的作用</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    <span class="fn">TerminateWindow</span>(...)用于终止窗口时，清理GLFW。
+</p>
+<p>
+    接着来填充<span class="fn">InitializeWindow</span>(...)。
+    <br>
+    首先用<a href="https://www.glfw.org/docs/latest/group__init.html#ga317aac130a235ab08c6db0834907d85e">glfwInit</a>(...)初始化GLFW，该函数在执行成功时返回<span class="kw">true</span>。
+</p>
+<pre class="code">
+<span class="kw">if</span> (!<span class="fn">glfwInit</span>()) {
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ] ERROR\nFailed to initialize GLFW!\n&quot;</span>);
+    <span class="kw">return false</span>;
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            这里用<code>std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;...&quot;</span>);</code>输出字符串字面量是为了同带更多参数的格式化输出<code>std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;...&quot;</span>, ...);</code>统一，而这是为了方便日后把<code>std::cout &lt;&lt; std::<span class="fn">format</span>(...);</code>一次性替换成<code><span class="fn">某个格式化输出函数</span>(...);</code>，比如会在C++23上线的<a href="https://en.cppreference.com/w/cpp/io/print">print</a>(...)。
+        </p>
+    </li>
+</ul>
+<p>
+    然后，在创建窗口前，必须调用<a href="https://www.glfw.org/docs/latest/group__init.html#ga110fd1d3f0412822b4f1908c026f724a">glfwWindowHint</a>(<span class="mcr">GLFW_CLIENT_API</span>, <span class="mcr">GLFW_NO_API</span>)。GLFW同GLM一样最初是为OpenGL设计的，<span class="mcr">GLFW_CLIENT_API</span>的默认设置是<span class="mcr">GLFW_OPENGL_API</span>，这种情况下，GLFW会在创建窗口时创建OpenGL的上下文，这对于Vulkan而言是多余的，所以向GLFW说明不需要OpenGL的API。
+</p>
+<pre class="code">
+<span class="fn">glfwWindowHint</span>(<span class="mcr">GLFW_CLIENT_API</span>, <span class="mcr">GLFW_NO_API</span>);
+</pre>
+<p>
+    接着用<a href="https://www.glfw.org/docs/latest/group__init.html#ga110fd1d3f0412822b4f1908c026f724a">glfwWindowHint</a>(<span class="mcr">GLFW_RESIZABLE</span>, isResizable)指定窗口可否拉伸：
+</p>
+<pre class="code">
+<span class="fn">glfwWindowHint</span>(<span class="mcr">GLFW_RESIZABLE</span>, isResizable);
+</pre>
+<p>
+    然后便能用<a href="https://www.glfw.org/docs/latest/group__window.html#ga3555a418df92ad53f917597fe2f64aeb">glfwCreateWindow</a>(...)创建窗口了，该函数在执行成功时返回一非空指针。
+</p>
+<pre class="code">
+pWindow = <span class="fn">glfwCreateWindow</span>(size.width, size.height, windowTitle, <span class="kw">nullptr</span>, <span class="kw">nullptr</span>);
+</pre>
+<p>
+    想必<a href="https://www.glfw.org/docs/latest/group__window.html#ga3555a418df92ad53f917597fe2f64aeb">glfwCreateWindow</a>(...)的前三个参数一目了然不必多说，其第四个参数用于指定全屏模式的显示器，若为<span class="kw">nullptr</span>则使用窗口模式，第五个参数可传入一个其它窗口的指针，用于与其他窗口分享内容。
+</p>
+<p>
+    如果你想实现全屏，则还需要用<a href="https://www.glfw.org/docs/latest/group__monitor.html#gac3adb24947eb709e1874028272e5dfc5">glfwGetPrimaryMonitor</a>()取得当前显示器信息的指针，即便你在初始化时不想全屏，也有必要先取得它以备之后使用：
+</p>
+<pre class="code">
+pMonitor = <span class="fn">glfwGetPrimaryMonitor</span>();
+</pre>
+<p>
+    通常全屏时的图像区域应当跟屏幕分辨率一致，因此还需要使用<a href="https://www.glfw.org/docs/latest/group__monitor.html#gaba376fa7e76634b4788bddc505d6c9d5">glfwGetVideoMode</a>(...)取得显示器当前的视频模式：
+</p>
+<pre class="code">
+<span class="kw">const</span> <span class="type">GLFWvidmode</span>* pMode = <span class="fn">glfwGetVideoMode</span>(pMonitor);
+</pre>
+<ul>
+    <li>
+        <p>
+            视频模式可能因为用户的操作而在程序运行过程中发生变更，因此总是在需要时获取，而不将其存储到全局变量。
+        </p>
+    </li>
+</ul>
+<p>
+    于是，若要实现全屏，根据<span class="var">fullScreen</span>的值决定是否以全屏模式初始化窗口：
+</p>
+<pre class="code">
+pWindow = fullScreen ?
+    <span class="fn">glfwCreateWindow</span>(pMode->width, pMode->height, windowTitle, pMonitor, <span class="kw">nullptr</span>) :
+    <span class="fn">glfwCreateWindow</span>(size.width, size.height, windowTitle, <span class="kw">nullptr</span>, <span class="kw">nullptr</span>);
+</pre>
+<p>
+    验证<span class="var">pWindow</span>的值，若窗口创建失败，用<a href="https://www.glfw.org/docs/latest/group__init.html#gaaae48c0a18607ea4a4ba951d939f0901">glfwTerminate</a>()来清理GLFW并让函数返回<span class="kw">false</span>：
+</p>
+<pre class="code">
+<span class="kw">if</span> (!pWindow) {
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ]\nFailed to create a glfw window!\n&quot;</span>);
+    <span class="fn">glfwTerminate</span>();
+    <span class="kw">return false</span>;
+}
+</pre>
+<p>
+    当然<span class="fn">TerminateWindow</span>()里也会调用<a href="https://www.glfw.org/docs/latest/group__init.html#gaaae48c0a18607ea4a4ba951d939f0901">glfwTerminate</a>()，于是，至此为止<span class="fn">InitializeWindow</span>(...)和<span class="fn">TerminateWindow</span>()的内容总结如下：
+</p>
+<pre class="code">
+<span class="kw">bool</span> <span class="fn">InitializeWindow</span>(<span class="type">VkExtent2D</span> size, <span class="kw">bool</span> fullScreen = <span class="kw">false</span>, <span class="kw">bool</span> isResizable = <span class="kw">true</span>, <span class="kw">bool</span> limitFrameRate = <span class="kw">true</span>) {
+    <span class="kw">if</span> (!<span class="fn">glfwInit</span>()) {
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ] ERROR\nFailed to initialize GLFW!\n&quot;</span>);
+        <span class="kw">return false</span>;
+    }
+    <span class="fn">glfwWindowHint</span>(<span class="mcr">GLFW_CLIENT_API</span>, <span class="mcr">GLFW_NO_API</span>);
+    <span class="fn">glfwWindowHint</span>(<span class="mcr">GLFW_RESIZABLE</span>, isResizable);
+    pMonitor = <span class="fn">glfwGetPrimaryMonitor</span>();
+    <span class="kw">const</span> <span class="type">GLFWvidmode</span>* pMode = <span class="fn">glfwGetVideoMode</span>(pMonitor);
+    pWindow = fullScreen ?
+        <span class="fn">glfwCreateWindow</span>(size.width, size.height, windowTitle, pMonitor, <span class="kw">nullptr</span>) :
+        <span class="fn">glfwCreateWindow</span>(size.width, size.height, windowTitle, <span class="kw">nullptr</span>, <span class="kw">nullptr</span>);
+    <span class="kw">if</span> (!pWindow) {
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ]\nFailed to create a glfw window!\n&quot;</span>);
+        <span class="fn">glfwTerminate</span>();
+        <span class="kw">return false</span>;
+    }
+    <span class="cmt">/*待Ch1-3和Ch1-4填充*/</span>
+    <span class="kw">return true</span>;
+}
+<span class="kw">void</span> <span class="fn">TerminateWindow</span>() {
+    <span class="cmt">/*待Ch1-4填充*/</span>
+    <span class="fn">glfwTerminate</span>();
+}
+</pre>
+<div class="admonition important">
+    <p class="admonition-title">Important</p>
+    <p>
+        注意，你不需要手动 <span class="kw">delete</span> <span class="var">pMode</span>，GLFW的注释及官方文档中写到：
+        <br>
+        <span class="ref">The returned array is allocated and freed by GLFW. You should not free it yourself. It is valid until the specified monitor is disconnected or the library is terminated.</span>
+    </p>
+</div></section>
+<section id="id3">
+<h2>在窗口标题上显示帧率<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<p>
+    下面是一个用于在标题上显示帧率的函数，每帧调用一次。约每一秒更新一次帧率，其逻辑为：
+    <br>
+    记录时间点<span class="var">t0</span>，若之后某次调用该函数时取得的时间<span class="var">t1</span>已超过<span class="var">t0</span>一秒，用<span class="var">t1</span>与<span class="var">t0</span>的差除以这中间经历的帧数，得到帧率，并将<span class="var">t1</span>赋值给<span class="var">t0</span>。
+    <br>
+    得到帧率后，将其转为字符串衔接在原标题后，然后用<a href="https://www.glfw.org/docs/latest/group__window.html#ga5d877f09e968cef7a360b513306f17ff">glfwSetWindowTitle</a>(...)设置窗口标题。
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">TitleFps</span>() {
+    <span class="kw">static double</span> time0 = <span class="fn">glfwGetTime</span>();
+    <span class="kw">static double</span> time1;
+    <span class="kw">static double</span> dt;
+    <span class="kw">static int</span> dframe = -1;
+    <span class="kw">static</span> std::<span class="type">stringstream</span> info;
+    time1 = <span class="fn">glfwGetTime</span>();
+    dframe++;
+    <span class="kw">if</span> ((dt = time1 - time0) >= 1) {
+        info.<span class="fn">precision</span>(1);
+        info &lt;&lt; windowTitle &lt;&lt; <span class="str">&quot;    &quot;</span> &lt;&lt; std::<span class="fn">fixed</span> &lt;&lt; dframe / dt &lt;&lt; <span class="str">&quot; FPS&quot;</span>;
+        <span class="fn">glfwSetWindowTitle</span>(pWindow, <span class="fn">info.str</span>().<span class="fn">c_str</span>());
+        info.<span class="fn">str</span>(<span class="str">&quot;&quot;</span>);<span class="cmt">//别忘了在设置完窗口标题后清空所用的stringstream</span>
+        time0 = time1;
+        dframe = 0;
+    }
+}
+</pre>
+<p>
+<a href="https://www.glfw.org/docs/3.0/group__time.html#gaa6cf4e7a77158a3b8fd00328b1720a4a">glfwGetTime</a>()返回自GLFW初始化以来的时间，单位为秒。
+我在<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan/WinGeneral.hpp">WinGeneral.hpp</a>中也提供了通过C++标准库函数来取得时间的方法。
+</p></section>
+<section id="id4">
+<h2>试着运行一下吧！<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<p>
+    到<span class="path">main.cpp</span>中书写主函数：
+</p>
+<pre class="code">
+<span class="pragma">#include</span> <span class="str">&quot;GlfwGeneral.hpp&quot;</span>
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
+        <span class="kw">return</span> -1;<span class="cmt">//来个你讨厌的返回值</span>
+    <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
+        <span class="fn">TitleFps</span>();
+        <span class="cmt">/*渲染及操作过程，待填充*/</span>
+        <span class="fn">glfwPollEvents</span>();
+    }
+    <span class="fn">TerminateWindow</span>();
+    <span class="kw">return</span> 0;
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            <a href="https://www.glfw.org/docs/latest/group__window.html#ga37bd57223967b4211d60ca1a0bf3c832">glfwPollEvents</a>()用于处理GLFW相关的事件，如接收窗口变化的信息，及接受输入并执行回调函数。
+        </p>
+    </li>
+    <li>
+        <p>
+            若<a href="https://www.glfw.org/docs/latest/group__window.html#ga24e02fbfefbb81fc45320989f8140ab5">glfwWindowShouldClose</a>(...)返回<span class="kw">true</span>，说明在前一次中收到了来自操作系统的信息，告诉GLFW应当关闭窗口。
+        </p>
+    </li>
+</ul>
+<p>
+    如果你在编译后看到了一个全白的窗口，并且帧率还炸了，那就算是一切顺利！
+</p>
+<p>
+    如果你在控制台中见到信息“libpng warning: iCCP: cHRM chunk does not match sRGB”，那是因为你正在使用QQ输入法（这真的很奇怪，所以我特地提一嘴）。
+</p></section>
+<section id="id5">
+<h2>在全屏和窗口模式间切换<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<p>本节为非必要项，与今后的学习内容无关。</p>
+<p>
+    用<a href="https://www.glfw.org/docs/latest/group__window.html#ga81c76c418af80a1cce7055bccb0ae0a7">glfwSetWindowMonitor</a>(...)可以在全屏和窗口模式间切换。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <a href="https://www.glfw.org/docs/latest/group__window.html#ga81c76c418af80a1cce7055bccb0ae0a7">glfwSetWindowMonitor</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">GLFWwindow</span>* window</p></td>
+            <td><p>窗口的指针</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">GLFWmonitor</span>* monitor</p></td>
+            <td><p>显示器信息的指针，用于指定全屏模式的显示器</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">int</span> xpos</p></td>
+            <td><p>图像区域左上角在屏幕上的横坐标</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">int</span> ypos</p></td>
+            <td><p>图像区域左上角在屏幕上的纵坐标</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">int</span> width</p></td>
+            <td><p>图像区域的宽度</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">int</span> height</p></td>
+            <td><p>图像区域的高度</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">int</span> refreshRate</p></td>
+            <td><p>屏幕刷新率</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            所指图像区域不包括窗口的边框和标题栏。
+        </p>
+    </li>
+    <li>
+        <p>
+            切换到全屏模式时，<span class="var">xpos</span>和<span class="var">ypos</span>被无视。
+        </p>
+    </li>
+    <li>
+        <p>
+            切换到窗口模式时，<span class="var">ypos</span>应避免小于标题栏高度。
+        </p>
+    </li>
+</ul>
+<p>
+    在<span class="path">GlfwGeneral.hpp</span>中定义函数<span class="fn">MakeWindowFullScreen</span>()和<span class="fn">MakeWindowWindowed</span>(...)分别用于从窗口变为全屏和从全屏变回窗口：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">MakeWindowFullScreen</span>() {
+    <span class="kw">const</span> <span class="type">GLFWvidmode</span>* pMode = <span class="fn">glfwGetVideoMode</span>(pMonitor);
+    <span class="fn">glfwSetWindowMonitor</span>(pWindow, pMonitor, 0, 0, pMode->width, pMode->height, pMode->refreshRate);
+}
+<span class="kw">void</span> <span class="fn">MakeWindowWindowed</span>(<span class="type">VkOffset2D</span> position, <span class="type">VkExtent2D</span> size) {
+    <span class="kw">const</span> <span class="type">GLFWvidmode</span>* pMode = <span class="fn">glfwGetVideoMode</span>(pMonitor);
+    <span class="fn">glfwSetWindowMonitor</span>(pWindow, <span class="kw">nullptr</span>, position.x, position.y, size.width, size.height, pMode->refreshRate);
+}
+</pre>
+<p>
+    接着就是获取鼠标/键盘输入，在按下你期望的按键后调用上述函数了。
+    <br>
+    关于如何获取输入在此不做赘述，请自行参阅<a href="https://www.glfw.org/docs/latest/input_guide.html">GLFW的Input guide</a>。
+</p></section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="Ch1-2%20%E5%88%9B%E5%BB%BAVk%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html" class="btn btn-neutral float-right" title="Ch1-2 创建Vk实例与逻辑设备" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html" class="btn btn-neutral float-left" title="Ch1-0 准备工作" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html" class="btn btn-neutral float-left" title="Ch1-0 准备工作" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html" class="btn btn-neutral float-right" title="Ch1-2 初始化流程" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2021, Qiao Wu.
-
-    </p>
+    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

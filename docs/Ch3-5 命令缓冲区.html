@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch3-5 命令缓冲区 &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ch3-6 描述符" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html" />
+    <link rel="prev" title="Ch3-4 渲染通道和帧缓冲" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch3-5 命令缓冲区</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#command-buffer">Command Buffer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">命令缓冲区的生命周期</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">提交命令缓冲区</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">开始和结束录制命令缓冲区</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">二级命令缓冲区</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#commandbuffer">封装为commandBuffer类</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#command-pool">Command Pool</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">创建命令池</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">分配命令缓冲区</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">释放命令缓冲区</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">重置命令缓冲区</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">重置命令池</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#commandpool">封装为commandPool类</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch3-5 命令缓冲区</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch3-5">
+<h1>Ch3-5 命令缓冲区<a class="headerlink" href="#ch3-5" title="Permalink to this heading"></a></h1>
+<p>
+    命令缓冲区（<span class="type">VkCommandBuffer</span>）用于录制命令，而命令池（<span class="type">VkCommandPool</span>）用于分配命令缓冲区。
+    <br>
+    命令缓冲区并不代表命令池中大小和位置确定的某块区域，它是根据录制的命令内容动态变化的，由命令池管理，命令池本身也是动态大小的。
+    <br>
+    在多线程中录制命令缓冲区时，必须给每个线程一个不同的命令池（而不是从同一个命令池中为每个线程分配不同的命令缓冲区），以避免访问冲突。
+</p><section id="command-buffer">
+<h2>Command Buffer<a class="headerlink" href="#command-buffer" title="Permalink to this heading"></a></h2>
+<p>
+    命令缓冲区有两个级别：一级命令缓冲区和二级命令缓冲区。
+    <br>
+    一级命令缓冲区可以被直接提交给队列。
+    <br>
+    二级命令缓冲区必须从一级命令缓冲区执行，跟函数调用不太一样，二级命令缓冲区在开始录制时需指定继承信息（包含渲染通道在内的一些上下文参数），并非录制完以后可以被任何一级缓冲区调用。
+    <br>
+    对于有多个子通道的渲染通道，通过在主线程中录制一级命令缓冲区，另一线程中将某个子通道中的命令录制在二级命令缓冲区中，可能可以在一定程度上缩减CPU一侧的执行时间。
+</p><section id="id1">
+<h3>命令缓冲区的生命周期<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<img alt="_images/ch3-5-1.png" src="_images/ch3-5-1.png">
+<img alt="_images/ch3-5-2.png" src="_images/ch3-5-2.png">
+<ul>
+    <li>
+        <p>
+            如图所示，提交命令缓冲区之后、命令执行完之前的状态为待决状态（提一下以强调）。
+        </p>
+    </li>
+    <li>
+        <p>
+            若命令缓冲区中涉及到的Vulkan对象被销毁，则命令缓冲区从录制或可执行状态进入无效状态。
+        </p>
+    </li>
+    <li>
+        <p>
+            对于可反复录制（从指定了<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>的命令池中分配）且每次录制完只提交一次（开始录制时指定<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>）的命令缓冲区，执行完以后可以手动将其重置，但通常不需要这么干，重新录制命令缓冲区时会将其自动重置到初始化状态（然后紧跟着进入录制状态）。
+        </p>
+    </li>
+</ul>
+<div class="admonition note">
+    <p class="admonition-title">Note</p>
+    <p>
+        对于某些早期的Vulkan实现，提交命令缓冲区时必须附带一个栅栏（哪怕你用了其他同步手段比如信号量），才能使命令缓冲区在执行结束后从待决状态回到可执行状态或进入无效状态。这在标准中没有规定，可能是bug。这个问题大概只有在多线程中使用时间线信号量的场合需要处理，如果发生了的话建议更新显卡驱动。
+    </p>
+</div>
+<p>
+    关于分配、释放、重置命令缓冲区的相应函数，见后文关于命令池的说明。
+</p></section>
+<section id="id2">
+<h3>提交命令缓冲区<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkQueueSubmit">vkQueueSubmit</a>(...)向队列提交命令缓冲区：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkQueueSubmit">vkQueueSubmit</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkQueue</span> queue</p></td>
+            <td><p>队列的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> submitCount</p></td>
+            <td><p>命令提交信息的个数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkSubmitInfo</span> pSubmits</p></td>
+            <td><p>指向命令提交信息的数组</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkFence</span> fence</p></td>
+            <td><p>命令全部执行完后所需置位的栅栏的handle（非必要，可为<span class="mcr">VK_NULL_HANDLE</span>）</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap6.html#VkSubmitInfo">VkSubmitInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_SUBMIT_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> waitSemaphoreCount</p></td>
+            <td><p>所需等待被置位的信号量的个数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkSemaphore</span>* pWaitSemaphores</p></td>
+            <td><p>指向所需等待被置位的信号量的数组</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkPipelineStageFlags</span>* pWaitDstStageMask</p></td>
+            <td><p>所指数组用于说明对pWaitSemaphores所指各个信号量的等待在哪些阶段前完成</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> commandBufferCount</p></td>
+            <td><p>所需提交的命令缓冲区的个数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkCommandBuffer</span>* pCommandBuffers</p></td>
+            <td><p>指向所需提交的命令缓冲区的数组</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> signalSemaphoreCount</p></td>
+            <td><p>命令执行结束后需被置位的信号量的个数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkSemaphore</span>* pSignalSemaphores</p></td>
+            <td><p>指向命令执行结束后需被置位的信号量的数组</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            若提供了所需等待的信号量，提交命令缓冲区会定义对信号量的等待操作（注意，意思是在命令执行过程中达到特定阶段前完成等待，而不是在命令开始执行前）。
+        </p>
+    </li>
+</ul>
+<p>
+    <strong>有一点略微需要注意，等待信号量的操作未必会发生在所指定的阶段。</strong>
+    <br>
+    官方标准里的注释项（<a href="https://renderdoc.org/vkspec_chunked/chap7.html#synchronization-semaphores-waiting">见此</a>）中有写到：
+    <br>
+    <span class="ref">Some implementations may be able to execute transfer operations and/or pre-rasterization work before the semaphore is signaled.</span>
+    <br>
+    译文：有些实现可能可以在信号量被置位前执行转移操作，以及/或栅格化前的工作。
+    <br>
+    这意味若命令缓冲区中包含图形命令，即便你指定的等待阶段早于或包含<span class="enum">VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT</span>（前期片段测试阶段，是栅格化后的第一个阶段），也应当将其视作等同于<span class="enum">VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT</span>，总是应该保证，在片段着色器前的任何着色器中涉及的资源（片段着色器前的话，通常是顶点数据/uniform数据），必须在提交命令缓冲区前完成其写入。
+    <br>
+    （其实这不是什么要特别注意的点，除非你故意用一些很麻烦的写法，比如在提交更新数据用的命令缓冲区时使用二值信号量而非栅栏来同步）
+</p>
+<p>
+    总结，用<a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkQueueSubmit">vkQueueSubmit</a>(...)提交命令缓冲区后，剧本流程如下：
+    <br>
+    1.若指定了需要等待的信号量，定义对信号量的等待操作。
+    <br>
+    2.命令开始执行，等执行到相应等待阶段（或可能延后到栅格化后），等待信号量。
+    <br>
+    3.所需等待的信号量被置位后，继续执行后续操作，直至完成命令的执行。
+    <br>
+    4.置位所需置位的信号量和栅栏。
+</p></section>
+<section id="id3">
+<h3>开始和结束录制命令缓冲区<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkBeginCommandBuffer">vkBeginCommandBuffer</a>(...)开始录制命令缓冲区：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkBeginCommandBuffer">vkBeginCommandBuffer</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandBuffer</span> commandBuffer</p></td>
+            <td><p>命令缓冲区的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkCommandBufferBeginInfo</span>* pBeginInfo</p></td>
+            <td><p>指向命令缓冲区的开始信息</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap6.html#VkCommandBufferBeginInfo">VkCommandBufferBeginInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandBufferUsageFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkCommandBufferInheritanceInfo</span>* pInheritanceInfo</p></td>
+            <td><p>指向二级命令缓冲区的继承信息</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap6.html#VkCommandBufferUsageFlagBits">VkCommandBufferUsageFlagBits</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT      </span>表示该命令缓冲区只会被提交一次，然后就会被被重置（重新录制当然也算）/释放</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT </span>仅用于二级命令缓冲区，表示所录制命令被完全包含在某个渲染通道内，若使用该bit，继承信息中提供的renderPass必须有效</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT     </span>表示该命令缓冲区可以在待决状态下（即还没执行完时）被重新提交</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    <a href="https://renderdoc.org/vkspec_chunked/chap6.html#VkCommandBufferInheritanceInfo">VkCommandBufferInheritanceInfo</a>的解说见后文。
+</p>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkEndCommandBuffer">vkEndCommandBuffer</a>(...)结束录制命令缓冲区，单个参数为命令缓冲区的handle。
+</p></section>
+<section id="id4">
+<h3>二级命令缓冲区<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<p>
+    //TODO 暂时用不着所以<a href="https://renderdoc.org/vkspec_chunked/chap6.html#VkCommandBufferInheritanceInfo">VkCommandBufferInheritanceInfo</a>也先不写了。
+    <br>
+    单线程里用处不大，相关示例可能要等我写到阴影。
+</p></section>
+<section id="commandbuffer">
+<h3>封装为commandBuffer类<a class="headerlink" href="#commandbuffer" title="Permalink to this heading"></a></h3>
+<p>
+    向<span class="path">VKBase.h</span>，vulkan命名空间中添加以下代码：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">commandBuffer</span> {
+    <span class="kw">friend class</span> commandPool;<span class="cmt">//封装命令池的commandPool类负责分配和释放命令缓冲区，需要让其能访问私有成员handle</span>
+    <span class="type">VkCommandBuffer</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
+<span class="kw">public</span>:
+    <span class="fn">commandBuffer</span>() = <span class="kw">default</span>;
+    <span class="fn">commandBuffer</span>(<span class="type">commandBuffer</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    <span class="cmt">//因释放命令缓冲区的函数被我定义在封装命令池的commandPool类中，没析构器</span>
+    <span class="cmt">//Getter</span>
+    <span class="mcr">DefineHandleTypeOperator</span>;
+    <span class="mcr">DefineAddressFunction</span>;
+    <span class="cmt">//Const Function</span>
+    <span class="cmt">//这里没给inheritanceInfo设定默认参数，因为C++标准中规定对解引用空指针是未定义行为（尽管运行期不必发生，且至少MSVC编译器允许这种代码），而我又一定要传引用而非指针，因而形成了两个Begin(...)</span>
+    <span class="type">result_t</span> Begin(<span class="type">VkCommandBufferUsageFlags</span> usageFlags, <span class="type">VkCommandBufferInheritanceInfo</span>&amp; inheritanceInfo) <span class="kw">const</span> {
+        inheritanceInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO</span>;
+        <span class="enum">VkCommandBufferBeginInfo</span> beginInfo = {
+            .sType = <span class="enum">VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO</span>,
+            .flags = usageFlags,
+            .pInheritanceInfo = &amp;inheritanceInfo
+        };
+        <span class="type">VkResult</span> result = <span class="fn">vkBeginCommandBuffer</span>(handle, &amp;beginInfo);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandBuffer ] ERROR\nFailed to begin a command buffer!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="type">result_t</span> Begin(<span class="type">VkCommandBufferUsageFlags</span> usageFlags = 0) <span class="kw">const</span> {
+        <span class="enum">VkCommandBufferBeginInfo</span> beginInfo = {
+            .sType = <span class="enum">VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO</span>,
+            .flags = usageFlags,
+        };
+        <span class="type">VkResult</span> result = <span class="fn">vkBeginCommandBuffer</span>(handle, &amp;beginInfo);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandBuffer ] ERROR\nFailed to begin a command buffer!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="type">result_t</span> End() <span class="kw">const</span> {
+        <span class="type">VkResult</span> result = <span class="fn">vkEndCommandBuffer</span>(handle);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandBuffer ] ERROR\nFailed to end a command buffer!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+};
+</pre></section>
+</section>
+<section id="command-pool">
+<h2>Command Pool<a class="headerlink" href="#command-pool" title="Permalink to this heading"></a></h2>
+<section id="id5">
+<h3>创建命令池<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkCreateCommandPool">vkCreateCommandPool</a>(...)创建命令池：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkCreateCommandPool">vkCreateCommandPool</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkCommandPoolCreateInfo</span>* pCreateInfo</p></td>
+            <td><p>指向<span class="type">VkCommandPool</span>的创建信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span>* pAllocator</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkCommandPool</span>* pCommandPool</p></td>
+            <td><p>若执行成功，将命令池的handle写入*pCommandPool</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap6.html#VkCommandPoolCreateInfo">VkCommandPoolCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandPoolCreateFlags</span> flags</p></td>
+            <td><p>见后文</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> queueFamilyIndex</p></td>
+            <td><p>队列族索引</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            自Vulkan1.0以来，flags中可以设置<span class="enum">VK_COMMAND_POOL_CREATE_TRANSIENT_BIT</span>，意为从命令池中分配的命令缓冲区都是短命鬼，用一次没多久后就会被重置或free掉。
+        </p>
+    </li>
+    <li>
+        <p>
+            自Vulkan1.0以来，flags中可以设置<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>，意为从命令池中分配的命令缓冲区可以被重置，若要多次向同一命令缓冲区录制命令，须指定该bit。
+        </p>
+    </li>
+    <li>
+        <p>
+            从命令池中分配的命令缓冲区，必须被提交给queueFamilyIndex所示队列族中的队列。即，所创建的命令池将是索引为queueFamilyIndex的队列族专用的。
+        </p>
+    </li>
+</ul></section>
+<section id="id6">
+<h3>分配命令缓冲区<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkAllocateCommandBuffers">vkAllocateCommandBuffers</a>(...)分配命令缓冲区：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkAllocateCommandBuffers">vkAllocateCommandBuffers</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkCommandBufferAllocateInfo</span>* pAllocateInfo</p></td>
+            <td><p>指向<span class="type">VkCommandBuffer</span>的分配信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandBuffer</span>* pCommandBuffers</p></td>
+            <td><p>若执行成功，将命令缓冲区的handle写入pCommandBuffers所指数组</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap6.html#VkCommandBufferAllocateInfo">VkCommandBufferAllocateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandPool</span> commandPool</p></td>
+            <td><p>命令池的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkCommandBufferLevel</span> level</p></td>
+            <td><p>所需分配的命令缓冲区的级别，<span class="enum">VK_COMMAND_BUFFER_LEVEL_PRIMARY</span>为一级命令缓冲区，<span class="enum">VK_COMMAND_BUFFER_LEVEL_SECONDARY</span>为二级命令缓冲区</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> commandBufferCount</p></td>
+            <td><p>所需分配的命令缓冲区的个数</p></td>
+        </tr>
+    </tbody>
+</table></section>
+<section id="id7">
+<h3>释放命令缓冲区<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkFreeCommandBuffers">vkFreeCommandBuffers</a>(...)释放命令缓冲区：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkFreeCommandBuffers">vkFreeCommandBuffers</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkCommandPool</span> commandPool</p></td>
+            <td><p>命令池的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> commandBufferCount</p></td>
+            <td><p>所需释放的命令缓冲区的个数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkCommandBuffer</span>* pCommandBuffers</p></td>
+            <td><p>指向由所需释放的命令缓冲区的handle构成的数组</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    通常而言你不需要手动释放命令缓冲区，销毁命令池时，会回收从中分配的所有命令缓冲区。
+</p></section>
+<section id="id8">
+<h3>重置命令缓冲区<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<p>
+    对于可以被重置的命令缓冲区，每次重新录制命令时，命令缓冲区会被自动重置。
+    <br>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkResetCommandBuffer">vkResetCommandBuffer</a>(...)显式地重置命令缓冲区，使得命令缓冲区的状态变为初始化状态：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkResetCommandBuffer">vkResetCommandBuffer</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandBuffer</span> commandBuffer</p></td>
+            <td><p>所需重置的命令缓冲区的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkCommandBufferResetFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            自Vulkan1.0以来，flags中可以设置<span class="enum">VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT</span>，意为回收分配给命令缓冲区的内存，若不注明该bit，已分配的内存将被用于下一次录制
+        </p>
+    </li>
+</ul></section>
+<section id="id9">
+<h3>重置命令池<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkResetCommandPool">vkResetCommandPool</a>(...)重置整个命令池，这将导致所有从该命令池中分配的命令缓冲区的状态变为初始化状态：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkResetCommandPool">vkResetCommandPool</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandPool</span> commandPool</p></td>
+            <td><p>所需重置的命令池的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkCommandPoolResetFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            自Vulkan1.0以来，flags中可以设置<span class="enum">VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT</span>，意为将为命令池分配的内存交还给系统，若不注明该bit，已分配的内存将被用于之后的录制
+        </p>
+    </li>
+</ul></section>
+<section id="commandpool">
+<h3>封装为commandPool类<a class="headerlink" href="#commandpool" title="Permalink to this heading"></a></h3>
+<p>
+    向<span class="path">VKBase.h</span>，vulkan命名空间中，<span class="type">commandBuffer</span>的定义后添加以下代码：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">commandPool</span> {
+    <span class="type">VkCommandPool</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
+<span class="kw">public</span>:
+    <span class="fn">commandPool</span>() = <span class="kw">default</span>;
+    <span class="fn">commandPool</span>(<span class="type">VkCommandPoolCreateInfo</span>&amp; createInfo) {
+        <span class="fn">Create</span>(createInfo);
+    }
+    <span class="fn">commandPool</span>(<span class="type">VkCommandPoolCreateFlags</span> createFlags, <span class="type">uint32_t</span> queueFamilyIndex) {
+        <span class="fn">Create</span>(createFlags, queueFamilyIndex);
+    }
+    <span class="fn">commandPool</span>(<span class="type">commandPool</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    ~<span class="fn">commandPool</span>() { <span class="mcr">DestroyHandleBy</span>(vkDestroyCommandPool); }
+    <span class="cmt">//Getter</span>
+    <span class="mcr">DefineHandleTypeOperator</span>;
+    <span class="mcr">DefineAddressFunction</span>;
+    <span class="cmt">//Const Function</span>
+    <span class="type">result_t</span> <span class="fn">AllocateBuffers</span>(<span class="type">arrayParameter</span>&lt;<span class="type">VkCommandBuffer</span>&gt; buffers, <span class="type">VkCommandBufferLevel</span> level = <span class="enum">VK_COMMAND_BUFFER_LEVEL_PRIMARY</span>) <span class="kw">const</span> {
+        <span class="type">VkCommandBufferAllocateInfo</span> allocateInfo = {
+            .sType = <span class="enum">VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO</span>,
+            .commandPool = handle,
+            .level = level,
+            .commandBufferCount = <span class="type">uint32_t</span>(buffers.<span class="fn">Count</span>())
+        };
+        <span class="type">VkResult</span> result = <span class="fn">vkAllocateCommandBuffers</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), &amp;allocateInfo, buffers.<span class="fn">Pointer</span>());
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandPool ] ERROR\nFailed to allocate command buffers!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="type">result_t</span> <span class="fn">AllocateBuffers</span>(<span class="type">arrayParameter</span>&lt;<span class="type">commandBuffer</span>&gt; buffers, <span class="type">VkCommandBufferLevel</span> level = <span class="enum">VK_COMMAND_BUFFER_LEVEL_PRIMARY</span>) <span class="kw">const</span> {
+        <span class="kw">return</span> <span class="fn">AllocateBuffers</span>(
+            { &amp;buffers[0].handle, buffers.<span class="fn">Count</span>() },
+            level);
+    }
+    <span class="kw">void</span> <span class="fn">FreeBuffers</span>(<span class="type">arrayParameter</span>&lt;<span class="type">VkCommandBuffer</span>&gt; buffers) <span class="kw">const</span> {
+        <span class="fn">vkFreeCommandBuffers</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle, buffers.<span class="fn">Count</span>(), buffers.<span class="fn">Pointer</span>());
+        <span class="fn">memset</span>(buffers.<span class="fn">Pointer</span>(), 0, buffers.<span class="fn">Count</span>() * <span class="kw">sizeof</span>(<span class="type">VkCommandBuffer</span>));
+    }
+    <span class="kw">void</span> <span class="fn">FreeBuffers</span>(<span class="type">arrayParameter</span>&lt;<span class="type">commandBuffer</span>&gt; buffers) <span class="kw">const</span> {
+        <span class="fn">FreeBuffers</span>({ &amp;buffers[0].handle, buffers.<span class="fn">Count</span>() });
+    }
+    <span class="cmt">//Non-const Function</span>
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkCommandPoolCreateInfo</span>&amp; createInfo) {
+        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateCommandPool</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="enum">nullptr</span>, &amp;handle);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandPool ] ERROR\nFailed to create a command pool!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkCommandPoolCreateFlags</span> createFlags, <span class="type">uint32_t</span> queueFamilyIndex) {
+        <span class="type">VkCommandPoolCreateInfo</span> createInfo = {
+            .flags = createFlags,
+            .queueFamilyIndex = queueFamilyIndex
+        };
+        <span class="kw">return</span> <span class="fn">Create</span>(createInfo);
+    }
+};
+</pre></section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html" class="btn btn-neutral float-left" title="Ch3-4 渲染通道和帧缓冲" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html" class="btn btn-neutral float-right" title="Ch3-6 描述符" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

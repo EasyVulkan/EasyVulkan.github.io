@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch7-4 初识uniform缓冲区 &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="prev" title="Ch7-3 初识push constant" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch7-4 初识uniform缓冲区</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#uniform">使用uniform缓冲区绘制三角形的流程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">创建uniform缓冲区</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">创建描述符布局和管线布局</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">创建并写入描述符</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#firsttriangle-uniformbuffer-vert-shader">FirstTriangle_UniformBuffer.vert.shader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">绑定描述符并绘制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">动态uniform缓冲区</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch7-4 初识uniform缓冲区</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch7-4-uniform">
+<h1>Ch7-4 初识uniform缓冲区<a class="headerlink" href="#ch7-4-uniform" title="Permalink to this heading"></a></h1>
+<p>
+    这一节尝试使用uniform缓冲区来为三角形指定位移，并用实例化来绘制多个在不同位置的三角形。
+</p><section id="uniform">
+<h2>使用uniform缓冲区绘制三角形的流程<a class="headerlink" href="#uniform" title="Permalink to this heading"></a></h2>
+<p>
+    在之前用顶点缓冲区绘制三角形代码的基础上，使用顶点和uniform缓冲区绘制三角形需要经历以下步骤：
+    <br>
+    1.创建uniform缓冲区
+    <br>
+    2.创建描述符布局和管线布局
+    <br>
+    3.创建描述符
+    <br>
+    4.将uniform缓冲区的信息写入描述符
+    <br>
+    5.书写着色器
+    <br>
+    6.在命令缓冲区中绑定描述符并绘制
+</p>
+<p>
+    这一节会绘制出与前一节效果完全相同的图像，但比使用push constant会麻烦得多。
+    <br>
+    Push constant和uniform缓冲区各有优劣：
+    <br>
+    Push constant的优势在于它会被直接记录在命令缓冲区中，且更新push constant这一行为不需要被同步，适合用于一些即时（immediate）设计的程序。从OpenGL移植过来的程序，若常量不是很大，适合把常量放进push constant。劣势是push constant只支持128个字节，且在同一命令缓冲区中频繁更新可能显著增大命令缓冲区的体积。
+    <br>
+    Uniform缓冲区的优势在于其大小可以比较大（具体大小取决于硬件，若要更大，应当使用storage缓冲区），更新uniform缓冲区时，若数据量较大，那么需要使用<a href="https://renderdoc.org/vkspec_chunked/chap20.html#vkCmdCopyBuffer">vkCmdCopyBuffer</a>(...)从暂存缓冲区拷贝数据，这一行为要么放在单独的（与绘制无关）的命令缓冲区中，要么在渲染通道前进行并使用pipeline barrier进行同步，若数据量小于等于65536个比特，那么可以用<a href="https://renderdoc.org/vkspec_chunked/chap19.html#vkCmdUpdateBuffer">vkCmdUpdateBuffer</a>(...)直接更新（仍旧需要同步）。Uniform缓冲区需要通过描述符使用而不能直接绑定，相比之下比较费事。
+</p></section>
+<section id="id1">
+<h2>创建uniform缓冲区<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<pre class="code">
+glm::<span class="type">vec2</span> uniform_positions[] = {
+    {  .0f, .0f }, {},
+    { -.5f, .0f }, {},
+    {  .0f, .5f }, {}
+};
+<span class="type">uniformBuffer</span> uniformBuffer(<span class="kw">sizeof</span> uniform_positions);
+uniformBuffer.<span class="fn">TransferData</span>(uniform_positions);
+</pre>
+<p>
+    着色器中uniform缓冲区的<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id12">内存布局</a>只能为std140，由于C++中<span class="type">vec2</span>的大小和对齐是8，凑整到16为16，于是需要在每个数组成员后再放一个<span class="type">vec2</span>作为空数据以满足对其要求。
+</p></section>
+<section id="id2">
+<h2>创建描述符布局和管线布局<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<p>
+    请先参阅<a class="reference internal" href="">Ch3-6 描述符</a>，并完成该节中所涉及到的所有Vulkan对象的封装。
+</p>
+<p>
+    在<span class="path">main.cpp</span>中为描述符布局定义一个新的全局变量：
+</p>
+<pre class="code">
+<span class="type">descriptorSetLayout</span> descriptorSetLayout_triangle;
+</pre>
+<p>
+    创建描述符布局。填写<span class="type">VkDescriptorSetLayoutBinding</span>结构体：描述符被绑定到0号binding，类型为uniform缓冲区，个数是一个，在顶点着色器阶段使用它。
+</p>
+<pre class="code">
+<span class="type">VkDescriptorSetLayoutBinding</span> descriptorSetLayoutBinding_trianglePosition = {
+    .binding = 0,                                       <span class="cmt">//描述符被绑定到0号binding</span>
+    .descriptorType = <span class="enum">VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER</span>,<span class="cmt">//类型为uniform缓冲区</span>
+    .descriptorCount = 1,                               <span class="cmt">//个数是1个</span>
+    .stageFlags = <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>            <span class="cmt">//在顶点着色器阶段读取uniform缓冲区</span>
+};
+<span class="type">VkDescriptorSetLayoutCreateInfo</span> descriptorSetLayoutCreateInfo_triangle = {
+    .bindingCount = 1,
+    .pBindings = &amp;descriptorSetLayoutBinding_trianglePosition
+};
+descriptorSetLayout_triangle.<span class="fn">Create</span>(descriptorSetLayoutCreateInfo_triangle);
+</pre>
+<p>
+    然后创建管线布局。
+    <br>
+    这部分代码应该会被写在<span class="fn">CreateLayout</span>()函数中，整个函数如下：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">CreateLayout</span>() {
+    <span class="type">VkDescriptorSetLayoutBinding</span> descriptorSetLayoutBinding_trianglePosition = {
+        .binding = 0,                                       <span class="cmt">//描述符被绑定到0号binding</span>
+        .descriptorType = <span class="enum">VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER</span>,<span class="cmt">//类型为uniform缓冲区</span>
+        .descriptorCount = 1,                               <span class="cmt">//个数是1个</span>
+        .stageFlags = <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>            <span class="cmt">//在顶点着色器阶段读取uniform缓冲区</span>
+    };
+    <span class="type">VkDescriptorSetLayoutCreateInfo</span> descriptorSetLayoutCreateInfo_triangle = {
+        .bindingCount = 1,
+        .pBindings = &amp;descriptorSetLayoutBinding_trianglePosition
+    };
+    descriptorSetLayout_triangle.<span class="fn">Create</span>(descriptorSetLayoutCreateInfo_triangle);
+    <span class="type">VkPipelineLayoutCreateInfo</span> pipelineLayoutCreateInfo = {
+        .setLayoutCount = 1,
+        .pSetLayouts = descriptorSetLayout_triangle.<span class="fn">Address</span>()
+    };
+    pipelineLayout_triangle.<span class="fn">Create</span>(pipelineLayoutCreateInfo);
+}
+</pre></section>
+<section id="id3">
+<h2>创建并写入描述符<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<p>
+    在主函数中创建描述符。
+    <br>
+    首先创建描述符池。对于本节的程序，描述符池只需要能分配一个记录uniform缓冲区信息的描述符即可：
+</p>
+<pre class="code">
+<span class="type">VkDescriptorPoolSize</span> descriptorPoolSizes[] = {
+    { <span class="enum">VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER</span>, 1 }
+};
+<span class="type">descriptorPool descriptorPool</span>(0, 1, descriptorPoolSizes);
+</pre>
+<p>
+    然后分配描述符集：
+</p>
+<pre class="code">
+<span class="type">descriptorSet</span> descriptorSet_trianglePosition;
+descriptorPool.<span class="fn">AllocateSets</span>(descriptorSet_trianglePosition, descriptorSetLayout_triangle);
+</pre>
+<p>
+    将uniform缓冲区的信息写入描述符：
+</p>
+<pre class="code">
+<span class="type">VkDescriptorBufferInfo</span> bufferInfo = {
+    .buffer = uniformBuffer,
+    .offset = 0,
+    .range = <span class="kw">sizeof</span> uniform_positions<span class="cmt">//或VK_WHOLE_SIZE</span>
+};
+descriptorSet_trianglePosition.<span class="fn">Write</span>(bufferInfo, <span class="enum">VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER</span>);
+</pre></section>
+<section id="firsttriangle-uniformbuffer-vert-shader">
+<h2>FirstTriangle_UniformBuffer.vert.shader<a class="headerlink" href="#firsttriangle-uniformbuffer-vert-shader" title="Permalink to this heading"></a></h2>
+<pre class="code">
+<span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(vertex)
+
+<span class="kw">layout</span>(binding = 0) <span class="kw">uniform</span> trianglePosition {
+    <span class="type">vec2</span> u_Positions[3];
+};
+
+<span class="kw">layout</span>(location = 0) <span class="kw">in</span> <span class="type">vec2</span> i_Position;
+<span class="kw">layout</span>(location = 1) <span class="kw">in</span> <span class="type">vec4</span> i_Color;
+<span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec4</span> o_Color;
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    gl_Position = <span class="type">vec4</span>(i_Position + u_Positions[gl_VertexIndex], 0, 1);
+    o_Color = i_Color;
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            涉及到的语法：<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#uniform">Uniform缓冲区的声明方式</a>。
+        </p>
+    </li>
+</ul>
+<p>
+    与前一节中的顶点着色器大致相同，这里仅仅是将前一节中的push constant块改成了uniform缓冲区的块，而这是通过把<code><span class="kw">layout</span>(push_constant)</code>修改为<code><span class="kw">layout</span>(binding = 0)</code>来实现的。因为只有一组描述符且之后会将其绑定到0号索引，所以这里不必显式指定<code>set = 0</code>。
+</p></section>
+<section id="id4">
+<h2>绑定描述符并绘制<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<p>
+    在录制命令缓冲区时，用<a href="https://renderdoc.org/vkspec_chunked/chap14.html#vkCmdBindDescriptorSets">vkCmdBindDescriptorSets</a>绑定描述符：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap14.html#vkCmdBindDescriptorSets">vkCmdBindDescriptorSets</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandBuffer</span> commandBuffer</p></td>
+            <td><p>命令缓冲区的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkPipelineBindPoint</span> pipelineBindPoint</p></td>
+            <td><p>指定会使用描述符的管线的类型</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkPipelineLayout</span> layout</p></td>
+            <td><p>管线布局的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> firstSet</p></td>
+            <td><p>指定pDescriptorSets所指数组中第一个描述符集会被绑定到的索引</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> descriptorSetCount</p></td>
+            <td><p>要被绑定的描述符集的个数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkDescriptorSet</span>* pDescriptorSets</p></td>
+            <td><p>指向<span class="type">VkDescriptorSet</span>的数组，指定所要绑定的描述符集</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> dynamicOffsetCount</p></td>
+            <td><p>动态offset的个数，与描述符中包含的动态uniform/storage缓冲区的总数一致</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">uint32_t</span>* pDynamicOffsets</p></td>
+            <td><p>指向<span class="type">uint32_t</span>的数组，为每个动态缓冲区提供相应的动态offset</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            所能使用的描述符集的最大个数由硬件决定，通常会确保有4组可用。因此firstSet的有效范围通常为闭区间[0,3]。
+        </p>
+    </li>
+    <li>
+        <p>
+            pDynamicOffsets所指数组中的元素，与描述符集的中动态uniform/storage缓冲区一一对应。比如说，若只绑定一套描述符，其中binding为0的是一个动态uniform缓冲区的描述符，binding为3的是包含两个动态storage缓冲区的描述符数组，那么需要为该描述符集提供3个动态offset（重点是只需要考虑动态缓冲区的个数并依序提供offset，不必考虑当中间隔的其他类型的描述符）。
+        </p>
+    </li>
+</ul>
+<p>
+    在<span class="fn">vkCmdDraw</span>(...)前加入以下代码：
+</p>
+<pre class="code">
+<span class="fn">vkCmdBindDescriptorSets</span>(commandBuffer_graphics, <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>,
+    pipelineLayout_triangle, 0, 1, descriptorSet_trianglePosition.<span class="fn">Address</span>(), 0, <span class="kw">nullptr</span>);
+</pre>
+<p>
+    绘制命令同上一节一样，绘制三个实例：
+</p>
+<pre class="code">
+<span class="fn">vkCmdDraw</span>(commandBuffer_graphics, 3, 3, 0, 0);
+</pre>
+<p>
+    运行程序，你应该会看到以下图像（跟上一节的一样）：
+</p>
+<img alt="_images/ch7-3-1.png" src="_images/ch7-3-1.png"></section>
+<section id="id5">
+<h2>动态uniform缓冲区<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<p>
+    在<a class="reference internal" href="">写入描述符集</a>中提到，若多个描述符引用同一个缓冲区的不同部分，则必须满足相应对齐要求。比如，假设有三组数据A~C，各自被用在不同的描述符中，则整个uniform缓冲区的大小如下计算：
+</p>
+<pre class="code">
+<span class="cmt">//首先取得单位对齐距离</span>
+<span class="type">VkDeviceSize</span> uniformAlignment = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>()limits.minUniformBufferOffsetAlignment;
+<span class="cmt">//计算每组数据的大小</span>
+<span class="type">VkDeviceSize</span> dataSize[] = { <span class="kw">sizeof</span> A, <span class="kw">sizeof</span> B, <span class="kw">sizeof</span> C };
+<span class="cmt">//每组数据的大小向上凑整到单位对齐距离的整数倍并相加，得到整个缓冲区的大小</span>
+<span class="type">VkDeviceSize</span> uniformBufferSize = uniformAlignment * (std::<span class="fn">ceil</span>(<span class="kw">float</span>(dataSize[0]) / uniformAlignment) + ... + std::<span class="fn">ceil</span>(<span class="kw">float</span>(dataSize[2]) / uniformAlignment));
+<span class="cmt">//上式更快的计算方法，原理请自行推导：</span>
+<span class="cmt">//VkDeviceSize uniformBufferSize = ((uniformAlignment + sizeof A - 1) & ~(uniformAlignment - 1)) + ... + ((uniformAlignment + sizeof C - 1) & ~(uniformAlignment - 1));</span>
+</pre>
+<p>
+    绑定动态缓冲区时，动态offset需要满足同样的对齐要求，下文简单做个示例：
+</p>
+<p>
+    前文的程序是：<strong>uniform缓冲区的描述符</strong>对应包含<strong>3组</strong>位移数据的整个缓冲区，绑定描述符<strong>1次</strong>，然后执行<strong>1次</strong>绘制命令，一次性绘制<strong>3个</strong>三角形实例。
+    <br>
+    现试着将程序改写为：<strong>动态uniform缓冲区的描述符</strong>对应包含<strong>1组</strong>位移数据的部分缓冲区，绑定描述符<strong>3次</strong>，然后执行<strong>3次</strong>绘制命令，各绘制<strong>1个</strong>三角形实例。
+    <br>
+    那么首先在创建描述符布局时，指定描述符类型为动态uniform缓冲区：
+</p>
+<pre class="code">
+<span class="type">VkDescriptorSetLayoutBinding</span> descriptorSetLayoutBinding_trianglePosition = {
+    .binding = 0,
+    .descriptorType = <span class="enum">VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC</span>,<span class="cmt">//类型为动态uniform缓冲区</span>
+    .descriptorCount = 1,
+    .stageFlags = <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>
+};
+</pre>
+<p>
+    Uniform缓冲区中的每组数据需要满足对齐要求，先创建相应大小的缓冲区，然后将数据拷贝到相应对齐位置：
+</p>
+<pre class="code">
+glm::<span class="type">vec2</span> uniform_positions[] = {
+    {  .0f, .0f },
+    { -.5f, .0f },
+    {  .0f, .5f }
+};
+<span class="type">VkDeviceSize</span> uniformAlignment = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.minUniformBufferOffsetAlignment;
+uniformAlignment *= (std::<span class="fn">ceil</span>(<span class="kw">float</span>(<span class="kw">sizeof</span>(glm::<span class="type">vec2</span>)) / uniformAlignment);
+<span class="cmt">//上式可改为：</span>
+<span class="cmt">//uniformAlignment = (uniformAlignment + sizeof(glm::vec2) - 1) & ~(uniformAlignment - 1);</span>
+<span class="type">uniformBuffer</span> uniformBuffer(uniformAlignment * 3);
+uniformBuffer.<span class="fn">TransferData</span>(uniform_positions, 3, <span class="kw">sizeof</span>(glm::<span class="type">vec2</span>), <span class="kw">sizeof</span>(glm::<span class="type">vec2</span>), uniformAlignment);
+</pre>
+<p>
+    分配相应类型的描述符集，写入描述符：
+</p>
+<pre class="code">
+<span class="type">VkDescriptorPoolSize</span> descriptorPoolSizes[] = {
+    { <span class="enum">VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC</span>, 1 }
+};
+<span class="type">descriptorPool descriptorPool</span>(0, 1, descriptorPoolSizes);
+<span class="type">descriptorSet</span> descriptorSet_trianglePosition;
+descriptorPool.<span class="fn">AllocateSets</span>(descriptorSet_trianglePosition, descriptorSetLayout_triangle);
+<span class="type">VkDescriptorBufferInfo</span> bufferInfo = {
+    .buffer = uniformBuffer,
+    .offset = 0,
+    .range = <span class="kw">sizeof</span>(glm::<span class="type">vec2</span>)
+};
+descriptorSet_trianglePosition.<span class="fn">Write</span>(bufferInfo, <span class="enum">VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC</span>);
+</pre>
+<p>
+    在循环中绑定描述符并绘制：
+</p>
+<pre class="code">
+<span class="kw">for</span> (<span class="type">size_t</span> i = 0; i < 3; i++) {
+    <span class="fn">vkCmdBindDescriptorSets</span>(commandBuffer_graphics, <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>,
+    pipelineLayout_triangle, 0, 1, descriptorSet_trianglePosition.<span class="fn">Address</span>(), 1, &amp;uniformAlignment);
+    <span class="fn">vkCmdDraw</span>(commandBuffer_graphics, 3, 1, 0, 0);
+}
+</pre>
+<p>
+    运行结果当然与前文的相同。
+</p>
+<p>
+    上文仅演示用法，所示情形其实并不需要使用动态uniform缓冲区。动态uniform缓冲区/storage缓冲区的优势在于，可以在录制命令时灵活地改变读取缓冲区时的起始位置，而不必再重新写入描述符。
+</p></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html" class="btn btn-neutral float-left" title="Ch7-3 初识push constant" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

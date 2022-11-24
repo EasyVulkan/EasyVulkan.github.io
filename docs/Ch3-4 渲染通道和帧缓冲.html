@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch3-4 渲染通道和帧缓冲 &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ch3-5 命令缓冲区" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html" />
+    <link rel="prev" title="Ch3-3 管线布局和管线" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch3-4 渲染通道和帧缓冲</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#render-pass">Render Pass</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">创建渲染通道</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">图像附件</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">子通道</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">子通道依赖</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">开始渲染通道</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">进入下一个子通道</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">结束渲染通道</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#renderpass">封装为renderPass类</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#framebuffer">Framebuffer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id8">创建帧缓冲</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">封装为framebuffer类</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch3-4 渲染通道和帧缓冲</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch3-4">
+<h1>Ch3-4 渲染通道和帧缓冲<a class="headerlink" href="#ch3-4" title="Permalink to this heading"></a></h1>
+<section id="render-pass">
+<h2>Render Pass<a class="headerlink" href="#render-pass" title="Permalink to this heading"></a></h2>
+<p>
+    渲染通道（<span class="type">VkRenderPass</span>）由图像附件（attachment）、子通道描述（subpass）、以及子通道依赖（<span class="type">VkSubpassDependency</span>）组合而成。渲染通道指定渲染过程中，所绑定帧缓冲的参数（格式、内存布局）及各个渲染步骤之间的关系，换言之，渲染通道是对渲染流程的抽象。
+</p><section id="id1">
+<h3>创建渲染通道<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap8.html#vkCreateRenderPass">vkCreateRenderPass</a>(...)创建渲染通道：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap8.html#vkCreateRenderPass">vkCreateRenderPass</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkRenderPassCreateInfo</span>* pCreateInfo</p></td>
+            <td><p>指向<span class="type">VkRenderPass</span>的创建信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span>* pAllocator</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkRenderPass</span>* pRenderPass</p></td>
+            <td><p>若执行成功，将渲染通道的handle写入*pRenderPass</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkRenderPassCreateInfo">VkRenderPassCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkRenderPassCreateFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> attachmentCount</p></td>
+            <td><p>图像附件的数量</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAttachmentDescription</span>* pAttachments</p></td>
+            <td><p>指向<span class="type">VkAttachmentDescription</span>的数组，用于描述图像附件</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> subpassCount</p></td>
+            <td><p>子通道的数量</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkSubpassDescription</span>* pSubpasses</p></td>
+            <td><p>指向<span class="type">VkSubpassDescription</span>的数组，用于描述子通道</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> dependenciesCount</p></td>
+            <td><p>子通道依赖的数量</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkSubpassDependency</span>* pDependencies</p></td>
+            <td><p>指向<span class="type">VkSubpassDependency</span>的数组，用于描述子通道依赖</p></td>
+        </tr>
+    </tbody>
+</table><section id="id2">
+<h4>图像附件<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h4>
+<p>
+    通俗地说，图像附件就是渲染目标，图形命令向图像附件上输出颜色/深度/模板值。
+    <br>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkAttachmentDescription">VkAttachmentDescription</a>描述图像附件：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkAttachmentDescription">VkAttachmentDescription</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkAttachmentDescriptionFlags</span> flags</p></td>
+            <td><p>若填入<span class="enum">VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT</span>，则说明该图像附件可能与其他图像附件共用内存</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkFormat</span> format</p></td>
+            <td><p>图像附件的格式，与要被用作图像附件的image view的格式一致</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkSampleCountFlagBits</span> samples</p></td>
+            <td><p>每个像素的采样点数量</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkAttachmentLoadOp</span> loadOp</p></td>
+            <td><p>读取图像附件时，对颜色和深度值进行的操作</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkAttachmentStoreOp</span> storeOp</p></td>
+            <td><p>存储颜色和深度值到图像附件时的操作</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkAttachmentLoadOp</span> stencilLoadOp</p></td>
+            <td><p>读取图像附件时，对模板值进行的操作</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkAttachmentStoreOp</span> stencilStoreOp</p></td>
+            <td><p>存储模板值到图像附件时的操作</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkImageLayout</span> initialLayout</p></td>
+            <td><p>读取图像附件时的内存布局</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkImageLayout</span> finalLayout</p></td>
+            <td><p>存储渲染结果到图像附件时，需转换至的内存布局</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            自Vulkan1.0以来，flags中可设置<span class="enum">VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT</span>，意为该图像附件可能与其他图像附件共用内存（但“作为某一图像附件写入后，再作为另一图像附件读取”这种行为通常是不安全的），某些情况下可以籍此节省一些内存。
+        </p>
+    </li>
+    <li>
+        <p>
+            samples决定了是否使用多重采样及其精度，若不使用多重采样或超采样，值应为<span class="enum">VK_SAMPLE_COUNT_1_BIT</span>，若使用4x多重采样或4x超采样（除指定samples外还需要其他设置，在此不做展开），值应为<span class="enum">VK_SAMPLE_COUNT_4_BIT</span>。
+        </p>
+    </li>
+</ul>
+<p>
+    <span class="type">VkAttachmentDescription</span>只是用于描述图像附件，而不指定具体的图像附件或帧缓冲，因此其中不要求填写<span class="type">VkImage</span>或<span class="type">VkImageView</span>或<span class="type">VkFramebuffer</span>类型的handle。
+</p>
+<p>
+    读取图像附件这一行为，发生在该图像附件<strong>在渲染通道中首次被使用</strong>的时候，而存储图像附件则发生在该图像附件<strong>在渲染通道中最后一次被使用</strong>的时候。
+    <br>
+    首次使用某一图像附件未必发生在最初的子通道中。举例而言，实现延迟渲染时，首先在最初的子通道中渲染到G-buffer，然后在之后的子通道中渲染到交换链图像，于是交换链图像的首次使用发生在第二个子通道中。
+</p>
+<div class="admonition note">
+    <p class="admonition-title">Note</p>
+    <p>
+        所谓“存储图像附件则发生在该图像附件在渲染通道中最后一次被使用的时候”，简而言之，storeOp仅影响渲染通道结束后如何存储生成的数值，而不影响中间过程，即，无论给被解析的颜色附件和输入附件（相关解释见后文）指定何种storeOp，它们都能正常发挥作用。
+    </p>
+</div>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkAttachmentLoadOp">VkAttachmentLoadOp</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_ATTACHMENT_LOAD_OP_LOAD      </span>表示读取图像附件时保留其原有内容</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_ATTACHMENT_LOAD_OP_CLEAR     </span>表示读取图像附件时清空其原有内容</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_ATTACHMENT_LOAD_OP_DONT_CARE </span>表示不在乎读取图像附件时的操作（即图像附件的原有内容无关紧要）</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkAttachmentStoreOp">VkAttachmentStoreOp</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_ATTACHMENT_STORE_OP_STORE     </span>表示将渲染结果存入图像附件</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_ATTACHMENT_STORE_OP_DONT_CARE </span>表示不在乎是否将渲染结果存入图像附件</p></td>
+        </tr>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_ATTACHMENT_STORE_OP_NONE      </span>表示图像附件的渲染区域内不会发生写入（不是阻止写入渲染结果，而是你必须确保不产生渲染结果）</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            显然，若不在渲染区域内进行渲染，或渲染结果被丢弃（GLSL着色器中使用<span class="kw">discard</span>），那么使用<span class="enum">VK_ATTACHMENT_STORE_OP_STORE</span>和<span class="enum">VK_ATTACHMENT_STORE_OP_NONE</span>的结果是一致的，但后者可免去不必要的隐式同步。
+        </p>
+    </li>
+</ul>
+<p>
+    关于内存布局，参见<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#id12">图像内存屏障</a>。关于内存布局在渲染通道中的转换，见下一段。
+</p></section>
+<section id="id3">
+<h4>子通道<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h4>
+<p>
+    既然渲染通道是对渲染流程的抽象，那么子通道就是渲染流程中的一个环节。
+    <br>
+    举例而言，直接渲染到屏幕缓冲（由交换链图像构成的帧缓冲）的做法只有一个子通道。而延迟渲染至少要经历两个子通道，一个生成G-buffer，一个用G-buffer在屏幕缓冲上进行光照计算，如果你还要做正向透明度的话，还得再多一个子通道。
+    <br>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkSubpassDescription">VkSubpassDescription</a>描述子通道中用到了哪些附件并各自起到何种作用：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkSubpassDescription">VkSubpassDescription</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkPipelineBindPoint</span> pipelineBindPoint</p></td>
+            <td><p>该通道对应的管线类型</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> inputAttachmentCount</p></td>
+            <td><p>该子通道中所使用输入附件的数量</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAttachmentReference</span>* pInputAttachments</p></td>
+            <td><p>指向<span class="type">VkAttachmentReference</span>的数组，该数组引用该子通道所使用的输入附件</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> colorAttachmentCount</p></td>
+            <td><p>该子通道中所使用颜色附件的数量</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAttachmentReference</span>* pColorAttachments</p></td>
+            <td><p>指向<span class="type">VkAttachmentReference</span>的数组，该数组引用该子通道所使用的颜色附件</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkAttachmentReference</span>* pResolveAttachments</p></td>
+            <td><p>指向<span class="type">VkAttachmentReference</span>的数组，该数组引用该子通道所使用的解析附件，与颜色附件一一对应</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAttachmentReference</span>* pDepthStencilAttachment</p></td>
+            <td><p>指向单个<span class="type">VkAttachmentReference</span>对象，该对象引用该子通道所使用的深度模板附件</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> preserveAttachmentCount</p></td>
+            <td><p>该子通道中保留附件的数量</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">uint32_t</span>* pPreserveAttachments</p></td>
+            <td><p>指向<span class="type">uint32_t</span>的数组，该数组记录该子通道中的保留附件所对应<span class="type">VkRenderPassCreateInfo</span>::pAttachments中元素的索引</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            既然是渲染通道，那么<span class="type">VkSubpassDescription</span>::pipelineBindPoint当然应该是<span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>，这是不使用扩展的情况下的唯一选择。
+        </p>
+    </li>
+</ul>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkAttachmentReference">VkAttachmentReference</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> attachment</p></td>
+            <td><p>附件对应<span class="type">VkRenderPassCreateInfo</span>::pAttachments中元素的索引</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkImageLayout</span> imageLayout</p></td>
+            <td><p>该子通道内使用该附件时的内存布局</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            内存布局转换如下发生：举例而言，若渲染通道有两个子通道，则渲染附件内存布局从<span class="type">VkAttachmentDescription</span>::initialLayout变为第一个子通道中的布局，再变成第二个子通道中的布局，最后变为<span class="type">VkAttachmentDescription</span>::finalLayout。
+        </p>
+    </li>
+</ul>
+<p>
+    输入附件（input attachment）对于从OpenGL转来的程序员应该是个比较陌生的概念，其名称可能会让人误以为它指代该子通道中所用到的所有附件。事实上，它起到的是类似用于采样的贴图的作用，只不过输入附件必定是点对点的，读取输入附件时不采样，而是直接读取到与当前像素坐标同一位置的像素。
+    <br>
+    读取输入附件的效率比采样高，并且可以使用frambuffer-local依赖（见后文“子通道依赖”）。
+    <br>
+    输入附件的使用案例见//TODO 延迟渲染。
+</p>
+<p>
+    颜色附件（color attachment）的概念应该不需要过多解释，令人疑惑的大概是为什么可以有多个颜色附件，事实上，你是可以在片段着色器中把颜色输出到多个颜色附件的，见<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#dual-source-blending">Dual-source Blending</a>。注意所有颜色附件的采样次数都得是一致的。
+    <br>
+    可以一个颜色附件都没有，比如渲染阴影贴图，相应地也不需要片段着色器。
+</p>
+<p>
+    解析附件（resolve attachment）用于将多重采样的颜色附件解析为普通的图像，因此解析附件不得为多重采样的，即其samples必须为<span class="enum">VK_SAMPLE_COUNT_1_BIT</span>，此外每个解析附件的格式必须与相应颜色附件一致。解析是自动发生的。
+    <br>
+    深度模板附件也可以进行多重采样并参与解析，但Vulkan1.0版本不支持将多重采样的深度模板附件解析为独立的图像，如果你有这种需求，在Vulkan1.2中，可以使
+    <a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkSubpassDescription2">VkSubpassDescription2</a>::pNext指向一个<a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkSubpassDescriptionDepthStencilResolve">VkSubpassDescriptionDepthStencilResolve</a>结构体。
+</p>
+<p>
+    深度模板附件（depth stencil attachment）可以只有深度值或模板值，由格式决定。若既不进行深度测试也不进行模板测试，pDepthStencilAttachment为<span class="kw">nullptr</span>。
+</p>
+<p>
+    保留附件（preserve attachment）说明该子通道不使用该附件，但必须保留其内容。举例而言，对于以下延迟渲染流程：G-buffer→延迟光照→渲染透明物体，需要三个子通道，而G-buffer环节中的深度信息不需要参与延迟光照，但需要保留到渲染透明物体的环节继续参与深度测试，于是必须将G-buffer子通道中的深度附件设定为延迟光照子通道中的保留附件。
+</p>
+<p>
+    一个子通道甚至整个渲染通道可以不使用任何图像附件，意在执行一些副作用，比方说在着色器中对storage缓冲区进行写入。
+</p></section>
+<section id="id4">
+<h4>子通道依赖<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h4>
+<p>
+    子通道依赖是一种同步措施，它能确保附件的内存布局转换在正确的时机发生。
+    <br>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkSubpassDependency">VkSubpassDependency</a>描述子通道间的依赖条件，或子通道与外部的依赖条件：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkSubpassDependency">VkSubpassDependency</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> srcSubpass</p></td>
+            <td><p>源子通道，见后文</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> dstSubpass</p></td>
+            <td><p>目标子通道，见后文</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkPipelineStageFlags</span> srcStageMask</p></td>
+            <td><p>源管线阶段，见后文</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkPipelineStageFlags</span> dstStageMask</p></td>
+            <td><p>目标管线阶段，见后文</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkAccessFlags</span> srcAccessMask</p></td>
+            <td><p>源操作，见后文</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkAccessFlags</span> dstAccessMask</p></td>
+            <td><p>目标操作，见后文</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkDependencyFlags</span> dependencyFlags</p></td>
+            <td><p>自Vulkan1.0以来可以指定<span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span>，见后文</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            srcSubpass与dstSubpass是子通道在整个渲染通道中的索引，即子通道对应的<span class="type">VkSubpassDescription</span>在<span class="type">VkRenderPassCreateInfo</span>::pSubpasses所指数组中的索引。可对它们使用特殊值<span class="mcr">VK_SUBPASS_EXTERNAL</span>，表示与当前渲染通道外的操作进行同步。
+        </p>
+    </li>
+    <li>
+        <p>
+            关于<a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkPipelineStageFlagBits">VkPipelineStageFlags</a>和<a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkAccessFlags">VkAccessFlags</a>，参见<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#pipeline-barrier">Pipeline Barrier</a>（如果从Ch2-1点进这个页面，先不用管）。
+        </p>
+    </li>
+    <li>
+        <p>
+            因为是mask，srcStageMask和dstStageMask中可以指定多于一个阶段，类似地，srcAccessMask和dstAccessMask中可以指定多于一种操作。
+        </p>
+    </li>
+</ul>
+<p>
+    Vulkan官方标准中提到，Vulkan的命令按顺序开始执行，但未必按顺序结束，那么依序录制的命令的执行时间可能重叠。
+    <br>
+    记srcSubpass对应的子通道中，由srcStageMask所表示的阶段为第一同步域。
+    <br>
+    记dstSubpass对应的子通道中，由dstStageMask所表示的阶段为第二同步域。
+    <br>
+    子通道依赖确保：
+    <br>
+    1.第一同步域发生在第二同步域之前，且图像附件的内存布局转换发生在两者之间，这构成一种<strong>执行依赖</strong>。
+    <br>
+    2.确保第一同步域中srcAccessMask所注明的任何写入操作的结果，能被第二同步域中dstAccessMask所注明的任何读取操作正确读取，这构成一种<strong>内存依赖</strong>。
+    <br>
+</p>
+<div class="admonition note">
+    <p class="admonition-title">Note</p>
+    <p>
+        可以在srcAccessMask中填入诸如<span class="enum">VK_ACCESS_COLOR_ATTACHMENT_READ_BIT</span>之类的读操作，但没意义。
+    </p>
+</div>
+<ul>
+    <li>
+        <p>
+            在srcStageMask使用<span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span>或<span class="enum">VK_PIPELINE_STAGE_ALL_COMMANDS_BIT</span>，说明第二同步域的所有操作必须等待该队列执行完先前的所有命令。
+        </p>
+    </li>
+    <li>
+        <p>
+            在dstStageMask上使用<span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>或<span class="enum">VK_PIPELINE_STAGE_ALL_COMMANDS_BIT</span>，说明之后在该队列上执行的所有命令都得在第一同步域的操作完成后执行。
+        </p>
+    </li>
+</ul>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr>
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkDependencyFlagBits">VkDependencyFlagBits</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_DEPENDENCY_BY_REGION_BIT    </span>表示该子通道依赖是framebuffer-local的</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_DEPENDENCY_DEVICE_GROUP_BIT </span>表示该子通道依赖涉及到多个物理设备</p></td>
+        </tr>
+        <tr>
+            <td><p>1.1</p></td>
+            <td><p><span class="enum">VK_DEPENDENCY_VIEW_LOCAL_BIT   </span>表示一个自依赖的子通道使用多个视点</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    <strong>什么是framebuffer-local的依赖？</strong>
+    <br>
+    指以帧缓冲区域（framebuffer region）为同步单位的依赖，单个帧缓冲区域为单个像素点或单个采样点。换言之，若需要同步的操作是点对点读写，那么便可将子通道依赖定义为framebuffer-local的，这种依赖称为帧缓冲空间依赖（framebuffer region dependency）。
+    <br>
+    定义帧缓冲空间依赖须满足：
+    <br>
+    1.你能确保第二同步域中的操作在访问图像的某个像素或采样点时，第一同步域中对该像素或采样点的操作已经完成了。
+    <br>
+    2.srcStageMask或dstStageMask中包含了以下四个阶段之中的至少一个：<span class="enum">VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT</span>、<span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>、<span class="enum">VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT</span>、<span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>，上述阶段按发生的顺序排列，统称为帧缓冲空间阶段（framebuffer-space stage）。
+</p>
+<p>
+    <strong>什么叫涉及到多个物理设备？</strong>
+    <br>
+    使用多张显卡进行渲染。
+</p>
+<p>
+    <strong>什么是自依赖？</strong>
+    <br>
+    若某个子通道依赖中填入的srcSubpass和dstSubpass为同一子通道，则称该子通道是自依赖的。
+    <br>
+    若某个子通道依赖表明了一个自依赖的子通道，那么其srcStageMask和dstStageMask必须只包括图形管线阶段，
+    <br>
+    且如果srcStageMask包含任一帧缓冲空间阶段，那么dstStageMask必须只包含帧缓冲空间阶段，如此一来将构成帧缓冲空间依赖（此时必须在dependencyFlags中指定<span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span>）。
+</p>
+<p>
+    <strong>每个子通道开始和结束时各应有一个子通道依赖。</strong>
+    <br>
+    整个渲染通道开始和结束时具有隐式的子通道依赖，可以手动书写覆盖这两个隐式依赖。这两个隐式依赖被定义为：
+</p>
+<pre class="code">
+<span class="cmt">//渲染通道开始时的隐式依赖</span>
+<span class="type">VkSubpassDependency</span> implicitDependency_renderPassBegin = {
+    .srcSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>;
+    .dstSubpass = firstSubpass;<span class="cmt">//首个使用了图像附件的子通道</span>
+    .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_NONE</span>;
+    .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_ALL_COMMANDS_BIT</span>;
+    .srcAccessMask = 0;
+    .dstAccessMask = <span class="enum">VK_ACCESS_INPUT_ATTACHMENT_READ_BIT</span> |
+                     <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_READ_BIT</span> |
+                     <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span> |
+                     <span class="enum">VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT</span> |
+                     <span class="enum">VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT</span>;
+    .dependencyFlags = 0;
+};
+<span class="cmt">//渲染通道结束时的隐式依赖</span>
+<span class="type">VkSubpassDependency</span> implicitDependency_renderPassEnd = {
+    .srcSubpass = lastSubpass;<span class="cmt">//最后一个使用了图像附件的子通道</span>
+    .dstSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>;
+    .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_ALL_COMMANDS_BIT</span>;
+    .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_NONE</span>;
+    .srcAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span> |
+                     <span class="enum">VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT</span>;
+    .dstAccessMask = 0;
+    .dependencyFlags = 0;
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            如果你要覆盖渲染通道开始时的隐式依赖，srcSubpass必须为<span class="mcr">VK_SUBPASS_EXTERNAL</span>，dstSubpass必须为firstSubpass。同理，如果你要覆盖渲染通道开始时的隐式依赖，srcSubpass必须为lastSubpass，dstSubpass必须为<span class="mcr">VK_SUBPASS_EXTERNAL</span>。
+        </p>
+    </li>
+</ul></section>
+</section>
+<section id="id5">
+<h3>开始渲染通道<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<p>
+    所谓开始渲染通道，就是开始该渲染通道所代表的一系列渲染流程。
+    <br>
+    在命令缓冲区中，用<a href="https://renderdoc.org/vkspec_chunked/chap8.html#vkCmdBeginRenderPass">vkCmdBeginRenderPass</a>(...)开始一个渲染通道：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap8.html#vkCmdBeginRenderPass">vkCmdBeginRenderPass</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandBuffer</span> commandBuffer</p></td>
+            <td><p>正在录制的命令缓冲区的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkRenderPassBeginInfo</span>* pRenderPassBegin</p></td>
+            <td><p>指向渲染通道的开始信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkSubpassContents</span> contents</p></td>
+            <td><p>若为<span class="enum">VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS</span>，则最初的子通道的内容将由二级命令缓冲区提供</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            若将contents指定为<span class="enum">VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS</span>，那么直到调用<a href="https://renderdoc.org/vkspec_chunked/chap8.html#vkCmdNextSubpass">vkCmdNextSubpass</a>(...)或<a href="https://renderdoc.org/vkspec_chunked/chap8.html#vkCmdEndRenderPass">vkCmdEndRenderPass</a>(...)前，用<a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkCmdExecuteCommands">vkCmdExecuteCommands</a>(...)执行二级命令缓冲区将是唯一可行的操作。
+        </p>
+    </li>
+</ul>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkRenderPassBeginInfo">VkRenderPassBeginInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkRenderPass</span> renderPass</p></td>
+            <td><p>渲染通道的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkFramebuffer</span> framebuffer</p></td>
+            <td><p>所使用的帧缓冲的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkRect2D</span> renderArea</p></td>
+            <td><p>渲染区域</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> clearValueCount</p></td>
+            <td><p>清屏值的数量</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkClearValue</span> pClearValues</p></td>
+            <td><p>指向清屏值的数组</p></td>
+        </tr>
+</tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            renderArea.offset（起始点）和renderArea.extent（大小）皆以像素为单位，renderArea.offset的坐标以画面左上角为原点，向右向下为正（不考虑呈现引擎对图像做的变换的话）。
+        </p>
+    </li>
+    <li>
+        <p>
+            清屏值的个数至少要涵盖到<span class="type">VkRenderPassCreateInfo</span>::pAttachments中最后一个需要被清屏（loadOp为<span class="enum">VK_ATTACHMENT_LOAD_OP_CLEAR</span>）的图像附件。比如，若<span class="type">VkRenderPassCreateInfo</span>::pAttachments指向三个元素的数组，且只有其中第二个图像附件需要清屏，那么clearValueCount应当至少为2。
+        </p>
+    </li>
+</ul></section>
+<section id="id6">
+<h3>进入下一个子通道<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<p>
+    在命令缓冲区中，用<a href="https://renderdoc.org/vkspec_chunked/chap8.html#vkCmdNextSubpass">vkCmdNextSubpass</a>(...)进入下一个子通道：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap8.html#vkCmdNextSubpass">vkCmdNextSubpass</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandBuffer</span> commandBuffer</p></td>
+            <td><p>正在录制的命令缓冲区的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkSubpassContents</span> contents</p></td>
+            <td><p>若为<span class="enum">VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS</span>，则接下来的子通道的内容将由二级命令缓冲区提供</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            同<a href="https://renderdoc.org/vkspec_chunked/chap8.html#vkCmdBeginRenderPass">vkCmdBeginRenderPass</a>(...)的情况一样，若contents为<span class="enum">VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS</span>，则直到本子通道结束前只能执行二级命令缓冲区。
+        </p>
+    </li>
+</ul></section>
+<section id="id7">
+<h3>结束渲染通道<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<p>
+    在命令缓冲区中，用<a href="https://renderdoc.org/vkspec_chunked/chap8.html#vkCmdEndRenderPass">vkCmdEndRenderPass</a>(...)结束当前渲染通道：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap8.html#vkCmdEndRenderPass">vkCmdEndRenderPass</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandBuffer</span> commandBuffer</p></td>
+            <td><p>正在录制的命令缓冲区的handle</p></td>
+        </tr>
+    </tbody>
+</table></section>
+<section id="renderpass">
+<h3>封装为renderPass类<a class="headerlink" href="#renderpass" title="Permalink to this heading"></a></h3>
+<p>
+    向<span class="path">VKBase.h</span>，vulkan命名空间中添加以下代码：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">renderPass</span> {
+    <span class="type">VkRenderPass</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
+<span class="kw">public</span>:
+    <span class="fn">renderPass</span>() = <span class="kw">default</span>;
+    <span class="fn">renderPass</span>(<span class="type">VkRenderPassCreateInfo</span>&amp; createInfo) {
+        <span class="fn">Create</span>(createInfo);
+    }
+    <span class="fn">renderPass</span>(<span class="type">renderPass</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    ~<span class="fn">renderPass</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyRenderPass</span>); }
+    <span class="cmt">//Getter</span>
+    <span class="mcr">DefineHandleTypeOperator</span>;
+    <span class="mcr">DefineAddressFunction</span>;
+    <span class="cmt">//Const Function</span>
+    <span class="kw">void</span> <span class="fn">CmdBegin</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkRenderPassBeginInfo</span>&amp; beginInfo, <span class="type">VkSubpassContents</span> subpassContents = <span class="enum">VK_SUBPASS_CONTENTS_INLINE</span>) <span class="kw">const</span> {
+        beginInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO</span>;
+        beginInfo.renderPass = handle;
+        <span class="fn">vkCmdBeginRenderPass</span>(commandBuffer, &amp;beginInfo, subpassContents);
+    }
+    <span class="kw">void</span> <span class="fn">CmdBegin</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkFramebuffer</span> framebuffer, <span class="type">arrayParameter</span>&lt;<span class="kw">const</span> <span class="type">VkClearValue</span>&gt; clearValues = {}, <span class="type">VkSubpassContents</span> subpassContents = <span class="enum">VK_SUBPASS_CONTENTS_INLINE</span>) <span class="kw">const</span> {
+        <span class="fn">CmdBegin</span>(commandBuffer, framebuffer, { {}, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageExtent }, clearValues, subpassContents);
+    }
+    <span class="kw">void</span> <span class="fn">CmdBegin</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkFramebuffer</span> framebuffer, <span class="type">VkRect2D</span> renderArea, <span class="type">arrayParameter</span>&lt;<span class="kw">const</span> <span class="type">VkClearValue</span>&gt; clearValues = {}, <span class="type">VkSubpassContents</span> subpassContents = <span class="enum">VK_SUBPASS_CONTENTS_INLINE</span>) <span class="kw">const</span> {
+        <span class="type">VkRenderPassBeginInfo</span> beginInfo = {
+            .sType = <span class="enum">VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO</span>,
+            .renderPass = handle,
+            .framebuffer = framebuffer,
+            .renderArea = renderArea,
+            .clearValueCount = <span class="type">uint32_t</span>(clearValues.<span class="fn">Count</span>()),
+            .pClearValues = clearValues.<span class="fn">Pointer</span>()
+        };
+        <span class="fn">vkCmdBeginRenderPass</span>(commandBuffer, &amp;beginInfo, subpassContents);
+    }
+    <span class="kw">void</span> <span class="fn">CmdNext</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkSubpassContents</span> subpassContents = <span class="enum">VK_SUBPASS_CONTENTS_INLINE</span>) <span class="kw">const</span> {
+        <span class="fn">vkCmdNextSubpass</span>(commandBuffer, subpassContents);
+    }
+    <span class="kw">void</span> <span class="fn">CmdEnd</span>(<span class="type">VkCommandBuffer</span> commandBuffer) <span class="kw">const</span> {
+        <span class="fn">vkCmdEndRenderPass</span>(commandBuffer);
+    }
+    <span class="cmt">//Non-const Function</span>
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkRenderPassCreateInfo</span>&amp; createInfo) {
+        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateRenderPass</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ renderPass ] ERROR\nFailed to create a render pass!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+};
+</pre></section>
+</section>
+<section id="framebuffer">
+<h2>Framebuffer<a class="headerlink" href="#framebuffer" title="Permalink to this heading"></a></h2>
+<p>
+    帧缓冲（<span class="type">VkFramebuffer</span>）是用于特定渲染流程的一系列图像附件的集合。
+</p><section id="id8">
+<h3>创建帧缓冲<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap8.html#vkCreateFramebuffer">vkCreateFramebuffer</a>(...)创建帧缓冲：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap8.html#vkCreateFramebuffer">vkCreateFramebuffer</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkFramebufferCreateInfo</span>* pCreateInfo</p></td>
+            <td><p>指向<span class="type">VkFramebuffer</span>的创建信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span>* pAllocator</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkRenderPass</span>* pFramebuffer</p></td>
+            <td><p>若创建成功，将帧缓冲的handle写入*pFramebuffer</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkFramebufferCreateInfo">VkFramebufferCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkFramebufferCreateFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> attachmentCount</p></td>
+            <td><p>图像附件的数量</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkImageView</span>* pAttachments</p></td>
+            <td><p>指向<span class="type">VkImageView</span>的数组，用于指定图像附件</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> width</p></td>
+            <td><p>图像附件的宽度</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> height</p></td>
+            <td><p>图像附件的高度</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> layers</p></td>
+            <td><p>图像附件的图层数，适用于2D图像数组</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            <span class="type">VkFramebufferCreateInfo</span>::pAttachments与<span class="type">VkRenderPassCreateInfo</span>::pAttachments一一对应。这两者类似于实参与形参的关系。
+        </p>
+    </li>
+    <li>
+        <p>
+            自Vulkan1.2以来，可以在flags中指定<span class="enum">VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT</span>，并使pNext指向一个<a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkFramebufferAttachmentsCreateInfo">VkFramebufferAttachmentsCreateInfo</a>结构体，以创建无图帧缓冲（imageless framebuffer），这种帧缓冲仅指定图像附件的大小、图层数和图像格式，而实际的图像附件则在渲染通道开始时再行指定，详见//TODO Imageless Framebuffer。
+        </p>
+    </li>
+</ul>
+<p>
+    如果提供的<span class="type">VkImageView</span>是2D图像数组，那么创建的帧缓冲称为多层帧缓冲（layered framebuffer），这有时候会非常有用，但有些硬件（比如英特尔核显）不支持多层帧缓冲。多层帧缓冲的应用实例，参考：//TODO 将Erp图像转为Cubemap
+</p></section>
+<section id="id9">
+<h3>封装为framebuffer类<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<p>
+    向<span class="path">VKBase.h</span>，vulkan命名空间中添加以下代码：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">framebuffer</span> {
+    <span class="type">VkFramebuffer</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
+<span class="kw">public</span>:
+    <span class="fn">framebuffer</span>() = <span class="kw">default</span>;
+    <span class="fn">framebuffer</span>(<span class="type">VkFramebufferCreateInfo</span>&amp; createInfo) {
+        <span class="fn">Create</span>(createInfo);
+    }
+    <span class="fn">framebuffer</span>(<span class="type">framebuffer</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    ~<span class="fn">framebuffer</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyFramebuffer</span>); }
+    <span class="cmt">//Getter</span>
+    <span class="mcr">DefineHandleTypeOperator</span>;
+    <span class="mcr">DefineAddressFunction</span>;
+    <span class="cmt">//Non-const Function</span>
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkFramebufferCreateInfo</span>&amp; createInfo) {
+        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateFramebuffer</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ framebuffer ] ERROR\nFailed to create a framebuffer!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+};
+</pre></section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html" class="btn btn-neutral float-left" title="Ch3-3 管线布局和管线" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-right" title="Ch3-5 命令缓冲区" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

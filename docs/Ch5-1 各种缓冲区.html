@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch5-1 各种缓冲区 &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ch7-1 初识顶点缓冲区" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html" />
+    <link rel="prev" title="Ch5-0 VkBase+.h" href="Ch5-0%20VkBase%2B.h.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch5-1 各种缓冲区</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#staging-buffer">Staging Buffer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">专用于主线程的暂存缓冲区</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#device-local-buffer">Device Local Buffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vertex-buffer">Vertex Buffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#index-buffer">Index Buffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#uniform-buffer">Uniform Buffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#storage-buffer">Storage Buffer</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch5-1 各种缓冲区</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch5-1">
+<h1>Ch5-1 各种缓冲区<a class="headerlink" href="#ch5-1" title="Permalink to this heading"></a></h1>
+<p>
+    请先参阅<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a>，我在该节中具体叙述了何为设备内存和缓冲区（缓冲区视图暂不用管），并对它们进行了简单封装，请先阅览该节并完成封装。
+</p>
+<p>
+    内存可以具有属性：
+</p>
+<ul>
+    <li>
+        <p>
+            <span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>表示最适用于物理设备访问。
+        </p>
+    </li>
+    <li>
+        <p>
+            <span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>表示在CPU一侧可见（数据可被CPU读写）。
+        </p>
+    </li>
+</ul>
+<p>
+    物理设备可能可以分配同时具有这两种属性的内存，也可能不行，因此从CPU一侧向物理设备传输数据的通用方式为：首先将数据存入具有<span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>属性的暂存缓冲区（staging buffer），再由物理设备将数据从暂存缓存区搬运到具有<span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>属性的、访问效率更高的另一缓冲区。
+</p><section id="staging-buffer">
+<h2>Staging Buffer<a class="headerlink" href="#staging-buffer" title="Permalink to this heading"></a></h2>
+<p>
+    如前文所述，可以在映射设备内存后，通过<span class="fn">memcpy</span>(...)等方式，将数据直接拷贝到具有<span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>属性的缓冲区，将这类可由CPU侧直接写入的缓冲区封装为专用于数据中转的暂存缓冲区（staging buffer）。
+</p>
+<p>
+    我对暂存缓冲区采用如下设计：
+    <br>
+    1.能很容易地写入、读取数据，若写入时分配的缓冲区大小不够，则重新分配。
+    <br>
+    2.能手动释放设备内存。
+    <br>
+    3.能为其创建混叠图像
+    <br>
+    为了满足第1点，有必要记录每次映射的内存的大小，于是向<span class="path">VKBase+.h</span>，vulkan命名空间中添加以下代码：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">stagingBuffer</span> {
+<span class="kw">protected</span>:
+    <span class="type">bufferMemory</span> bufferMemory;
+    <span class="type">VkDeviceSize</span> memoryUsage = 0;<span class="cmt">//每次映射的内存大小</span>
+    <span class="type">image</span> aliasedImage;
+<span class="kw">public</span>:
+    <span class="fn">stagingBuffer</span>() = <span class="kw">default</span>;
+    <span class="fn">stagingBuffer</span>(<span class="type">VkDeviceSize</span> size) {
+        <span class="fn">Expand</span>(size);
+    }
+    <span class="cmt">//Getter</span>
+    <span class="kw">operator</span> <span class="type">VkBuffer</span>() <span class="kw">const</span> { <span class="kw">return</span> bufferMemory.<span class="fn">Buffer</span>(); }
+    <span class="kw">const</span> <span class="type">VkBuffer</span>* <span class="fn">Address</span>() <span class="kw">const</span> { <span class="kw">return</span> bufferMemory.<span class="fn">AddressOfBuffer</span>(); }
+    <span class="type">VkDeviceSize</span> <span class="fn">AllocationSize</span>() <span class="kw">const</span> { <span class="kw">return</span> bufferMemory.<span class="fn">AllocationSize</span>(); }
+    <span class="type">VkImage</span> <span class="fn">AliasedImage</span>() <span class="kw">const</span> { <span class="kw">return</span> aliasedImage; }
+    <span class="cmt">//Const Function</span>
+    <span class="cmt">//该函数用于从缓冲区取回数据</span>
+    <span class="kw">void</span> <span class="fn">RetrieveData</span>(<span class="kw">void</span>* pData_src, <span class="type">VkDeviceSize</span> size) <span class="kw">const</span> {
+        bufferMemory.<span class="fn">RetrieveData</span>(pData_src, size);
+    }
+    <span class="cmt">//Non-const Function</span>
+    <span class="cmt">//该函数用于在所分配设备内存大小不够时重新分配内存</span>
+    <span class="kw">void</span> <span class="fn">Expand</span>(<span class="type">VkDeviceSize</span> size) {
+        <span class="kw">if</span> (size &lt;= <span class="fn">AllocationSize</span>())
+            <span class="kw">return</span>;
+        <span class="fn">Release</span>();
+        <span class="type">VkBufferCreateInfo</span> bufferCreateInfo = {
+            .size = size,
+            .usage = <span class="enum">VK_BUFFER_USAGE_TRANSFER_SRC_BIT</span> | <span class="enum">VK_BUFFER_USAGE_TRANSFER_DST_BIT</span>
+        };
+        bufferMemory.<span class="fn">Create</span>(bufferCreateInfo, <span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>);
+    }
+    <span class="cmt">//该函数用于手动释放所有内存并销毁设备内存和缓冲区的handle</span>
+    <span class="kw">void</span> <span class="fn">Release</span>() {
+        bufferMemory.~<span class="fn">bufferMemory</span>();
+    }
+    <span class="kw">void</span>* <span class="fn">MapMemory</span>(<span class="type">VkDeviceSize</span> size) {
+        <span class="fn">Expand</span>(size);
+        <span class="kw">void</span>* pData_dst = <span class="kw">nullptr</span>;
+        bufferMemory.<span class="fn">MapMemory</span>(pData_dst, size);
+        memoryUsage = size;
+        <span class="kw">return</span> pData_dst;
+    }
+    <span class="kw">void</span> <span class="fn">UnmapMemory</span>() {
+        bufferMemory.<span class="fn">UnmapMemory</span>(memoryUsage);
+        memoryUsage = 0;
+    }
+    <span class="cmt">//该函数用于向缓冲区写入数据</span>
+    <span class="kw">void</span> <span class="fn">BufferData</span>(<span class="kw">const void</span>* pData_src, <span class="type">VkDeviceSize</span> size) {
+        <span class="fn">Expand</span>(size);
+        bufferMemory.<span class="fn">BufferData</span>(pData_src, size);
+    }
+    <span class="cmt">//该函数创建线性布局的混叠图像</span>
+    [[nodiscard]]
+    <span class="type">VkImage</span> <span class="fn">AliasedImage</span>(<span class="type">VkImageType</span> imageType, <span class="type">VkFormat format</span>, <span class="type">VkExtent3D</span> extent, <span class="type">uint32_t</span> arrayLayerCount) {
+        <span class="cmt">/*待后续填充*/</span>
+    }
+};
+</pre>
+<p>
+    创建线性布局的混叠图像，考虑到这种图像的用途是作为将数据blit到另一图像的来源，首先检查对于特定图像格式，硬件是否支持线性布局的图像数据作为blit命令的来源：
+</p>
+<pre class="code">
+<span class="type">VkImage</span> <span class="fn">AliasedImage</span>(<span class="type">VkImageType</span> imageType, <span class="type">VkFormat format</span>, <span class="type">VkExtent3D</span> extent, <span class="type">uint32_t</span> arrayLayerCount) {
+    <span class="kw">if</span> (!(<span class="fn">FormatProperties</span>(format).linearTilingFeatures &amp; <span class="enum">VK_FORMAT_FEATURE_BLIT_SRC_BIT</span>))
+        <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;
+    <span class="cmt">/*待后续填充*/</span>
+}
+</pre>
+<p>
+    然后用<a href="https://renderdoc.org/vkspec_chunked/chap44.html#vkGetPhysicalDeviceImageFormatProperties">vkGetPhysicalDeviceImageFormatProperties</a>(...)取得对于特定参数组合创建的图像，所容许的图像尺寸等参数<a href="https://renderdoc.org/vkspec_chunked/chap44.html#VkImageFormatProperties">VkImageFormatProperties</a>：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap44.html#vkGetPhysicalDeviceImageFormatProperties">vkGetPhysicalDeviceImageFormatProperties</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkPhysicalDevice</span> physicalDevice</p></td>
+            <td><p>物理设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkFormat</span> format</p></td>
+            <td><p>图像的预期格式</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkImageType</span> type</p></td>
+            <td><p>图像的预期类型</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkImageTiling</span> tiling</p></td>
+            <td><p>图像数据的预期排列方式</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkImageUsageFlags</span> usage</p></td>
+            <td><p>图像的预期用途</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkImageCreateFlags</span> flags</p></td>
+            <td><p>创建图像时的预期flags</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkImageFormatProperties</span>* pImageFormatProperties</p></td>
+            <td><p>若函数执行成功，将容许的图像大小、mipmap等级、图层数、采样点个数、数据大小写入*pImageFormatProperties</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap44.html#VkImageFormatProperties">VkImageFormatProperties</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkExtent3D</span> maxExtent</p></td>
+            <td><p>容许的最大尺寸</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> maxMipLevels</p></td>
+            <td><p>容许的最大mipmap等级</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> maxArrayLayers</p></td>
+            <td><p>容许的最大图层数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkSampleCountFlags</span> sampleCounts</p></td>
+            <td><p>容许的采样点个数的所有情形，对应各个bit，比如若4x多重采样可行，则与<span class="enum">VK_SAMPLE_COUNT_4_BIT</span>的位与结果为<span class="enum">VK_SAMPLE_COUNT_4_BIT</span></a></p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkDeviceSize</span> maxResourceSize</p></td>
+            <td><p>容许的最大数据大小，单位为字节</p></td>
+        </tr>
+    </tbody>
+</table>
+<pre class="code">
+<span class="type">VkImage</span> <span class="fn">AliasedImage</span>(<span class="type">VkImageType</span> imageType, <span class="type">VkFormat format</span>, <span class="type">VkExtent3D</span> extent, <span class="type">uint32_t</span> arrayLayerCount) {
+    <span class="kw">if</span> (!(<span class="fn">FormatProperties</span>(format).linearTilingFeatures &amp; <span class="enum">VK_FORMAT_FEATURE_BLIT_SRC_BIT</span>))
+        <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;
+    <span class="type">VkImageFormatProperties</span> imageFormatProperties = {};
+    <span class="fn">vkGetPhysicalDeviceImageFormatProperties</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDevice</span>(),
+        format, imageType, <span class="enum">VK_IMAGE_TILING_LINEAR</span>, <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>, 0, &amp;imageFormatProperties);
+    <span class="cmt">/*待后续填充*/</span>
+}
+</pre>
+<p>
+    然后验证向函数提供的参数，以及缓冲区中现存的数据是否满足要求：
+</p>
+<pre class="code">
+<span class="type">VkImage</span> <span class="fn">AliasedImage</span>(<span class="type">VkImageType</span> imageType, <span class="type">VkFormat format</span>, <span class="type">VkExtent3D</span> extent, <span class="type">uint32_t</span> arrayLayerCount) {
+    <span class="kw">if</span> (!(<span class="fn">FormatProperties</span>(format).linearTilingFeatures &amp; <span class="enum">VK_FORMAT_FEATURE_BLIT_SRC_BIT</span>))
+        <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;
+    <span class="type">VkImageFormatProperties</span> imageFormatProperties = {};
+    <span class="fn">vkGetPhysicalDeviceImageFormatProperties</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDevice</span>(),
+        format, imageType, <span class="enum">VK_IMAGE_TILING_LINEAR</span>, <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>, 0, &amp;imageFormatProperties);
+    <span class="cmt">//计算相应格式的图像数据的大小</span>
+    <span class="type">VkDeviceSize</span> imageDataSize = <span class="type">VkDeviceSize</span>(<span class="fn">FormatInfo</span>(format).sizePerPixel) * extent.width * extent.height * extent.depth;
+    <span class="cmt">//检查各个参数是否在容许范围内</span>
+    <span class="kw">if</span> (extent.width &lt;= imageFormatProperties.maxExtent.width &amp;&amp;
+        extent.height &lt;= imageFormatProperties.maxExtent.height &amp;&amp;
+        extent.depth &lt;= imageFormatProperties.maxExtent.depth &amp;&amp;
+        arrayLayerCount &lt;= imageFormatProperties.maxArrayLayers &amp;&amp;
+        imageDataSize &lt;= imageFormatProperties.maxResourceSize) {
+            <span class="cmt">/*待后续填充*/</span>
+    }
+    <span class="cmt">//如不满足要求，返回VK_NULL_HANDLE</span>
+    <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;
+}
+</pre>
+<p>
+   然后，若内存区大小不足，首先对其扩容：
+</p>
+<pre class="code">
+<span class="fn">Expand</span>(imageDataSize);
+</pre>
+<ul>
+    <li>
+        <p>
+            如果你仔细阅读了前文代码，<span class="fn">Expand</span>(...)在内存区大小足够时不做扩容，否则扩容并舍弃原有内容。
+        </p>
+    </li>
+    <li>
+        <p>
+            很显然，由在此扩容可知，<span class="fn">AliasedImage</span>(...)未必得在创建混叠图像前向缓冲区输入数据，其用法应当是先调用<span class="fn">AliasedImage</span>(...)以检查能否创建特定参数组合的图像，同时确保缓冲区大小。
+        </p>
+    </li>
+</ul>
+<p>
+    然后填写图像的创建信息，就其使用场景而言，是由CPU侧写入数据，因此初始内存布局为<span class="enum">VK_IMAGE_LAYOUT_PREINITIALIZED</span>，bilt命令属于数据传送命令，因此图像用处为<span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>。
+</p>
+<pre class="code">
+<span class="type">VkImageCreateInfo</span> imageCreateInfo = {
+    .imageType = imageType,
+    .format = format,
+    .extent = extent,
+    .mipLevels = 1,
+    .arrayLayers = arrayLayerCount,
+    .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+    .tiling = <span class="enum">VK_IMAGE_TILING_LINEAR</span>,
+    .usage = <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>,
+    .initialLayout = <span class="enum">VK_IMAGE_LAYOUT_PREINITIALIZED</span>
+};
+</pre>
+<p>
+    若混叠图像已存在，先析构它，然后再创建新图像，并绑定设备内存：
+</p>
+<pre class="code">
+<span class="kw">if</span> (aliasedImage)
+    aliasedImage.~<span class="fn">image</span>();
+aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
+aliasedImage.<span class="fn">BindMemory</span>(bufferMemory.<span class="fn">Memory</span>());
+</pre>
+<p>
+    最后返回所创建图像的handle，整个<span class="fn">AliasedImage</span>(...)函数如下：
+</p>
+<pre class="code">
+<span class="type">VkImage</span> <span class="fn">AliasedImage</span>(<span class="type">VkImageType</span> imageType, <span class="type">VkFormat format</span>, <span class="type">VkExtent3D</span> extent, <span class="type">uint32_t</span> arrayLayerCount) {
+    <span class="kw">if</span> (!(<span class="fn">FormatProperties</span>(format).linearTilingFeatures &amp; <span class="enum">VK_FORMAT_FEATURE_BLIT_SRC_BIT</span>))
+        <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;
+    <span class="type">VkImageFormatProperties</span> imageFormatProperties = {};
+    <span class="fn">vkGetPhysicalDeviceImageFormatProperties</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDevice</span>(),
+        format, imageType, <span class="enum">VK_IMAGE_TILING_LINEAR</span>, <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>, 0, &amp;imageFormatProperties);
+    <span class="type">VkDeviceSize</span> imageDataSize = <span class="type">VkDeviceSize</span>(<span class="fn">FormatInfo</span>(format).sizePerPixel) * extent.width * extent.height * extent.depth;
+    <span class="kw">if</span> (extent.width &lt;= imageFormatProperties.maxExtent.width &amp;&amp;
+        extent.height &lt;= imageFormatProperties.maxExtent.height &amp;&amp;
+        extent.depth &lt;= imageFormatProperties.maxExtent.depth &amp;&amp;
+        arrayLayerCount &lt;= imageFormatProperties.maxArrayLayers &amp;&amp;
+        imageDataSize &lt;= imageFormatProperties.maxResourceSize) {
+        <span class="fn">Expand</span>(imageDataSize);
+        <span class="type">VkImageCreateInfo</span> imageCreateInfo = {
+            .imageType = imageType,
+            .format = format,
+            .extent = extent,
+            .mipLevels = 1,
+            .arrayLayers = arrayLayerCount,
+            .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+            .tiling = <span class="enum">VK_IMAGE_TILING_LINEAR</span>,
+            .usage = <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>,
+            .initialLayout = <span class="enum">VK_IMAGE_LAYOUT_PREINITIALIZED</span>
+        };
+        <span class="kw">if</span> (aliasedImage)
+            aliasedImage.~<span class="fn">image</span>();
+        aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
+        aliasedImage.<span class="fn">BindMemory</span>(bufferMemory.<span class="fn">Memory</span>());
+        <span class="kw">return</span> aliasedImage;
+    }
+    <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;
+}
+</pre><section id="id1">
+<h3>专用于主线程的暂存缓冲区<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<p>
+    由于之后各种缓冲区、图像的封装会大量用到暂存缓冲区，这里在<span class="type">stagingBuffer</span>中添加一个静态成员<span class="var">stagingBuffer_mainThread</span>专用于主线程。
+    <br>
+    你可以直接：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">stagingBuffer</span> {
+    <span class="kw">static</span> <span class="type">stagingBuffer</span> stagingBuffer_mainThread;
+    <span class="cmt">/*其他成员略*/</span>
+};
+<span class="kw">inline</span> <span class="type">stagingBuffer</span> <span class="type">stagingBuffer</span>::stagingBuffer_mainThread;
+</pre>
+<p>
+    如果你需要重建逻辑设备，那么有必要在<span class="var">stagingBuffer_mainThread</span>的初始化器中设置回调函数，为了不必手动调用<span class="var">stagingBuffer_mainThread</span>的初始化器，这里使用一些C++编程技巧来实现这一点：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">stagingBuffer</span> {
+    <span class="kw">static struct</span> <span class="type">implStagingBuffer_mainThread</span> {
+        <span class="type">stagingBuffer</span>* pointer;
+        <span class="type">implStagingBuffer_mainThread</span>() {
+            <span class="kw">static</span> <span class="type">stagingBuffer</span> stagingBuffer;
+            pointer = &amp;stagingBuffer;
+            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_DestroyDevice</span>([] { stagingBuffer_mainThread.~<span class="fn">stagingBuffer</span>(); });
+        }
+        <span class="type">stagingBuffer</span>&amp; <span class="fn">Get</span>() <span class="kw">const</span> { <span class="kw">return</span> *pointer; }
+    } stagingBuffer_mainThread;
+    <span class="cmt">/*其他成员略*/</span>
+};
+<span class="kw">inline</span> <span class="type">stagingBuffer</span>::<span class="type">implStagingBuffer_mainThread</span> <span class="type">stagingBuffer</span>::stagingBuffer_mainThread;
+</pre>
+<ul>
+    <li>
+        <p>
+            <span class="type">implStagingBuffer_mainThread</span>是<span class="type">stagingBuffer</span>的嵌套类，嵌套类中定义的变量（无论是否静态）的类型不能为外围类，因此需要定义<span class="var">pointer</span>，然后再在初始化器中使其指向局部静态变量<span class="var">stagingBuffer</span>。
+        </p>
+    </li>
+</ul>
+<p>
+    在<span class="type">stagingBuffer</span>中定义与<span class="var">stagingBuffer_mainThread</span>相关的静态成员函数，最后整个<span class="type">stagingBuffer</span>类如下：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">stagingBuffer</span> {
+    <span class="kw">static struct</span> <span class="type">implStagingBuffer_mainThread</span> {
+        <span class="type">stagingBuffer</span>* pointer;
+        <span class="type">implStagingBuffer_mainThread</span>() {
+            <span class="kw">static</span> <span class="type">stagingBuffer</span> stagingBuffer;
+            pointer = &amp;stagingBuffer;
+            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_DestroyDevice</span>([] { stagingBuffer_mainThread.~<span class="fn">stagingBuffer</span>(); });
+        }
+        <span class="type">stagingBuffer</span>&amp; <span class="fn">Get</span>() <span class="kw">const</span> { <span class="kw">return</span> *pointer; }
+    } stagingBuffer_mainThread;
+<span class="kw">protected</span>:
+    <span class="type">bufferMemory</span> bufferMemory;
+    <span class="type">VkDeviceSize</span> memoryUsage = 0;
+    <span class="type">image</span> aliasedImage;
+<span class="kw">public</span>:
+    <span class="fn">stagingBuffer</span>() = <span class="kw">default</span>;
+    <span class="fn">stagingBuffer</span>(<span class="type">VkDeviceSize</span> size) {
+        <span class="fn">Expand</span>(size);
+    }
+    <span class="cmt">//Getter</span>
+    <span class="kw">operator</span> <span class="type">VkBuffer</span>() <span class="kw">const</span> { <span class="kw">return</span> bufferMemory.<span class="fn">Buffer</span>(); }
+    <span class="kw">const</span> <span class="type">VkBuffer</span>* <span class="fn">Address</span>() <span class="kw">const</span> { <span class="kw">return</span> bufferMemory.<span class="fn">AddressOfBuffer</span>(); }
+    <span class="type">VkDeviceSize</span> <span class="fn">AllocationSize</span>() <span class="kw">const</span> { <span class="kw">return</span> bufferMemory.<span class="fn">AllocationSize</span>(); }
+    <span class="type">VkImage</span> <span class="fn">AliasedImage</span>() <span class="kw">const</span> { <span class="kw">return</span> aliasedImage; }
+    <span class="cmt">//Const Function</span>
+    <span class="kw">void</span> <span class="fn">RetrieveData</span>(<span class="kw">void</span>* pData_src, <span class="type">VkDeviceSize</span> size) <span class="kw">const</span> {
+        bufferMemory.<span class="fn">RetrieveData</span>(pData_src, size);
+    }
+    <span class="cmt">//Non-const Function</span>
+    <span class="kw">void</span> <span class="fn">Expand</span>(<span class="type">VkDeviceSize</span> size) {
+        <span class="kw">if</span> (size &lt;= <span class="fn">AllocationSize</span>())
+            <span class="kw">return</span>;
+        <span class="fn">Release</span>();
+        <span class="type">VkBufferCreateInfo</span> bufferCreateInfo = {
+            .size = size,
+            .usage = <span class="enum">VK_BUFFER_USAGE_TRANSFER_SRC_BIT</span> | <span class="enum">VK_BUFFER_USAGE_TRANSFER_DST_BIT</span>
+        };
+        bufferMemory.<span class="fn">Create</span>(bufferCreateInfo, <span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>);
+    }
+    <span class="kw">void</span> <span class="fn">Release</span>() {
+        bufferMemory.~<span class="fn">bufferMemory</span>();
+    }
+    <span class="kw">void</span>* <span class="fn">MapMemory</span>(<span class="type">VkDeviceSize</span> size) {
+        <span class="fn">Expand</span>(size);
+        <span class="kw">void</span>* pData_dst = <span class="kw">nullptr</span>;
+        bufferMemory.<span class="fn">MapMemory</span>(pData_dst, size);
+        memoryUsage = size;
+        <span class="kw">return</span> pData_dst;
+    }
+    <span class="kw">void</span> <span class="fn">UnmapMemory</span>() {
+        bufferMemory.<span class="fn">UnmapMemory</span>(memoryUsage);
+        memoryUsage = 0;
+    }
+    <span class="kw">void</span> <span class="fn">BufferData</span>(<span class="kw">const void</span>* pData_src, <span class="type">VkDeviceSize</span> size) {
+        <span class="fn">Expand</span>(size);
+        bufferMemory.<span class="fn">BufferData</span>(pData_src, size);
+    }
+    [[nodiscard]]
+    <span class="type">VkImage</span> <span class="fn">AliasedImage</span>(<span class="type">VkImageType</span> imageType, <span class="type">VkFormat format</span>,  <span class="type">VkExtent3D</span> extent, <span class="type">uint32_t</span> arrayLayerCount) {
+        <span class="kw">if</span> (!(<span class="fn">FormatProperties</span>(format).linearTilingFeatures &amp; <span class="enum">VK_FORMAT_FEATURE_BLIT_SRC_BIT</span>))
+            <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;
+        <span class="type">VkImageFormatProperties</span> imageFormatProperties = {};
+        <span class="fn">vkGetPhysicalDeviceImageFormatProperties</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDevice</span>(),
+            format, imageType, <span class="enum">VK_IMAGE_TILING_LINEAR</span>, <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>, 0, &amp;imageFormatProperties);
+        <span class="type">VkDeviceSize</span> imageDataSize = <span class="type">VkDeviceSize</span>(<span class="fn">FormatInfo</span>(format).sizePerPixel) * extent.width * extent. height * extent.depth;
+        <span class="kw">if</span> (extent.width &lt;= imageFormatProperties.maxExtent.width &amp;&amp;
+            extent.height &lt;= imageFormatProperties.maxExtent.height &amp;&amp;
+            extent.depth &lt;= imageFormatProperties.maxExtent.depth &amp;&amp;
+            arrayLayerCount &lt;= imageFormatProperties.maxArrayLayers &amp;&amp;
+            imageDataSize &lt;= imageFormatProperties.maxResourceSize) {
+            <span class="fn">Expand</span>(imageDataSize);
+            <span class="type">VkImageCreateInfo</span> imageCreateInfo = {
+                .imageType = imageType,
+                .format = format,
+                .extent = extent,
+                .mipLevels = 1,
+                .arrayLayers = arrayLayerCount,
+                .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+                .tiling = <span class="enum">VK_IMAGE_TILING_LINEAR</span>,
+                .usage = <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>,
+                .initialLayout = <span class="enum">VK_IMAGE_LAYOUT_PREINITIALIZED</span>
+            };
+            <span class="kw">if</span> (aliasedImage)
+                aliasedImage.~<span class="fn">image</span>();
+            aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
+            aliasedImage.<span class="fn">BindMemory</span>(bufferMemory.<span class="fn">Memory</span>());
+            <span class="kw">return</span> aliasedImage;
+        }
+        <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;
+    }
+    <span class="cmt">//Static Function</span>
+    <span class="kw">static</span> <span class="type">VkBuffer</span> <span class="fn">Buffer_MainThread</span>() {
+        <span class="kw">return</span> stagingBuffer_mainThread.<span class="fn">Get</span>();
+    }
+    <span class="kw">static void</span> <span class="fn">Expand_MainThread</span>(<span class="type">VkDeviceSize</span> size) {
+        stagingBuffer_mainThread.<span class="fn">Get</span>().<span class="fn">Expand</span>(size);
+    }
+    <span class="kw">static void</span> <span class="fn">Release_MainThread</span>() {
+        stagingBuffer_mainThread.<span class="fn">Get</span>().<span class="fn">Release</span>();
+    }
+    <span class="kw">static void</span>* <span class="fn">MapMemory_MainThread</span>(<span class="type">VkDeviceSize</span> size) {
+        <span class="kw">return</span> stagingBuffer_mainThread.<span class="fn">Get</span>().<span class="fn">MapMemory</span>(size);
+    }
+    <span class="kw">static void</span> <span class="fn">UnmapMemory_MainThread</span>() {
+        stagingBuffer_mainThread.<span class="fn">Get</span>().<span class="fn">UnmapMemory</span>();
+    }
+    <span class="kw">static void</span> <span class="fn">BufferData_MainThread</span>(<span class="kw">const void</span>* pData_src, <span class="type">VkDeviceSize</span> size) {
+        stagingBuffer_mainThread.<span class="fn">Get</span>().<span class="fn">BufferData</span>(pData_src, size);
+    }
+    <span class="kw">static void</span> <span class="fn">RetrieveData_MainThread</span>(<span class="kw">void</span>* pData_src, <span class="type">VkDeviceSize</span> size) {
+        stagingBuffer_mainThread.<span class="fn">Get</span>().<span class="fn">RetrieveData</span>(pData_src, size);
+    }
+    [[nodiscard]]
+    <span class="kw">static</span> <span class="type">VkImage</span> <span class="fn">AliasedImage_MainThread</span>(<span class="type">VkImageType</span> imageType, <span class="type">VkFormat</span> format, <span class="type">VkExtent3D</span> extent, <span class="type">uint32_t</span> arrayLayerCount) {
+        <span class="kw">return</span> stagingBuffer_mainThread.<span class="fn">Get</span>().<span class="fn">AliasedImage</span>(imageType, format, extent, arrayLayerCount);
+    }
+};
+</pre></section>
+</section>
+<section id="device-local-buffer">
+<h2>Device Local Buffer<a class="headerlink" href="#device-local-buffer" title="Permalink to this heading"></a></h2>
+<p>
+    将具有<span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>内存属性的缓冲区封装为<span class="type">deviceLocalBuffer</span>，首先定义基本的Getter和创建/重建函数：
+</p>
+    <pre class="code">
+<span class="kw">class</span> <span class="type">deviceLocalBuffer</span> {
+<span class="kw">protected</span>:
+    <span class="type">bufferMemory</span> bufferMemory;
+<span class="kw">public</span>:
+    <span class="fn">deviceLocalBuffer</span>() = <span class="kw">default</span>;
+    <span class="fn">deviceLocalBuffer</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> desiredUsages__Without_transfer_dst) {
+        <span class="fn">Create</span>(size, desiredUsages__Without_transfer_dst);
+    }
+    <span class="cmt">//Getter</span>
+    <span class="kw">operator</span> <span class="type">VkBuffer</span>() <span class="kw">const</span> { <span class="kw">return</span> bufferMemory.<span class="fn">Buffer</span>(); }
+    <span class="kw">const</span> <span class="type">VkBuffer</span>* <span class="fn">Address</span>() <span class="kw">const</span> { <span class="kw">return</span> bufferMemory.<span class="fn">AddressOfBuffer</span>(); }
+    <span class="type">VkDeviceSize</span> <span class="fn">AllocationSize</span>() <span class="kw">const</span> { <span class="kw">return</span> bufferMemory.<span class="fn">AllocationSize</span>(); }
+    <span class="cmt">//Non-const Function</span>
+    <span class="kw">void</span> <span class="fn">Create</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> desiredUsages__Without_transfer_dst) {
+        <span class="type">VkBufferCreateInfo</span> bufferCreateInfo = {
+            .size = size,
+            .usage = desiredUsages__Without_transfer_dst | <span class="enum">VK_BUFFER_USAGE_TRANSFER_DST_BIT</span>
+        };
+        <span class="cmt">//短路执行，第一行的false||是为了对齐</span>
+        <span class="kw">false</span> ||
+            bufferMemory.<span class="fn">CreateBuffer</span>(bufferCreateInfo) ||
+            bufferMemory.<span class="fn">AllocateMemory</span>(<span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span> | <span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>) &amp;&amp;<span class="cmt">//&&运算符优先级高于||</span>
+            bufferMemory.<span class="fn">AllocateMemory</span>(<span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>) ||
+            bufferMemory.<span class="fn">BindMemory</span>();
+    }
+    <span class="kw">void</span> <span class="fn">Recreate</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> desiredUsages__Without_transfer_dst) {
+        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">WaitIdle</span>();
+        bufferMemory.~<span class="fn">bufferMemory</span>();
+        <span class="fn">Create</span>(size, desiredUsages__Without_transfer_dst);
+    }
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            优先尝试分配同时具有<span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span> 和 <span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>内存属性的设备内存。
+        </p>
+    </li>
+</ul>
+<p>
+    向具有<span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>，但不具有<span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>内存属性的设备内存写入数据，有两种手法：
+    <br>
+    1.用<a href="https://renderdoc.org/vkspec_chunked/chap20.html#vkCmdCopyBuffer">vkCmdCopyBuffer</a>(...)从暂存缓冲区拷贝到目标缓冲区。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap19.html#vkCmdUpdateBuffer">vkCmdUpdateBuffer</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandBuffer</span> commandBuffer</p></td>
+            <td><p>命令缓冲区的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkBuffer</span> dstBuffer</p></td>
+            <td><p>目标缓冲区</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkDeviceSize</span> dstOffset</p></td>
+            <td><p>数据要被拷贝到目标缓冲区中的位置，单位是字节，必须是4的倍数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkDeviceSize</span> dataSize</p></td>
+            <td><p>数据大小，单位是字节，必须是4的倍数，且不多于65536个字节</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">void</span>* pData</p></td>
+            <td><p>源数据的地址</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            <a href="https://renderdoc.org/vkspec_chunked/chap19.html#vkCmdUpdateBuffer">vkCmdUpdateBuffer</a>(...)将更新数据直接记录在命令缓冲区中，即它会影响命令缓冲区的大小，因此其更新的数据大小不得太大。
+        </p>
+    </li>
+</ul>
+<p>
+    2.若数据量不大于65536个字节，用<a href="https://renderdoc.org/vkspec_chunked/chap19.html#vkCmdUpdateBuffer">vkCmdUpdateBuffer</a>(...)命令直接更新缓冲区（这方法也适用于具有<span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>属性的设备内存）。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap20.html#vkCmdCopyBuffer">vkCmdCopyBuffer</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandBuffer</span> commandBuffer</p></td>
+            <td><p>命令缓冲区的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkBuffer</span> srcBuffer</p></td>
+            <td><p>源缓冲区</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkBuffer</span> dstBuffer</p></td>
+            <td><p>目标缓冲区</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> regionCount</p></td>
+            <td><p>要被拷贝的内存区域的个数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkBufferCopy</span>* pRegions</p></td>
+            <td><p>指向<span class="type">VkBufferCopy</span>类型的数组，用于指定要被拷贝的内存区域</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap20.html#VkBufferCopy">VkBufferCopy</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDeviceSize</span> srcOffset</p></td>
+            <td><p>要被拷贝的数据在源缓冲区中的起始位置，单位是字节</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkDeviceSize</span> dstOffset</p></td>
+            <td><p>数据要被拷贝到目标缓冲区中的位置，单位是字节</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkDeviceSize</span> size</p></td>
+            <td><p>要被拷贝的数据的大小，单位是字节</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    那么首先来非常简单地包装下<a href="https://renderdoc.org/vkspec_chunked/chap19.html#vkCmdUpdateBuffer">vkCmdUpdateBuffer</a>(...)：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">deviceLocalBuffer</span> {
+<span class="kw">public</span>:
+    <span class="cmt">/*其他成员略*/</span>
+    <span class="cmt">//Const Function</span>
+    <span class="kw">void</span> <span class="fn">CmdUpdateBuffer</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="kw">const void</span>* pData_src, <span class="type">VkDeviceSize</span> size__Less_than_65536, <span class="type">VkDeviceSize</span> offset = 0) <span class="kw">const</span> {
+        <span class="fn">vkCmdUpdateBuffer</span>(commandBuffer, bufferMemory.<span class="fn">Buffer</span>(), offset, size__Less_than_65536, pData_src);
+    }
+    <span class="cmt">//适用于从缓冲区开头更新连续的数据块，数据大小自动判断</span>
+    <span class="kw">void</span> <span class="fn">CmdUpdateBuffer</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="kw">const auto</span>&amp; data_src) <span class="kw">const</span> {
+        <span class="fn">vkCmdUpdateBuffer</span>(commandBuffer, bufferMemory.<span class="fn">Buffer</span>(), 0, <span class="kw">sizeof</span> data_src, &amp;data_src);
+    }
+};
+</pre>
+<p>
+    定义<span class="fn">TransferData</span>(...)函数，若具有<span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>属性，直接调用<span class="var">bufferMemory</span>.<span class="fn">BufferData</span>(...)，否则在命令缓冲区中调用<a href="https://renderdoc.org/vkspec_chunked/chap20.html#vkCmdCopyBuffer">vkCmdCopyBuffer</a>(...)：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">deviceLocalBuffer</span> {
+<span class="kw">public</span>:
+    <span class="cmt">/*其他成员略*/</span>
+    <span class="cmt">//Const Function</span>
+    <span class="cmt">//适用于更新连续的数据块</span>
+    <span class="kw">void</span> <span class="fn">TransferData</span>(<span class="kw">const void</span>* pData_src, <span class="type">VkDeviceSize</span> size, <span class="type">VkDeviceSize</span> offset = 0) <span class="kw">const</span> {
+        <span class="kw">if</span> (bufferMemory.<span class="fn">MemoryProperties</span>() &amp; <span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>) {
+            bufferMemory.<span class="fn">BufferData</span>(pData_src, size, offset);
+            <span class="kw">return</span>;
+        }
+        <span class="type">stagingBuffer</span>::<span class="fn">BufferData_MainThread</span>(pData_src, size);
+        <span class="type">fence</span> fence;
+        <span class="kw">auto</span>&amp; commandBuffer = <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">CommandBuffer_Transfer</span>();
+        commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
+        <span class="type">VkBufferCopy</span> region = { 0, offset, size };
+        <span class="fn">vkCmdCopyBuffer</span>(commandBuffer, <span class="type">stagingBuffer</span>::<span class="fn">Buffer_MainThread</span>(), bufferMemory.<span class="fn">Buffer</span>(), 1, &amp;region);
+        commandBuffer.<span class="fn">End</span>();
+        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SubmitCommandBuffer_Transfer</span>(commandBuffer, fence);
+        fence.<span class="fn">Wait</span>();
+    }
+    <span class="cmt">//适用于更新不连续的多块数据，stride是每组数据间的步长，这里offset当然是目标缓冲区中的offset</span>
+    <span class="kw">void</span> <span class="fn">TransferData</span>(<span class="kw">const void</span>* pData_src, <span class="type">uint32_t</span> elementCount, <span class="type">VkDeviceSize</span> elementSize, <span class="type">VkDeviceSize</span> stride_src, <span class="type">VkDeviceSize</span> stride_dst, <span class="type">VkDeviceSize</span> offset = 0) <span class="kw">const</span> {
+        <span class="kw">if</span> (bufferMemory.<span class="fn">MemoryProperties</span>() &amp; <span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>) {
+            <span class="kw">void</span>* pData_dst = <span class="kw">nullptr</span>;
+            bufferMemory.<span class="fn">MapMemory</span>(pData_dst, stride_dst * elementCount, offset);
+            <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; elementCount; i++)
+                <span class="fn">memcpy</span>(stride_dst * i + <span class="kw">static_cast</span>&lt;<span class="type">uint8_t</span>*&gt;(pData_dst), stride_src * i + <span class="kw">static_cast</span>&lt;<span class="type">uint8_t</span>*&gt;(pData_src), <span class="type">size_t</span>(elementSize));
+            bufferMemory.<span class="fn">UnmapMemory</span>(elementCount * stride_dst, offset);
+            <span class="kw">return</span>;
+        }
+        <span class="type">stagingBuffer</span>::<span class="fn">BufferData_MainThread</span>(pData_src, stride_src * elementCount);
+        <span class="type">fence</span> fence;
+        {
+            <span class="kw">auto</span>&amp; commandBuffer = <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">CommandBuffer_Transfer</span>();
+            commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
+            std::<span class="type">unique_ptr</span>&lt;<span class="type">VkBufferCopy</span>[]&gt; regions = std::<span class="fn">make_unique</span>&lt;<span class="type">VkBufferCopy</span>[]&gt;(elementCount);
+            <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; elementCount; i++)
+                regions[i] = { stride_src * i, stride_dst * i + offset, elementSize };
+                <span class="fn">vkCmdCopyBuffer</span>(commandBuffer, <span class="type">stagingBuffer</span>::<span class="fn">Buffer_MainThread</span>(), bufferMemory.<span class="fn">Buffer</span>(), elementCount, regions.<span class="fn">get</span>());
+            commandBuffer.<span class="fn">End</span>();
+            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SubmitCommandBuffer_Transfer</span>(commandBuffer, fence);
+        }
+        fence.<span class="fn">Wait</span>();
+    }
+    <span class="cmt">//适用于从缓冲区开头更新连续的数据块，数据大小自动判断</span>
+    <span class="kw">void</span> <span class="fn">TransferData</span>(<span class="kw">const auto</span>&amp; data_src) <span class="kw">const</span> {
+        <span class="fn">TransferData</span>(&amp;data_src, <span class="kw">sizeof</span> data_src);
+    }
+};
+</pre>
+<p>
+    最后整个<span class="type">deviceLocalBuffer</span>如下：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">deviceLocalBuffer</span> {
+<span class="kw">protected</span>:
+    <span class="type">bufferMemory</span> bufferMemory;
+<span class="kw">public</span>:
+    <span class="fn">deviceLocalBuffer</span>() = <span class="kw">default</span>;
+    <span class="fn">deviceLocalBuffer</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> desiredUsages__Without_transfer_dst) {
+        <span class="fn">Create</span>(size, desiredUsages__Without_transfer_dst);
+    }
+    <span class="cmt">//Getter</span>
+    <span class="kw">operator</span> <span class="type">VkBuffer</span>() <span class="kw">const</span> { <span class="kw">return</span> bufferMemory.<span class="fn">Buffer</span>(); }
+    <span class="kw">const</span> <span class="type">VkBuffer</span>* <span class="fn">Address</span>() <span class="kw">const</span> { <span class="kw">return</span> bufferMemory.<span class="fn">AddressOfBuffer</span>(); }
+    <span class="type">VkDeviceSize</span> <span class="fn">AllocationSize</span>() <span class="kw">const</span> { <span class="kw">return</span> bufferMemory.<span class="fn">AllocationSize</span>(); }
+    <span class="cmt">//Const Function</span>
+    <span class="kw">void</span> <span class="fn">TransferData</span>(<span class="kw">const void</span>* pData_src, <span class="type">VkDeviceSize</span> size, <span class="type">VkDeviceSize</span> offset = 0) <span class="kw">const</span> {
+        <span class="kw">if</span> (bufferMemory.<span class="fn">MemoryProperties</span>() &amp; <span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>) {
+            bufferMemory.<span class="fn">BufferData</span>(pData_src, size, offset);
+            <span class="kw">return</span>;
+        }
+        <span class="type">stagingBuffer</span>::<span class="fn">BufferData_MainThread</span>(pData_src, size);
+        <span class="type">fence</span> fence;
+        <span class="kw">auto</span>&amp; commandBuffer = <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">CommandBuffer_Transfer</span>();
+        commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
+        <span class="type">VkBufferCopy</span> region = { 0, offset, size };
+        <span class="fn">vkCmdCopyBuffer</span>(commandBuffer, <span class="type">stagingBuffer</span>::<span class="fn">Buffer_MainThread</span>(), bufferMemory.<span class="fn">Buffer</span>(), 1, &amp;region);
+        commandBuffer.<span class="fn">End</span>();
+        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SubmitCommandBuffer_Transfer</span>(commandBuffer, fence);
+        fence.<span class="fn">Wait</span>();
+    }
+    <span class="kw">void</span> <span class="fn">TransferData</span>(<span class="kw">const void</span>* pData_src, <span class="type">uint32_t</span> elementCount, <span class="type">VkDeviceSize</span> elementSize, <span class="type">VkDeviceSize</span> stride_src, <span class="type">VkDeviceSize</span> stride_dst, <span class="type">VkDeviceSize</span> offset = 0) <span class="kw">const</span> {
+        <span class="kw">if</span> (bufferMemory.<span class="fn">MemoryProperties</span>() &amp; <span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>) {
+            <span class="kw">void</span>* pData_dst = <span class="kw">nullptr</span>;
+            bufferMemory.<span class="fn">MapMemory</span>(pData_dst, stride_dst * elementCount, offset);
+            <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; elementCount; i++)
+                <span class="fn">memcpy</span>(stride_dst * i + <span class="kw">static_cast</span>&lt;<span class="type">uint8_t</span>*&gt;(pData_dst), stride_src * i + <span class="kw">static_cast</span>&lt;<span class="type">uint8_t</span>*&gt;(pData_src), <span class="type">size_t</span>(elementSize));
+            bufferMemory.<span class="fn">UnmapMemory</span>(elementCount * stride_dst, offset);
+            <span class="kw">return</span>;
+        }
+        <span class="type">stagingBuffer</span>::<span class="fn">BufferData_MainThread</span>(pData_src, stride_src * elementCount);
+        <span class="type">fence</span> fence;
+        {
+            <span class="kw">auto</span>&amp; commandBuffer = <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">CommandBuffer_Transfer</span>();
+            commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
+            std::<span class="type">unique_ptr</span>&lt;<span class="type">VkBufferCopy</span>[]&gt; regions = std::<span class="fn">make_unique</span>&lt;<span class="type">VkBufferCopy</span>[]&gt;(elementCount);
+            <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; elementCount; i++)
+                regions[i] = { stride_src * i, stride_dst * i + offset, elementSize };
+                <span class="fn">vkCmdCopyBuffer</span>(commandBuffer, <span class="type">stagingBuffer</span>::<span class="fn">Buffer_MainThread</span>(), bufferMemory.<span class="fn">Buffer</span>(), elementCount, regions.<span class="fn">get</span>());
+            commandBuffer.<span class="fn">End</span>();
+            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SubmitCommandBuffer_Transfer</span>(commandBuffer, fence);
+        }
+        fence.<span class="fn">Wait</span>();
+    }
+    <span class="kw">void</span> <span class="fn">TransferData</span>(<span class="kw">const auto</span>&amp; data_src) <span class="kw">const</span> {
+        <span class="fn">TransferData</span>(&amp;data_src, <span class="kw">sizeof</span> data_src);
+    }
+    <span class="kw">void</span> <span class="fn">CmdUpdateBuffer</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="kw">const void</span>* pData_src, <span class="type">VkDeviceSize</span> size__Less_than_65536, <span class="type">VkDeviceSize</span> offset = 0) <span class="kw">const</span> {
+        <span class="fn">vkCmdUpdateBuffer</span>(commandBuffer, bufferMemory.<span class="fn">Buffer</span>(), offset, size__Less_than_65536, pData_src);
+    }
+    <span class="kw">void</span> <span class="fn">CmdUpdateBuffer</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="kw">const auto</span>&amp; data_src) <span class="kw">const</span> {
+        <span class="fn">vkCmdUpdateBuffer</span>(commandBuffer, bufferMemory.<span class="fn">Buffer</span>(), 0, <span class="kw">sizeof</span> data_src, &amp;data_src);
+    }
+    <span class="cmt">//Non-const Function</span>
+    <span class="kw">void</span> <span class="fn">Create</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> desiredUsages__Without_transfer_dst) {
+        <span class="type">VkBufferCreateInfo</span> bufferCreateInfo = {
+            .size = size,
+            .usage = desiredUsages__Without_transfer_dst | <span class="enum">VK_BUFFER_USAGE_TRANSFER_DST_BIT</span>
+        };
+        <span class="kw">false</span> ||
+            bufferMemory.<span class="fn">CreateBuffer</span>(bufferCreateInfo) ||
+            bufferMemory.<span class="fn">AllocateMemory</span>(<span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span> | <span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>) &amp;&amp;
+            bufferMemory.<span class="fn">AllocateMemory</span>(<span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>) ||
+            bufferMemory.<span class="fn">BindMemory</span>();
+    }
+    <span class="kw">void</span> <span class="fn">Recreate</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> desiredUsages__Without_transfer_dst) {
+        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">WaitIdle</span>();
+        bufferMemory.~<span class="fn">bufferMemory</span>();
+        <span class="fn">Create</span>(size, desiredUsages__Without_transfer_dst);
+    }
+};
+</pre>
+<p>
+    后文分别为顶点缓冲区、索引缓冲区、uniform缓冲区、storage缓冲区创建专属的类。
+    <br>
+    （注意，尽管本节中这么封装，一个缓冲区有多种用途也是可以的，只要创建时声明的用途中包含相应bit即可）
+</p></section>
+<section id="vertex-buffer">
+<h2>Vertex Buffer<a class="headerlink" href="#vertex-buffer" title="Permalink to this heading"></a></h2>
+<p>
+    为顶点缓冲区创建专用的类型，<span class="type">vertexBuffer</span>继承<span class="type">deviceLocalBuffer</span>，在创建缓冲区时默认指定<span class="enum">VK_BUFFER_USAGE_VERTEX_BUFFER_BIT</span>：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">vertexBuffer</span> :<span class="kw">public</span> <span class="type">deviceLocalBuffer</span> {
+<span class="kw">public</span>:
+    <span class="fn">vertexBuffer</span>() = <span class="kw">default</span>;
+    <span class="fn">vertexBuffer</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> otherUsages = 0) :<span class="type">deviceLocalBuffer</span>(size, <span class="enum">VK_BUFFER_USAGE_VERTEX_BUFFER_BIT</span> | otherUsages) {}
+    <span class="cmt">//Non-const Function</span>
+    <span class="kw">void</span> <span class="fn">Create</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> otherUsages = 0) {
+        <span class="type">deviceLocalBuffer</span>::Create(size, <span class="enum">VK_BUFFER_USAGE_VERTEX_BUFFER_BIT</span> | otherUsages);
+    }
+    <span class="kw">void</span> <span class="fn">Recreate</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> otherUsages = 0) {
+        <span class="type">deviceLocalBuffer</span>::Recreate(size, <span class="enum">VK_BUFFER_USAGE_VERTEX_BUFFER_BIT</span> | otherUsages);
+    }
+};
+</pre></section>
+<section id="index-buffer">
+<h2>Index Buffer<a class="headerlink" href="#index-buffer" title="Permalink to this heading"></a></h2>
+<p>
+    为索引缓冲区创建专用的类型，<span class="type">indexBuffer</span>继承<span class="type">deviceLocalBuffer</span>，在创建缓冲区时默认指定<span class="enum">VK_BUFFER_USAGE_INDEX_BUFFER_BIT</span>：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">indexBuffer</span> :<span class="kw">public</span> <span class="type">deviceLocalBuffer</span> {
+<span class="kw">public</span>:
+    <span class="fn">indexBuffer</span>() = <span class="kw">default</span>;
+    <span class="fn">indexBuffer</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> otherUsages = 0) :<span class="type">deviceLocalBuffer</span>(size, <span class="enum">VK_BUFFER_USAGE_INDEX_BUFFER_BIT</span> | otherUsages) {}
+    <span class="cmt">//Non-const Function</span>
+    <span class="kw">void</span> <span class="fn">Create</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> otherUsages = 0) {
+        <span class="type">deviceLocalBuffer</span>::Create(size, <span class="enum">VK_BUFFER_USAGE_INDEX_BUFFER_BIT</span> | otherUsages);
+    }
+    <span class="kw">void</span> <span class="fn">Recreate</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> otherUsages = 0) {
+        <span class="type">deviceLocalBuffer</span>::Recreate(size, <span class="enum">VK_BUFFER_USAGE_INDEX_BUFFER_BIT</span> | otherUsages);
+    }
+};
+</pre></section>
+<section id="uniform-buffer">
+<h2>Uniform Buffer<a class="headerlink" href="#uniform-buffer" title="Permalink to this heading"></a></h2>
+<p>
+    为uniform缓冲区创建专用的类型，<span class="type">uniformBuffer</span>继承<span class="type">deviceLocalBuffer</span>，在创建缓冲区时默认指定<span class="enum">VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT</span>：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">uniformBuffer</span> :<span class="kw">public</span> <span class="type">deviceLocalBuffer</span> {
+<span class="kw">public</span>:
+    <span class="fn">uniformBuffer</span>() = <span class="kw">default</span>;
+    <span class="fn">uniformBuffer</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> otherUsages = 0) :<span class="type">deviceLocalBuffer</span>(size, <span class="enum">VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT</span> | otherUsages) {}
+    <span class="cmt">//Non-const Function</span>
+    <span class="kw">void</span> <span class="fn">Create</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> otherUsages = 0) {
+        <span class="type">deviceLocalBuffer</span>::Create(size, <span class="enum">VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT</span> | otherUsages);
+    }
+    <span class="kw">void</span> <span class="fn">Recreate</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> otherUsages = 0) {
+        <span class="type">deviceLocalBuffer</span>::Recreate(size, <span class="enum">VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT</span> | otherUsages);
+    }
+    <span class="cmt">//Static Function</span>
+    <span class="kw">static</span> <span class="type">VkDeviceSize</span> <span class="fn">CalculateAlignedSize</span>(<span class="type">VkDeviceSize</span> dataSize) {
+        <span class="kw">const</span> <span class="type">VkDeviceSize</span>&amp; alignment = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().span.<span class="fn">PhysicalDeviceProperties</span>().limits.minUniformBufferOffsetAlignment;
+        <span class="kw">return</span> alignment + dataSize - 1 &amp; ~(alignment - 1);
+    }
+};
+</pre>
+<p>
+    若将多个uniform缓冲区放在单个缓冲区里，这称为动态uniform缓冲区（dynamic uniform buffer），之后将缓冲区绑定到着色器中的uniform块时，可以通过改变offset绑定到动态uniform缓冲区中不同的部分。
+    <br>
+    上述代码中，<span class="fn">CalculateAlignedSize</span>(...)基于动态uniform缓冲区中，各个uniform缓冲区的最小间隔（<span class="var">minUniformBufferOffsetAlignment</span>，动态uniform缓冲区中每个单独的uniform缓冲区的占用大小都必须是该间隔的整数倍），计算对于<span class="var">dataSize</span>大小的数据，需要多少大小的缓冲区。
+</p></section>
+<section id="storage-buffer">
+<h2>Storage Buffer<a class="headerlink" href="#storage-buffer" title="Permalink to this heading"></a></h2>
+<p>
+    为storage缓冲区创建专用的类型，<span class="type">storageBuffer</span>继承<span class="type">deviceLocalBuffer</span>，在创建缓冲区时默认指定<span class="enum">VK_BUFFER_USAGE_STORAGE_BUFFER_BIT</span>：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">storageBuffer</span> :<span class="kw">public</span> <span class="type">deviceLocalBuffer</span> {
+<span class="kw">public</span>:
+    <span class="fn">storageBuffer</span>() = <span class="kw">default</span>;
+    <span class="fn">storageBuffer</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> otherUsages = 0) :<span class="type">deviceLocalBuffer</span>(size, <span class="enum">VK_BUFFER_USAGE_STORAGE_BUFFER_BIT</span> | otherUsages) {}
+    <span class="cmt">//Non-const Function</span>
+    <span class="kw">void</span> <span class="fn">Create</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> otherUsages = 0) {
+        <span class="type">deviceLocalBuffer</span>::Create(size, <span class="enum">VK_BUFFER_USAGE_STORAGE_BUFFER_BIT</span> | otherUsages);
+    }
+    <span class="kw">void</span> <span class="fn">Recreate</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> otherUsages = 0) {
+        <span class="type">deviceLocalBuffer</span>::Recreate(size, <span class="enum">VK_BUFFER_USAGE_STORAGE_BUFFER_BIT</span> | otherUsages);
+    }
+    <span class="cmt">//Static Function</span>
+    <span class="kw">static</span> <span class="type">VkDeviceSize</span> <span class="fn">CalculateAlignedSize</span>(<span class="type">VkDeviceSize</span> dataSize) {
+        <span class="kw">const</span> <span class="type">VkDeviceSize</span>&amp; alignment = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().span.<span class="fn">PhysicalDeviceProperties</span>().limits.minStorageBufferOffsetAlignment;
+        <span class="kw">return</span> alignment + dataSize - 1 &amp; ~(alignment - 1);
+    }
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            类似动态uniform缓冲区，也有动态storage缓冲区（dynamic storage buffer）。
+        </p>
+    </li>
+</ul></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch5-0%20VkBase%2B.h.html" class="btn btn-neutral float-left" title="Ch5-0 VkBase+.h" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-right" title="Ch7-1 初识顶点缓冲区" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
