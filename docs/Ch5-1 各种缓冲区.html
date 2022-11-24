@@ -120,7 +120,9 @@
   <section id="ch5-1">
 <h1>Ch5-1 各种缓冲区<a class="headerlink" href="#ch5-1" title="Permalink to this heading"></a></h1>
 <p>
-    请先参阅<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a>，我在该节中具体叙述了何为设备内存和缓冲区（缓冲区视图暂不用管），并对它们进行了简单封装，请先阅览该节并完成封装。
+    阅读本节前请务必先阅读<a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a>。
+    <br>
+    请先参阅<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a>，我在该节中具体叙述了何为设备内存和缓冲区（缓冲区视图暂不用管），并对它们进行了简单封装，请先阅览该节并完成封装，并把<span class="path">VkFormat.h</span>包含在<span class="path">VkBase+.h</span>中。
 </p>
 <p>
     内存可以具有属性：
@@ -210,7 +212,7 @@
     }
     <span class="cmt">//该函数创建线性布局的混叠图像</span>
     [[nodiscard]]
-    <span class="type">VkImage</span> <span class="fn">AliasedImage</span>(<span class="type">VkImageType</span> imageType, <span class="type">VkFormat format</span>, <span class="type">VkExtent3D</span> extent, <span class="type">uint32_t</span> arrayLayerCount) {
+    <span class="type">VkImage</span> <span class="fn">AliasedImage</span>(<span class="type">VkImageType</span> imageType, <span class="type">VkFormat</span> format, <span class="type">VkExtent3D</span> extent, <span class="type">uint32_t</span> arrayLayerCount) {
         <span class="cmt">/*待后续填充*/</span>
     }
 };
@@ -219,7 +221,7 @@
     创建线性布局的混叠图像，考虑到这种图像的用途是作为将数据blit到另一图像的来源，首先检查对于特定图像格式，硬件是否支持线性布局的图像数据作为blit命令的来源：
 </p>
 <pre class="code">
-<span class="type">VkImage</span> <span class="fn">AliasedImage</span>(<span class="type">VkImageType</span> imageType, <span class="type">VkFormat format</span>, <span class="type">VkExtent3D</span> extent, <span class="type">uint32_t</span> arrayLayerCount) {
+<span class="type">VkImage</span> <span class="fn">AliasedImage</span>(<span class="type">VkImageType</span> imageType, <span class="type">VkFormat</span> format, <span class="type">VkExtent3D</span> extent, <span class="type">uint32_t</span> arrayLayerCount) {
     <span class="kw">if</span> (!(<span class="fn">FormatProperties</span>(format).linearTilingFeatures &amp; <span class="enum">VK_FORMAT_FEATURE_BLIT_SRC_BIT</span>))
         <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;
     <span class="cmt">/*待后续填充*/</span>
@@ -303,7 +305,7 @@
     </tbody>
 </table>
 <pre class="code">
-<span class="type">VkImage</span> <span class="fn">AliasedImage</span>(<span class="type">VkImageType</span> imageType, <span class="type">VkFormat format</span>, <span class="type">VkExtent3D</span> extent, <span class="type">uint32_t</span> arrayLayerCount) {
+<span class="type">VkImage</span> <span class="fn">AliasedImage</span>(<span class="type">VkImageType</span> imageType, <span class="type">VkFormat</span> format, <span class="type">VkExtent3D</span> extent, <span class="type">uint32_t</span> arrayLayerCount) {
     <span class="kw">if</span> (!(<span class="fn">FormatProperties</span>(format).linearTilingFeatures &amp; <span class="enum">VK_FORMAT_FEATURE_BLIT_SRC_BIT</span>))
         <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;
     <span class="type">VkImageFormatProperties</span> imageFormatProperties = {};
@@ -316,7 +318,7 @@
     然后验证向函数提供的参数，以及缓冲区中现存的数据是否满足要求：
 </p>
 <pre class="code">
-<span class="type">VkImage</span> <span class="fn">AliasedImage</span>(<span class="type">VkImageType</span> imageType, <span class="type">VkFormat format</span>, <span class="type">VkExtent3D</span> extent, <span class="type">uint32_t</span> arrayLayerCount) {
+<span class="type">VkImage</span> <span class="fn">AliasedImage</span>(<span class="type">VkImageType</span> imageType, <span class="type">VkFormat</span> format, <span class="type">VkExtent3D</span> extent, <span class="type">uint32_t</span> arrayLayerCount) {
     <span class="kw">if</span> (!(<span class="fn">FormatProperties</span>(format).linearTilingFeatures &amp; <span class="enum">VK_FORMAT_FEATURE_BLIT_SRC_BIT</span>))
         <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;
     <span class="type">VkImageFormatProperties</span> imageFormatProperties = {};
@@ -383,7 +385,7 @@ aliasedImage.<span class="fn">BindMemory</span>(bufferMemory.<span class="fn">Me
     最后返回所创建图像的handle，整个<span class="fn">AliasedImage</span>(...)函数如下：
 </p>
 <pre class="code">
-<span class="type">VkImage</span> <span class="fn">AliasedImage</span>(<span class="type">VkImageType</span> imageType, <span class="type">VkFormat format</span>, <span class="type">VkExtent3D</span> extent, <span class="type">uint32_t</span> arrayLayerCount) {
+<span class="type">VkImage</span> <span class="fn">AliasedImage</span>(<span class="type">VkImageType</span> imageType, <span class="type">VkFormat</span> format, <span class="type">VkExtent3D</span> extent, <span class="type">uint32_t</span> arrayLayerCount) {
     <span class="kw">if</span> (!(<span class="fn">FormatProperties</span>(format).linearTilingFeatures &amp; <span class="enum">VK_FORMAT_FEATURE_BLIT_SRC_BIT</span>))
         <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;
     <span class="type">VkImageFormatProperties</span> imageFormatProperties = {};
@@ -439,7 +441,7 @@ aliasedImage.<span class="fn">BindMemory</span>(bufferMemory.<span class="fn">Me
         <span class="type">implStagingBuffer_mainThread</span>() {
             <span class="kw">static</span> <span class="type">stagingBuffer</span> stagingBuffer;
             pointer = &amp;stagingBuffer;
-            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_DestroyDevice</span>([] { stagingBuffer_mainThread.~<span class="fn">stagingBuffer</span>(); });
+            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_DestroyDevice</span>([] { stagingBuffer.~<span class="fn">stagingBuffer</span>(); });
         }
         <span class="type">stagingBuffer</span>&amp; <span class="fn">Get</span>() <span class="kw">const</span> { <span class="kw">return</span> *pointer; }
     } stagingBuffer_mainThread;
@@ -464,7 +466,7 @@ aliasedImage.<span class="fn">BindMemory</span>(bufferMemory.<span class="fn">Me
         <span class="type">implStagingBuffer_mainThread</span>() {
             <span class="kw">static</span> <span class="type">stagingBuffer</span> stagingBuffer;
             pointer = &amp;stagingBuffer;
-            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_DestroyDevice</span>([] { stagingBuffer_mainThread.~<span class="fn">stagingBuffer</span>(); });
+            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_DestroyDevice</span>([] { stagingBuffer.~<span class="fn">stagingBuffer</span>(); });
         }
         <span class="type">stagingBuffer</span>&amp; <span class="fn">Get</span>() <span class="kw">const</span> { <span class="kw">return</span> *pointer; }
     } stagingBuffer_mainThread;
@@ -516,7 +518,7 @@ aliasedImage.<span class="fn">BindMemory</span>(bufferMemory.<span class="fn">Me
         bufferMemory.<span class="fn">BufferData</span>(pData_src, size);
     }
     [[nodiscard]]
-    <span class="type">VkImage</span> <span class="fn">AliasedImage</span>(<span class="type">VkImageType</span> imageType, <span class="type">VkFormat format</span>,  <span class="type">VkExtent3D</span> extent, <span class="type">uint32_t</span> arrayLayerCount) {
+    <span class="type">VkImage</span> <span class="fn">AliasedImage</span>(<span class="type">VkImageType</span> imageType, <span class="type">VkFormat</span> format,  <span class="type">VkExtent3D</span> extent, <span class="type">uint32_t</span> arrayLayerCount) {
         <span class="kw">if</span> (!(<span class="fn">FormatProperties</span>(format).linearTilingFeatures &amp; <span class="enum">VK_FORMAT_FEATURE_BLIT_SRC_BIT</span>))
             <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;
         <span class="type">VkImageFormatProperties</span> imageFormatProperties = {};
@@ -944,7 +946,7 @@ aliasedImage.<span class="fn">BindMemory</span>(bufferMemory.<span class="fn">Me
     }
     <span class="cmt">//Static Function</span>
     <span class="kw">static</span> <span class="type">VkDeviceSize</span> <span class="fn">CalculateAlignedSize</span>(<span class="type">VkDeviceSize</span> dataSize) {
-        <span class="kw">const</span> <span class="type">VkDeviceSize</span>&amp; alignment = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().span.<span class="fn">PhysicalDeviceProperties</span>().limits.minUniformBufferOffsetAlignment;
+        <span class="kw">const</span> <span class="type">VkDeviceSize</span>&amp; alignment = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.minUniformBufferOffsetAlignment;
         <span class="kw">return</span> alignment + dataSize - 1 &amp; ~(alignment - 1);
     }
 };
@@ -973,7 +975,7 @@ aliasedImage.<span class="fn">BindMemory</span>(bufferMemory.<span class="fn">Me
     }
     <span class="cmt">//Static Function</span>
     <span class="kw">static</span> <span class="type">VkDeviceSize</span> <span class="fn">CalculateAlignedSize</span>(<span class="type">VkDeviceSize</span> dataSize) {
-        <span class="kw">const</span> <span class="type">VkDeviceSize</span>&amp; alignment = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().span.<span class="fn">PhysicalDeviceProperties</span>().limits.minStorageBufferOffsetAlignment;
+        <span class="kw">const</span> <span class="type">VkDeviceSize</span>&amp; alignment = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.minStorageBufferOffsetAlignment;
         <span class="kw">return</span> alignment + dataSize - 1 &amp; ~(alignment - 1);
     }
 };

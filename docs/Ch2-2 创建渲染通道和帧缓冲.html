@@ -171,17 +171,17 @@
 <pre class="code">
 <span class="pragma">#include</span> <span class="str">&quot;VkBase.h&quot;</span>
 
+<span class="kw">using namespace</span> vulkan;
 <span class="kw">const</span> <span class="type">VkExtent2D</span>&amp; windowSize = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageExtent;
 
 <span class="kw">namespace</span> easyVulkan {
-    <span class="kw">using namespace</span> vulkan;
     <span class="cmt">/*待填充*/</span>
 }
 </pre>
 <ul>
     <li>
         <p>
-            之后会不止一处用到交换链图像大小，实在太长了点，为其创建别名。
+            之后会不止一处用到交换链图像大小，为其创建别名<span class="var">windowSize</span>以简化书写。
         </p>
     </li>
 </ul></section>
@@ -334,8 +334,8 @@ rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graph
     <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
         .renderPass = rpwf_screen.renderPass,
         .attachmentCount = 1,
-        .width = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageExtent.width,
-        .height = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageExtent.height,
+        .width = windowSize.width,
+        .height = windowSize.height,
         .layers = 1
     };
     <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span        class="fn">SwapchainImageCount</span>(); i++) {
@@ -396,8 +396,8 @@ rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graph
             <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
                 .renderPass = rpwf_screen.renderPass,
                 .attachmentCount = 1,
-                .width = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageExtent.width,
-                .height = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageExtent.height,
+                .width = windowSize.width,
+                .height = windowSize.height,
                 .layers = 1
             };
             <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span        class="fn">SwapchainImageCount</span>(); i++) {

@@ -1487,7 +1487,7 @@ memoryAllocateInfo.memoryTypeIndex = -1;
 <section id="imagememory">
 <h3>同设备内存一起封装为imageMemory类<a class="headerlink" href="#imagememory" title="Permalink to this heading"></a></h3>
 <p>
-    向<span class="path">VKBase.h</span>，vulkan命名空间中，<span class="type">buffer</span>的定义后添加以下代码：
+    向<span class="path">VKBase.h</span>，vulkan命名空间中，<span class="type">image</span>的定义后添加以下代码：
 </p>
 <pre class="code">
 <span class="kw">class</span> <span class="type">imageMemory</span> :<span class="type">image</span>, <span class="type">deviceMemory</span> {
@@ -1522,7 +1522,7 @@ memoryAllocateInfo.memoryTypeIndex = -1;
         <span class="kw">return</span> <span class="fn">Allocate</span>(allocateInfo);
     }
     <span class="type">result_t</span> <span class="fn">BindMemory</span>() {
-        <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="type">buffer</span>::<span class="fn">BindMemory</span>(<span class="fn">Memory</span>()))
+        <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="type">image</span>::<span class="fn">BindMemory</span>(<span class="fn">Memory</span>()))
             <span class="kw">return</span> result;
         areBound = <span class="kw">true</span>;
         <span class="kw">return</span> <span class="mcr">VK_SUCCESS</span>;
@@ -1530,7 +1530,7 @@ memoryAllocateInfo.memoryTypeIndex = -1;
     <span class="cmt">//分配设备内存、创建图像、绑定</span>
     <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkImageCreateInfo</span>&amp; createInfo, <span class="type">VkMemoryPropertyFlags</span> desiredMemoryProperties) {
         <span class="type">VkResult</span> result;
-        <span class="kw">>false</span> ||<span class="cmt">//这行用来应对Visual Studio中代码的对齐</span>
+        <span class="kw">false</span> ||<span class="cmt">//这行用来应对Visual Studio中代码的对齐</span>
             (result = <span class="type">CreateImage</span>(createInfo)) ||<span class="cmt">//用||短路执行</span>
             (result = <span class="type">AllocateMemory</span>(desiredMemoryProperties)) ||
             (result = <span class="type">BindMemory</span>());
@@ -2014,7 +2014,7 @@ memoryAllocateInfo.memoryTypeIndex = -1;
 <p>
     你也可以使用Vulkan官方提供的<span class="path">vulkan_format_traits.hpp</span>，你可以在以下安装目录找到它：<span class="path">VulkanSDK\版本号\Include\vulkan</span>。
     <br>
-    注意我的<span class="path">VkFormat.h</span>与<span class="cmt">vulkan_format_traits.hpp</span>有所不同，在<span class="path">vulkan_format_traits.hpp</span>中<span class="enum">VK_FORMAT_D32_SFLOAT_S8_UINT</span>格式的blockSize是5，在我的<span class="path">VkFormat.h</span>中<span class="enum">VK_FORMAT_D32_SFLOAT_S8_UINT</span>格式的单个像素大小是8（其实有些格式不应适用“单个像素”这个概念），这种差别是由于我的<span class="path">VkFormat.h</span>的用处是计算线性排列的数据大小。
+    注意我的<span class="path">VkFormat.h</span>与<span class="path">vulkan_format_traits.hpp</span>有所不同，在<span class="path">vulkan_format_traits.hpp</span>中<span class="enum">VK_FORMAT_D32_SFLOAT_S8_UINT</span>格式的blockSize是5，在我的<span class="path">VkFormat.h</span>中<span class="enum">VK_FORMAT_D32_SFLOAT_S8_UINT</span>格式的单个像素大小是8（其实有些格式不应适用“单个像素”这个概念），这种差别是由于我的<span class="path">VkFormat.h</span>的用处是计算线性排列的数据大小。
 </p>
 <pre class="code">
 <span class="pragma">#pragma once</span>

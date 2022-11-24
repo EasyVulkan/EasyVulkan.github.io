@@ -421,7 +421,7 @@ file.<span class="fn">close</span>();
     <span class="cmt">//Non-const Function</span>
     <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkShaderModuleCreateInfo</span>&amp; createInfo) {
         createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO</span>;
-        <span class="type">VkResult</span> result = <span class="fn">vkCreateShaderModule</span>((<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateShaderModule</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ shader ] ERROR\nFailed to create a shader module!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;

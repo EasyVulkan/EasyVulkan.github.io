@@ -501,7 +501,7 @@
     }
     <span class="kw">return</span> format_32BitFloat;
 }
-<span class="kw">constexpr</span> <span class="type">VkFormatProperties</span>&amp; <span class="fn">FormatProperties</span>(<span class="type">VkFormat</span> format) {
+<span class="kw">const</span> <span class="type">VkFormatProperties</span>&amp; <span class="fn">FormatProperties</span>(<span class="type">VkFormat</span> format) {
     <span class="kw">return</span> <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">FormatProperties</span>(format);
 }
 </pre></section>
