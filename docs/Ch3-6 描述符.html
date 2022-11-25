@@ -620,7 +620,7 @@
             .dstArrayElement = dstArrayElement,
             .descriptorCount = <span class="type">uint32_t</span>(descriptorInfos.<span class="fn">Count</span>()),
             .descriptorType = descriptorType,
-            .pImageInfo = descriptorInfos.<span class="fn">Pointer</span>()
+            .pBufferInfo = descriptorInfos.<span class="fn">Pointer</span>()
         };
         <span class="fn">Update</span>(writeDescriptorSet);
     }
@@ -631,7 +631,7 @@
             .dstArrayElement = dstArrayElement,
             .descriptorCount = <span class="type">uint32_t</span>(descriptorInfos.<span class="fn">Count</span>()),
             .descriptorType = descriptorType,
-            .pImageInfo = descriptorInfos.<span class="fn">Pointer</span>()
+            .pTexelBufferInfo = descriptorInfos.<span class="fn">Pointer</span>()
         };
         <span class="fn">Update</span>(writeDescriptorSet);
     }
@@ -895,7 +895,7 @@
         <span class="kw">if</span> (sets.Count() != setLayouts.Count())
             <span class="kw">if</span> (sets.Count() < setLayouts.Count()) {
                 outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ descriptorPool ] ERROR\nFor each descriptor set, must provide a corresponding layout!\n&quot;</span>);
-                <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;<span class="cmt">//No proper VkResult enum value, don't use VK_ERROR_UNKNOWN</span>
+                <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;<span class="cmt">//没有合适的错误代码，别用VK_ERROR_UNKNOWN</span>
             }
             <span class="kw">else</span>
                 outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ descriptorPool ] WARNING\nProvided layouts are more than sets!\n&quot;</span>);
@@ -942,7 +942,7 @@
         <span class="kw">return</span> result;
     }
     <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkDescriptorPoolCreateFlags</span> createFlags, <span class="type">uint32_t</span> maxSetCount, <span class="type">arrayParameter</span>&lt;<span class="kw">const</span> <span class="type">VkDescriptorPoolSize</span>&gt; poolSizes) {
-        <span class="type">VkDescriptorPoolCreateInfo<span class="fn"> createInfo = {
+        <span class="type">VkDescriptorPoolCreateInfo</span> createInfo = {
             .flags = createFlags,
             .maxSets = maxSetCount,
             .poolSizeCount = <span class="type">uint32_t</span>(poolSizes.<span class="fn">Count</span>()),

@@ -1499,9 +1499,9 @@ memoryAllocateInfo.memoryTypeIndex = -1;
     <span class="fn">imageMemory</span>(<span class="type">imageMemory</span>&amp;&amp; other) <span class="kw">noexcept</span> :
         <span class="type">image</span>(std::<span class="fn">move</span>(other)), <span class="type">deviceMemory</span>(std::<span class="fn">move</span>(other)) {
         areBound = other.areBound;
-        other.areBound = <span class="kw">>false</span>;
+        other.areBound = <span class="kw">false</span>;
     }
-    ~<span class="fn">imageMemory</span>() { areBound = <span class="kw">>false</span>; }
+    ~<span class="fn">imageMemory</span>() { areBound = <span class="kw">false</span>; }
     <span class="cmt">//Getter</span>
     <span class="type">VkImage</span> <span class="fn">Image</span>() <span class="kw">const</span> { <span class="kw">return</span> <span class="kw">static_cast</span>&lt;<span class="kw">const</span> <span class="type">image</span>&amp;&gt;(*<span class="kw">this</span>); }
     <span class="kw">const</span> <span class="type">VkImage</span>* <span class="fn">AddressOfImage</span>() <span class="kw">const</span> { <span class="kw">return</span> <span class="type">image</span>::<span class="fn">Address</span>(); }

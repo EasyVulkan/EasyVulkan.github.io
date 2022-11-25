@@ -117,11 +117,14 @@
   <section id="ch7-4-uniform">
 <h1>Ch7-4 初识uniform缓冲区<a class="headerlink" href="#ch7-4-uniform" title="Permalink to this heading"></a></h1>
 <p>
+    本节的<span class="path">main.cpp</span>对应示例代码中的：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7/Ch7-4.hpp">Ch7-4.hpp</a>
+</p>
+<p>
     这一节尝试使用uniform缓冲区来为三角形指定位移，并用实例化来绘制多个在不同位置的三角形。
 </p><section id="uniform">
 <h2>使用uniform缓冲区绘制三角形的流程<a class="headerlink" href="#uniform" title="Permalink to this heading"></a></h2>
 <p>
-    在之前用顶点缓冲区绘制三角形代码的基础上，使用顶点和uniform缓冲区绘制三角形需要经历以下步骤：
+    在之前<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7/Ch7-1.hpp">Ch7-1.hpp</a>用顶点缓冲区绘制三角形代码的基础上，使用顶点和uniform缓冲区绘制三角形需要经历以下步骤：
     <br>
     1.创建uniform缓冲区
     <br>
@@ -137,7 +140,8 @@
 </p>
 <p>
     这一节会绘制出与前一节效果完全相同的图像，但比使用push constant会麻烦得多。
-    <br>
+</p>
+<p>
     Push constant和uniform缓冲区各有优劣：
     <br>
     Push constant的优势在于它会被直接记录在命令缓冲区中，且更新push constant这一行为不需要被同步，适合用于一些即时（immediate）设计的程序。从OpenGL移植过来的程序，若常量不是很大，适合把常量放进push constant。劣势是push constant只支持128个字节，且在同一命令缓冲区中频繁更新可能显著增大命令缓冲区的体积。
@@ -150,7 +154,7 @@
 glm::<span class="type">vec2</span> uniform_positions[] = {
     {  .0f, .0f }, {},
     { -.5f, .0f }, {},
-    {  .0f, .5f }, {}
+    {  .5f, .0f }, {}
 };
 <span class="type">uniformBuffer</span> uniformBuffer(<span class="kw">sizeof</span> uniform_positions);
 uniformBuffer.<span class="fn">TransferData</span>(uniform_positions);
@@ -161,7 +165,7 @@ uniformBuffer.<span class="fn">TransferData</span>(uniform_positions);
 <section id="id2">
 <h2>创建描述符布局和管线布局<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
 <p>
-    请先参阅<a class="reference internal" href="">Ch3-6 描述符</a>，并完成该节中所涉及到的所有Vulkan对象的封装。
+    请先参阅<a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a>，并完成该节中所涉及到的所有Vulkan对象的封装。
 </p>
 <p>
     在<span class="path">main.cpp</span>中为描述符布局定义一个新的全局变量：
@@ -268,8 +272,17 @@ descriptorSet_trianglePosition.<span class="fn">Write</span>(bufferInfo, <span c
     </li>
 </ul>
 <p>
-    与前一节中的顶点着色器大致相同，这里仅仅是将前一节中的push constant块改成了uniform缓冲区的块，而这是通过把<code><span class="kw">layout</span>(push_constant)</code>修改为<code><span class="kw">layout</span>(binding = 0)</code>来实现的。因为只有一组描述符且之后会将其绑定到0号索引，所以这里不必显式指定<code>set = 0</code>。
-</p></section>
+    与前一节中的顶点着色器大致相同，这里仅仅是将前一节中的push constant块改成了uniform缓冲区的块，而这是通过把<code><span class="kw">layout</span>(push_constant)</code>修改为<code><span class="kw">layout</span>(binding = 0)</code>来实现的。因为只有一组描述符且之后会将其绑定到0号描述符集索引，所以这里不必显式指定<code>set = 0</code>。
+</p>
+<p>
+    别忘了更改<span class="fn">CreatePipeline</span>(...)：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">CreatePipeline</span>() {
+    <span class="kw">static</span> <span class="type">shaderModule</span> vert_triangle(<span class="str">"shader/FirstTriangle_UniformBuffer.vert.spv"</span>);
+    <span class="cmt">//省略后续代码</span>
+}
+</pre></section>
 <section id="id4">
 <h2>绑定描述符并绘制<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
 <p>
@@ -336,14 +349,14 @@ descriptorSet_trianglePosition.<span class="fn">Write</span>(bufferInfo, <span c
     在<span class="fn">vkCmdDraw</span>(...)前加入以下代码：
 </p>
 <pre class="code">
-<span class="fn">vkCmdBindDescriptorSets</span>(commandBuffer_graphics, <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>,
+<span class="fn">vkCmdBindDescriptorSets</span>(commandBuffer, <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>,
     pipelineLayout_triangle, 0, 1, descriptorSet_trianglePosition.<span class="fn">Address</span>(), 0, <span class="kw">nullptr</span>);
 </pre>
 <p>
     绘制命令同上一节一样，绘制三个实例：
 </p>
 <pre class="code">
-<span class="fn">vkCmdDraw</span>(commandBuffer_graphics, 3, 3, 0, 0);
+<span class="fn">vkCmdDraw</span>(commandBuffer, 3, 3, 0, 0);
 </pre>
 <p>
     运行程序，你应该会看到以下图像（跟上一节的一样）：
@@ -352,7 +365,7 @@ descriptorSet_trianglePosition.<span class="fn">Write</span>(bufferInfo, <span c
 <section id="id5">
 <h2>动态uniform缓冲区<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
 <p>
-    在<a class="reference internal" href="">写入描述符集</a>中提到，若多个描述符引用同一个缓冲区的不同部分，则必须满足相应对齐要求。比如，假设有三组数据A~C，各自被用在不同的描述符中，则整个uniform缓冲区的大小如下计算：
+    在<a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html#id4">写入描述符集</a>中提到，若多个描述符引用同一个缓冲区的不同部分，则必须满足相应对齐要求。比如，假设有三组数据A~C，各自被用在不同的描述符中，则整个uniform缓冲区的大小如下计算：
 </p>
 <pre class="code">
 <span class="cmt">//首先取得单位对齐距离</span>
@@ -389,7 +402,7 @@ descriptorSet_trianglePosition.<span class="fn">Write</span>(bufferInfo, <span c
 glm::<span class="type">vec2</span> uniform_positions[] = {
     {  .0f, .0f },
     { -.5f, .0f },
-    {  .0f, .5f }
+    {  .5f, .0f }
 };
 <span class="type">VkDeviceSize</span> uniformAlignment = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.minUniformBufferOffsetAlignment;
 uniformAlignment *= (std::<span class="fn">ceil</span>(<span class="kw">float</span>(<span class="kw">sizeof</span>(glm::<span class="type">vec2</span>)) / uniformAlignment);
@@ -420,9 +433,9 @@ descriptorSet_trianglePosition.<span class="fn">Write</span>(bufferInfo, <span c
 </p>
 <pre class="code">
 <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i < 3; i++) {
-    <span class="fn">vkCmdBindDescriptorSets</span>(commandBuffer_graphics, <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>,
+    <span class="fn">vkCmdBindDescriptorSets</span>(commandBuffer, <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>,
     pipelineLayout_triangle, 0, 1, descriptorSet_trianglePosition.<span class="fn">Address</span>(), 1, &amp;uniformAlignment);
-    <span class="fn">vkCmdDraw</span>(commandBuffer_graphics, 3, 1, 0, 0);
+    <span class="fn">vkCmdDraw</span>(commandBuffer, 3, 1, 0, 0);
 }
 </pre>
 <p>
@@ -430,6 +443,9 @@ descriptorSet_trianglePosition.<span class="fn">Write</span>(bufferInfo, <span c
 </p>
 <p>
     上文仅演示用法，所示情形其实并不需要使用动态uniform缓冲区。动态uniform缓冲区/storage缓冲区的优势在于，可以在录制命令时灵活地改变读取缓冲区时的起始位置，而不必再重新写入描述符。
+</p>
+<p>
+    至此为止，你应该已经认识了三种绘制同一图形的不同方式了。
 </p></section>
 </section>
 

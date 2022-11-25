@@ -79,7 +79,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Ch7-2 初识索引缓冲区</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id1">使用顶点和索引缓冲区绘制四边形的流程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">使用顶点和索引缓冲区绘制长方形的流程</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id2">创建顶点缓冲区和索引缓冲区</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id3">绑定顶点缓冲区和索引缓冲区</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id4">使用索引进行绘制</a></li>
@@ -115,11 +115,14 @@
   <section id="ch7-2">
 <h1>Ch7-2 初识索引缓冲区<a class="headerlink" href="#ch7-2" title="Permalink to this heading"></a></h1>
 <p>
-    这一节使用顶点缓冲区和索引缓冲区来绘制三角形。
-</p><section id="id1">
-<h2>使用顶点和索引缓冲区绘制四边形的流程<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+    本节的<span class="path">main.cpp</span>对应示例代码中的：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7/Ch7-2.hpp">Ch7-2.hpp</a>
+</p>
 <p>
-    在之前用顶点缓冲区绘制三角形代码的基础上，使用顶点和索引缓冲区绘制四边形需要经历以下步骤：
+    这一节使用顶点缓冲区和索引缓冲区来绘制长方形。
+</p><section id="id1">
+<h2>使用顶点和索引缓冲区绘制长方形的流程<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>
+    在之前<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7/Ch7-1.hpp">Ch7-1.hpp</a>用顶点缓冲区绘制三角形代码的基础上，使用顶点和索引缓冲区绘制长方形需要经历以下步骤：
     <br>
     1.创建顶点缓冲区
     <br>
@@ -130,7 +133,7 @@
 <section id="id2">
 <h2>创建顶点缓冲区和索引缓冲区<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
 <p>
-    绘制一个四边形需要几个顶点？当然4个！
+    绘制一个长方形需要几个顶点？当然4个！
 </p>
 <pre class="code">
 <span class="type">vertex</span> vertices[] = {
@@ -143,7 +146,7 @@
 vertexBuffer.<span class="fn">TransferData</span>(vertices);
 </pre>
 <p>
-    一个四边形由两个三角形构成，所以以<span class="var">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST</span>为图元拓扑类型绘制时，必须要有6个顶点：
+    一个长方形由两个三角形构成，所以以<span class="var">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST</span>为图元拓扑类型绘制时，必须要有6个顶点：
 </p>
 <pre class="code">
 <span class="type">uint16_t</span> indices[] = {
@@ -152,7 +155,14 @@ vertexBuffer.<span class="fn">TransferData</span>(vertices);
 };
 indexBuffer indexBuffer(<span class="kw">sizeof</span> indices);
 indexBuffer.<span class="fn">TransferData</span>(indices);
-</pre></section>
+</pre>
+<ul>
+    <li>
+        <p>
+            <a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html#index-buffer">indexBuffer</a>是<span class="path">VkBase+.h</span>中的类。
+        </p>
+    </li>
+</ul></section>
 <section id="id3">
 <h2>绑定顶点缓冲区和索引缓冲区<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
 <p>
@@ -160,7 +170,7 @@ indexBuffer.<span class="fn">TransferData</span>(indices);
 </p>
 <pre class="code">
 <span class="type">VkDeviceSize</span> offset = 0;
-<span class="fn">vkCmdBindVertexBuffers</span>(commandBuffer_graphics, 0, 1, vertexBuffer.<span class="fn">Address</span>(), &amp;offset);
+<span class="fn">vkCmdBindVertexBuffers</span>(commandBuffer, 0, 1, vertexBuffer.<span class="fn">Address</span>(), &amp;offset);
 </pre>
 <p>
     在渲染循环中，渲染通道开始后用<a href="https://renderdoc.org/vkspec_chunked/chap21.html#vkCmdBindIndexBuffer">vkCmdBindIndexBuffer</a>(...)绑定索引缓冲区：
@@ -195,7 +205,7 @@ indexBuffer.<span class="fn">TransferData</span>(indices);
     </tbody>
 </table>
 <pre class="code">
-<span class="fn">vkCmdBindIndexBuffer</span>(commandBuffer_graphics, indexBuffer, 0, <span class="enum">VK_INDEX_TYPE_UINT16</span>);
+<span class="fn">vkCmdBindIndexBuffer</span>(commandBuffer, indexBuffer, 0, <span class="enum">VK_INDEX_TYPE_UINT16</span>);
 </pre></section>
 <section id="id4">
 <h2>使用索引进行绘制<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
@@ -240,7 +250,7 @@ indexBuffer.<span class="fn">TransferData</span>(indices);
     </tbody>
 </table>
 <pre class="code">
-<span class="fn">vkCmdDrawIndexed</span>(commandBuffer_graphics, 6, 1, 0, 0, 0);
+<span class="fn">vkCmdDrawIndexed</span>(commandBuffer, 6, 1, 0, 0, 0);
 </pre>
 <p>
     简要说明vertexOffset的作用，如果顶点数据如下：
@@ -255,7 +265,7 @@ indexBuffer.<span class="fn">TransferData</span>(indices);
 };
 </pre>
 <p>
-    那么用<code><span class="fn">vkCmdDrawIndexed</span>(commandBuffer_graphics, 6, 1, 0, 1, 0)</code>绘制得到的会是相同的结果。
+    那么用<code><span class="fn">vkCmdDrawIndexed</span>(commandBuffer, 6, 1, 0, 1, 0)</code>绘制得到的会是相同的结果（offset为1，于是不读取<span class="var">vertices</span>[0]被跳过）。
 </p>
 <p>
     运行程序，你应该会看到以下图像：

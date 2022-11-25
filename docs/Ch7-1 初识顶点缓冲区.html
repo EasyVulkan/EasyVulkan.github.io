@@ -117,6 +117,11 @@
   <section id="ch7-1">
 <h1>Ch7-1 初识顶点缓冲区<a class="headerlink" href="#ch7-1" title="Permalink to this heading"></a></h1>
 <p>
+    本章的示例代码参见：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7">EasyVulkan_Ch7</a>
+    <br>
+    本节的<span class="path">main.cpp</span>对应示例代码中的：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7/Ch7-1.hpp">Ch7-1.hpp</a>
+</p>
+<p>
     在你成功仅用着色器绘制出一个无法变更的三角形后，是时候使用顶点缓冲区来绘制三角形了。
 </p><section id="id1">
 <h2>使用顶点缓冲区绘制三角形的流程<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
@@ -140,7 +145,7 @@
 <ul>
     <li>
         <p>
-            第1~4步请参阅<a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a>以及前置章节<a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a>和<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a>，并先完成对各种缓冲区的封装（内容多而零散，先把代码抄了，用到什么函数时再去看具体解说。本节中暂不涉及图像及混叠等的知识点，诸如<span class="type">stagingBuffer</span>::<span class="fn">AliasedImage</span>(...)之类的函数先不必写）。
+            第1~4步请参阅<a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a>以及前置章节<a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a>和<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a>，并先完成对各种缓冲区的封装（内容多而零散，先把代码抄了，用到什么函数时再去看具体解说）。
         </p>
     </li>
     <li>
@@ -150,11 +155,19 @@
     </li>
 </ul>
 <p>
-    这一节里不光会用顶点缓冲区指定顶点的位置，也会指定各个顶点的颜色。
+    总结下，在往下阅读之前，请先依序定义以下类：
+    <br>
+    <span class="path">VkBase.h</span>中：<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html#device-memory">deviceMemory</a>、<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html#buffer">buffer</a>、<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html#buffermemory">bufferMemory</a>
+    <br>
+    <span class="path">VkBase+.h</span>中：<a class="reference internal" href="Ch5-0%20VkBase%2B.h.html#graphicsbaseplus">graphicsBasePlus</a>、<a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html#staging-buffer">stagingBuffer</a>、<a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html#device-local-buffer">deviceLocalBuffer</a>、<a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html#vertex-buffer">vertexBuffer</a>
+    <br>
+    本节中暂不涉及图像及混叠等的知识点，诸如<span class="type">stagingBuffer</span>::<span class="fn">AliasedImage</span>(...)之类的函数先不必写。
 </p></section>
 <section id="id2">
 <h2>创建顶点缓冲区并指定顶点属性<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
 <p>
+    本节中不光指定顶点的位置，也会指定各个顶点的颜色。
+    <br>
     要使得顶点缓冲区中包含位置和颜色信息，数据的摆放方式可以有两种：
     <br>
     1.把每个顶点的位置和颜色放一起，所有顶点数据放在单个缓冲区中。
@@ -298,7 +311,7 @@ pipelineCiPack.vertexInputAttributes.<span class="fn">emplace_back</span>(1, 0, 
 </p>
 <pre class="code">
 <span class="type">VkDeviceSize</span> offset = 0;
-<span class="fn">vkCmdBindVertexBuffers</span>(commandBuffer_graphics, 0, 1, vertexBuffer.<span class="fn">Address</span>(), &amp;offset);
+<span class="fn">vkCmdBindVertexBuffers</span>(commandBuffer, 0, 1, vertexBuffer.<span class="fn">Address</span>(), &amp;offset);
 </pre>
 <p>
     运行程序，你应该会看到以下图像：
@@ -341,8 +354,8 @@ pipelineCiPack.vertexInputAttributes.<span class="type">emplace_back</span>(1, 1
 </p>
 <pre class="code">
 <span class="type">VkDeviceSize</span> offset = 0;
-<span class="fn">vkCmdBindVertexBuffers</span>(commandBuffer_graphics, 0, 1, vertexBuffer_position.<span class="fn">Address</span>(), &amp;offset);
-<span class="fn">vkCmdBindVertexBuffers</span>(commandBuffer_graphics, 1, 1, vertexBuffer_color.<span class="fn">Address</span>(), &amp;offset);
+<span class="fn">vkCmdBindVertexBuffers</span>(commandBuffer, 0, 1, vertexBuffer_position.<span class="fn">Address</span>(), &amp;offset);
+<span class="fn">vkCmdBindVertexBuffers</span>(commandBuffer, 1, 1, vertexBuffer_color.<span class="fn">Address</span>(), &amp;offset);
 </pre>
 <p>
     最终运行结果应当与前文的图像一致。

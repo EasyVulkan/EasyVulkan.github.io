@@ -577,6 +577,7 @@ aliasedImage.<span class="fn">BindMemory</span>(bufferMemory.<span class="fn">Me
         <span class="kw">return</span> stagingBuffer_mainThread.<span class="fn">Get</span>().<span class="fn">AliasedImage</span>(imageType, format, extent, arrayLayerCount);
     }
 };
+<span class="kw">inline</span> <span class="type">stagingBuffer</span>::<span class="type">implStagingBuffer_mainThread</span> <span class="type">stagingBuffer</span>::stagingBuffer_mainThread;
 </pre></section>
 </section>
 <section id="device-local-buffer">
@@ -777,7 +778,7 @@ aliasedImage.<span class="fn">BindMemory</span>(bufferMemory.<span class="fn">Me
             <span class="kw">void</span>* pData_dst = <span class="kw">nullptr</span>;
             bufferMemory.<span class="fn">MapMemory</span>(pData_dst, stride_dst * elementCount, offset);
             <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; elementCount; i++)
-                <span class="fn">memcpy</span>(stride_dst * i + <span class="kw">static_cast</span>&lt;<span class="type">uint8_t</span>*&gt;(pData_dst), stride_src * i + <span class="kw">static_cast</span>&lt;<span class="type">uint8_t</span>*&gt;(pData_src), <span class="type">size_t</span>(elementSize));
+                <span class="fn">memcpy</span>(stride_dst * i + <span class="kw">static_cast</span>&lt;<span class="type">uint8_t</span>*&gt;(pData_dst), stride_src * i + <span class="kw">static_cast</span>&lt;<span class="kw">const</span> <span class="type">uint8_t</span>*&gt;(pData_src), <span class="type">size_t</span>(elementSize));
             bufferMemory.<span class="fn">UnmapMemory</span>(elementCount * stride_dst, offset);
             <span class="kw">return</span>;
         }
@@ -838,7 +839,7 @@ aliasedImage.<span class="fn">BindMemory</span>(bufferMemory.<span class="fn">Me
             <span class="kw">void</span>* pData_dst = <span class="kw">nullptr</span>;
             bufferMemory.<span class="fn">MapMemory</span>(pData_dst, stride_dst * elementCount, offset);
             <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; elementCount; i++)
-                <span class="fn">memcpy</span>(stride_dst * i + <span class="kw">static_cast</span>&lt;<span class="type">uint8_t</span>*&gt;(pData_dst), stride_src * i + <span class="kw">static_cast</span>&lt;<span class="type">uint8_t</span>*&gt;(pData_src), <span class="type">size_t</span>(elementSize));
+                <span class="fn">memcpy</span>(stride_dst * i + <span class="kw">static_cast</span>&lt;<span class="type">uint8_t</span>*&gt;(pData_dst), stride_src * i + <span class="kw">static_cast</span>&lt;<span class="kw">const</span> <span class="type">uint8_t</span>*&gt;(pData_src), <span class="type">size_t</span>(elementSize));
             bufferMemory.<span class="fn">UnmapMemory</span>(elementCount * stride_dst, offset);
             <span class="kw">return</span>;
         }

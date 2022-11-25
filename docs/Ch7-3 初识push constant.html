@@ -116,13 +116,16 @@
   <section id="ch7-3-push-constant">
 <h1>Ch7-3 初识push constant<a class="headerlink" href="#ch7-3-push-constant" title="Permalink to this heading"></a></h1>
 <p>
+    本节的<span class="path">main.cpp</span>对应示例代码中的：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7/Ch7-3.hpp">Ch7-3.hpp</a>
+</p>
+<p>
     Push constant是在着色器中使用可由CPU侧变更的常量的最简单方式。
     <br>
     这一节尝试使用push constant来为三角形指定位移，并用实例化来绘制多个在不同位置的三角形。
 </p><section id="push-constant">
 <h2>使用push constant绘制三角形的流程<a class="headerlink" href="#push-constant" title="Permalink to this heading"></a></h2>
 <p>
-    在之前用顶点缓冲区绘制三角形代码的基础上，使用顶点和uniform缓冲区绘制三角形需要经历以下步骤：
+    在之前<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7/Ch7-1.hpp">Ch7-1.hpp</a>用顶点缓冲区绘制三角形代码的基础上，使用顶点和uniform缓冲区绘制三角形需要经历以下步骤：
     <br>
     1.书写push constant所需数据
     <br>
@@ -134,6 +137,9 @@
 </p></section>
 <section id="id1">
 <h2>书写push constant所需数据<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>
+    在主函数里：
+</p>
 <pre class="code">
 glm::<span class="type">vec2</span> pushConstants[] = {
     {  .0f, .0f },
@@ -142,7 +148,7 @@ glm::<span class="type">vec2</span> pushConstants[] = {
 };
 </pre>
 <p>
-    参见<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id12">块成员的内存布局</a>，push constant在着色器中默认为std430布局，那么以上数组中<span class="type">vec2</span>类型的对齐为8，同C++代码中一致，不需要填补额外的空数据。
+    参见<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id12">块成员的内存布局</a>，push constant在着色器中默认为std430布局，那么以上数组中<span class="type">vec2</span>类型的对齐为8，同C++代码中一致，不需要在以上C++代码中填补额外的空数据。
 </p></section>
 <section id="id2">
 <h2>创建新的管线布局<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
@@ -244,13 +250,13 @@ glm::<span class="type">vec2</span> pushConstants[] = {
     在<span class="fn">vkCmdDraw</span>(...)前加入以下代码：
 </p>
 <pre class="code">
-<span class="fn">vkCmdPushConstants</span>(commandBuffer_graphics, pipelineLayout_triangle, <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>, 0, <span class="kw">sizeof</span> pushConstants, &amp;pushConstants);
+<span class="fn">vkCmdPushConstants</span>(commandBuffer, pipelineLayout_triangle, <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>, 0, <span class="kw">sizeof</span> pushConstants, &amp;pushConstants);
 </pre>
 <p>
     绘制命令则做如下修改，绘制3个实例：
 </p>
 <pre class="code">
-<span class="fn">vkCmdDraw</span>(commandBuffer_graphics, 3, 3, 0, 0);
+<span class="fn">vkCmdDraw</span>(commandBuffer, 3, 3, 0, 0);
 </pre>
 <p>
     运行程序，你应该会看到以下图像：
