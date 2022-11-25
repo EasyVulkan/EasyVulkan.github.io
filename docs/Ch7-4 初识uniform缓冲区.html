@@ -341,7 +341,7 @@ descriptorSet_trianglePosition.<span class="fn">Write</span>(bufferInfo, <span c
     </li>
     <li>
         <p>
-            pDynamicOffsets所指数组中的元素，与描述符集的中动态uniform/storage缓冲区一一对应。比如说，若只绑定一套描述符，其中binding为0的是一个动态uniform缓冲区的描述符，binding为3的是包含两个动态storage缓冲区的描述符数组，那么需要为该描述符集提供3个动态offset（重点是只需要考虑动态缓冲区的个数并依序提供offset，不必考虑当中间隔的其他类型的描述符）。
+            pDynamicOffsets所指数组中的元素，与描述符集的中动态uniform/storage缓冲区一一对应。比如说，若只绑定一套描述符集，其中binding为0的是一个动态uniform缓冲区的描述符，binding为3的是包含两个动态storage缓冲区的描述符数组，那么需要为该描述符集提供3个动态offset（重点是只需要考虑动态缓冲区的个数并依序提供offset，不必考虑当中间隔的其他类型的描述符）。
         </p>
     </li>
 </ul>

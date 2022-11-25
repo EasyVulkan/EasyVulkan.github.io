@@ -814,7 +814,7 @@ size = (size - offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCohe
         </tr>
         <tr class="row-odd">
             <td><p><span class="type">VkDeviceSize</span> alignment</p></td>
-            <td><p>内存的对其要求，一定是2的次方，除了dynamic uniform缓冲区等情况外，通常不必理会这个成员</p></td>
+            <td><p>内存的对齐要求，一定是2的次方，除了dynamic uniform缓冲区等情况外，通常不必理会这个成员</p></td>
         </tr>
         <tr class="row-even">
             <td><p><span class="type">uint32_t</span> memoryTypeBits</p></td>
@@ -830,20 +830,27 @@ size = (size - offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCohe
     .sType = <span class="enum">VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO</span>
 };
 <span class="type">VkMemoryRequirements</span> memoryRequirements;
-<span class="fn">vkGetBufferMemoryRequirements</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle, &amp;ampmemoryRequirements);
+<span class="fn">vkGetBufferMemoryRequirements</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle, &amp;memoryRequirements);
 memoryAllocateInfo.allocationSize = memoryRequirements.size;<span class="cmt">//取得所需的内存分配大小</span>
 <span class="kw">auto</span>&amp; physicalDeviceMemoryProperties = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceMemoryProperties</span>();
 memoryAllocateInfo.memoryTypeIndex = -1;
 <span class="kw">for</span> (<span class="type">size_t</span> j = 0; j &lt; 2; j++)
     <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; physicalDeviceMemoryProperties.memoryTypeCount; i++)<span class="cmt">//遍历所有设备内存类型</span>
-        <span class="kw">if</span> (<span class="cmt">//如果相应设备内存类型支持该缓冲区/图像，则继续执行后续代码</span>
+        <span class="kw">if</span> (<span class="cmt">//如果相应设备内存类型支持该缓冲区/图像，则继续执行后续判断，否则短路</span>
             memoryRequirements.memoryTypeBits &amp; 1 &lt;&lt; i &amp;&amp;
             <span class="cmt">//如果相应设备内存类型支持所需的内存属性，则覆写memoryAllocateInfo.memoryTypeIndex</span>
             (physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags &amp; desiredMemoryProperties) == desiredMemoryProperties) {
             memoryAllocateInfo.memoryTypeIndex = i;
             <span class="kw">break</span>;
         }
-</pre></section>
+</pre>
+<ul>
+    <li>
+        <p>
+            <code>memoryRequirements.memoryTypeBits &amp; 1 &lt;&lt; i</code>可能很不好懂，<code>1 &lt;&lt; i</code>得到的是左数第<span class="var">i</span>个比特位为1的数值，若其与<span class="var">memoryRequirements.memoryTypeBits</span>位与的结果非零，则说明<span class="var">memoryRequirements.memoryTypeBits</span>第<span class="var">i</span>位被置位，也就意味着，<a href="https://renderdoc.org/vkspec_chunked/chap11.html#VkPhysicalDeviceMemoryProperties">VkPhysicalDeviceMemoryProperties</a>::memoryTypes数组中的第i个成员所代表的内存类型，可以被用于该缓冲区/图像。注意一定要理解<a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkMemoryRequirements">VkMemoryAllocateInfo</a>::memoryTypeBits的意义。
+        </p>
+    </li>
+</ul></section>
 <section id="id7">
 <h3>将设备内存绑定到缓冲区<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
 <p>
