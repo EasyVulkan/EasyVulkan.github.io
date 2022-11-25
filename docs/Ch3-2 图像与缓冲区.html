@@ -920,11 +920,6 @@ memoryAllocateInfo.memoryTypeIndex = -1;
                     memoryAllocateInfo.memoryTypeIndex = i;
                     <span class="kw">break</span>;
                 }
-            <span class="cmt">//若desiredMemoryProperties包含VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT，检查物理设备是否支持惰性分配</span>
-            <span class="cmt">//如不支持则从desiredMemoryProperties中去掉该bit</span>
-            <span class="kw">if</span> (memoryAllocateInfo.memoryTypeIndex == -1 &amp;&amp;
-                desiredMemoryProperties &amp; <span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>)
-                desiredMemoryProperties &amp;= ~<span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>;
         }
         <span class="cmt">//不在此检查是否成功取得内存类型索引，因为会把memoryAllocateInfo返回出去，交由外部检查</span>
         <span class="cmt">//if (memoryAllocateInfo.memoryTypeIndex == -1)</span>

@@ -1125,9 +1125,6 @@ namespace vulkan {
 						memoryAllocateInfo.memoryTypeIndex = i;
 						break;
 					}
-				if (memoryAllocateInfo.memoryTypeIndex == -1 &&
-					desiredMemoryProperties & VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT)
-					desiredMemoryProperties &= ~VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT;
 			}
 			//if (memoryAllocateInfo.memoryTypeIndex == -1)
 			//    outStream << std::format("[ buffer ] ERROR\nFailed to find any memory type satisfies all desired memory properties!\n");
@@ -1227,6 +1224,7 @@ namespace vulkan {
 						memoryAllocateInfo.memoryTypeIndex = i;
 						break;
 					}
+				//Highly possible that the GPU and its driver may not support lazy allocation.
 				if (memoryAllocateInfo.memoryTypeIndex == -1 &&
 					desiredMemoryProperties & VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT)
 					desiredMemoryProperties &= ~VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT;
