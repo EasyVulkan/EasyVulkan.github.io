@@ -2,7 +2,7 @@
 #include "VKBase.h"
 #include <windows.h>
 #include <Vulkan/vulkan_win32.h>
-#if defined(DEBUG) || defined(_DEBUG)
+#ifndef NDEBUG
 #pragma comment(linker, "/subsystem:console")
 #define Main main
 #else
@@ -10,13 +10,6 @@
 #define Main _stdcall WinMain
 #endif
 
-//Enum
-enum class hdrColorSpace {
-	DISABLE = 0,
-	HDR10_ST2084 = VK_COLOR_SPACE_HDR10_ST2084_EXT,
-	DOLBYVISION = VK_COLOR_SPACE_DOLBYVISION_EXT,
-	HDR10_HLG = VK_COLOR_SPACE_HDR10_HLG_EXT
-};
 //Class
 class window {
 	struct windowClass :WNDCLASSEX {
@@ -38,17 +31,17 @@ class window {
 	//--------------------
 	static LRESULT CALLBACK HandleMessageSetup(HWND hWindow, UINT message, WPARAM wParam, LPARAM lParam) {
 		if (message == WM_NCCREATE) {//NC means non-client area (e.g. title bar, system menu). This message is sent before WM_CREATE.
-			window* const pWindow = (window*)(((CREATESTRUCTW*)lParam)->lpCreateParams);
-			//Store a pointer to the user-defined window object, in case you want to acces the object in the WNDPROC function.
+			window* pWindow = reinterpret_cast<window*>(reinterpret_cast<CREATESTRUCTW*>(lParam)->lpCreateParams);
+			//Store a pointer of the user-defined window object, in case you want to acces the object in the WNDPROC function.
 			SetWindowLongPtr(hWindow, GWLP_USERDATA, (LONG_PTR)pWindow);
-			//HandleMessageSetup(...) should be called only once, reset WNDPROC to be a non-member function.
+			//HandleMessageSetup(...) should be called only once, reset WNDPROC to a static function which calls HandleMessage(...) directly.
 			SetWindowLongPtr(hWindow, GWLP_WNDPROC, (LONG_PTR)HandleMessageThunk);
 			return pWindow->HandleMessage(hWindow, message, wParam, lParam);
 		}
 		return DefWindowProc(hWindow, message, wParam, lParam);//Def means default.
 	}
 	static LRESULT CALLBACK HandleMessageThunk(HWND hWindow, UINT message, WPARAM wParam, LPARAM lParam) {
-		return ((window*)GetWindowLongPtr(hWindow, GWLP_USERDATA))->HandleMessage(hWindow, message, wParam, lParam);
+		return reinterpret_cast<window*>(GetWindowLongPtr(hWindow, GWLP_USERDATA))->HandleMessage(hWindow, message, wParam, lParam);
 	}
 	LRESULT HandleMessage(HWND hWindow, UINT message, WPARAM wParam, LPARAM lParam);
 public:
@@ -69,7 +62,7 @@ public:
 	//Const Function
 	bool ShouldClose() { return message.message == WM_QUIT; }
 	//Non-const Function
-	void Create(SIZE size, DWORD style) {
+	void Create(SIZE size, DWORD style, DWORD exStyle = 0) {
 		RECT sizeRect = { 0, 0, size.cx, size.cy };
 		AdjustWindowRect(&sizeRect, style, false);
 		size.cx = sizeRect.right - sizeRect.left;
@@ -78,10 +71,11 @@ public:
 			(GetSystemMetrics(SM_CXSCREEN) - size.cx) / 2,
 			(GetSystemMetrics(SM_CYSCREEN) - size.cy) / 2
 		};
-		hWindow = CreateWindow(WindowClass().lpszClassName, name, style,
+		hWindow = CreateWindowEx(exStyle, WindowClass().lpszClassName, name, style,
 			view.x, view.y, size.cx, size.cy,
 			nullptr, nullptr, WindowClass().hInstance, this);
-		ShowWindow(hWindow, SW_SHOWDEFAULT);
+		if (hWindow)
+			ShowWindow(hWindow, SW_SHOWDEFAULT);
 	}
 	void PollEvents() {
 		while (PeekMessage(&message, nullptr, 0, 0, PM_REMOVE) && !ShouldClose())
@@ -109,63 +103,80 @@ easyVulkan::keyManager keyManager(KeyPressed);
 template<> ULONGLONG easyVulkan::doubleClickMaxInterval<ULONGLONG> = 500;
 
 //Function
-auto PreInitialization_EnableComputeQueue() {
-	static bool enbaleComputeQueue;//Static object will be zero-initialized at launch.
-	enbaleComputeQueue = true;
-	struct {
-		static bool Get() { return enbaleComputeQueue; }
-	} wrapper;
-	return wrapper;
+auto PreInitialization_EnableSrgb() {
+	static bool enableSrgb;//Static object will be zero-initialized at launch.
+	enableSrgb = true;
+	return [] { return enableSrgb; };
 }
-auto PreInitialization_TryEnableHdrByOrder(std::array<hdrColorSpace, 3> hdrColorSpaces = {}) {
-	static std::array<hdrColorSpace, 3> _hdrColorSpaces;
-	_hdrColorSpaces = hdrColorSpaces;
-	return [] { return _hdrColorSpaces; };
+auto PreInitialization_TryEnableHdrByOrder(VkColorSpaceKHR colorSpace0, VkColorSpaceKHR colorSpace1 = {}, VkColorSpaceKHR colorSpace2 = {}) {
+	static VkColorSpaceKHR hdrColorSpaces[3];
+	if (colorSpace0 == VK_COLOR_SPACE_HDR10_ST2084_EXT || colorSpace0 == VK_COLOR_SPACE_DOLBYVISION_EXT || colorSpace0 == VK_COLOR_SPACE_HDR10_HLG_EXT)
+		hdrColorSpaces[0] = colorSpace0;
+	if (colorSpace1 == VK_COLOR_SPACE_HDR10_ST2084_EXT || colorSpace1 == VK_COLOR_SPACE_DOLBYVISION_EXT || colorSpace1 == VK_COLOR_SPACE_HDR10_HLG_EXT)
+		hdrColorSpaces[1] = colorSpace1;
+	if (colorSpace2 == VK_COLOR_SPACE_HDR10_ST2084_EXT || colorSpace2 == VK_COLOR_SPACE_DOLBYVISION_EXT || colorSpace2 == VK_COLOR_SPACE_HDR10_HLG_EXT)
+		hdrColorSpaces[2] = colorSpace2;
+	return []()->const auto& { return hdrColorSpaces; };
 }
 bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable = true, bool limitFrameRate = true) {
 	using namespace vulkan;
-	//Push extensions
-	graphicsBase::Base().PushInstanceExtension("VK_KHR_surface");
-	graphicsBase::Base().PushInstanceExtension("VK_KHR_win32_surface");
-	auto hdrColorSpaces = decltype(PreInitialization_TryEnableHdrByOrder()){}();
-	if (hdrColorSpaces[0] != hdrColorSpace::DISABLE)
-		graphicsBase::Base().PushInstanceExtension("VK_EXT_swapchain_colorspace");
-	graphicsBase::Base().PushDeviceExtension(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
-	//Create a vulkan instance
-	graphicsBase::Base().CreateInstance();
-	//Create a window
+	//Create window
 	style_windowed = WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
 	if (isResizable)
 		style_windowed |= WS_SIZEBOX | WS_MAXIMIZEBOX;
 	fullScreen ?
 		mainWindow.Create({ GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) }, WS_POPUP) :
 		mainWindow.Create({ long(size.width), long(size.height) }, style_windowed);
-	//Create a vulkan surface
+	if (!mainWindow.HWindow()) {
+		outStream << std::format("[ InitializeWindow ] ERROR\nFailed to create a win32 window!\n");
+		return false;
+	}
+	//Push extensions
+	graphicsBase::Base().PushInstanceExtension(VK_KHR_SURFACE_EXTENSION_NAME);
+	graphicsBase::Base().PushInstanceExtension(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
+	auto& hdrColorSpaces = decltype(PreInitialization_TryEnableHdrByOrder({})){}();
+	if (hdrColorSpaces[0])
+		graphicsBase::Base().PushInstanceExtension(VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
+	graphicsBase::Base().PushDeviceExtension(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+	//Create vulkan instance
+	if (graphicsBase::Base().CreateInstance())
+		return false;
+	//Create surface
 	VkSurfaceKHR surface = VK_NULL_HANDLE;
-	VkWin32SurfaceCreateInfoKHR surfaceCreateInfo{};
-	surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-	surfaceCreateInfo.hinstance = window::WindowClass().hInstance;
-	surfaceCreateInfo.hwnd = mainWindow.HWindow();
+	VkWin32SurfaceCreateInfoKHR surfaceCreateInfo = {
+		.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
+		.hinstance = window::WindowClass().hInstance,
+		.hwnd = mainWindow.HWindow()
+	};
 	if (VkResult result = vkCreateWin32SurfaceKHR(graphicsBase::Base().Instance(), &surfaceCreateInfo, nullptr, &surface)) {
-		std::cout << "[ InitializeWindow ]\nFailed to create a window surface!\nError code: " << std::hex << result << std::endl;
+		outStream << std::format("[ InitializeWindow ] ERROR\nFailed to create a window surface!\nError code: {}\n", int32_t(result));
 		return false;
 	}
 	graphicsBase::Base().Surface(surface);
-	//Get a physical device
-	graphicsBase::Base().GetPhysicalDevice(decltype(PreInitialization_EnableComputeQueue())::Get());
-	//Set HDR surface format
-	for (auto& i : hdrColorSpaces)
-		if (i == hdrColorSpace::DISABLE)
-			break;
-		else
-			for (auto& j : graphicsBase::Base().SurfaceFormats())
-				if (j.colorSpace == VkColorSpaceKHR(i)) {
-					graphicsBase::Base().SetSurfaceFormat(j);
-					break;
-				}
-	//Create a logical device and a swapchain
-	graphicsBase::Base().CreateLogicalDevice();
-	graphicsBase::Base().CreateSwapchain(limitFrameRate);
+	if (//Get physical device
+		graphicsBase::Base().GetPhysicalDevices() ||
+		graphicsBase::Base().DeterminePhysicalDevice() ||
+		//Create logical device
+		graphicsBase::Base().CreateDevice())
+		return false;
+	//Set surface format if necessary
+	if (graphicsBase::Base().GetSurfaceFormats())
+		return false;
+	VkResult result_enableHdr = VK_SUCCESS;
+	true &&//Auto formatting alignment
+		hdrColorSpaces[0] && (result_enableHdr = graphicsBase::Base().SetSurfaceFormat({ VK_FORMAT_UNDEFINED, hdrColorSpaces[0] })) &&
+		hdrColorSpaces[1] && (result_enableHdr = graphicsBase::Base().SetSurfaceFormat({ VK_FORMAT_UNDEFINED, hdrColorSpaces[1] })) &&
+		hdrColorSpaces[2] && (result_enableHdr = graphicsBase::Base().SetSurfaceFormat({ VK_FORMAT_UNDEFINED, hdrColorSpaces[2] }));
+	if (result_enableHdr)
+		outStream << std::format("[ InitializeWindow ] WARNING\nFailed to enable HDR!\n");
+	if (!graphicsBase::Base().SwapchainCreateInfo().imageFormat &&
+		decltype(PreInitialization_EnableSrgb()){}())
+		if (graphicsBase::Base().SetSurfaceFormat({ VK_FORMAT_R8G8B8A8_SRGB, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR }) &&
+			graphicsBase::Base().SetSurfaceFormat({ VK_FORMAT_B8G8R8A8_SRGB, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR }))
+			outStream << std::format("[ InitializeWindow ] WARNING\nFailed to enable sRGB!\n");
+	//Create swapchain
+	if (graphicsBase::Base().CreateSwapchain(limitFrameRate))
+		return false;
 	return true;
 }
 void MakeWindowFullScreen() {
@@ -250,9 +261,9 @@ LRESULT window::HandleMessage(HWND hWindow, UINT message, WPARAM wParam, LPARAM 
 		ReleaseCapture();
 		break;
 	case WM_MOUSEWHEEL:
-		//This is a callback function, chime_mouse.sy will be updated automatically only when a mouse wheel is scrolled,
-		//which means you should set chime_mouse.sy to 0 in rendering loop.
-		easyVulkan::mouseStatus::mouse.sy = short(HIWORD(wParam)) / 120.0;
+		//This is a callback function, easyVulkan_mouse.sy will be updated automatically only when a mouse wheel is scrolled,
+		//which means you should set easyVulkan_mouse.sy to 0 in rendering loop.
+		easyVulkan_mouse.sy = short(HIWORD(wParam)) / 120.0;
 		break;
 #pragma endregion
 	case WM_KEYDOWN:
@@ -264,9 +275,11 @@ LRESULT window::HandleMessage(HWND hWindow, UINT message, WPARAM wParam, LPARAM 
 		}
 		[[fallthrough]];
 	case WM_CLOSE:
-	case WM_QUIT://If the window wouldn't quit correctly, loop until it quits.
+	case WM_QUIT:
+		//If the window wouldn't quit correctly, post quit message until it quits.
 		PostQuitMessage(0);//Argument'll be stored to MSG::wParam. When quiting, DestroyWindow(...) is called in ~window()Cno need to return DefWindowProc(...).
-		return 0;//If the program is running with a console, you should terminate the program by clicking the console's closebox or press Esc key.
+		return 0;
+		//If the program is running with a console, you should terminate the program by clicking the console's closebox or press Esc key.
 	}
 	return DefWindowProc(hWindow, message, wParam, lParam);
 }
