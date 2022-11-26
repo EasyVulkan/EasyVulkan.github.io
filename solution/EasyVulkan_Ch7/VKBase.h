@@ -656,7 +656,7 @@ namespace vulkan {
 				outStream << std::format("[ graphicsBase ] WARNING\nVK_IMAGE_USAGE_TRANSFER_DST_BIT isn't supported!\n");
 
 			//Get surface formats
-			if (!availableSurfaceFormats.size())
+			if (availableSurfaceFormats.empty())
 				if (VkResult result = GetSurfaceFormats())
 					return result;
 			//If surface format is not determined, select a a four-component UNORM format

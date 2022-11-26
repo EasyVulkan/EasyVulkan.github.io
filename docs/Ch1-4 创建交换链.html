@@ -561,17 +561,10 @@ swapchainCreateInfo.imageUsage = <span class="enum">VK_IMAGE_USAGE_COLOR_ATTACHM
     接着继续填充vulkan::<span class="type">graphicsBase</span>::<span class="fn">CreateSwapchain</span>(...)，首先判断是否已获取surface格式，若尚未获取则调用<span class="fn">GetSurfaceFormats</span>()：
 </p>
 <pre class="code">
-<span class="kw">if</span> (!availableSurfaceFormats.<span class="fn">size</span>())
+<span class="kw">if</span> (availableSurfaceFormats.<span class="fn">empty</span>())
     <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">GetSurfaceFormats</span>())
         <span class="kw">return</span> result;
 </pre>
-<ul>
-    <li>
-        <p>
-           <code>!availableSurfaceFormats.<span class="fn">size</span>()</code>的值等于<code>availableSurfaceFormats.<span class="fn">empty</span>()</code>，选择前一种写法纯粹是个人习惯。
-        </p>
-    </li>
-</ul>
 <p>
     然后，若没有指定图像的格式和色彩空间（即没有在执行本函数前手动调用<span class="fn">SetSurfaceFormat</span>(...)），那么用<span class="fn">SetSurfaceFormat</span>(...)设置一个默认格式。
     <br>
