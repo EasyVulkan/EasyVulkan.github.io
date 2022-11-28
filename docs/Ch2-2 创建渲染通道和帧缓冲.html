@@ -285,6 +285,8 @@
     <a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html#id4">渲染通道开始时的隐式依赖</a>使得图像的内存布局转换在读写任何图像附件之前发生，并且不对先前的访问进行同步（因为srcStageMask是<span class="enum">VK_PIPELINE_STAGE_NONE</span>），这倒也没什么问题，因为可以有其他同步手段来确保先前的操作已经结束。
     <br>
     因此上文所写的子通道依赖并非必要的，但它更精细。这里使用<span class="mcr">VK_SUBPASS_EXTERNAL</span>为srcSubpass，实质上是指代前一次使用同一图像附件的渲染，确保前一次的颜色附件输出（color attachment output）阶段在本次的同一阶段前完成，由于每次向交换链图像渲染时，先前的内容都可以被舍弃，srcAccessMask可以为0（srcAccessMask的用途是用来确保写入操作的结果可以被后续操作安全访问）。
+    <br>
+    <b>注：其实写不写都一样，就算这个子通道依赖比默认的更精细也不会有实质作用。由于在每次循环中使用同个栅栏对同个命令缓冲区进行同步，执行当前渲染命令时，前一次渲染必定已经结束。</b>
 </p>
 <p>
     书写渲染通道的创建信息，以创建渲染通道：
