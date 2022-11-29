@@ -253,37 +253,39 @@ namespace vulkan {
 			bufferMemory.BufferData(pData_src, size);
 		}
 		[[nodiscard]]
-		VkImage AliasedImage(VkImageType imageType, VkFormat format, VkExtent3D extent, uint32_t arrayLayerCount) {
+		VkImage AliasedImage2d(VkFormat format, VkExtent2D extent) {
 			if (!(FormatProperties(format).linearTilingFeatures & VK_FORMAT_FEATURE_BLIT_SRC_BIT))
+				return VK_NULL_HANDLE;
+			VkDeviceSize imageDataSize = VkDeviceSize(FormatInfo(format).sizePerPixel) * extent.width * extent.height;
+			if (imageDataSize > AllocationSize())
 				return VK_NULL_HANDLE;
 			VkImageFormatProperties imageFormatProperties = {};
 			vkGetPhysicalDeviceImageFormatProperties(graphicsBase::Base().PhysicalDevice(),
-				format, imageType, VK_IMAGE_TILING_LINEAR, VK_IMAGE_USAGE_TRANSFER_SRC_BIT, 0, &imageFormatProperties);
-			VkDeviceSize imageDataSize = VkDeviceSize(FormatInfo(format).sizePerPixel) * extent.width * extent.height * extent.depth;
-			if (extent.width <= imageFormatProperties.maxExtent.width &&
-				extent.height <= imageFormatProperties.maxExtent.height &&
-				extent.depth <= imageFormatProperties.maxExtent.depth &&
-				arrayLayerCount <= imageFormatProperties.maxArrayLayers &&
-				imageDataSize <= imageFormatProperties.maxResourceSize) {
-				Expand(imageDataSize);
-				VkImageCreateInfo imageCreateInfo = {
-					.imageType = imageType,
-					.format = format,
-					.extent = extent,
-					.mipLevels = 1,
-					.arrayLayers = arrayLayerCount,
-					.samples = VK_SAMPLE_COUNT_1_BIT,
-					.tiling = VK_IMAGE_TILING_LINEAR,
-					.usage = VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
-					.initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED
-				};
-				if (aliasedImage)
-					aliasedImage.~image();
-				aliasedImage.Create(imageCreateInfo);
-				aliasedImage.BindMemory(bufferMemory.Memory());
-				return aliasedImage;
-			}
-			return VK_NULL_HANDLE;
+				format, VK_IMAGE_TYPE_2D, VK_IMAGE_TILING_LINEAR, VK_IMAGE_USAGE_TRANSFER_SRC_BIT, 0, &imageFormatProperties);
+			if (extent.width > imageFormatProperties.maxExtent.width ||
+				extent.height > imageFormatProperties.maxExtent.height ||
+				imageDataSize > imageFormatProperties.maxResourceSize)
+				return VK_NULL_HANDLE;
+			VkImageCreateInfo imageCreateInfo = {
+				.imageType = VK_IMAGE_TYPE_2D,
+				.format = format,
+				.extent = { extent.width, extent.height, 1 },
+				.mipLevels = 1,
+				.arrayLayers = 1,
+				.samples = VK_SAMPLE_COUNT_1_BIT,
+				.tiling = VK_IMAGE_TILING_LINEAR,
+				.usage = VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
+				.initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED
+			};
+			aliasedImage.~image();
+			aliasedImage.Create(imageCreateInfo);
+			VkImageSubresource subResource = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 0 };
+			VkSubresourceLayout subresourceLayout = {};
+			vkGetImageSubresourceLayout(graphicsBase::Base().Device(), aliasedImage, &subResource, &subresourceLayout);
+			if (subresourceLayout.size != imageDataSize)
+				return VK_NULL_HANDLE;//No padding bytes
+			aliasedImage.BindMemory(bufferMemory.Memory());
+			return aliasedImage;
 		}
 		//Static Function
 		static VkBuffer Buffer_MainThread() {
@@ -308,8 +310,8 @@ namespace vulkan {
 			stagingBuffer_mainThread.Get().RetrieveData(pData_src, size);
 		}
 		[[nodiscard]]
-		static VkImage AliasedImage_MainThread(VkImageType imageType, VkFormat format, VkExtent3D extent, uint32_t arrayLayerCount) {
-			return stagingBuffer_mainThread.Get().AliasedImage(imageType, format, extent, arrayLayerCount);
+		static VkImage AliasedImage2d_MainThread(VkFormat format, VkExtent2D extent) {
+			return stagingBuffer_mainThread.Get().AliasedImage2d(format, extent);
 		}
 	};
 	inline stagingBuffer::implStagingBuffer_mainThread stagingBuffer::stagingBuffer_mainThread;
