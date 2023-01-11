@@ -53,7 +53,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Ch2-0 代码整理及一些辅助类</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id1">辅助类</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#result-t">result_t</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#arrayparameter">arrayParameter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#arrayref">arrayRef</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#id2">实用的宏</a><ul>
@@ -196,8 +196,8 @@
 <p>
     之后将目前为止写过的函数的返回值类型从<span class="type">VkResult</span>改为<span class="type">result_t</span>即可。
 </p></section>
-<section id="arrayparameter">
-<h3>arrayParameter<a class="headerlink" href="#arrayparameter" title="Permalink to this heading"></a></h3>
+<section id="arrayref">
+<h3>arrayRef<a class="headerlink" href="#arrayref" title="Permalink to this heading"></a></h3>
 <p>
     一些Vulkan创建信息或函数会要求提供一个指向某类型数组的指针和数组元素个数，比如：
 </p>
@@ -249,23 +249,23 @@
     <br>
     编程中常用的一种技巧是，把一系列相关参数放到一个类或结构体中，并为其提供多种构造器，这样就能以多种方式指定这些参数。
     <br>
-    于是，引入我的<span class="type">arrayParameter</span>类：
+    于是，引入我的<span class="type">arrayRef</span>类：
 </p>
 <pre class="code">
 <span class="kw">template</span>&lt;<span class="kw">typename</span> <span class="type">T</span>&gt;
-<span class="kw">class</span> arrayParameter {
+<span class="kw">class</span> arrayRef {
     <span class="type">T</span>* pArray = <span class="kw">nullptr</span>;
     <span class="type">size_t</span> count = 0;
 <span class="kw">public</span>:
     <span class="cmt">//从空参数构造，count为0</span>
-    <span class="fn">arrayParameter</span>() = <span class="kw">default</span>;
+    <span class="fn">arrayRef</span>() = <span class="kw">default</span>;
     <span class="cmt">//从单个对象构造，count为1</span>
-    <span class="fn">arrayParameter</span>(<span class="type">T</span>&amp; data) :pArray(&amp;data), count(1) {}
+    <span class="fn">arrayRef</span>(<span class="type">T</span>&amp; data) :pArray(&amp;data), count(1) {}
     <span class="cmt">//从顶级数组构造</span>
     <span class="kw">template</span>&lt;<span class="type">size_t</span> elementCount&gt;
-    <span class="fn">arrayParameter</span>(<span class="type">T</span>(&amp;data)[elementCount]) : pArray(data), count(elementCount) {}
+    <span class="fn">arrayRef</span>(<span class="type">T</span>(&amp;data)[elementCount]) : pArray(data), count(elementCount) {}
     <span class="cmt">//从指针和元素个数构造</span>
-    <span class="fn">arrayParameter</span>(<span class="type">T</span>* pData, <span class="type">size_t</span> elementCount) :pArray(pData), count(elementCount) {}
+    <span class="fn">arrayRef</span>(<span class="type">T</span>* pData, <span class="type">size_t</span> elementCount) :pArray(pData), count(elementCount) {}
     <span class="cmt">//Getter</span>
     <span class="type">T</span>* <span class="fn">Pointer</span>() <span class="kw">const</span> { <span class="kw">return</span> pArray; }
     <span class="type">size_t</span> <span class="fn">Count</span>() <span class="kw">const</span> { <span class="kw">return</span> count; }
@@ -278,7 +278,7 @@
 <div class="admonition note">
     <p class="admonition-title">Note</p>
     <p>
-        C++标准库中提供了std::<span class="type">span</span>类型，这东西可以从数组构造，具有与我的<span class="type">arrayParameter</span>类相似的功能，但是不支持从单个对象构造。
+        C++标准库中提供了std::<span class="type">span</span>类型，这东西可以从数组构造，具有与我的<span class="type">arrayRef</span>类相似的功能，但是不支持从单个对象构造。
     </p>
 </div></section>
 </section>

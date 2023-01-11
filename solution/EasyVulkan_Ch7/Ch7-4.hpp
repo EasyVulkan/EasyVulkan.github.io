@@ -117,7 +117,7 @@ int main() {
 		fence.WaitAndReset();
 
 		commandBuffer.Begin(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
-		renderPass.CmdBegin(commandBuffer, framebuffers[i], clearColor);
+		renderPass.CmdBegin(commandBuffer, framebuffers[i], { {}, windowSize }, clearColor);
 		VkDeviceSize offset = 0;
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffer.Address(), &offset);
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_triangle);

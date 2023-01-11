@@ -702,7 +702,7 @@
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
     <span class="cmt">//Const Function</span>
-    <span class="type">result_t</span> <span class="fn">AllocateBuffers</span>(<span class="type">arrayParameter</span>&lt;<span class="type">VkCommandBuffer</span>&gt; buffers, <span class="type">VkCommandBufferLevel</span> level = <span class="enum">VK_COMMAND_BUFFER_LEVEL_PRIMARY</span>) <span class="kw">const</span> {
+    <span class="type">result_t</span> <span class="fn">AllocateBuffers</span>(<span class="type">arrayRef</span>&lt;<span class="type">VkCommandBuffer</span>&gt; buffers, <span class="type">VkCommandBufferLevel</span> level = <span class="enum">VK_COMMAND_BUFFER_LEVEL_PRIMARY</span>) <span class="kw">const</span> {
         <span class="type">VkCommandBufferAllocateInfo</span> allocateInfo = {
             .sType = <span class="enum">VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO</span>,
             .commandPool = handle,
@@ -714,16 +714,16 @@
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandPool ] ERROR\nFailed to allocate command buffers!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
-    <span class="type">result_t</span> <span class="fn">AllocateBuffers</span>(<span class="type">arrayParameter</span>&lt;<span class="type">commandBuffer</span>&gt; buffers, <span class="type">VkCommandBufferLevel</span> level = <span class="enum">VK_COMMAND_BUFFER_LEVEL_PRIMARY</span>) <span class="kw">const</span> {
+    <span class="type">result_t</span> <span class="fn">AllocateBuffers</span>(<span class="type">arrayRef</span>&lt;<span class="type">commandBuffer</span>&gt; buffers, <span class="type">VkCommandBufferLevel</span> level = <span class="enum">VK_COMMAND_BUFFER_LEVEL_PRIMARY</span>) <span class="kw">const</span> {
         <span class="kw">return</span> <span class="fn">AllocateBuffers</span>(
             { &amp;buffers[0].handle, buffers.<span class="fn">Count</span>() },
             level);
     }
-    <span class="kw">void</span> <span class="fn">FreeBuffers</span>(<span class="type">arrayParameter</span>&lt;<span class="type">VkCommandBuffer</span>&gt; buffers) <span class="kw">const</span> {
+    <span class="kw">void</span> <span class="fn">FreeBuffers</span>(<span class="type">arrayRef</span>&lt;<span class="type">VkCommandBuffer</span>&gt; buffers) <span class="kw">const</span> {
         <span class="fn">vkFreeCommandBuffers</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle, buffers.<span class="fn">Count</span>(), buffers.<span class="fn">Pointer</span>());
         <span class="fn">memset</span>(buffers.<span class="fn">Pointer</span>(), 0, buffers.<span class="fn">Count</span>() * <span class="kw">sizeof</span>(<span class="type">VkCommandBuffer</span>));
     }
-    <span class="kw">void</span> <span class="fn">FreeBuffers</span>(<span class="type">arrayParameter</span>&lt;<span class="type">commandBuffer</span>&gt; buffers) <span class="kw">const</span> {
+    <span class="kw">void</span> <span class="fn">FreeBuffers</span>(<span class="type">arrayRef</span>&lt;<span class="type">commandBuffer</span>&gt; buffers) <span class="kw">const</span> {
         <span class="fn">FreeBuffers</span>({ &amp;buffers[0].handle, buffers.<span class="fn">Count</span>() });
     }
     <span class="cmt">//Non-const Function</span>

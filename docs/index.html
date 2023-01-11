@@ -189,7 +189,8 @@
 </ul>
 </div>
 <div class="line-block">
-<div class="line">Ch3-7 Query</div>
+<div class="line">Ch3-7 采样器</div>
+<div class="line">Ch3-8 Query</div>
 </div>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
@@ -259,16 +260,41 @@
 </section>
 <section id="id4">
 <h2>更新履历<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
-<p>
-    2022.11.30 新增关于线性图像中填充字节的说明，见<a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html#staging-buffer">stagingBuffer</a>的部分（哇块一周过去了完全不想更新的章节呢）。
-    <br>
-    2022.11.24 基础部分重写完毕（其实老早写好了，但因为没人催，懒得检查也懒得写示例，毕竟自己写的文章看了也不会有长进）。
-</p></section>
+<p>2023.01.11</p>
+<ul>
+    <li>
+        修改了一些函数名和类名。
+    </li>
+    <li>
+        示例代码中，增加了一些<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch7/EasyVKStart.h#L50">数学函数</a>备用。
+    </li>
+    <li>
+        删了个在参数中间省略默认参数<span class="var">renderArea</span>的函数<span class="type">renderPass</span>::<span class="fn">CmdBegin</span>(...)←这种不良习惯容易导致Bug！并相应修改代码。
+    </li>
+    <li>
+        Ch1-4<a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html#id11">最后</a>应该要更新<span class="fn">TerminateWindow</span>()，<a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html#id9">若需要重建逻辑设备</a>末尾应该要向<span class="type">graphicsBase</span>::<span class="fn">CreateDevice</span>()增加一小段执行回调函数的代码，原本忘记了现在补上。在<a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html#id8">创建和销毁交换链时的回调函数</a>末尾添加了关于使用range-based for循环执行回调函数的注释。
+    </li>
+    <li>
+        Ch7的示例代码中增加<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch7/EasyVulkan.hpp#L73">用于快速显示启动画面的函数BootScreen()</a>（因为后续没多少要初始化的东西，没阻塞所以会一闪而过，不是bug）及<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch7/Ch7-5.hpp">Ch7-5的示例HPP</a>，以及<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch7/VkBase+.h#L456">2D贴图、2D贴图数组、立方体贴图的封装</a>，最近忙疯了+没人看+没人反馈，不怎么想更教程，有条件的自己啃吧。
+    </li>
+</ul>
+<p>2022.11.30</p>
+<ul>
+    <li>
+        新增关于线性图像中填充字节的说明，见<a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html#staging-buffer">stagingBuffer</a>的部分（哇块一周过去了完全不想更新的章节呢）。
+    </li>
+</ul>
+<p>2022.11.24</p>
+<ul>
+    <li>
+        基础部分重写完毕（其实老早写好了，但因为没人催，懒得检查也懒得写示例，毕竟自己写的文章看了也不会有长进）。
+    </li>
+</ul></section>
 <section id="id5">
 <h2>关于转载<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
 <p>
     可随意转载，记得带上原文链接并注明作者（<a href="https://space.bilibili.com/600719">TimeRemnant</a>）。
-</p></section>
+</P></section>
 <section id="id6">
 <h2>联系方式<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
 <p>
@@ -283,11 +309,6 @@
     <li>
         <p>
             B站私信：<a href="https://space.bilibili.com/600719">TimeRemnant的个人空间</a>，关于C++语法和Vulkan的答疑可联系，不定期上B站（其实基本不上，而且做编程教学视频大概也赚不了钱）。
-        </p>
-    </li>
-    <li>
-        <p>
-            微博私信：<a href="https://weibo.com/u/2388449664">路西法没有尾巴的个人主页</a>，同上，不定期上微博（基本不发东西）。
         </p>
     </li>
     <li>

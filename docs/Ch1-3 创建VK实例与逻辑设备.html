@@ -1188,7 +1188,7 @@ queueFamilyIndex_compute = ic;
 <ul>
     <li>
         <p>
-            我打算之后在<span class="type">graphicsBase</span>::<span class="fn">CreateLogicalDevice</span>(...)中会判断队列族索引是否为<span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>以确定是否要创建相应队列，因此这里应当将不需要的队列族索引覆写为<span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>。
+            我打算之后在<span class="type">graphicsBase</span>::<span class="fn">CreateDevice</span>(...)中会判断队列族索引是否为<span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>以确定是否要创建相应队列，因此这里应当将不需要的队列族索引覆写为<span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>。
         </p>
     </li>
 </ul>
@@ -1365,10 +1365,10 @@ queueFamilyIndex_compute = ic;
     </li>
 </ul>
 <p>
-    于是乎，首先在<span class="type">graphicsBase</span>::<span class="fn">CreateLogicalDevice</span>(...)中为所需的队列族填写相应的<a href="https://renderdoc.org/vkspec_chunked/chap5.html#VkDeviceQueueCreateInfo">VkDeviceQueueCreateInfo</a>，并记录所需队列的个数：
+    于是乎，首先在<span class="type">graphicsBase</span>::<span class="fn">CreateDevice</span>(...)中为所需的队列族填写相应的<a href="https://renderdoc.org/vkspec_chunked/chap5.html#VkDeviceQueueCreateInfo">VkDeviceQueueCreateInfo</a>，并记录所需队列的个数：
 </p>
 <pre class="code">
-<span class="type">VkResult</span> <span class="fn">CreateLogicalDevice</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkDeviceCreateFlags</span> flags = 0) {
+<span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkDeviceCreateFlags</span> flags = 0) {
     <span class="kw">float</span> queuePriority = 1.f;
     <span class="type">VkDeviceQueueCreateInfo</span> queueCreateInfos[3] = {
         {
@@ -1504,10 +1504,10 @@ queueFamilyIndex_compute = ic;
     </li>
 </ul>
 <p>
-    成功创建逻辑设备后，已没有必要变更物理设备，于是用<a href="https://renderdoc.org/vkspec_chunked/chap5.html#vkGetPhysicalDeviceProperties">vkGetPhysicalDeviceProperties</a>(...)获取物理设备属性，用<a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkGetPhysicalDeviceMemoryProperties">vkGetPhysicalDeviceMemoryProperties</a>(...)获取物理设备内存属性，整个<span class="type">graphicsBase</span>::<span class="fn">CreateLogicalDevice</span>()函数如下：
+    成功创建逻辑设备后，已没有必要变更物理设备，于是用<a href="https://renderdoc.org/vkspec_chunked/chap5.html#vkGetPhysicalDeviceProperties">vkGetPhysicalDeviceProperties</a>(...)获取物理设备属性，用<a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkGetPhysicalDeviceMemoryProperties">vkGetPhysicalDeviceMemoryProperties</a>(...)获取物理设备内存属性，整个<span class="type">graphicsBase</span>::<span class="fn">CreateDevice</span>()函数如下：
 </p>
 <pre class="code">
-<span class="type">VkResult</span> <span class="fn">CreateLogicalDevice</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkDeviceCreateFlags</span> flags = 0) {
+<span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkDeviceCreateFlags</span> flags = 0) {
     <span class="kw">float</span> queuePriority = 1.f;
     <span class="type">VkDeviceQueueCreateInfo</span> queueCreateInfos[3] = {
         {
@@ -1558,6 +1558,7 @@ queueFamilyIndex_compute = ic;
     <span class="fn">vkGetPhysicalDeviceMemoryProperties</span>(physicalDevice, &amp;physicalDeviceMemoryProperties);
     <span class="cmt">//输出所用的物理设备名称</span>
     std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;Renderer: {}\n&quot;</span>, physicalDeviceProperties.deviceName);
+    <span class="cmt">/*待Ch1-4填充*/</span>
     <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
 }
 </pre>
@@ -1631,7 +1632,7 @@ queueFamilyIndex_compute = ic;
         <span class="cmt">//一个true一个false，暂时不需要计算用的队列</span>
         <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">DeterminePhysicalDevice</span>(0, <span class="kw">true</span>, <span class="kw">false</span>) ||
         <span class="cmt">//创建逻辑设备</span>
-        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">CreateLogicalDevice</span>())
+        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">CreateDevice</span>())
         <span class="kw">return false</span>;
     <span class="cmt">//----------------------------------------</span>
 

@@ -516,7 +516,7 @@ namespace vulkan {
 			physicalDevice = availablePhysicalDevices[deviceIndex];
 			return VK_SUCCESS;
 		}
-		result_t CreateLogicalDevice(const void* pNext = nullptr, VkDeviceCreateFlags flags = 0) {
+		result_t CreateDevice(const void* pNext = nullptr, VkDeviceCreateFlags flags = 0) {
 			float queuePriority = 1.f;
 			VkDeviceQueueCreateInfo queueCreateInfos[3] = {
 				{
@@ -734,7 +734,7 @@ namespace vulkan {
 			if (device)
 				vkDestroyDevice(device, nullptr),
 				device = VK_NULL_HANDLE;
-			return CreateLogicalDevice(pNext, flags);
+			return CreateDevice(pNext, flags);
 		}
 		result_t RecreateSwapchain() {
 			VkSurfaceCapabilitiesKHR surfaceCapabilities = {};
@@ -1103,10 +1103,7 @@ namespace vulkan {
 			beginInfo.renderPass = handle;
 			vkCmdBeginRenderPass(commandBuffer, &beginInfo, subpassContents);
 		}
-		void CmdBegin(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer, arrayParameter<const VkClearValue> clearValues = {}, VkSubpassContents subpassContents = VK_SUBPASS_CONTENTS_INLINE) const {
-			CmdBegin(commandBuffer, framebuffer, { {}, graphicsBase::Base().SwapchainCreateInfo().imageExtent }, clearValues, subpassContents);
-		}
-		void CmdBegin(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer, VkRect2D renderArea, arrayParameter<const VkClearValue> clearValues = {}, VkSubpassContents subpassContents = VK_SUBPASS_CONTENTS_INLINE) const {
+		void CmdBegin(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer, VkRect2D renderArea, arrayRef<const VkClearValue> clearValues = {}, VkSubpassContents subpassContents = VK_SUBPASS_CONTENTS_INLINE) const {
 			VkRenderPassBeginInfo beginInfo = {
 				.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
 				.renderPass = handle,
@@ -1209,7 +1206,7 @@ namespace vulkan {
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
 		//Const Function
-		result_t AllocateBuffers(arrayParameter<VkCommandBuffer> buffers, VkCommandBufferLevel level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const {
+		result_t AllocateBuffers(arrayRef<VkCommandBuffer> buffers, VkCommandBufferLevel level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const {
 			VkCommandBufferAllocateInfo allocateInfo = {
 				.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
 				.commandPool = handle,
@@ -1221,16 +1218,16 @@ namespace vulkan {
 				outStream << std::format("[ commandPool ] ERROR\nFailed to allocate command buffers!\nError code: {}\n", int32_t(result));
 			return result;
 		}
-		result_t AllocateBuffers(arrayParameter<commandBuffer> buffers, VkCommandBufferLevel level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const {
+		result_t AllocateBuffers(arrayRef<commandBuffer> buffers, VkCommandBufferLevel level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const {
 			return AllocateBuffers(
 				{ &buffers[0].handle, buffers.Count() },
 				level);
 		}
-		void FreeBuffers(arrayParameter<VkCommandBuffer> buffers) const {
+		void FreeBuffers(arrayRef<VkCommandBuffer> buffers) const {
 			vkFreeCommandBuffers(graphicsBase::Base().Device(), handle, buffers.Count(), buffers.Pointer());
 			memset(buffers.Pointer(), 0, buffers.Count() * sizeof(VkCommandBuffer));
 		}
-		void FreeBuffers(arrayParameter<commandBuffer> buffers) const {
+		void FreeBuffers(arrayRef<commandBuffer> buffers) const {
 			FreeBuffers({ &buffers[0].handle, buffers.Count() });
 		}
 		//Non-const Function

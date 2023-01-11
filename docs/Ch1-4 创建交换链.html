@@ -1073,7 +1073,15 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
 </pre>
 <p>
     需要注意的是，因为<span class="fn">RecreateSwapchain</span>()会被其他看似与创建交换链无关的函数调用，因而没有参数，在调用<span class="fn">RecreateSwapchain</span>()重建交换链时，创建信息中的pNext仍旧为之前的值，因此但凡有重建交换链的必要，必须确保传入<span class="fn">CreateSwapchain</span>(...)的pNext具有够长的生存期。
-</p></section>
+</p>
+<div class="admonition warning">
+    <p class="admonition-title">Warning</p>
+    <p>
+        注意，如果迭代器可能会失效，那么用<code><span class="kw">for</span> (<span class="kw">auto</span>&amp; i : callbacks) i();</code>，即range-based for循环执行回调函数并不安全。
+        <br>
+        你可以将其改成<code><span class="kw">for</span> (<span class="type">size_t</span> size = callbacks.<span class="fn">size</span>(), i = 0; i < size; i++) callbacks[i]();</code>，或者留着range-based for循环以发现并避免<strong>“在回调函数执行过程中添加新的回调函数”</strong>这种情形。
+    </p>
+</div></section>
 <section id="id9">
 <h2>若需要重建逻辑设备<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h2>
 <p>
@@ -1180,7 +1188,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
     device = <span class="mcr">VK_NULL_HANDLE</span>;
 </pre>
 <p>
-    最后调用<span class="fn">CreateLogicalDevice</span>(...)重建逻辑设备，整个vulkan::<span class="type">graphicsBase</span>::<span class="fn">RecreateDevice</span>()如下：
+    最后调用<span class="fn">CreateDevice</span>(...)重建逻辑设备，整个vulkan::<span class="type">graphicsBase</span>::<span class="fn">RecreateDevice</span>()如下：
 </p>
 <pre class="code">
 <span class="type">VkResult</span> <span class="fn">RecreateDevice</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkDeviceCreateFlags</span> flags = 0) {
@@ -1202,11 +1210,23 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
     <span class="kw">if</span> (device)
         <span class="fn">vkDestroyDevice</span>(device, <span class="kw">nullptr</span>),
         device = <span class="mcr">VK_NULL_HANDLE</span>;
-    <span class="kw">return</span> <span class="fn">CreateLogicalDevice</span>(pNext, flags);
+    <span class="kw">return</span> <span class="fn">CreateDevice</span>(pNext, flags);
 }
 </pre>
 <p>
-    <strong>如果你要重建逻辑设备，那么剧本应该是这样的：</strong>
+    注意应该在<span class="fn">CreateDevice</span>(...)中执行创建逻辑设备时的回调：
+</p>
+    <pre class="code">
+<span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkDeviceCreateFlags</span> flags = 0) {
+    <span class="cmt">/*...*/</span>
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;Renderer: {}\n&quot;</span>, physicalDeviceProperties.deviceName);
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : callbacks_createDevice)
+        i();
+    <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
+}
+</pre>
+<p>
+    <strong>于是如果你要重建逻辑设备，那么剧本应该是这样的：</strong>
     <br>
     1.调用<span class="fn">RecreateDevice</span>(...)重建逻辑设备。
     <br>
@@ -1408,7 +1428,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
     <span class="kw">if</span> (
         <span class="type">graphicsBase</span>::<span class="fn">Base</span>.<span class="fn">GetPhysicalDevices</span>() ||
         <span class="type">graphicsBase</span>::<span class="fn">Base</span>.<span class="fn">DeterminePhysicalDevice</span>(0, <span class="kw">true</span>, <span class="kw">false</span>) ||
-        <span class="type">graphicsBase</span>::<span class="fn">Base</span>.<span class="fn">CreateLogicalDevice</span>())
+        <span class="type">graphicsBase</span>::<span class="fn">Base</span>.<span class="fn">CreateDevice</span>())
         <span class="kw">return false</span>;
 
     <span class="cmt">//本节新增--------------------------------</span>
@@ -1417,6 +1437,15 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
     <span class="cmt">//----------------------------------------</span>
 
     <span class="kw">return true</span>;
+}
+</pre>
+<p>
+    终止窗口前应该确保Vulkan没有与窗口系统的呈现引擎进行交互，在<span class="fn">TerminateWindow</span>(...)中调用vulkan::<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">WaitIdle</span>()：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">TerminateWindow</span>() {
+    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">WaitIdle</span>()
+    <span class="fn">glfwTerminate</span>();
 }
 </pre>
 <p>

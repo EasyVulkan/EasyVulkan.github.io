@@ -488,7 +488,7 @@
             <td><p>若描述符类型为采样器或带采样器的图像，在此填入采样器的handle，否则为<span class="mcr">VK_NULL_HANDLE</span></p></td>
         </tr>
         <tr class="row-odd">
-            <td><p><span class="kw">VkImageView</span> imageView</p></td>
+            <td><p><span class="type">VkImageView</span> imageView</p></td>
             <td><p>若描述符类型为图像或带采样器的图像或输入附件，在此填入图像视图的handle，否则为<span class="mcr">VK_NULL_HANDLE</span></p></td>
         </tr>
         <tr class="row-even">
@@ -513,7 +513,7 @@
             <td><p>缓冲区的handle</p></td>
         </tr>
         <tr class="row-odd">
-            <td><p><span class="kw">VkDeviceSize</span> offset</p></td>
+            <td><p><span class="type">VkDeviceSize</span> offset</p></td>
             <td><p>在着色器中访问缓冲区时的起始点，对应Vulkan的缓冲区中，距离缓冲区起始位置的距离（即用来定义一个映射关系）</p></td>
         </tr>
         <tr class="row-even">
@@ -602,7 +602,7 @@
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
     <span class="cmt">//Const Function</span>
-    <span class="kw">void</span> <span class="fn">Write</span>(<span class="type">arrayParameter</span>&lt;<span class="kw">const</span> <span class="type">VkDescriptorImageInfo</span>&gt; descriptorInfos, <span class="type">VkDescriptorType</span> descriptorType, <span class="type">uint32_t</span> dstBinding = 0, <span class="type">uint32_t</span> dstArrayElement = 0) <span class="kw">const</span> {
+    <span class="kw">void</span> <span class="fn">Write</span>(<span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">VkDescriptorImageInfo</span>&gt; descriptorInfos, <span class="type">VkDescriptorType</span> descriptorType, <span class="type">uint32_t</span> dstBinding = 0, <span class="type">uint32_t</span> dstArrayElement = 0) <span class="kw">const</span> {
         <span class="type">VkWriteDescriptorSet</span> writeDescriptorSet = {
             .dstSet = handle,
             .dstBinding = dstBinding,
@@ -613,7 +613,7 @@
         };
         <span class="fn">Update</span>(writeDescriptorSet);
     }
-    <span class="kw">void</span> <span class="fn">Write</span>(<span class="type">arrayParameter</span>&lt;<span class="kw">const</span> <span class="type">VkDescriptorBufferInfo</span>&gt; descriptorInfos, <span class="type">VkDescriptorType</span> descriptorType, <span class="type">uint32_t</span> dstBinding = 0, <span class="type">uint32_t</span> dstArrayElement = 0) <span class="kw">const</span> {
+    <span class="kw">void</span> <span class="fn">Write</span>(<span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">VkDescriptorBufferInfo</span>&gt; descriptorInfos, <span class="type">VkDescriptorType</span> descriptorType, <span class="type">uint32_t</span> dstBinding = 0, <span class="type">uint32_t</span> dstArrayElement = 0) <span class="kw">const</span> {
         <span class="type">VkWriteDescriptorSet</span> writeDescriptorSet = {
             .dstSet = handle,
             .dstBinding = dstBinding,
@@ -624,7 +624,7 @@
         };
         <span class="fn">Update</span>(writeDescriptorSet);
     }
-    <span class="kw">void</span> <span class="fn">Write</span>(<span class="type">arrayParameter</span>&lt;<span class="kw">const</span> <span class="type">VkBufferView</span>&gt; descriptorInfos, <span class="type">VkDescriptorType</span> descriptorType, <span class="type">uint32_t</span> dstBinding = 0, <span class="type">uint32_t</span> dstArrayElement = 0) <span class="kw">const</span> {
+    <span class="kw">void</span> <span class="fn">Write</span>(<span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">VkBufferView</span>&gt; descriptorInfos, <span class="type">VkDescriptorType</span> descriptorType, <span class="type">uint32_t</span> dstBinding = 0, <span class="type">uint32_t</span> dstArrayElement = 0) <span class="kw">const</span> {
         <span class="type">VkWriteDescriptorSet</span> writeDescriptorSet = {
             .dstSet = handle,
             .dstBinding = dstBinding,
@@ -636,7 +636,7 @@
         <span class="fn">Update</span>(writeDescriptorSet);
     }
     <span class="cmt">//Static Function</span>
-    <span class="kw">static void</span> <span class="fn">Update</span>(<span class="type">arrayParameter</span>&lt;<span class="type">VkWriteDescriptorSet</span>&gt; writes, <span class="type">arrayParameter</span>&lt;<span class="type">VkCopyDescriptorSet</span>&gt; copies = {}) {
+    <span class="kw">static void</span> <span class="fn">Update</span>(<span class="type">arrayRef</span>&lt;<span class="type">VkWriteDescriptorSet</span>&gt; writes, <span class="type">arrayRef</span>&lt;<span class="type">VkCopyDescriptorSet</span>&gt; copies = {}) {
         <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : writes)
             i.sType = <span class="enum">VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET</span>;
         <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : copies)
@@ -882,7 +882,7 @@
     <span class="fn">descriptorPool</span>(<span class="type">VkDescriptorPoolCreateInfo</span>&amp; createInfo) {
         <span class="fn">Create</span>(createInfo);
     }
-    <span class="fn">descriptorPool</span>(<span class="type">VkDescriptorPoolCreateFlags</span> createFlags, <span class="type">uint32_t</span> maxSetCount, <span class="type">arrayParameter</span>&lt;<span class="kw">const</span> <span class="type">VkDescriptorPoolSize</span>&gt; poolSizes) {
+    <span class="fn">descriptorPool</span>(<span class="type">VkDescriptorPoolCreateFlags</span> createFlags, <span class="type">uint32_t</span> maxSetCount, <span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">VkDescriptorPoolSize</span>&gt; poolSizes) {
         <span class="fn">Create</span>(createFlags, maxSetCount, poolSizes);
     }
     <span class="fn">descriptorPool</span>(<span class="type">descriptorPool</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
@@ -891,7 +891,7 @@
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
     <span class="cmt">//Const Function</span>
-    <span class="type">result_t</span> AllocateSets(<span class="type">arrayParameter</span>&lt;<span class="type">VkDescriptorSet</span>&gt; sets, <span class="type">arrayParameter</span>&lt;<span class="kw">const</span> <span class="type">VkDescriptorSetLayout</span>&gt; setLayouts) <span class="kw">const</span> {
+    <span class="type">result_t</span> AllocateSets(<span class="type">arrayRef</span>&lt;<span class="type">VkDescriptorSet</span>&gt; sets, <span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">VkDescriptorSetLayout</span>&gt; setLayouts) <span class="kw">const</span> {
         <span class="kw">if</span> (sets.Count() != setLayouts.Count())
             <span class="kw">if</span> (sets.Count() < setLayouts.Count()) {
                 outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ descriptorPool ] ERROR\nFor each descriptor set, must provide a corresponding layout!\n&quot;</span>);
@@ -910,27 +910,27 @@
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ descriptorPool ] ERROR\nFailed to allocate descriptor sets!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
-    <span class="type">result_t</span> <span class="fn">AllocateSets</span>(<span class="type">arrayParameter</span>&lt;<span class="type">VkDescriptorSet</span>&gt; sets, <span class="type">arrayParameter</span>&lt;<span class="kw">const</span> <span class="type">descriptorSetLayout</span>&gt; setLayouts) <span class="kw">const</span> {
+    <span class="type">result_t</span> <span class="fn">AllocateSets</span>(<span class="type">arrayRef</span>&lt;<span class="type">VkDescriptorSet</span>&gt; sets, <span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">descriptorSetLayout</span>&gt; setLayouts) <span class="kw">const</span> {
         <span class="kw">return</span> <span class="fn">AllocateSets</span>(
             sets,
             { setLayouts[0].<span class="fn">Address</span>(), setLayouts.<span class="fn">Count</span>() });
     }
-    <span class="type">result_t</span> <span class="fn">AllocateSets</span>(<span class="type">arrayParameter</span>&lt;<span class="type">descriptorSet</span>&gt; sets, <span class="type">arrayParameter</span>&lt;<span class="kw">const</span> <span class="type">VkDescriptorSetLayout</span>&gt; setLayouts) <span class="kw">const</span> {
+    <span class="type">result_t</span> <span class="fn">AllocateSets</span>(<span class="type">arrayRef</span>&lt;<span class="type">descriptorSet</span>&gt; sets, <span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">VkDescriptorSetLayout</span>&gt; setLayouts) <span class="kw">const</span> {
         <span class="kw">return</span> <span class="fn">AllocateSets</span>(
             { &amp;sets[0].handle, sets.<span class="fn">Count</span>() },
             setLayouts);
     }
-    <span class="type">result_t</span> <span class="fn">AllocateSets</span>(<span class="type">arrayParameter</span>&lt;<span class="type">descriptorSet</span>&gt; sets, <span class="type">arrayParameter</span>&lt;<span class="kw">const</span> <span class="type">descriptorSetLayout</span>&gt; setLayouts) <span class="kw">const</span> {
+    <span class="type">result_t</span> <span class="fn">AllocateSets</span>(<span class="type">arrayRef</span>&lt;<span class="type">descriptorSet</span>&gt; sets, <span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">descriptorSetLayout</span>&gt; setLayouts) <span class="kw">const</span> {
         <span class="kw">return</span> <span class="fn">AllocateSets</span>(
             { &amp;sets[0].handle, sets.<span class="fn">Count</span>() },
             { setLayouts[0].<span class="fn">Address</span>(), setLayouts.<span class="fn">Count</span>() });
     }
-    <span class="type">result_t</span> <span class="fn">FreeSets</span>(<span class="type">arrayParameter</span>&lt;<span class="type">VkDescriptorSet</span>&gt; sets) <span class="kw">const</span> {
+    <span class="type">result_t</span> <span class="fn">FreeSets</span>(<span class="type">arrayRef</span>&lt;<span class="type">VkDescriptorSet</span>&gt; sets) <span class="kw">const</span> {
         <span class="type">VkResult</span> result = <span class="fn">vkFreeDescriptorSets</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle, sets.<span class="fn">Count</span>(), sets.<span class="fn">Pointer</span>());
         <span class="fn">memset</span>(sets.<span class="fn">Pointer</span>(), 0, sets.<span class="fn">Count</span>() * <span class="kw">sizeof</span>(<span class="type">VkDescriptorSet</span>));
         <span class="kw">return</span> result;<span class="cmt">//Though vkFreeDescriptorSets(...) can only return VK_SUCCESS</span>
     }
-    <span class="type">result_t</span> <span class="fn">FreeSets</span>(<span class="type">arrayParameter</span>&lt;<span class="type">descriptorSet</span>&gt; sets) <span class="kw">const</span> {
+    <span class="type">result_t</span> <span class="fn">FreeSets</span>(<span class="type">arrayRef</span>&lt;<span class="type">descriptorSet</span>&gt; sets) <span class="kw">const</span> {
         <span class="kw">return</span> <span class="fn">FreeSets</span>({ &amp;sets[0].handle, sets.<span class="fn">Count</span>() });
     }
     <span class="cmt">//Non-const Function</span>
@@ -941,7 +941,7 @@
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ descriptorPool ] ERROR\nFailed to create a descriptor pool!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
-    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkDescriptorPoolCreateFlags</span> createFlags, <span class="type">uint32_t</span> maxSetCount, <span class="type">arrayParameter</span>&lt;<span class="kw">const</span> <span class="type">VkDescriptorPoolSize</span>&gt; poolSizes) {
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkDescriptorPoolCreateFlags</span> createFlags, <span class="type">uint32_t</span> maxSetCount, <span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">VkDescriptorPoolSize</span>&gt; poolSizes) {
         <span class="type">VkDescriptorPoolCreateInfo</span> createInfo = {
             .flags = createFlags,
             .maxSets = maxSetCount,

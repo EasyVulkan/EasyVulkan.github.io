@@ -467,7 +467,7 @@ namespace vulkan {
 			physicalDevice = availablePhysicalDevices[deviceIndex];
 			return VK_SUCCESS;
 		}
-		VkResult CreateLogicalDevice(const void* pNext = nullptr, VkDeviceCreateFlags flags = 0) {
+		VkResult CreateDevice(const void* pNext = nullptr, VkDeviceCreateFlags flags = 0) {
 			float queuePriority = 1.f;
 			VkDeviceQueueCreateInfo queueCreateInfos[3] = {
 				{
@@ -603,7 +603,7 @@ namespace vulkan {
 				std::cout << std::format("[ graphicsBase ] WARNING\nVK_IMAGE_USAGE_TRANSFER_DST_BIT isn't supported!\n");
 
 			//Get surface formats
-			if (availableSurfaceFormats.empty())
+			if (!availableSurfaceFormats.size())
 				if (VkResult result = GetSurfaceFormats())
 					return result;
 			//If surface format is not determined, select a a four-component UNORM format
@@ -685,7 +685,7 @@ namespace vulkan {
 			if (device)
 				vkDestroyDevice(device, nullptr),
 				device = VK_NULL_HANDLE;
-			return CreateLogicalDevice(pNext, flags);
+			return CreateDevice(pNext, flags);
 		}
 		VkResult RecreateSwapchain() {
 			VkSurfaceCapabilitiesKHR surfaceCapabilities = {};

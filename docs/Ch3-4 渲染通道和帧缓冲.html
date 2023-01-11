@@ -837,10 +837,7 @@
         beginInfo.renderPass = handle;
         <span class="fn">vkCmdBeginRenderPass</span>(commandBuffer, &amp;beginInfo, subpassContents);
     }
-    <span class="kw">void</span> <span class="fn">CmdBegin</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkFramebuffer</span> framebuffer, <span class="type">arrayParameter</span>&lt;<span class="kw">const</span> <span class="type">VkClearValue</span>&gt; clearValues = {}, <span class="type">VkSubpassContents</span> subpassContents = <span class="enum">VK_SUBPASS_CONTENTS_INLINE</span>) <span class="kw">const</span> {
-        <span class="fn">CmdBegin</span>(commandBuffer, framebuffer, { {}, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageExtent }, clearValues, subpassContents);
-    }
-    <span class="kw">void</span> <span class="fn">CmdBegin</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkFramebuffer</span> framebuffer, <span class="type">VkRect2D</span> renderArea, <span class="type">arrayParameter</span>&lt;<span class="kw">const</span> <span class="type">VkClearValue</span>&gt; clearValues = {}, <span class="type">VkSubpassContents</span> subpassContents = <span class="enum">VK_SUBPASS_CONTENTS_INLINE</span>) <span class="kw">const</span> {
+    <span class="kw">void</span> <span class="fn">CmdBegin</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkFramebuffer</span> framebuffer, <span class="type">VkRect2D</span> renderArea, <span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">VkClearValue</span>&gt; clearValues = {}, <span class="type">VkSubpassContents</span> subpassContents = <span class="enum">VK_SUBPASS_CONTENTS_INLINE</span>) <span class="kw">const</span> {
         <span class="type">VkRenderPassBeginInfo</span> beginInfo = {
             .sType = <span class="enum">VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO</span>,
             .renderPass = handle,

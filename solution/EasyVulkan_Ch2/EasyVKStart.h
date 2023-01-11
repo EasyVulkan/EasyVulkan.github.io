@@ -28,15 +28,15 @@
 #pragma comment(lib, "vulkan-1.lib")
 
 template<typename T>
-class arrayParameter {
+class arrayRef {
     T* pArray = nullptr;
     size_t count = 0;
 public:
-    arrayParameter() = default;
-    arrayParameter(T& data) :pArray(&data), count(1) {}
+    arrayRef() = default;
+    arrayRef(T& data) :pArray(&data), count(1) {}
     template<size_t elementCount>
-    arrayParameter(T(&data)[elementCount]) : pArray(data), count(elementCount) {}
-    arrayParameter(T* pData, size_t elementCount) :pArray(pData), count(elementCount) {}
+    arrayRef(T(&data)[elementCount]) : pArray(data), count(elementCount) {}
+    arrayRef(T* pData, size_t elementCount) :pArray(pData), count(elementCount) {}
     //Getter
     T* Pointer() const { return pArray; }
     size_t Count() const { return count; }

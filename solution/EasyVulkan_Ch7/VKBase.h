@@ -520,7 +520,7 @@ namespace vulkan {
 			physicalDevice = availablePhysicalDevices[deviceIndex];
 			return VK_SUCCESS;
 		}
-		result_t CreateLogicalDevice(const void* pNext = nullptr, VkDeviceCreateFlags flags = 0) {
+		result_t CreateDevice(const void* pNext = nullptr, VkDeviceCreateFlags flags = 0) {
 			float queuePriority = 1.f;
 			VkDeviceQueueCreateInfo queueCreateInfos[3] = {
 				{
@@ -570,6 +570,8 @@ namespace vulkan {
 			vkGetPhysicalDeviceProperties(physicalDevice, &physicalDeviceProperties);
 			vkGetPhysicalDeviceMemoryProperties(physicalDevice, &physicalDeviceMemoryProperties);
 			outStream << std::format("Renderer: {}\n", physicalDeviceProperties.deviceName);
+			for (auto& i : callbacks_createDevice)
+				i();
 			return VK_SUCCESS;
 		}
 		result_t CheckDeviceExtensions(std::span<const char*> extensionsToCheck, const char* layerName = nullptr) const {
@@ -738,7 +740,7 @@ namespace vulkan {
 			if (device)
 				vkDestroyDevice(device, nullptr),
 				device = VK_NULL_HANDLE;
-			return CreateLogicalDevice(pNext, flags);
+			return CreateDevice(pNext, flags);
 		}
 		result_t RecreateSwapchain() {
 			VkSurfaceCapabilitiesKHR surfaceCapabilities = {};
@@ -1294,6 +1296,94 @@ namespace vulkan {
 		}
 	};
 
+	class bufferView {
+		VkBufferView handle = VK_NULL_HANDLE;
+	public:
+		bufferView() = default;
+		bufferView(VkBufferViewCreateInfo& createInfo) {
+			Create(createInfo);
+		}
+		bufferView(VkBuffer buffer, VkFormat format, VkDeviceSize offset = 0, VkDeviceSize range = 0) {
+			Create(buffer, format, offset, range);
+		}
+		bufferView(bufferView&& other) noexcept { MoveHandle; }
+		~bufferView() { DestroyHandleBy(vkDestroyBufferView); }
+		//Getter
+		DefineHandleTypeOperator;
+		DefineAddressFunction;
+		//Non-const Function
+		result_t Create(VkBufferViewCreateInfo& createInfo) {
+			createInfo.sType = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO;
+			VkResult result = vkCreateBufferView(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
+			if (result)
+				outStream << std::format("[ bufferView ] ERROR\nFailed to create a buffer view!\nError code: {}\n", int32_t(result));
+			return result;
+		}
+		result_t Create(VkBuffer buffer, VkFormat format, VkDeviceSize offset = 0, VkDeviceSize range = 0) {
+			VkBufferViewCreateInfo createInfo = {
+				.buffer = buffer,
+				.format = format,
+				.offset = offset,
+				.range = range
+			};
+			return Create(createInfo);
+		}
+	};
+	class imageView {
+		VkImageView handle = VK_NULL_HANDLE;
+	public:
+		imageView() = default;
+		imageView(VkImageViewCreateInfo& createInfo) {
+			Create(createInfo);
+		}
+		imageView(VkImage image, VkImageViewType viewType, VkFormat format, const VkImageSubresourceRange& subresourceRange) {
+			Create(image, viewType, format, subresourceRange);
+		}
+		imageView(imageView&& other) noexcept { MoveHandle; }
+		~imageView() { DestroyHandleBy(vkDestroyImageView); }
+		//Getter
+		DefineHandleTypeOperator;
+		DefineAddressFunction;
+		//Non-const Function
+		result_t Create(VkImageViewCreateInfo& createInfo) {
+			createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+			VkResult result = vkCreateImageView(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
+			if (result)
+				outStream << std::format("[ imageView ] ERROR\nFailed to create an image view!\nError code: {}\n", int32_t(result));
+			return result;
+		}
+		result_t Create(VkImage image, VkImageViewType viewType, VkFormat format, const VkImageSubresourceRange& subresourceRange) {
+			VkImageViewCreateInfo createInfo = {
+				.image = image,
+				.viewType = viewType,
+				.format = format,
+				.subresourceRange = subresourceRange
+			};
+			return Create(createInfo);
+		}
+	};
+	class sampler {
+		VkSampler handle = VK_NULL_HANDLE;
+	public:
+		sampler() = default;
+		sampler(VkSamplerCreateInfo& createInfo) {
+			Create(createInfo);
+		}
+		sampler(sampler&& other) noexcept { MoveHandle; }
+		~sampler() { DestroyHandleBy(vkDestroySampler); }
+		//Getter
+		DefineHandleTypeOperator;
+		DefineAddressFunction;
+		//Non-const Function
+		result_t Create(VkSamplerCreateInfo& createInfo) {
+			createInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+			VkResult result = vkCreateSampler(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
+			if (result)
+				outStream << std::format("[ sampler ] ERROR\nFailed to create a sampler!\nError code: {}\n", int32_t(result));
+			return result;
+		}
+	};
+
 	class shaderModule {
 		VkShaderModule handle = VK_NULL_HANDLE;
 	public:
@@ -1439,10 +1529,7 @@ namespace vulkan {
 			beginInfo.renderPass = handle;
 			vkCmdBeginRenderPass(commandBuffer, &beginInfo, subpassContents);
 		}
-		void CmdBegin(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer, arrayParameter<const VkClearValue> clearValues = {}, VkSubpassContents subpassContents = VK_SUBPASS_CONTENTS_INLINE) const {
-			CmdBegin(commandBuffer, framebuffer, { {}, graphicsBase::Base().SwapchainCreateInfo().imageExtent }, clearValues, subpassContents);
-		}
-		void CmdBegin(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer, VkRect2D renderArea, arrayParameter<const VkClearValue> clearValues = {}, VkSubpassContents subpassContents = VK_SUBPASS_CONTENTS_INLINE) const {
+		void CmdBegin(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer, VkRect2D renderArea, arrayRef<const VkClearValue> clearValues = {}, VkSubpassContents subpassContents = VK_SUBPASS_CONTENTS_INLINE) const {
 			VkRenderPassBeginInfo beginInfo = {
 				.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
 				.renderPass = handle,
@@ -1545,7 +1632,7 @@ namespace vulkan {
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
 		//Const Function
-		result_t AllocateBuffers(arrayParameter<VkCommandBuffer> buffers, VkCommandBufferLevel level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const {
+		result_t AllocateBuffers(arrayRef<VkCommandBuffer> buffers, VkCommandBufferLevel level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const {
 			VkCommandBufferAllocateInfo allocateInfo = {
 				.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
 				.commandPool = handle,
@@ -1557,16 +1644,16 @@ namespace vulkan {
 				outStream << std::format("[ commandPool ] ERROR\nFailed to allocate command buffers!\nError code: {}\n", int32_t(result));
 			return result;
 		}
-		result_t AllocateBuffers(arrayParameter<commandBuffer> buffers, VkCommandBufferLevel level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const {
+		result_t AllocateBuffers(arrayRef<commandBuffer> buffers, VkCommandBufferLevel level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const {
 			return AllocateBuffers(
 				{ &buffers[0].handle, buffers.Count() },
 				level);
 		}
-		void FreeBuffers(arrayParameter<VkCommandBuffer> buffers) const {
+		void FreeBuffers(arrayRef<VkCommandBuffer> buffers) const {
 			vkFreeCommandBuffers(graphicsBase::Base().Device(), handle, buffers.Count(), buffers.Pointer());
 			memset(buffers.Pointer(), 0, buffers.Count() * sizeof(VkCommandBuffer));
 		}
-		void FreeBuffers(arrayParameter<commandBuffer> buffers) const {
+		void FreeBuffers(arrayRef<commandBuffer> buffers) const {
 			FreeBuffers({ &buffers[0].handle, buffers.Count() });
 		}
 		//Non-const Function
@@ -1595,7 +1682,7 @@ namespace vulkan {
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
 		//Const Function
-		void Write(arrayParameter<const VkDescriptorImageInfo> descriptorInfos, VkDescriptorType descriptorType, uint32_t dstBinding = 0, uint32_t dstArrayElement = 0) const {
+		void Write(arrayRef<const VkDescriptorImageInfo> descriptorInfos, VkDescriptorType descriptorType, uint32_t dstBinding = 0, uint32_t dstArrayElement = 0) const {
 			VkWriteDescriptorSet writeDescriptorSet = {
 				.dstSet = handle,
 				.dstBinding = dstBinding,
@@ -1606,7 +1693,7 @@ namespace vulkan {
 			};
 			Update(writeDescriptorSet);
 		}
-		void Write(arrayParameter<const VkDescriptorBufferInfo> descriptorInfos, VkDescriptorType descriptorType, uint32_t dstBinding = 0, uint32_t dstArrayElement = 0) const {
+		void Write(arrayRef<const VkDescriptorBufferInfo> descriptorInfos, VkDescriptorType descriptorType, uint32_t dstBinding = 0, uint32_t dstArrayElement = 0) const {
 			VkWriteDescriptorSet writeDescriptorSet = {
 				.dstSet = handle,
 				.dstBinding = dstBinding,
@@ -1617,7 +1704,7 @@ namespace vulkan {
 			};
 			Update(writeDescriptorSet);
 		}
-		void Write(arrayParameter<const VkBufferView> descriptorInfos, VkDescriptorType descriptorType, uint32_t dstBinding = 0, uint32_t dstArrayElement = 0) const {
+		void Write(arrayRef<const VkBufferView> descriptorInfos, VkDescriptorType descriptorType, uint32_t dstBinding = 0, uint32_t dstArrayElement = 0) const {
 			VkWriteDescriptorSet writeDescriptorSet = {
 				.dstSet = handle,
 				.dstBinding = dstBinding,
@@ -1629,7 +1716,7 @@ namespace vulkan {
 			Update(writeDescriptorSet);
 		}
 		//Static Function
-		static void Update(arrayParameter<VkWriteDescriptorSet> writes, arrayParameter<VkCopyDescriptorSet> copies = {}) {
+		static void Update(arrayRef<VkWriteDescriptorSet> writes, arrayRef<VkCopyDescriptorSet> copies = {}) {
 			for (auto& i : writes)
 				i.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			for (auto& i : copies)
@@ -1645,7 +1732,7 @@ namespace vulkan {
 		descriptorPool(VkDescriptorPoolCreateInfo& createInfo) {
 			Create(createInfo);
 		}
-		descriptorPool(VkDescriptorPoolCreateFlags createFlags, uint32_t maxSetCount, arrayParameter<const VkDescriptorPoolSize> poolSizes) {
+		descriptorPool(VkDescriptorPoolCreateFlags createFlags, uint32_t maxSetCount, arrayRef<const VkDescriptorPoolSize> poolSizes) {
 			Create(createFlags, maxSetCount, poolSizes);
 		}
 		descriptorPool(descriptorPool&& other) noexcept { MoveHandle; }
@@ -1654,7 +1741,7 @@ namespace vulkan {
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
 		//Const Function
-		result_t AllocateSets(arrayParameter<VkDescriptorSet> sets, arrayParameter<const VkDescriptorSetLayout> setLayouts) const {
+		result_t AllocateSets(arrayRef<VkDescriptorSet> sets, arrayRef<const VkDescriptorSetLayout> setLayouts) const {
 			if (sets.Count() != setLayouts.Count())
 				if (sets.Count() < setLayouts.Count()) {
 					outStream << std::format("[ descriptorPool ] ERROR\nFor each descriptor set, must provide a corresponding layout!\n");
@@ -1673,27 +1760,27 @@ namespace vulkan {
 				outStream << std::format("[ descriptorPool ] ERROR\nFailed to allocate descriptor sets!\nError code: {}\n", int32_t(result));
 			return result;
 		}
-		result_t AllocateSets(arrayParameter<VkDescriptorSet> sets, arrayParameter<const descriptorSetLayout> setLayouts) const {
+		result_t AllocateSets(arrayRef<VkDescriptorSet> sets, arrayRef<const descriptorSetLayout> setLayouts) const {
 			return AllocateSets(
 				sets,
 				{ setLayouts[0].Address(), setLayouts.Count() });
 		}
-		result_t AllocateSets(arrayParameter<descriptorSet> sets, arrayParameter<const VkDescriptorSetLayout> setLayouts) const {
+		result_t AllocateSets(arrayRef<descriptorSet> sets, arrayRef<const VkDescriptorSetLayout> setLayouts) const {
 			return AllocateSets(
 				{ &sets[0].handle, sets.Count() },
 				setLayouts);
 		}
-		result_t AllocateSets(arrayParameter<descriptorSet> sets, arrayParameter<const descriptorSetLayout> setLayouts) const {
+		result_t AllocateSets(arrayRef<descriptorSet> sets, arrayRef<const descriptorSetLayout> setLayouts) const {
 			return AllocateSets(
 				{ &sets[0].handle, sets.Count() },
 				{ setLayouts[0].Address(), setLayouts.Count() });
 		}
-		result_t FreeSets(arrayParameter<VkDescriptorSet> sets) const {
+		result_t FreeSets(arrayRef<VkDescriptorSet> sets) const {
 			VkResult result = vkFreeDescriptorSets(graphicsBase::Base().Device(), handle, sets.Count(), sets.Pointer());
 			memset(sets.Pointer(), 0, sets.Count() * sizeof(VkDescriptorSet));
 			return result;//Though vkFreeDescriptorSets(...) can only return VK_SUCCESS
 		}
-		result_t FreeSets(arrayParameter<descriptorSet> sets) const {
+		result_t FreeSets(arrayRef<descriptorSet> sets) const {
 			return FreeSets({ &sets[0].handle, sets.Count() });
 		}
 		//Non-const Function
@@ -1704,7 +1791,7 @@ namespace vulkan {
 				outStream << std::format("[ descriptorPool ] ERROR\nFailed to create a descriptor pool!\nError code: {}\n", int32_t(result));
 			return result;
 		}
-		result_t Create(VkDescriptorPoolCreateFlags createFlags, uint32_t maxSetCount, arrayParameter<const VkDescriptorPoolSize> poolSizes) {
+		result_t Create(VkDescriptorPoolCreateFlags createFlags, uint32_t maxSetCount, arrayRef<const VkDescriptorPoolSize> poolSizes) {
 			VkDescriptorPoolCreateInfo createInfo = {
 				.flags = createFlags,
 				.maxSets = maxSetCount,

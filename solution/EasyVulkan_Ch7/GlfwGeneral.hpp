@@ -57,7 +57,7 @@ bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable
 
 	if (vulkan::graphicsBase::Base().GetPhysicalDevices() ||
 		vulkan::graphicsBase::Base().DeterminePhysicalDevice(0, true, false) ||
-		vulkan::graphicsBase::Base().CreateLogicalDevice())
+		vulkan::graphicsBase::Base().CreateDevice())
 		return false;
 
 	if (graphicsBase::Base().CreateSwapchain(limitFrameRate))
@@ -66,6 +66,7 @@ bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable
 	return true;
 }
 void TerminateWindow() {
+	vulkan::graphicsBase::Base().WaitIdle();
 	glfwTerminate();
 }
 void MakeWindowFullScreen() {

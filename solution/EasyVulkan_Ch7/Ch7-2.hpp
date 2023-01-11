@@ -89,7 +89,7 @@ int main() {
 		fence.WaitAndReset();
 
 		commandBuffer.Begin(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
-		renderPass.CmdBegin(commandBuffer, framebuffers[i], clearColor);
+		renderPass.CmdBegin(commandBuffer, framebuffers[i], { {}, windowSize }, clearColor);
 		VkDeviceSize offset = 0;
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffer.Address(), &offset);
 		vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
