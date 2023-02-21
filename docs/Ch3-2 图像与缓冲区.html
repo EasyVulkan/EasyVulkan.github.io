@@ -837,14 +837,13 @@ size = (size - offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCohe
 <span class="type">VkMemoryRequirements</span> memoryRequirements;
 <span class="fn">vkGetBufferMemoryRequirements</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle, &amp;memoryRequirements);
 memoryAllocateInfo.allocationSize = memoryRequirements.size;<span class="cmt">//取得所需的内存分配大小</span>
+memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
 <span class="kw">auto</span>&amp; physicalDeviceMemoryProperties = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceMemoryProperties</span>();
-memoryAllocateInfo.memoryTypeIndex = -1;
-<span class="kw">for</span> (<span class="type">size_t</span> j = 0; j &lt; 2; j++)
-    <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; physicalDeviceMemoryProperties.memoryTypeCount; i++)<span class="cmt">//遍历所有设备内存类型</span>
-        <span class="kw">if</span> (<span class="cmt">//如果相应设备内存类型支持该缓冲区/图像，则继续执行后续判断，否则短路</span>
-            memoryRequirements.memoryTypeBits &amp; 1 &lt;&lt; i &amp;&amp;
-            <span class="cmt">//如果相应设备内存类型支持所需的内存属性，则覆写memoryAllocateInfo.memoryTypeIndex</span>
-            (physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags &amp; desiredMemoryProperties) == desiredMemoryProperties) {
+<span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; physicalDeviceMemoryProperties.memoryTypeCount; i++)<span class="cmt">//遍历所有设备内存类型</span>
+    <span class="kw">if</span> (<span class="cmt">//如果相应设备内存类型支持该缓冲区/图像，则继续执行后续判断，否则短路</span>
+        memoryRequirements.memoryTypeBits &amp; 1 &lt;&lt; i &amp;&amp;
+        <span class="cmt">//如果相应设备内存类型支持所需的内存属性，覆写memoryAllocateInfo.memoryTypeIndex</span>
+        (physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags &amp; desiredMemoryProperties) == desiredMemoryProperties) {
             memoryAllocateInfo.memoryTypeIndex = i;
             <span class="kw">break</span>;
         }
@@ -916,18 +915,16 @@ memoryAllocateInfo.memoryTypeIndex = -1;
         <span class="type">VkMemoryRequirements</span> memoryRequirements;
         <span class="fn">vkGetBufferMemoryRequirements</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle, &amp;memoryRequirements);
         memoryAllocateInfo.allocationSize = memoryRequirements.size;
+        memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
         <span class="kw">auto</span>&amp; physicalDeviceMemoryProperties = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceMemoryProperties</span>();
-        memoryAllocateInfo.memoryTypeIndex = -1;
-        <span class="kw">for</span> (<span class="type">size_t</span> j = 0; j &lt; 2; j++) {
-            <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; physicalDeviceMemoryProperties.memoryTypeCount; i++)
-                <span class="kw">if</span> (memoryRequirements.memoryTypeBits &amp; 1 &lt;&lt; i &amp;&amp;
-                    (physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags &amp; desiredMemoryProperties) == desiredMemoryProperties) {
-                    memoryAllocateInfo.memoryTypeIndex = i;
-                    <span class="kw">break</span>;
-                }
-        }
+        <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; physicalDeviceMemoryProperties.memoryTypeCount; i++)
+            <span class="kw">if</span> (memoryRequirements.memoryTypeBits &amp; 1 &lt;&lt; i &amp;&amp;
+                (physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags &amp; desiredMemoryProperties) == desiredMemoryProperties) {
+                            memoryAllocateInfo.memoryTypeIndex = i;
+                            <span class="kw">break</span>;
+                    }
         <span class="cmt">//不在此检查是否成功取得内存类型索引，因为会把memoryAllocateInfo返回出去，交由外部检查</span>
-        <span class="cmt">//if (memoryAllocateInfo.memoryTypeIndex == -1)</span>
+        <span class="cmt">//if (memoryAllocateInfo.memoryTypeIndex == UINT32_MAX)</span>
         <span class="cmt">//    outStream &lt;&lt; std::format(&quot;[ buffer ] ERROR\nFailed to find any memory type satisfies all desired memory properties!\n&quot;);</span>
         <span class="kw">return</span> memoryAllocateInfo;
     }
@@ -981,7 +978,7 @@ memoryAllocateInfo.memoryTypeIndex = -1;
     <span class="kw">using</span> <span class="type">deviceMemory</span>::<span class="fn">BufferData</span>;
     <span class="kw">using</span> <span class="type">deviceMemory</span>::<span class="fn">RetrieveData</span>;
     <span class="cmt">//Non-const Function</span>
-    <span class="cmt">//以下三个函数仅用于Create(...)执行失败的情况</span>
+    <span class="cmt">//以下三个函数仅用于Create(...)可能执行失败的情况</span>
     <span class="type">result_t</span> <span class="fn">CreateBuffer</span>(<span class="type">VkBufferCreateInfo</span>&amp; createInfo) {
         <span class="kw">return</span> <span class="type">buffer</span>::<span class="fn">Create</span>(createInfo);
     }
@@ -1388,13 +1385,36 @@ memoryAllocateInfo.memoryTypeIndex = -1;
         </tr>
     </tbody>
 </table>
-<ul>
-    <li>
-        <p>
-            关于<span class="type">VkMemoryRequirements</span>和确定<a href="https://renderdoc.org/vkspec_chunked/chap11.html#VkMemoryAllocateInfo">VkMemoryAllocateInfo</a>::memoryTypeIndex的方式与前文//TODO 获取缓冲区的内存分配要求 中一致。
-        </p>
-    </li>
-</ul></section>
+<p>
+    关于<span class="type">VkMemoryRequirements</span>和确定<a href="https://renderdoc.org/vkspec_chunked/chap11.html#VkMemoryAllocateInfo">VkMemoryAllocateInfo</a>::memoryTypeIndex的方式与前文<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html#id6">获取缓冲区的内存分配要求</a>中一致。
+    <br>
+    不同于缓冲区的是，图像内存可以被惰性分配（见后文），但驱动未必支持惰性分配内存，因此相比缓冲区的情形，还得多做一步：
+</p>
+<pre class="code">
+    <span class="type">VkMemoryAllocateInfo</span> memoryAllocateInfo = {
+    .sType = <span class="enum">VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO</span>
+};
+<span class="type">VkMemoryRequirements</span> memoryRequirements;
+<span class="fn">vkGetBufferMemoryRequirements</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle, &amp;memoryRequirements);
+memoryAllocateInfo.allocationSize = memoryRequirements.size;<span class="cmt">//取得所需的内存分配大小</span>
+<span class="cmt">//将可能会多次执行的部分包装为lambda表达式</span>
+<span class="kw">auto</span> GetMemoryTypeIndex = [](<span class="type">uint32_t</span> memoryTypeBits, <span class="type">VkMemoryPropertyFlags</span> desiredMemoryProperties) {
+    <span class="kw">auto</span>&amp; physicalDeviceMemoryProperties = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceMemoryProperties</span>();
+    <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; physicalDeviceMemoryProperties.memoryTypeCount; i++)<span class="cmt">//遍历所有设备内存类型</span>
+        <span class="kw">if</span> (<span class="cmt">//如果相应设备内存类型支持该缓冲区/图像，则继续执行后续判断，否则短路</span>
+            memoryTypeBits &amp; 1 &lt;&lt; i &amp;&amp;
+            <span class="cmt">//如果相应设备内存类型支持所需的内存属性，返回该设备内存类型的索引</span>
+            (physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags &amp; desiredMemoryProperties) == desiredMemoryProperties)
+            <span class="kw">return</span> i;
+    <span class="cmt">//如果找不到符合要求的设备内存类型，返回UINT32_MAX</span>
+    <span class="kw">return</span> <span class="mcr">UINT32_MAX</span>;
+};
+memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memoryTypeBits, desiredMemoryProperties);
+<span class="cmt">//如果没能获取有效的memoryTypeIndex，试着从desiredMemoryProperties中除去VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT后再次调用GetMemoryTypeIndex(...)</span>
+<span class="kw">if</span> (memoryAllocateInfo.memoryTypeIndex == <span class="mcr">UINT32_MAX</span> &amp;&amp;
+    desiredMemoryProperties &amp; <span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>)
+    memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memoryTypeBits, desiredMemoryProperties &amp; ~<span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>);
+</pre></section>
 <section id="id12">
 <h3>将设备内存绑定到图像<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h3>
 <p>
@@ -1452,24 +1472,21 @@ memoryAllocateInfo.memoryTypeIndex = -1;
         <span class="type">VkMemoryAllocateInfo</span> memoryAllocateInfo = {
             .sType = <span class="enum">VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO</span>
         };
-        <span class="enum">VkMemoryRequirements</span> memoryRequirements;
-        <span class="enum">vkGetImageMemoryRequirements</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle, &amp;memoryRequirements);
+        <span class="type">VkMemoryRequirements</span> memoryRequirements;
+        <span class="fn">vkGetBufferMemoryRequirements</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle, &amp;memoryRequirements);
         memoryAllocateInfo.allocationSize = memoryRequirements.size;
-        <span class="kw">auto</span>&amp; physicalDeviceMemoryProperties = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceMemoryProperties</span>();
-        memoryAllocateInfo.memoryTypeIndex = -1;
-        <span class="kw">for</span> (<span class="type">size_t</span> j = 0; j &lt; 2; j++) {
+        <span class="kw">auto</span> GetMemoryTypeIndex = [](<span class="type">uint32_t</span> memoryTypeBits, <span class="type">VkMemoryPropertyFlags</span> desiredMemoryProperties) {
+            <span class="kw">auto</span>&amp; physicalDeviceMemoryProperties = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceMemoryProperties</span>();
             <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; physicalDeviceMemoryProperties.memoryTypeCount; i++)
-                <span class="kw">if</span> (memoryRequirements.memoryTypeBits &amp; 1 &lt;&lt; i &amp;&amp;
-                    (physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags &amp; desiredMemoryProperties) == desiredMemoryProperties) {
-                    memoryAllocateInfo.memoryTypeIndex = i;
-                    <span class="kw">break</span>;
-                }
-            <span class="cmt">//若desiredMemoryProperties包含VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT，检查物理设备是否支持惰性分配</span>
-            <span class="cmt">//如不支持则从desiredMemoryProperties中去掉该bit</span>
-            <span class="kw">if</span> (memoryAllocateInfo.memoryTypeIndex == -1 &amp;&amp;
-                desiredMemoryProperties &amp; <span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>)
-                desiredMemoryProperties &amp;= ~<span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>;
-        }
+                <span class="kw">if</span> (memoryTypeBits &amp; 1 &lt;&lt; i &amp;&amp;
+                    (physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags &amp; desiredMemoryProperties) == desiredMemoryProperties)
+                    <span class="kw">return</span> i;
+            <span class="kw">return</span> <span class="mcr">UINT32_MAX</span>;
+        };
+        memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memoryTypeBits, desiredMemoryProperties);
+        <span class="kw">if</span> (memoryAllocateInfo.memoryTypeIndex == <span class="mcr">UINT32_MAX</span> &amp;&amp;
+            desiredMemoryProperties &amp; <span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>)
+            memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memoryTypeBits, desiredMemoryProperties &amp; ~<span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>);
         <span class="cmt">//不在此检查是否成功取得内存类型索引，因为会把memoryAllocateInfo返回出去，交由外部检查</span>
         <span class="cmt">//if (memoryAllocateInfo.memoryTypeIndex == -1)</span>
         <span class="cmt">//    outStream << std::format("[ image ] ERROR\nFailed to find any memory type satisfies all desired memory properties!\n");</span>
@@ -1518,7 +1535,7 @@ memoryAllocateInfo.memoryTypeIndex = -1;
     <span class="kw">using</span> <span class="type">deviceMemory</span>::<span class="fn">AllocationSize</span>;
     <span class="kw">using</span> <span class="type">deviceMemory</span>::<span class="fn">MemoryProperties</span>;
     <span class="cmt">//Non-const Function</span>
-    <span class="cmt">//以下三个函数仅用于Create(...)执行失败的情况</span>
+    <span class="cmt">//以下三个函数仅用于Create(...)可能执行失败的情况</span>
     <span class="type">result_t</span> <span class="fn">CreateImage</span>(<span class="type">VkImageCreateInfo</span>&amp; createInfo) {
         <span class="kw">return</span> <span class="type">image</span>::<span class="fn">Create</span>(createInfo);
     }
@@ -2281,7 +2298,7 @@ memoryAllocateInfo.memoryTypeIndex = -1;
     </span>
 </p>
 <p>
-    注意，惰性分配的设备内存只能被绑定给创建时注明了<span class="enum">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</span>的图像，不得被用于缓冲区。
+    注意，惰性分配的设备内存只能被绑定给创建时注明了<span class="enum">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</span>的图像，不得被用于缓冲区。且分配可被惰性初始化的设备内存时，不得注明<span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>（即惰性分配的设备内存无法被CPU侧读写）。
 </p></section>
 </section>
 

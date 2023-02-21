@@ -1118,18 +1118,14 @@ namespace vulkan {
 			VkMemoryRequirements memoryRequirements;
 			vkGetBufferMemoryRequirements(graphicsBase::Base().Device(), handle, &memoryRequirements);
 			memoryAllocateInfo.allocationSize = memoryRequirements.size;
+			memoryAllocateInfo.memoryTypeIndex = UINT32_MAX;
 			auto& physicalDeviceMemoryProperties = graphicsBase::Base().PhysicalDeviceMemoryProperties();
-			memoryAllocateInfo.memoryTypeIndex = -1;
-			for (size_t j = 0; j < 2; j++) {
-				for (size_t i = 0; i < physicalDeviceMemoryProperties.memoryTypeCount; i++)
-					if (memoryRequirements.memoryTypeBits & 1 << i &&
-						(physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags & desiredMemoryProperties) == desiredMemoryProperties) {
-						memoryAllocateInfo.memoryTypeIndex = i;
-						break;
-					}
-			}
-			//if (memoryAllocateInfo.memoryTypeIndex == -1)
-			//    outStream << std::format("[ buffer ] ERROR\nFailed to find any memory type satisfies all desired memory properties!\n");
+			for (uint32_t i = 0; i < physicalDeviceMemoryProperties.memoryTypeCount; i++)
+				if (memoryRequirements.memoryTypeBits & 1 << i &&
+					(physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags & desiredMemoryProperties) == desiredMemoryProperties) {
+					memoryAllocateInfo.memoryTypeIndex = i;
+					break;
+				}
 			return memoryAllocateInfo;
 		}
 		result_t BindMemory(VkDeviceMemory deviceMemory, VkDeviceSize memoryOffset = 0) const {
@@ -1217,22 +1213,18 @@ namespace vulkan {
 			VkMemoryRequirements memoryRequirements;
 			vkGetImageMemoryRequirements(graphicsBase::Base().Device(), handle, &memoryRequirements);
 			memoryAllocateInfo.allocationSize = memoryRequirements.size;
-			auto& physicalDeviceMemoryProperties = graphicsBase::Base().PhysicalDeviceMemoryProperties();
-			memoryAllocateInfo.memoryTypeIndex = -1;
-			for (size_t j = 0; j < 2; j++) {
-				for (size_t i = 0; i < physicalDeviceMemoryProperties.memoryTypeCount; i++)
-					if (memoryRequirements.memoryTypeBits & 1 << i &&
-						(physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags & desiredMemoryProperties) == desiredMemoryProperties) {
-						memoryAllocateInfo.memoryTypeIndex = i;
-						break;
-					}
-				//Highly possible that the GPU and its driver may not support lazy allocation.
-				if (memoryAllocateInfo.memoryTypeIndex == -1 &&
-					desiredMemoryProperties & VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT)
-					desiredMemoryProperties &= ~VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT;
-			}
-			//if (memoryAllocateInfo.memoryTypeIndex == -1)
-			//    outStream << std::format("[ image ] ERROR\nFailed to find any memory type satisfies all desired memory properties!\n");
+			auto GetMemoryTypeIndex = [](uint32_t memoryTypeBits, VkMemoryPropertyFlags desiredMemoryProperties) {
+				auto& physicalDeviceMemoryProperties = graphicsBase::Base().PhysicalDeviceMemoryProperties();
+				for (uint32_t i = 0; i < physicalDeviceMemoryProperties.memoryTypeCount; i++)
+					if (memoryTypeBits & 1 << i &&
+						(physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags & desiredMemoryProperties) == desiredMemoryProperties)
+						return i;
+				return UINT32_MAX;
+			};
+			memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memoryTypeBits, desiredMemoryProperties);
+			if (memoryAllocateInfo.memoryTypeIndex == UINT32_MAX &&
+				desiredMemoryProperties & VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT)
+				memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memoryTypeBits, desiredMemoryProperties & ~VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT);
 			return memoryAllocateInfo;
 		}
 		result_t BindMemory(VkDeviceMemory deviceMemory, VkDeviceSize memoryOffset = 0) const {
