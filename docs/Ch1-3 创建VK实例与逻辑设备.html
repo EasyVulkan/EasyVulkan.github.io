@@ -428,12 +428,8 @@ extensionNames = <span class="type">glfwGetRequiredInstanceExtensions</span>(&am
 <pre class="code">
 <span class="type">VkResult</span> <span class="fn">CreateInstance</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkInstanceCreateFlags</span> flags = 0) {
 <span class="pragma">#ifndef</span> <span class="mcr">NDEBUG</span>
-    <span class="kw">static constexpr const char</span>* validationLayerName = <span class="str">&quot;VK_LAYER_KHRONOS_validation&quot;</span>;
-    <span class="kw">static constexpr const char</span>* debugUtilsExtensionName = <span class="mcr">VK_EXT_DEBUG_UTILS_EXTENSION_NAME</span>;
-    <span class="kw">if</span> (instanceLayers.<span class="fn">size</span>() &amp;&amp; instanceLayers.<span class="fn">back</span>() != validationLayerName)
-        instanceLayers.<span class="fn">push_back</span>(validationLayerName);
-    <span class="kw">if</span> (instanceExtensions.<span class="fn">size</span>() &amp;&amp; instanceExtensions.<span class="fn">back</span>() != validationLayerName)
-        instanceExtensions.<span class="fn">push_back</span>(debugUtilsExtensionName);
+    <span class="fn">PushInstanceLayer</span>(<span class="str">&quot;VK_LAYER_KHRONOS_validation&quot;</span>);
+    <span class="fn">PushInstanceExtension</span>(<span class="mcr">VK_EXT_DEBUG_UTILS_EXTENSION_NAME</span>);
 <span class="pragma">#endif</span>
     <span class="type">VkApplicationInfo</span> applicatianInfo = {
         .sType = <span class="enum">VK_STRUCTURE_TYPE_APPLICATION_INFO</span>,
