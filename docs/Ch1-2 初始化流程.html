@@ -243,6 +243,13 @@
 std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt; instanceLayers;
 std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt; instanceExtensions;
 
+<span class="cmt">//该函数用于向instanceLayers或instanceExtensions容器中添加字符串指针，并确保不重复</span>
+<span class="kw">static void</span> <span class="fn">AddLayerOrExtension</span>( std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;&amp; container, <span class="kw">const char</span>* name) {
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : container)
+        <span class="kw">if</span> (!<span class="fn">strcmp</span>(name, i))<span class="cmt">//strcmp(...)在字符串匹配时返回0</span>
+            <span class="kw">return</span>;          <span class="cmt">//如果层/扩展的名称已在容器中，直接返回</span>
+    container.<span class="fn">push_back</span>(name);
+}
 <span class="kw">public</span>:
 <span class="cmt">//Getter</span>
 <span class="type">VkInstance</span> <span class="fn">Instance</span>() <span class="kw">const</span> {
@@ -257,10 +264,10 @@ std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;
 
 <span class="cmt">//以下函数用于创建Vulkan实例前</span>
 <span class="kw">void</span> <span class="fn">PushInstanceLayer</span>(<span class="kw">const char</span>* layerName) {
-    instanceLayers.<span class="fn">push_back</span>(layerName);
+    <span class="fn">AddLayerOrExtension</span>(instanceLayers, layerName);
 }
 <span class="kw">void</span> <span class="fn">PushInstanceExtension</span>(<span class="kw">const char</span>* extensionName) {
-    instanceExtensions.<span class="fn">push_back</span>(extensionName);
+    <span class="fn">AddLayerOrExtension</span>(instanceExtensions, extensionName);
 }
 <span class="cmt">//该函数用于创建Vulkan实例</span>
 <span class="type">VkResult</span> <span class="fn">CreateInstance</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkInstanceCreateFlags</span> flags = 0) {
@@ -468,7 +475,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;
 
 <span class="cmt">//该函数用于创建逻辑设备前</span>
 <span class="kw">void</span> <span class="fn">PushDeviceExtension</span>(<span class="kw">const char</span>* extensionName) {
-    deviceExtensions.<span class="fn">push_back</span>(extensionName);
+    <span class="fn">AddLayerOrExtension</span>(deviceExtensions, extensionName);
 }
 <span class="cmt">//该函数用于获取物理设备</span>
 <span class="type">VkResult</span> <span class="fn">GetPhysicalDevices</span>() {

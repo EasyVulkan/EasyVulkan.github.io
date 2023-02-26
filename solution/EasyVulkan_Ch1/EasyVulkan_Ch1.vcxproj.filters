@@ -9,12 +9,12 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="EasyVK_Head">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="EasyVK_HPP">
       <UniqueIdentifier>{ed168a59-58fa-4d1c-a4fd-94ae9ec8d92b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EasyVK_Header">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -24,10 +24,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EasyVKStart.h">
-      <Filter>EasyVK_Head</Filter>
+      <Filter>EasyVK_Header</Filter>
     </ClInclude>
     <ClInclude Include="VKBase.h">
-      <Filter>EasyVK_Head</Filter>
+      <Filter>EasyVK_Header</Filter>
     </ClInclude>
     <ClInclude Include="GlfwGeneral.hpp">
       <Filter>EasyVK_HPP</Filter>

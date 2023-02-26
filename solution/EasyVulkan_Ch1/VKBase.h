@@ -184,6 +184,13 @@ namespace vulkan {
 			std::cout << std::format("[ graphicsBase ] ERROR\nFailed to get the function pointer of vkCreateDebugUtilsMessengerEXT!\n");
 			return VK_RESULT_MAX_ENUM;
 		}
+		//Static Function
+		static void AddLayerOrExtension(std::vector<const char*>& container, const char* name) {
+			for (auto& i : container)
+				if (!strcmp(name, i))
+					return;
+			container.push_back(name);
+		}
 	public:
 		//Getter
 		uint32_t ApiVersion() const {
@@ -292,10 +299,10 @@ namespace vulkan {
 		}
 		//                    Create Instance
 		void PushInstanceLayer(const char* layerName) {
-			instanceLayers.push_back(layerName);
+			AddLayerOrExtension(instanceLayers, layerName);
 		}
 		void PushInstanceExtension(const char* extensionName) {
-			instanceExtensions.push_back(extensionName);
+			AddLayerOrExtension(instanceExtensions, extensionName);
 		}
 		VkResult UseLatestApiVersion() {
 			if (vkGetInstanceProcAddr(VK_NULL_HANDLE, "vkEnumerateInstanceVersion"))
@@ -304,12 +311,8 @@ namespace vulkan {
 		}
 		VkResult CreateInstance(const void* pNext = nullptr, VkInstanceCreateFlags flags = 0) {
 #ifndef NDEBUG
-			static constexpr const char* validationLayerName = "VK_LAYER_KHRONOS_validation";
-			static constexpr const char* debugUtilsExtensionName = VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
-			if (instanceLayers.size() && instanceLayers.back() != validationLayerName)
-				instanceLayers.push_back(validationLayerName);
-			if (instanceExtensions.size() && instanceExtensions.back() != validationLayerName)
-				instanceExtensions.push_back(debugUtilsExtensionName);
+			PushInstanceLayer("VK_LAYER_KHRONOS_validation");
+			PushInstanceExtension(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 #endif
 			VkApplicationInfo applicatianInfo = {
 				.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
@@ -412,7 +415,7 @@ namespace vulkan {
 		}
 		//                    Create Logical Device
 		void PushDeviceExtension(const char* extensionName) {
-			deviceExtensions.push_back(extensionName);
+			AddLayerOrExtension(deviceExtensions, extensionName);
 		}
 		VkResult GetPhysicalDevices() {
 			uint32_t deviceCount;
