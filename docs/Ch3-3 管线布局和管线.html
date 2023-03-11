@@ -1078,7 +1078,7 @@
     </li>
     <li>
         <p>
-            当depthBiasClamp非0时，对depthBiasConstantFactor和depthBiasSlopeFactor的合计效果进行钳制：若depthBiasClamp大于0，则合计的偏移值不超过depthBiasClamp；若depthBiasClamp小于0，则合计的偏移值不小于depthBiasClamp。
+            当depthBiasClamp非0时，对depthBiasConstantFactor和depthBiasSlopeFactor的合计效果进行钳制：若depthBiasClamp大于0，则合计的偏移值不超过depthBiasClamp；若depthBiasClamp小于0，则合计的偏移值不小于-depthBiasClamp。
         </p>
     </li>
 </ul>
@@ -1228,7 +1228,7 @@
         <br>
         上述两个概念通常不需要区分，除非你想要使用着色器的副作用，比如写入storage缓冲区。
         <br>
-        你可以用如下GLSL代码进行验证，count_covered为count_notCovered为storage缓冲区中的变量，写入结束后在CPU侧读取其数值，若对不被覆盖的采样点不执行片段着色器，那么count_notCovered应该总是0：
+        你可以用如下GLSL代码进行验证，count_covered和count_notCovered为storage缓冲区中的变量，写入结束后在CPU侧读取其数值，若对不被覆盖的采样点不执行片段着色器，那么count_notCovered应该总是0：
         <br>
         <code><span class="kw">if</span> (gl_SampleMaskIn[0] == 1 << gl_SampleID) <span class="fn">atomicAdd</span>(count_covered, 1); <span class="kw">else</span> <span class="fn">atomicAdd</span>(count_notCovered, 1);</code>
         <br>
@@ -1236,7 +1236,7 @@
     </p>
 </div>
 <p>
-    若alphaToCoverageEnable为<span class="mcr">VK_TRUE</span>，则会在执行片段着色器后，根据输出的各个采样点的透明度，生成一个遮罩与片段着色器后的coverage mask（应用可能发生的sample mask test及片段着色器中可能输出的gl_SampleMask后得到的结果）做位与，透明度到遮罩的转换是实现特定的，标准仅规定透明度为0时生成的遮罩为0。
+    若alphaToCoverageEnable为<span class="mcr">VK_TRUE</span>，则会在执行片段着色器后，根据输出的各个采样点的透明度，生成一个遮罩，与片段着色器后的coverage mask（应用可能发生的sample mask test及片段着色器中可能输出的gl_SampleMask后得到的结果）做位与，透明度到遮罩的转换是实现特定的，标准仅规定透明度为0时生成的遮罩为0。
     <br>
     若alphaToOneEnable为<span class="mcr">VK_TRUE</span>，则会在执行片段着色器后，无视输出颜色的透明度，使得片段着色器输出到0号索引的色值的透明度为1（关于输出到0号索引，见<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#dual-source-blending">Dual-source Blending</a>），考虑到像素的颜色是采样点的颜色应用遮罩后取平均，这可以在alphaToCoverageEnable为<span class="mcr">VK_TRUE</span>时使像素的透明度不至于过低。
     <br>
