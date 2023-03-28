@@ -225,8 +225,6 @@ extensionNames = <span class="type">glfwGetRequiredInstanceExtensions</span>(&am
 </ul>
 <p>
     这段代码说明仅在编译选项为DEBUG时，在<span class="var">instanceLayers</span>和<span class="var">instanceExtensions</span>尾部加上所需的名称。
-    <br>
-    之所以先验证尾部是否已有相应名称再<span class="fn">push_back</span>(...)，是因为按照前一节中<a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html#vulkan">创建Vulkan实例的剧本流程</a>，创建Vulkan失败时会先复制一份<span class="var">instanceLayers</span>或<span class="var">instanceExtensions</span>，进行检查后筛选掉不可用且非必要的层或扩展，然后再将结果赋值回<span class="var">instanceLayers</span>或<span class="var">instanceExtensions</span>，这里防止重复加入相同的名称。
 </p></section>
 <section id="vulkan">
 <h2>使用Vulkan的最新版本<a class="headerlink" href="#vulkan" title="Permalink to this heading"></a></h2>
