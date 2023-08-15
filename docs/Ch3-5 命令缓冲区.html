@@ -272,7 +272,7 @@
     <br>
     译文：有些实现可能可以在信号量被置位前执行转移操作，以及/或栅格化前的工作。
     <br>
-    这意味若命令缓冲区中包含图形命令，即便你指定的等待阶段早于或包含<span class="enum">VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT</span>（前期片段测试阶段，是栅格化后的第一个阶段），也应当将其视作等同于<span class="enum">VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT</span>，总是应该保证，在片段着色器前的任何着色器中涉及的资源（片段着色器前的话，通常是顶点数据/uniform数据），必须在提交命令缓冲区前完成其写入。
+    这意味着若命令缓冲区中包含图形命令，即便你指定的等待阶段早于或包含<span class="enum">VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT</span>（前期片段测试阶段，是栅格化后的第一个阶段），也应当将其视作等同于<span class="enum">VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT</span>，总是应该保证，在片段着色器前的任何着色器中涉及的资源（片段着色器前的话，通常是顶点数据/uniform数据），必须在提交命令缓冲区前完成其写入。
     <br>
     （其实这不是什么要特别注意的点，除非你故意用一些很麻烦的写法，比如在提交更新数据用的命令缓冲区时使用二值信号量而非栅栏来同步）
 </p>
