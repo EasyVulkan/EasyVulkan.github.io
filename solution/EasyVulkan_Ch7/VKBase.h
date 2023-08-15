@@ -355,7 +355,7 @@ namespace vulkan {
 		void PushInstanceLayer(const char* layerName) {
 			AddLayerOrExtension(instanceLayers, layerName);
 		}
-		void PushDeviceExtension(const char* extensionName) {
+		void PushInstanceExtension(const char* extensionName) {
 			AddLayerOrExtension(instanceExtensions, extensionName);
 		}
 		result_t UseLatestApiVersion() {

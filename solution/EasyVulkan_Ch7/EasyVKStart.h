@@ -48,15 +48,6 @@ public:
 #define ExecuteOnce(...) { static bool executed = false; if (executed) return __VA_ARGS__; executed = true; }
 
 //----------Math Related-------------------------------------------------------
-/*Compare*/
-template<typename T0, typename T1>
-constexpr auto Less(T0 num0, T1 num1) {
-    return num0 < num1 ? num0 : num1;
-}
-template<typename T0, typename T1>
-constexpr auto Greater(T0 num0, T1 num1) {
-    return num0 >= num1 ? num0 : num1;
-}
 template<std::signed_integral T>
 constexpr int GetSign(T num) {
     return (num > 0) - (num < 0);
