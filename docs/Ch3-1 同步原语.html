@@ -87,6 +87,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html">Ch3-7 采样器</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
 <ul>
@@ -373,10 +374,9 @@
 <span class="kw">class</span> <span class="type">fence</span> {
     <span class="type">VkFence</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
 <span class="kw">public</span>:
-    <span class="cmt">//默认构造器在已创建逻辑设备时，自动创建未置位的栅栏</span>
+    <span class="cmt">//默认构造器创建未置位的栅栏</span>
     <span class="fn">fence</span>(<span class="kw">bool</span> signaled = <span class="kw">false</span>) {
-        <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>())
-            <span class="fn">Create</span>(signaled);
+        <span class="fn">Create</span>(signaled);
     }
     <span class="fn">fence</span>(<span class="type">VkFenceCreateInfo</span>&amp; createInfo) {
         <span class="fn">Create</span>(createInfo);
@@ -550,10 +550,9 @@
 <span class="kw">class</span> <span class="type">semaphore</span> {
     <span class="type">VkSemaphore</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
 <span class="kw">public</span>:
-    <span class="cmt">//默认构造器在已创建逻辑设备时，自动创建未置位的信号量</span>
+    <span class="cmt">//默认构造器创建未置位的信号量</span>
     <span class="fn">semaphore</span>() {
-        <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>())
-            <span class="fn">Create</span>();
+        <span class="fn">Create</span>();
     }
     <span class="fn">semaphore</span>(<span class="type">VkSemaphoreCreateInfo</span>&amp; createInfo) {
         <span class="fn">Create</span>(createInfo);

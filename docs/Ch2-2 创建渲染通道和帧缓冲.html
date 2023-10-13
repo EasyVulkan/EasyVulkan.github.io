@@ -71,6 +71,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html">Ch3-7 采样器</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
 <ul>
@@ -444,6 +445,8 @@ rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graph
     <span class="cmt">/*新增*/</span><span class="type">VkClearValue</span> clearColor = { .color = { 1.f, 0.f, 0.f, 1.f } };<span class="cmt">//红色</span>
 
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
+        <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
+            <span class="fn">glfwWaitEvents</span>();
         <span class="fn">TitleFps</span>();
 
         <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);

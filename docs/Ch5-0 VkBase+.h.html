@@ -63,6 +63,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html">Ch3-7 采样器</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
 <ul>
@@ -218,7 +219,7 @@
     <span class="kw">const</span> <span class="type">commandPool</span>&amp; <span class="fn">CommandPool_Compute</span>() const { <span class="kw">return</span> commandPool_compute; }
     <span class="kw">const</span> <span class="type">commandBuffer</span>&amp; <span class="fn">CommandBuffer_Transfer</span>() const { <span class="kw">return</span> commandBuffer_transfer; }
     <span class="cmt">//Const Function</span>
-    <span class="cmt">//该函数专用于向呈现队列提交用于接受交换链图像的队列族所有权的命令缓冲区</span>
+    <span class="cmt">//该函数专用于向呈现队列提交用于接收交换链图像的队列族所有权的命令缓冲区</span>
     <span class="type">result_t</span> <span class="fn">AcquireImageOwnership_Presentation</span>(<span class="type">VkSemaphore</span> semaphore_renderingIsOver, <span class="type">VkSemaphore</span> semaphore_ownershipIsTransfered, <span class="type">VkFence</span> fence = <span class="mcr">VK_NULL_HANDLE</span>) <span class="kw">const</span> {
         <span class="kw">if</span> (<span class="type">VkResult</span> result = commandBuffer_presentation.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>))
             <span class="kw">return</span> result;
@@ -233,7 +234,7 @@
 <ul>
     <li>
         <p>
-            由于专用于呈现队列的命令缓冲区只会进行交换链图像的队列族所有权，不必暴露相应的命令池和命令缓冲的handle。
+            由于专用于呈现队列的命令缓冲区只用于接收交换链图像的队列族所有权，不必暴露相应的命令池和命令缓冲的handle。
         </p>
     </li>
 </ul>
@@ -275,7 +276,7 @@
 <section id="id1">
 <h2>图像格式相关<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
 <p>
-    <a href="https://renderdoc.org/vkspec_chunked/chap43.html#VkFormatProperties">VkFormatProperties</a>类型记录了对于某一图像格式，数据线性排列的图像、数据最优排列的图像，以及存储该格式数据的缓冲区所支持的格式特性：
+    <a href="https://renderdoc.org/vkspec_chunked/chap48.html#VkFormatProperties">VkFormatProperties</a>类型记录了对于某一图像格式，数据线性排列的图像、数据最优排列的图像，以及存储该格式数据的缓冲区所支持的格式特性：
 </p>
 <table class="docutils align-default">
     <colgroup>
@@ -284,7 +285,7 @@
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap43.html#VkFormatProperties">VkFormatProperties</a> 的成员说明</p></th>
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap48.html#VkFormatProperties">VkFormatProperties</a> 的成员说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -310,7 +311,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap43.html#VkFormatProperties">VkFormatProperties</a> 的枚举值（略去跟YCbCr色彩空间相关的枚举值）</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap48.html#VkFormatProperties">VkFormatProperties</a> 的枚举值（略去跟YCbCr色彩空间相关的枚举值）</p></th>
         </tr>
     </thead>
     <tbody>
@@ -397,7 +398,7 @@
     </li>
 </ul>
 <p>
-    在后续的编程中，许多情况下会出现需要检查图像格式所支持格式特性的情况，有必要在创建逻辑设备后事先取得各个格式的<a href="https://renderdoc.org/vkspec_chunked/chap43.html#VkFormatProperties">VkFormatProperties</a>：
+    在后续的编程中，许多情况下会出现需要检查图像格式所支持格式特性的情况，有必要在创建逻辑设备后事先取得各个格式的<a href="https://renderdoc.org/vkspec_chunked/chap48.html#VkFormatProperties">VkFormatProperties</a>：
 </p>
 <pre class="code">
 <span class="kw">class</span> <span class="type">graphicsBasePlus</span> {

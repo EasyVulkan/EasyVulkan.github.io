@@ -111,7 +111,10 @@ int main() {
 	VkClearValue clearColor = { .color = { 1.f, 0.f, 0.f, 1.f } };
 
 	while (!glfwWindowShouldClose(pWindow)) {
+		while (glfwGetWindowAttrib(pWindow, GLFW_ICONIFIED))
+			glfwWaitEvents();
 		TitleFps();
+
 		graphicsBase::Base().SwapImage(semaphore_imageIsAvailable);
 		auto i = graphicsBase::Base().CurrentImageIndex();
 		fence.WaitAndReset();

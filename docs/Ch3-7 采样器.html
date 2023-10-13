@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch3-7 采样器 &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ch4-1 着色器模组" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html" />
+    <link rel="prev" title="Ch3-6 描述符" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch3-7 采样器</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#sampler">Sampler</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">创建采样器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">封装为sampler类</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">滤波方式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">细节等级</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">寻址模式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">各向异性采样</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">比较深度值</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch3-7 采样器</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch3-7">
+<h1>Ch3-7 采样器<a class="headerlink" href="#ch3-7" title="Permalink to this heading"></a></h1>
+<section id="sampler">
+<h2>Sampler<a class="headerlink" href="#sampler" title="Permalink to this heading"></a></h2>
+<p>
+    采样器（<span class="type">VkSampler</span>）用于指定采样方式。
+    <br>
+    采样方式包括如何读取图像数据、滤波方式，以及一系列其他变换，使用不同的采样器以满足对图像的不同使用要求。
+</p><section id="id1">
+<h3>创建采样器<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap13.html#vkCreateSampler">vkCreateSampler</a>(...)创建采样器：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap8.html#vkCreateRenderPass">vkCreateRenderPass</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkSamplerCreateInfo</span>* pCreateInfo</p></td>
+            <td><p>指向<span class="type">VkSampler</span>的创建信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span>* pAllocator</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkSampler</span>* pSampler</p></td>
+            <td><p>若执行成功，将采样器的handle写入*pSampler</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap13.html#VkSamplerCreateInfo">VkSamplerCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkSamplerCreateFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkFilter</span> magFilter</p></td>
+            <td><p>在图像放大时的滤波方式</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkFilter</span> minFilter</p></td>
+            <td><p>在图像缩小时的滤波方式</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkSamplerMipmapMode</span> mipmapMode</p></td>
+            <td><p>Mipmap模式</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkSamplerAddressMode</span> addressModeU</p></td>
+            <td><p>指定采样坐标的u分量（对应通常的x分量）超出标准化坐标的[0,1)范围时的寻址模式</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkSamplerAddressMode</span> addressModeV</p></td>
+            <td><p>指定采样坐标的v分量（对应通常的y分量）超出标准化坐标的[0,1)范围时的寻址模式</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkSamplerAddressMode</span> addressModeW</p></td>
+            <td><p>指定采样坐标的w分量（对应通常的z分量）超出标准化坐标的[0,1)范围时的寻址模式</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">float</span> mipLodBias</p></td>
+            <td><p>Mipmap的LOD（level of detail，细节等级）偏移</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkBool32</span> anisotropyEnable</p></td>
+            <td><p>是否开启各向异性采样</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">float</span> maxAnisotropy</p></td>
+            <td><p>启用各向异性采样时，将各向异性数值钳制到不超过该值</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkBool32</span> compareEnable</p></td>
+            <td><p>若贴图格式为深度格式，是否与引用值比较（见后文）</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkCompareOp</span> compareOp</p></td>
+            <td><p>若贴图格式为深度格式，并与引用值比较，指定比较方式</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">float</span> minLod</p></td>
+            <td><p>容许的LOD的最小值，LOD被钳制到不小于该值</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">float</span> maxLod</p></td>
+            <td><p>容许的LOD的最大值，LOD被钳制到不大于该值</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkBorderColor</span> borderColor</p></td>
+            <td><p>若任意方向上的寻址模式是<span class="enum">VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER</span>，指定边框颜色（border color）</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkBool32</span> unnormalizedCoordinates</p></td>
+            <td><p>是否使用非标准化贴图坐标进行采样</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            通常使用标准化坐标，整张图像的贴图坐标范围为0~1，以2D图像为例，左上角为<code>{0.f, 0.f}</code>，右下角为<code>{1.f, 1.f}</code>。<br>
+            而使用非标准化坐标采样时（unnormalizedCoordinates为<span class="mcr">VK_TRUE</span>），整张图像的贴图坐标范围为[0, 贴图大小)。<br>
+            使用非标准化坐标时，对滤波方式有限制，且compareEnable必须为<span class="mcr">VK_FALSE</span>，这里不做赘述，有兴趣请自行参考官方文档。
+        </p>
+    </li>
+</ul>
+<p>
+    接下来先对<span class="type">VkSampler</span>进行封装，再逐一解说其它创建参数。
+</p></section>
+<section id="id2">
+<h3>封装为sampler类<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<p>
+    向<span class="path">VKBase.h</span>，vulkan命名空间中添加以下代码：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">sampler</span> {
+    <span class="type">VkSampler</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
+<span class="kw">public</span>:
+    <span class="fn">sampler</span>() = <span class="kw">default</span>;
+    <span class="fn">sampler</span>(<span class="type">VkSamplerCreateInfo</span>&amp; createInfo) {
+        <span class="fn">Create</span>(createInfo);
+    }
+    <span class="fn">sampler</span>(<span class="type">sampler</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    ~<span class="fn">sampler</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroySampler</span>); }
+    <span class="cmt">//Getter</span>
+    <span class="mcr">DefineHandleTypeOperator</span>;
+    <span class="mcr">DefineAddressFunction</span>;
+    <span class="cmt">//Non-const Function</span>
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkSamplerCreateInfo</span>&amp; createInfo) {
+        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = vkCreateSampler(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ sampler ] ERROR\nFailed to create a sampler!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+};
+</pre></section>
+<section id="id3">
+<h3>滤波方式<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap13.html#VkFilter">VkFilter</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_FILTER_NEAREST </span>表示使用临近滤波（有明显锯齿），适用于像素风游戏等比放大</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_FILTER_LINER   </span>表示使用线性插值滤波</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    下面展示了对同一张透明背景的图片（原图大小16x16像素），使用两种不同插值方式渲染到16倍大小的结果：
+</p>
+<img alt="_images/ch3-7-1.png" src="_images/ch3-7-1.png">
+<p>
+    毕竟放大了16倍，线性插值的结果显得很糊。
+    <br>
+    但是临近滤波是没有颜色过渡的，所以若不是编写像素风游戏或图像处理软件，通常你会希望使用<span class="enum">VK_FILTER_LINER</span>。
+    <br>
+    值得注意的是，如果你打算使用线性插值，且被渲染的图像有透明区域，那么被渲染的图像是否为预乘透明度会导致不同的结果（这在白色背景上尤为明显），具体参见//TODO Ch8-1 预乘透明度。
+    <br>
+    图中右下角的效果可能显得仍旧不够平滑，这可以通过使用sRGB格式的颜色附件解决，具体参见//TODO Ch8-7 HDR与sRGB色彩空间。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap13.html#VkSamplerMipmapMode">VkSamplerMipmapMode</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_SAMPLER_MIPMAP_MODE_NEAREST </span>表示直接采样单张最接近所需LOD的mipmap</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_SAMPLER_MIPMAP_MODE_LINEAR  </span>表示根据LOD等级选择两张mipmap进行线性插值</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    在图像的横纵两个方向上使用线性插值的滤波方式叫双线性滤波（bilinear filtering）。
+    <br>
+    若minFilter为<span class="enum">VK_FILTER_LINER</span>且mipmapMode为<span class="enum">VK_SAMPLER_MIPMAP_MODE_LINEAR</span>，则称为三线性滤波(trilinear filtering)。
+</p>
+<p>
+    通常而言我总是建议你使用<span class="enum">VK_SAMPLER_MIPMAP_MODE_LINEAR</span>。
+    <br>
+    若你需要使用<span class="enum">VK_SAMPLER_MIPMAP_MODE_NEAREST</span>，会出现“图像被渲染到1/3.1的长宽，却采样1/4长宽的mipmap”的情况，但通常你会想要精度更高的mipmap，这可以通过设置mipLodBias实现。另外注意，如果图像被渲染到正好1/3的长宽，采样1/2长宽还是1/4长宽的mipmap为实现特定。
+</p></section>
+<section id="id4">
+<h3>细节等级<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<p>
+    Mipmap的大小为<code>原图像长宽 / (mip等级 + 1)</code>，图像的LOD（level of detail）决定了要采样哪个mip等级的mipmap。
+</p>
+<p>
+    LOD可以在着色器中显式指定（采样时使用GLSL内置的<span class="fn">textureLod</span>(...)函数），也可以被隐式计算。
+    <br>
+    对于隐式计算，Vulkan官方标准中记载的LOD计算公式比较难懂，这里给个大致概念：
+    <br>
+    如果一张图像被渲染到其原本长宽的1/2，那么采样LOD等级为1（等级为0的是原图）的mipmap，如果长宽缩放比例不等，选择精度更高的数值为LOD（例如，长缩放到1/2，宽不变，则采样LOD等级为0）。
+    <br>
+    实际情况是图像可能会有更复杂的变形，因此LOD等级是通过微分运算确定的。
+</p>
+<p>
+    <span class="type">VkSamplerCreateInfo</span>中的mipLodBias、minLod、maxLod既适用于显式指定的LOD，也适用于隐式计算的LOD。
+    <br>
+    如果你不需要钳制LOD，应将minLod设置为0，maxLod设置为<span class="mcr">VK_LOD_CLAMP_NONE</span>。
+    <br>
+    将mipLodBias设置为正值会采样精度更低（尺寸更小）的mipmap，负值则相反。
+</p>
+<p>
+    有时候你会希望采样精度更低的mipmap，比如下图就是个应用实例：
+</p>
+<img alt="_images/ch3-7-2.png" src="_images/ch3-7-2.png">
+<p>
+    上图中实现了基于图像的BRDF光照（mipmap非原图的缩小版本，而是积分得到的环境贴图），下半张图像应用了<code>mipLodBias = 0.2f</code>。
+    <br>
+    这里的LOD等级为在着色器中显式指定，与粗糙度存在映射关系，应用0.2的mipLodBias相当于将粗糙度一概增加一些。
+    <br>
+    下半张图的光斑更明显，但是锯齿感显著减弱（尤其是小球右上角的那串“节日彩灯”）。
+</p></section>
+<section id="id5">
+<h3>寻址模式<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<p>
+    寻址模式（<span class="type">VkSamplerAddressMode</span>），也称wrapping mode，决定当用于采样的标准化坐标超出[0,1)范围时的采样结果。
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap13.html#VkSamplerAddressMode">VkSamplerAddressMode</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_SAMPLER_ADDRESS_MODE_REPEAT               </span>相当于将坐标取余到[0,1)范围内</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT      </span>相当于将坐标取余到[0,1)范围内，然后用1减去该值（大致可理解为如此计算）</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE        </span>相当于将坐标钳制到[0,1)范围内</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER      </span>相当于将超出[0,1)范围时的采样结果设定为特定颜色</p></td>
+        </tr>
+        <tr>
+            <td><p>1.2</p></td>
+            <td><p><span class="enum">VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE </span>相当于将负值坐标反转（正值则不变）并钳制到[0,1)范围内</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            如果你在意如何钳制到“小于等于1”，采样操作的底层实现是先计算出对应的整数坐标，取得色值（然后再插值，如果是线性滤波的话），整数坐标范围为[0, 贴图大小)，因为是整数所以等价于[0, 贴图大小 - 1]，根据与标准化坐标的映射关系，整数坐标无法为贴图大小即是钳制到“小于等于1”。
+        </p>
+    </li>
+</ul>
+<p>
+    下图展示了在U和V方向运用各个寻址模式的效果，每个单元左上角的贴图坐标为<code>{-0.25, -0.25}</code>，右下角为<code>{1.25, 1.25}</code>：
+</p>
+<img alt="_images/ch3-7-3.png" src="_images/ch3-7-3.png">
+<p>
+   <span class="enum">VK_SAMPLER_ADDRESS_MODE_REPEAT</span>和<span class="enum">VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT</span>分别是重复和镜像重复的效果。
+</p>
+</p>
+   一般而言，如果你需要渲染整张图像，那么<span class="enum">VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE</span>会是你期望的寻址模式，这种寻址模式的效果可以简述为“从边界延伸”，在渲染坐标不是整数时，这可以防止因插值引起的溢色（color bleeding）。下面的对比图中，图像被整个渲染到其原先的两倍大小：
+</p>
+<img alt="_images/ch3-7-4.png" src="_images/ch3-7-4.png">
+<ul>
+    <li>
+        <p>
+            可以看到REPEAT一图右下角有灰边，来源于顶部的灰色。
+        </p>
+    </li>
+    <li>
+        <p>
+            TRANSPARENT BORDER一图中使用透明黑（rgba全0）为边框颜色，插值会导致半透明的灰边。
+        </p>
+    </li>
+</ul>
+<p>
+    在U和V方向上的寻址模式不同时，若其中一个方向上的寻址模式设定为<span class="enum">VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER</span>，则只要该方向上的采样坐标出界，便应用边框颜色（border color），如下图所示。
+</p>
+<img alt="_images/ch3-7-5.png" src="_images/ch3-7-5.png">
+<p>
+    其中，边框颜色的可选项：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap13.html#VkBorderColor">VkBorderColor</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK </span>表示边框颜色为{ 0.0, 0.0, 0.0, 0.0 }</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BORDER_COLOR_INT_TRANSPARENT_BLACK   </span>表示边框颜色为{ 0, 0, 0, 0 }</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK      </span>表示边框颜色为{ 0.0, 0.0, 0.0, 1.0 }</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BORDER_COLOR_INT_OPAQUE_BLACK        </span>表示边框颜色为{ 0, 0, 0, 1 }</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE      </span>表示边框颜色为{ 1.0, 1.0, 1.0, 1.0 }</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_BORDER_COLOR_INT_OPAQUE_WHITE        </span>表示边框颜色为{ 1, 1, 1, 1 }</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            “OPAQUE”和“WHITE”仅说明a和rgb分量上的数值是否为1，而数值为1不代表100%不透明或颜色饱和。通常而言，如果你的图像附件为UNORM/SRGB格式，那么你的片段着色器输出的浮点数色值的有效范围在0.f~1.f之间，因此，处理整数格式色值的时候，会在着色器中除以255.f，这种情况下，上文的<span class="enum">VK_BORDER_COLOR_INT_OPAQUE_WHITE</span>对应的色值就是<code>{ 1/255.f, 1/255.f, 1/255.f, 1/255.f }</code>。基于这一点而言，如果图像的image view的格式中带有UINT或SINT字样，你难以通过<span class="enum">VK_BORDER_COLOR_INT_OPAQUE_BLACK</span>或<span class="enum">VK_BORDER_COLOR_INT_OPAQUE_WHITE</span>实现黑色或白色边框色（而带FLOAT字样的因底层数据非整形同样不必考虑）。
+        </p>
+    </li>
+</ul>
+<p>
+    你当然也可以使用自定义颜色，步骤：
+    <br>
+    1.创建逻辑设备时，启用扩展VK_EXT_custom_border_color，并开启相应特性（在获取设备特性前，在<span class="type">VkPhysicalDeviceFeatures</span>的pNext链中加入<a href="https://renderdoc.org/vkspec_chunked/chap47.html#VkPhysicalDeviceCustomBorderColorFeaturesEXT">VkPhysicalDeviceCustomBorderColorFeaturesEXT</a>，之后创建设备的时候不需要变更pNext链）。
+    <br>
+    2.<span class="type">VkSamplerCreateInfo</span>::borderColor指定为<span class="enum">VK_BORDER_COLOR_FLOAT_CUSTOM_EXT</span>或<span class="enum">VK_BORDER_COLOR_INT_CUSTOM_EXT</span>。
+    <br>
+    3.填写<a href="https://renderdoc.org/vkspec_chunked/chap13.html#VkSamplerCustomBorderColorCreateInfoEXT">VkSamplerCustomBorderColorCreateInfoEXT</a>结构体。注意其中format各通道的位数（8/16/32等）不必与图像的image view一致，但数字格式（UINT/UNORM等）需要按前述规则匹配<span class="enum">VK_BORDER_COLOR_FLOAT_CUSTOM_EXT</span>或<span class="enum">VK_BORDER_COLOR_INT_CUSTOM_EXT</span>。
+    <br>
+    4.将<span class="type">VkSamplerCustomBorderColorCreateInfoEXT</span>加入<span class="type">VkSamplerCreateInfo</span>的pNext链。
+</p>
+<p>
+    <span class="enum">VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE</span>的效果实质上就是在[-1, 1)范围内发生镜像，在此之外则从边界延伸。因此在Unity等游戏引擎中，对应这一寻址模式的wrapping mode被称为“MirrorOnce”。这种寻址模式便于渲染对称图像并防止溢色。
+    <br>
+    下图左上角的贴图坐标为<code>{-1.25, -1.25}</code>，右下角为<code>{1.25, 1.25}</code>：
+</p>
+<img alt="_images/ch3-7-6.png" src="_images/ch3-7-6.png"></section>
+<section id="id6">
+<h3>各向异性采样<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<p>
+    各向异性有助于改善图像倾斜时的采样效果：
+</p>
+<img alt="_images/ch3-7-7.png" src="_images/ch3-7-7.png">
+<img alt="_images/ch3-7-8.png" src="_images/ch3-7-8.png">
+<p>
+    由微分计算出图像在x和y方向上的放缩比例ρx和ρy，记其中较大者为ρmax，较小者为ρmin，各项异性数值即为ρmax/ρmin。
+    <br>
+    各项异性数值会被钳制到<span class="type">VkSamplerCreateInfo</span>::maxAnisotropy和<span class="type">VkPhysicalDeviceProperties</span>::limits::maxSamplerAnisotropy中的较小值，因为ρmax/ρmin的最小值为1，所以maxAnisotropy不得小于1。若maxAnisotropy为1，则效果理应等同于关闭各向异性采样。
+</p>
+<div class="admonition important">
+    <p class="admonition-title">Important</p>
+    <p>
+        各向异性采样的底层实现的细节，在不同的显卡驱动中不同。
+        <br>
+        滤波方式可能因此收到影响。比如，在开启各向异性采样时，英特尔核显可能会无视minFilter和magFilter，总是应用线性滤波。
+        <br>
+        各向异性采样的实际效果也可能因显卡的不同有所差异。
+    </p>
+</div></section>
+<section id="id7">
+<h3>比较深度值<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<p>
+    基于不同的目的，有两种不同的采样深度贴图的方式：
+    <br>
+    1.将深度贴图作为单色贴图采样。
+    <br>
+    2.将深度值与引用值比较，根据比较结果返回0.f或1.f。如果应用线型滤波，插值是对比较结果进行的，而非先对深度值做插值再比较，因而会返回[0, 1]区间内的数值。
+    <br>
+    后一种方式可以用来实现最为简单的阴影。
+</p>
+<p>
+    下面两张图，第一张图是直接可视化深度贴图（作为单色贴图采样，将采样结果的r分量赋值给输出颜色的rgb三个分量以显示为灰色），第二张图是与引用值0.95比较，使用的比较方式为<span class="enum">VK_COMPARE_OP_LESS</span>，即引用值小于深度值时返回1.f，否则返回0.f，采样结果被赋值给输出颜色的rgb三个分量。
+</p>
+<img alt="_images/ch3-7-9.png" src="_images/ch3-7-9.png">
+<p>
+    虽然你八成用不着前述的第2种方式，这里姑且做下大致的步骤说明：
+    <br>
+    1.设置<span class="type">VkSamplerCreateInfo</span>::compareEnable为<span class="mcr">VK_TRUE</span>，设置比较方式（<span class="type">VkSamplerCreateInfo</span>::compareOp）。
+    <br>
+    2.着色器中的混合贴图采样器类型使用<span class="type">sampler2DShadow</span>（注：该类型专用于与引用值进行比较的采样方式。将深度贴图作为单色贴图采样时应使用<span class="type">sampler2D</span>等不具Shadow后缀的类型）。
+    <br>
+    3.使用<span class="fn">texture</span>(...)函数进行采样，首个参数为混合贴图采样器，后一个参数为<span class="type">vec3</span>类型，其中uv分量为贴图坐标，第三个分量为引用值（随你设定，不必是常量，与其他各种设置无关），采样得到的结果是浮点数标量。
+
+</p></section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html" class="btn btn-neutral float-left" title="Ch3-6 描述符" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html" class="btn btn-neutral float-right" title="Ch4-1 着色器模组" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
