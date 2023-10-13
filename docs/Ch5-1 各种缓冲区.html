@@ -520,7 +520,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
     aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
     <span class="type">VkImageSubresource</span> subResource = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 0 };
     <span class="type">VkSubresourceLayout</span> subresourceLayout = {};
-    <span class="fn">vkGetImageSubresourceLayout</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), aliasedImage, amp;subResource, &amp;subresourceLayout);
+    <span class="fn">vkGetImageSubresourceLayout</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), aliasedImage, &amp;subResource, &amp;subresourceLayout);
     <span class="kw">if</span> (subresourceLayout.size != imageDataSize)
         <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;
     aliasedImage.<span class="fn">BindMemory</span>(bufferMemory.<span class="fn">Memory</span>());
@@ -635,7 +635,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
             <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;
         <span class="type">VkImageFormatProperties</span> imageFormatProperties = {};
         <span class="fn">vkGetPhysicalDeviceImageFormatProperties</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDevice</span>(),
-            format, <span class="enum">VK_IMAGE_TYPE_2D</span>, <span class="enum">VK_IMAGE_TILING_LINEAR</span>, <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>, 0, &amp;  imageFormatProperties);
+            format, <span class="enum">VK_IMAGE_TYPE_2D</span>, <span class="enum">VK_IMAGE_TILING_LINEAR</span>, <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>, 0, &amp;imageFormatProperties);
         <span class="kw">if</span> (extent.width &gt; imageFormatProperties.maxExtent.width ||
             extent.height &gt; imageFormatProperties.maxExtent.height ||
             imageDataSize &gt; imageFormatProperties.maxResourceSize)
@@ -655,7 +655,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
         aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
         <span class="type">VkImageSubresource</span> subResource = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 0 };
         <span class="type">VkSubresourceLayout</span> subresourceLayout = {};
-        <span class="fn">vkGetImageSubresourceLayout</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), aliasedImage, amp; subResource, &amp;subresourceLayout);
+        <span class="fn">vkGetImageSubresourceLayout</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), aliasedImage, &amp;subResource, &amp;subresourceLayout);
         <span class="kw">if</span> (subresourceLayout.size != imageDataSize)
             <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;
         aliasedImage.<span class="fn">BindMemory</span>(bufferMemory.<span class="fn">Memory</span>());
@@ -702,18 +702,18 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
     <span class="type">bufferMemory</span> bufferMemory;
 <span class="kw">public</span>:
     <span class="fn">deviceLocalBuffer</span>() = <span class="kw">default</span>;
-    <span class="fn">deviceLocalBuffer</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> desiredUsages__Without_transfer_dst) {
-        <span class="fn">Create</span>(size, desiredUsages__Without_transfer_dst);
+    <span class="fn">deviceLocalBuffer</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> desiredUsages_Without_transfer_dst) {
+        <span class="fn">Create</span>(size, desiredUsages_Without_transfer_dst);
     }
     <span class="cmt">//Getter</span>
     <span class="kw">operator</span> <span class="type">VkBuffer</span>() <span class="kw">const</span> { <span class="kw">return</span> bufferMemory.<span class="fn">Buffer</span>(); }
     <span class="kw">const</span> <span class="type">VkBuffer</span>* <span class="fn">Address</span>() <span class="kw">const</span> { <span class="kw">return</span> bufferMemory.<span class="fn">AddressOfBuffer</span>(); }
     <span class="type">VkDeviceSize</span> <span class="fn">AllocationSize</span>() <span class="kw">const</span> { <span class="kw">return</span> bufferMemory.<span class="fn">AllocationSize</span>(); }
     <span class="cmt">//Non-const Function</span>
-    <span class="kw">void</span> <span class="fn">Create</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> desiredUsages__Without_transfer_dst) {
+    <span class="kw">void</span> <span class="fn">Create</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> desiredUsages_Without_transfer_dst) {
         <span class="type">VkBufferCreateInfo</span> bufferCreateInfo = {
             .size = size,
-            .usage = desiredUsages__Without_transfer_dst | <span class="enum">VK_BUFFER_USAGE_TRANSFER_DST_BIT</span>
+            .usage = desiredUsages_Without_transfer_dst | <span class="enum">VK_BUFFER_USAGE_TRANSFER_DST_BIT</span>
         };
         <span class="cmt">//短路执行，第一行的false||是为了对齐</span>
         <span class="kw">false</span> ||
@@ -722,10 +722,10 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
             bufferMemory.<span class="fn">AllocateMemory</span>(<span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>) ||
             bufferMemory.<span class="fn">BindMemory</span>();
     }
-    <span class="kw">void</span> <span class="fn">Recreate</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> desiredUsages__Without_transfer_dst) {
+    <span class="kw">void</span> <span class="fn">Recreate</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> desiredUsages_Without_transfer_dst) {
         <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">WaitIdle</span>();
         bufferMemory.~<span class="fn">bufferMemory</span>();
-        <span class="fn">Create</span>(size, desiredUsages__Without_transfer_dst);
+        <span class="fn">Create</span>(size, desiredUsages_Without_transfer_dst);
     }
 };
 </pre>
@@ -850,8 +850,8 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
 <span class="kw">public</span>:
     <span class="cmt">/*其他成员略*/</span>
     <span class="cmt">//Const Function</span>
-    <span class="kw">void</span> <span class="fn">CmdUpdateBuffer</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="kw">const void</span>* pData_src, <span class="type">VkDeviceSize</span> size__Less_than_65536, <span class="type">VkDeviceSize</span> offset = 0) <span class="kw">const</span> {
-        <span class="fn">vkCmdUpdateBuffer</span>(commandBuffer, bufferMemory.<span class="fn">Buffer</span>(), offset, size__Less_than_65536, pData_src);
+    <span class="kw">void</span> <span class="fn">CmdUpdateBuffer</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="kw">const void</span>* pData_src, <span class="type">VkDeviceSize</span> size_Less_than_65536, <span class="type">VkDeviceSize</span> offset = 0) <span class="kw">const</span> {
+        <span class="fn">vkCmdUpdateBuffer</span>(commandBuffer, bufferMemory.<span class="fn">Buffer</span>(), offset, size_Less_than_65536, pData_src);
     }
     <span class="cmt">//适用于从缓冲区开头更新连续的数据块，数据大小自动判断</span>
     <span class="kw">void</span> <span class="fn">CmdUpdateBuffer</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="kw">const auto</span>&amp; data_src) <span class="kw">const</span> {
@@ -922,8 +922,8 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
     <span class="type">bufferMemory</span> bufferMemory;
 <span class="kw">public</span>:
     <span class="fn">deviceLocalBuffer</span>() = <span class="kw">default</span>;
-    <span class="fn">deviceLocalBuffer</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> desiredUsages__Without_transfer_dst) {
-        <span class="fn">Create</span>(size, desiredUsages__Without_transfer_dst);
+    <span class="fn">deviceLocalBuffer</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> desiredUsages_Without_transfer_dst) {
+        <span class="fn">Create</span>(size, desiredUsages_Without_transfer_dst);
     }
     <span class="cmt">//Getter</span>
     <span class="kw">operator</span> <span class="type">VkBuffer</span>() <span class="kw">const</span> { <span class="kw">return</span> bufferMemory.<span class="fn">Buffer</span>(); }
@@ -971,17 +971,17 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
     <span class="kw">void</span> <span class="fn">TransferData</span>(<span class="kw">const auto</span>&amp; data_src) <span class="kw">const</span> {
         <span class="fn">TransferData</span>(&amp;data_src, <span class="kw">sizeof</span> data_src);
     }
-    <span class="kw">void</span> <span class="fn">CmdUpdateBuffer</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="kw">const void</span>* pData_src, <span class="type">VkDeviceSize</span> size__Less_than_65536, <span class="type">VkDeviceSize</span> offset = 0) <span class="kw">const</span> {
-        <span class="fn">vkCmdUpdateBuffer</span>(commandBuffer, bufferMemory.<span class="fn">Buffer</span>(), offset, size__Less_than_65536, pData_src);
+    <span class="kw">void</span> <span class="fn">CmdUpdateBuffer</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="kw">const void</span>* pData_src, <span class="type">VkDeviceSize</span> size_Less_than_65536, <span class="type">VkDeviceSize</span> offset = 0) <span class="kw">const</span> {
+        <span class="fn">vkCmdUpdateBuffer</span>(commandBuffer, bufferMemory.<span class="fn">Buffer</span>(), offset, size_Less_than_65536, pData_src);
     }
     <span class="kw">void</span> <span class="fn">CmdUpdateBuffer</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="kw">const auto</span>&amp; data_src) <span class="kw">const</span> {
         <span class="fn">vkCmdUpdateBuffer</span>(commandBuffer, bufferMemory.<span class="fn">Buffer</span>(), 0, <span class="kw">sizeof</span> data_src, &amp;data_src);
     }
     <span class="cmt">//Non-const Function</span>
-    <span class="kw">void</span> <span class="fn">Create</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> desiredUsages__Without_transfer_dst) {
+    <span class="kw">void</span> <span class="fn">Create</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> desiredUsages_Without_transfer_dst) {
         <span class="type">VkBufferCreateInfo</span> bufferCreateInfo = {
             .size = size,
-            .usage = desiredUsages__Without_transfer_dst | <span class="enum">VK_BUFFER_USAGE_TRANSFER_DST_BIT</span>
+            .usage = desiredUsages_Without_transfer_dst | <span class="enum">VK_BUFFER_USAGE_TRANSFER_DST_BIT</span>
         };
         <span class="kw">false</span> ||
             bufferMemory.<span class="fn">CreateBuffer</span>(bufferCreateInfo) ||
@@ -989,10 +989,10 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
             bufferMemory.<span class="fn">AllocateMemory</span>(<span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>) ||
             bufferMemory.<span class="fn">BindMemory</span>();
     }
-    <span class="kw">void</span> <span class="fn">Recreate</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> desiredUsages__Without_transfer_dst) {
+    <span class="kw">void</span> <span class="fn">Recreate</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> desiredUsages_Without_transfer_dst) {
         <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">WaitIdle</span>();
         bufferMemory.~<span class="fn">bufferMemory</span>();
-        <span class="fn">Create</span>(size, desiredUsages__Without_transfer_dst);
+        <span class="fn">Create</span>(size, desiredUsages_Without_transfer_dst);
     }
 };
 </pre>
