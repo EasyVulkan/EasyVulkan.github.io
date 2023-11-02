@@ -196,13 +196,14 @@ namespace vulkan {
 
 	//Buffer
 	class stagingBuffer {
-		static struct implStagingBuffer_mainThread {
-			stagingBuffer* pointer;
-			implStagingBuffer_mainThread() {
+		static inline class {
+			stagingBuffer* pointer = Create();
+			stagingBuffer* Create() {
 				static stagingBuffer stagingBuffer;
 				pointer = &stagingBuffer;
 				graphicsBase::Base().PushCallback_DestroyDevice([] { stagingBuffer.~stagingBuffer(); });
 			}
+		public:
 			stagingBuffer& Get() const { return *pointer; }
 		} stagingBuffer_mainThread;
 	protected:
@@ -314,15 +315,14 @@ namespace vulkan {
 			return stagingBuffer_mainThread.Get().AliasedImage2d(format, extent);
 		}
 	};
-	inline stagingBuffer::implStagingBuffer_mainThread stagingBuffer::stagingBuffer_mainThread;
 
 	class deviceLocalBuffer {
 	protected:
 		bufferMemory bufferMemory;
 	public:
 		deviceLocalBuffer() = default;
-		deviceLocalBuffer(VkDeviceSize size, VkBufferUsageFlags desiredUsages_Without_transfer_dst) {
-			Create(size, desiredUsages_Without_transfer_dst);
+		deviceLocalBuffer(VkDeviceSize size, VkBufferUsageFlags desiredUsages__Without_transfer_dst) {
+			Create(size, desiredUsages__Without_transfer_dst);
 		}
 		//Getter
 		operator VkBuffer() const { return bufferMemory.Buffer(); }
@@ -370,17 +370,17 @@ namespace vulkan {
 		void TransferData(const auto& data_src) const {
 			TransferData(&data_src, sizeof data_src);
 		}
-		void CmdUpdateBuffer(VkCommandBuffer commandBuffer, const void* pData_src, VkDeviceSize size_Less_than_65536, VkDeviceSize offset = 0) const {
-			vkCmdUpdateBuffer(commandBuffer, bufferMemory.Buffer(), offset, size_Less_than_65536, pData_src);
+		void CmdUpdateBuffer(VkCommandBuffer commandBuffer, const void* pData_src, VkDeviceSize size__Less_than_65536, VkDeviceSize offset = 0) const {
+			vkCmdUpdateBuffer(commandBuffer, bufferMemory.Buffer(), offset, size__Less_than_65536, pData_src);
 		}
 		void CmdUpdateBuffer(VkCommandBuffer commandBuffer, const auto& data_src) const {
 			vkCmdUpdateBuffer(commandBuffer, bufferMemory.Buffer(), 0, sizeof data_src, &data_src);
 		}
 		//Non-const Function
-		void Create(VkDeviceSize size, VkBufferUsageFlags desiredUsages_Without_transfer_dst) {
+		void Create(VkDeviceSize size, VkBufferUsageFlags desiredUsages__Without_transfer_dst) {
 			VkBufferCreateInfo bufferCreateInfo = {
 				.size = size,
-				.usage = desiredUsages_Without_transfer_dst | VK_BUFFER_USAGE_TRANSFER_DST_BIT
+				.usage = desiredUsages__Without_transfer_dst | VK_BUFFER_USAGE_TRANSFER_DST_BIT
 			};
 			false ||
 				bufferMemory.CreateBuffer(bufferCreateInfo) ||
@@ -388,10 +388,10 @@ namespace vulkan {
 				bufferMemory.AllocateMemory(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) ||
 				bufferMemory.BindMemory();
 		}
-		void Recreate(VkDeviceSize size, VkBufferUsageFlags desiredUsages_Without_transfer_dst) {
+		void Recreate(VkDeviceSize size, VkBufferUsageFlags desiredUsages__Without_transfer_dst) {
 			graphicsBase::Base().WaitIdle();
 			bufferMemory.~bufferMemory();
-			Create(size, desiredUsages_Without_transfer_dst);
+			Create(size, desiredUsages__Without_transfer_dst);
 		}
 	};
 	class vertexBuffer :public deviceLocalBuffer {

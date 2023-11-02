@@ -130,7 +130,7 @@
     <br>
     片段着色器逐像素，或多重采样中的采样点发生调用，对每个被图元（即点、线、三角形）覆盖的采样点执行一次。对于不被图元覆盖的采样点，不对其执行片段着色器。
     <br>
-    注：具体而言，片段着色器被定义为逐片段调用，而开启多重采样后，多余1次的调用被定义为额外调用。<a href="https://renderdoc.org/vkspec_chunked/chap28.html#fragops-shader">来源见此。</a>当然，这种概念不用区分地那么清楚。
+    注：具体而言，片段着色器被定义为逐片段调用，而开启多重采样后，多余1次的调用被定义为额外调用。<a href="https://renderdoc.org/vkspec_chunked/chap29.html#fragops-shader">来源见此。</a>当然，这种概念不用区分得那么清楚。
     <br>
     ↑不管你干什么，最好不要依赖于“逐片段调用”这一说法，若Vulkan的实现能判断某个片段最终会被后续其它片段覆盖（即不影响最终渲染结果），那么可能直接不对其执行片段着色器。
 </p>
@@ -139,7 +139,7 @@
     <p>
         在2020年5月以后，Vulkan官方标准放宽了fragment的定义，不排除一个片段可以覆盖多个像素。
         <br>
-        比如<a href="https://renderdoc.org/vkspec_chunked/chap27.html#primsrast">27. Rasterization</a>在27.1一段前的部分的最后有这句：<span class="ref">Rasterization only generates fragments which cover one or more pixels inside the framebuffer.</span>。
+        比如<a href="https://renderdoc.org/vkspec_chunked/chap28.html#primsrast">28. Rasterization</a>在27.1一段前的部分的最后有这句：<span class="ref">Rasterization only generates fragments which cover one or more pixels inside the framebuffer.</span>。
         <br>
         这套教程中还是以片段即像素来考虑。
     </p>
@@ -245,7 +245,7 @@
 <p>
     gl_SampleMaskIn的数组元素个数取决于采样个数，<span class="kw">int</span>的长度为32个bit，因此32xMSAA及以下时gl_SampleMaskIn中有一个元素，64xMSAA时有两个元素。
     <br>
-    （阅读以下文字前请先阅读//TODO VkPipelineMultisampleStateCreateInfo）
+    （阅读以下文字前请先阅读<a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html#vkpipelinemultisamplestatecreateinfo">Ch3-3 管线布局和管线一节中关于VkPipelineMultisampleStateCreateInfo的说明</a>）
     <br>
     gl_SampleMaskIn中的每个bit对应相应索引的采样点，若没有在<a href="https://renderdoc.org/vkspec_chunked/chap27.html#VkPipelineMultisampleStateCreateInfo">VkPipelineMultisampleStateCreateInfo</a>中指定sample mask，以少于32xMSAA为例，一个采样点的gl_SampleMaskIn[0]的数值为<code>coverage mask & (1 << gl_SampleID)</code>。
     <br>

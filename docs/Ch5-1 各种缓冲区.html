@@ -545,23 +545,28 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
 </p>
 <pre class="code">
 <span class="kw">class</span> <span class="type">stagingBuffer</span> {
-    <span class="kw">static struct</span> <span class="type">implStagingBuffer_mainThread</span> {
-        <span class="type">stagingBuffer</span>* pointer;
-        <span class="type">implStagingBuffer_mainThread</span>() {
+    <span class="kw">static inline class</span> {
+        <span class="type">stagingBuffer</span>* pointer = <span class="fn">Create</span>();
+        <span class="type">stagingBuffer</span>* <span class="fn">Create</span>() {
             <span class="kw">static</span> <span class="type">stagingBuffer</span> stagingBuffer;
-            pointer = &amp;stagingBuffer;
             <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_DestroyDevice</span>([] { stagingBuffer.~<span class="fn">stagingBuffer</span>(); });
+            <span class="kw">return</span> &amp;stagingBuffer;
         }
+        <span class="kw">public</span>:
         <span class="type">stagingBuffer</span>&amp; <span class="fn">Get</span>() <span class="kw">const</span> { <span class="kw">return</span> *pointer; }
     } stagingBuffer_mainThread;
     <span class="cmt">/*其他成员略*/</span>
 };
-<span class="kw">inline</span> <span class="type">stagingBuffer</span>::<span class="type">implStagingBuffer_mainThread</span> <span class="type">stagingBuffer</span>::stagingBuffer_mainThread;
 </pre>
 <ul>
     <li>
         <p>
-            <span class="type">implStagingBuffer_mainThread</span>是<span class="type">stagingBuffer</span>的嵌套类，嵌套类中定义的变量（无论是否静态）的类型不能为外围类，因此需要定义<span class="var">pointer</span>，然后再在初始化器中使其指向局部静态变量<span class="var">stagingBuffer</span>。
+            <span class="kw">decltype</span>(<span class="var">stagingBuffer_mainThread</span>)是<span class="type">stagingBuffer</span>的嵌套类，嵌套类中定义的变量（无论是否静态）的类型不能为外围类，因此需要定义<span class="var">pointer</span>，然后再用一个函数调用作为其初始化器，使其指向局部静态变量<span class="var">stagingBuffer</span>。
+        </p>
+    </li>
+    <li>
+        <p>
+            这里使用<span class="kw">inline</span>来免除静态成员变量的类外定义。
         </p>
     </li>
 </ul>
@@ -570,13 +575,14 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
 </p>
 <pre class="code">
 <span class="kw">class</span> <span class="type">stagingBuffer</span> {
-    <span class="kw">static struct</span> <span class="type">implStagingBuffer_mainThread</span> {
-        <span class="type">stagingBuffer</span>* pointer;
-        <span class="type">implStagingBuffer_mainThread</span>() {
+    <span class="kw">static inline class</span> {
+        <span class="type">stagingBuffer</span>* pointer = <span class="fn">Create</span>();
+        <span class="type">stagingBuffer</span>* <span class="fn">Create</span>() {
             <span class="kw">static</span> <span class="type">stagingBuffer</span> stagingBuffer;
             pointer = &amp;stagingBuffer;
             <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_DestroyDevice</span>([] { stagingBuffer.~<span class="fn">stagingBuffer</span>(); });
         }
+        <span class="kw">public</span>:
         <span class="type">stagingBuffer</span>&amp; <span class="fn">Get</span>() <span class="kw">const</span> { <span class="kw">return</span> *pointer; }
     } stagingBuffer_mainThread;
 <span class="kw">protected</span>:
@@ -688,7 +694,6 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
         <span class="kw">return</span> stagingBuffer_mainThread.<span class="fn">Get</span>().<span class="fn">AliasedImage2d</span>(format, extent);
     }
 };
-<span class="kw">inline</span> <span class="type">stagingBuffer</span>::<span class="type">implStagingBuffer_mainThread</span> <span class="type">stagingBuffer</span>::stagingBuffer_mainThread;
 </pre></section>
 </section>
 <section id="device-local-buffer">
