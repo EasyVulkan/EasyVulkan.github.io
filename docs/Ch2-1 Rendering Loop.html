@@ -92,6 +92,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a></li>
 </ul>
 
         </div>
@@ -189,7 +190,14 @@
     <br>
     开始录制命令缓冲区前需要在CPU一侧手动等待<span class="var">fence</span>被置位以确保先前的命令已完成执行，虽然执行完命令后同样也会点亮<span class="var">semaphore_renderingIsOver</span>，但你不能在CPU一侧手动等待二值信号量。
     <br>
-    而用<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...)呈现图像时，其参数中只能指定需要等待被置位的二值信号量而不能指定栅栏，因此才出现了一个操作后需要置位两个同步对象的情况。
+    而用<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...)呈现图像时，其参数中只能指定需要等待被置位的二值信号量而不能指定栅栏，因此才出现了一个操作后需要置位两个同步对象的情况。
+</p>
+<p>
+    24.01.07 更新补充说明：
+    <br>
+    你可以以非置位状态创建<span class="var">fence</span>，然后在呈现图像前调用函数等待它，如此一来<span class="var">semaphore_renderingIsOver</span>就是多余的。
+    <br>
+    栅栏的同步粒度比信号量粗（因为栅栏是在CPU一侧调用函数等待GPU发来信号嘛），这是否有可见的影响当然与硬件及Vulkan的底层实现有关，而这是否可忽略则取决于你的需求。这里我先教你更妥当的做法。
 </p></section>
 <section id="id2">
 <h2>创建命令池和命令缓冲区<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
@@ -228,7 +236,7 @@
 <section id="id3">
 <h2>获取交换链图像索引<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
 <p>
-    用<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)获取下一张用于渲染的交换链图像的索引：
+    用<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)获取下一张用于渲染的交换链图像的索引：
 </p>
 <table class="docutils align-default">
     <colgroup>
@@ -237,7 +245,7 @@
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...) 的参数说明</p></th>
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...) 的参数说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -297,7 +305,7 @@
 <p>
     需要注意的是，获取到的图像索引未必依序而来。
     <br>
-    举例而言，如果交换链中一共有三张图像，<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)可能总是按0、1、2的顺序获取图像，也可能总是按0、2、1的顺序。更极端的是，其顺序可能在每个周期（这里以交换链图像个数次渲染循环为一个周期）中不同，比如在先按0、1、2的顺序获取并呈现图像，然后在下一个周期中按0、2、1的顺序获取到图像，但这种情况理论上只在待获取图像可能超过一张的情况下发生。
+    举例而言，如果交换链中一共有三张图像，<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)可能总是按0、1、2的顺序获取图像，也可能总是按0、2、1的顺序。更极端的是，其顺序可能在每个周期（这里以交换链图像个数次渲染循环为一个周期）中不同，比如在先按0、1、2的顺序获取并呈现图像，然后在下一个周期中按0、2、1的顺序获取到图像，但这种情况理论上只在待获取图像可能超过一张的情况下发生。
     <br>
     因此，在渲染循环中总是应当使用<span class="type">graphicsBase</span>::<span class="fn">Base</span>.<span class="fn">CurrentImageIndex</span>()来获取当前图像索引，不要使用一个总是从0到2（假定图像数量为3张）递增的变量。
 </p>
@@ -528,7 +536,7 @@
 <section id="id5">
 <h2>呈现图像<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
 <p>
-    用<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...)呈现图像：
+    用<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...)呈现图像：
 </p>
 <table class="docutils align-default">
     <colgroup>
@@ -537,7 +545,7 @@
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...) 的参数说明</p></th>
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...) 的参数说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -558,7 +566,7 @@
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkPresentInfoKHR">VkPresentInfoKHR</a> 的成员说明</p></th>
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkPresentInfoKHR">VkPresentInfoKHR</a> 的成员说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -597,9 +605,9 @@
     </tbody>
 </table>
 <p>
-    多交换链适用于程序有多个窗口的情况，由于我们的程序只有一个交换链，可以直接从<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...)的返回值得知其执行结果，pResults填写为<span class="kw">nullptr</span>。
+    多交换链适用于程序有多个窗口的情况，由于我们的程序只有一个交换链，可以直接从<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...)的返回值得知其执行结果，pResults填写为<span class="kw">nullptr</span>。
     <br>
-    <a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...)同<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)一样，可能会遭遇需要重建交换链的情况，因此在<span class="type">graphicsBase</span>中对其做如下封装：
+    <a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...)同<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)一样，可能会遭遇需要重建交换链的情况，因此在<span class="type">graphicsBase</span>中对其做如下封装：
 </p>
 <pre class="code">
 <span class="type">result_t</span> <span class="fn">PresentImage</span>(<span class="type">VkPresentInfoKHR</span>&amp; presentInfo) {
@@ -897,7 +905,7 @@
 <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier_g2p_acquire = {
     .sType = <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
     <span class="cmt">//因为srcStage是VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT，不需要srcAccessMask</span>
-    <span class="cmt">//因为dstStage是VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT，不需要dstAccessMask</span>
+    <span class="cmt">//因为dstStage是VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT，不需要dstAccessMask</span>
     .oldLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>,
     .newLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>,
     .srcQueueFamilyIndex = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">QueueFamilyIndex_Graphics</span>(),

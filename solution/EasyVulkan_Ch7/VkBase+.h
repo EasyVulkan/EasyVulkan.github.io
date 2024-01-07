@@ -200,8 +200,8 @@ namespace vulkan {
 			stagingBuffer* pointer = Create();
 			stagingBuffer* Create() {
 				static stagingBuffer stagingBuffer;
-				pointer = &stagingBuffer;
 				graphicsBase::Base().PushCallback_DestroyDevice([] { stagingBuffer.~stagingBuffer(); });
+				return &stagingBuffer;
 			}
 		public:
 			stagingBuffer& Get() const { return *pointer; }

@@ -108,6 +108,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a></li>
 </ul>
 
         </div>
@@ -450,7 +451,7 @@
     </li>
     <li>
         <p>
-            若不需要从同一批创建的管线中较早创建的管线衍生而来，basePipelineIndex应为特殊值-1，而不是0，因为0是一个有效的索引。
+            若需要衍生，但并非从同一批创建的管线中较早创建的管线衍生而来，basePipelineIndex应为特殊值-1，而不是0，因为0是一个有效的索引。
         </p>
     </li>
     <li>
@@ -489,7 +490,7 @@
         </tr>
         <tr>
             <td><p>1.1</p></td>
-            <td><p><span class="enum">VK_PIPELINE_CREATE_DISPATCH_BASE_BIT                     </span>表示绑定计算管线后可以使用<a href="https://renderdoc.org/vkspec_chunked/chap30.html#vkCmdDispatchBase">vkCmdDispatchBase</a>(...)指令，仅用于计算管线</p></td>
+            <td><p><span class="enum">VK_PIPELINE_CREATE_DISPATCH_BASE_BIT                     </span>表示绑定计算管线后可以使用<a href="https://renderdoc.org/vkspec_chunked/chap31.html#vkCmdDispatchBase">vkCmdDispatchBase</a>(...)指令，仅用于计算管线</p></td>
         </tr>
         <tr>
             <td><p>1.3</p></td>
@@ -893,7 +894,7 @@
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap26.html#VkPipelineViewportStateCreateInfo">VkPipelineViewportStateCreateInfo</a> 的成员说明</p></th>
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap27.html#VkPipelineViewportStateCreateInfo">VkPipelineViewportStateCreateInfo</a> 的成员说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1003,7 +1004,7 @@
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap27.html#VkPipelineRasterizationStateCreateInfo">VkPipelineRasterizationStateCreateInfo</a> 的成员说明</p></th>
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap28.html#VkPipelineRasterizationStateCreateInfo">VkPipelineRasterizationStateCreateInfo</a> 的成员说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1091,7 +1092,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap27.html#VkPolygonMode">VkPolygonMode</a> 的枚举值</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap28.html#VkPolygonMode">VkPolygonMode</a> 的枚举值</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1124,7 +1125,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap27.html#VkCullModeFlagBits">VkCullModeFlagBits</a> 的枚举值</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap28.html#VkCullModeFlagBits">VkCullModeFlagBits</a> 的枚举值</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1158,7 +1159,7 @@
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap27.html#VkPipelineMultisampleStateCreateInfo">VkPipelineMultisampleStateCreateInfo</a> 的成员说明</p></th>
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap28.html#VkPipelineMultisampleStateCreateInfo">VkPipelineMultisampleStateCreateInfo</a> 的成员说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1229,7 +1230,7 @@
         <br>
         上述两个概念通常不需要区分，除非你想要使用着色器的副作用，比如写入storage缓冲区。
         <br>
-        你可以用如下GLSL代码进行验证，count_covered为count_notCovered为storage缓冲区中的变量，写入结束后在CPU侧读取其数值，若对不被覆盖的采样点不执行片段着色器，那么count_notCovered应该总是0：
+        你可以用如下GLSL代码进行验证，count_covered和count_notCovered为storage缓冲区中的变量，写入结束后在CPU侧读取其数值，若对不被覆盖的采样点不执行片段着色器，那么count_notCovered应该总是0：
         <br>
         <code><span class="kw">if</span> (gl_SampleMaskIn[0] == 1 << gl_SampleID) <span class="fn">atomicAdd</span>(count_covered, 1); <span class="kw">else</span> <span class="fn">atomicAdd</span>(count_notCovered, 1);</code>
         <br>
@@ -1239,16 +1240,18 @@
 <p>
     若alphaToCoverageEnable为<span class="mcr">VK_TRUE</span>，则会在执行片段着色器后，根据输出的各个采样点的透明度，生成一个遮罩与片段着色器后的coverage mask（应用可能发生的sample mask test及片段着色器中可能输出的gl_SampleMask后得到的结果）做位与，透明度到遮罩的转换是实现特定的，标准仅规定透明度为0时生成的遮罩为0。
     <br>
-    若alphaToOneEnable为<span class="mcr">VK_TRUE</span>，则会在执行片段着色器后，无视输出颜色的透明度，使得片段着色器输出到0号索引的色值的透明度为1（关于输出到0号索引，见<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#dual-source-blending">Dual-source Blending</a>），考虑到像素的颜色是采样点的颜色应用遮罩后取平均，这可以在alphaToCoverageEnable为<span class="mcr">VK_TRUE</span>时使像素的透明度不至于过低。
+    若alphaToOneEnable为<span class="mcr">VK_TRUE</span>，则会在执行片段着色器后，无视输出颜色的透明度，使得采样点的透明度为1，考虑到（多重采样后得到的）像素的颜色是采样点的颜色应用遮罩后取平均，这可以在alphaToCoverageEnable为<span class="mcr">VK_TRUE</span>时使像素的透明度不至于过低。
     <br>
     注意，虽然名称很相似，alphaToCoverageEnable影响coverage mask，而alphaToOneEnable影响透明度。Alpha to coverage的效果在alpha to one前应用，即alpha to one使得采样点透明度为1并不影响coverage mask。
+    <br>
+    alphaToCoverageEnable和alphaToOneEnable都只影响片段着色器输出到0号索引的色值，关于输出到0号索引，见<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#dual-source-blending">Dual-source Blending</a>。
 </p>
 <div class="admonition note">
     <p class="admonition-title">Note</p>
     <p>
         关于alpha to coverage的效果：
         <br>
-        即便你给所有采样点一个相同的透明度，且不做sample mask test，若透明度不是<code>整数/采样点个数</code>，最终呈现的图像中，各个像素点可能是不同的透明度。就我的Nvidia 1060 Max-Q显卡而言，图像整体算是均匀的，但细看会察觉到“棋盘格”或“网格”，类似“半调图案”的效果。
+        即便你给所有采样点一个相同的透明度，且不做sample mask test，若透明度不是<code>整数/采样点个数</code>，最终呈现的图像中，各个像素点可能是不同的透明度。就我的Nvidia 1060 Max-Q显卡而言，图像整体算是均匀的，但细看会察觉到“棋盘格”或“网格”，类似“半调图案”的效果。Vulkan标准中允许底层实现对不同坐标的片段采用不同的算法（<span class="ref">The algorithm <strong>may</strong> be different at different framebuffer coordinates.</span>）以规避一些图像瑕疵（artifact），在为特定平台开发时你可以考虑利用这一效果。
     </p>
 </div></section>
 <section id="vkpipelinedepthstencilstatecreateinfo">
@@ -1263,7 +1266,7 @@
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap28.html#VkPipelineDepthStencilStateCreateInfo">VkPipelineDepthStencilStateCreateInfo</a> 的成员说明</p></th>
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap29.html#VkPipelineDepthStencilStateCreateInfo">VkPipelineDepthStencilStateCreateInfo</a> 的成员说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1324,7 +1327,7 @@
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap28.html#VkStencilOpState">VkStencilOpState</a> 的成员说明</p></th>
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap29.html#VkStencilOpState">VkStencilOpState</a> 的成员说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1424,7 +1427,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap28.html#VkStencilOp">VkStencilOp</a> 的枚举值</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap29.html#VkStencilOp">VkStencilOp</a> 的枚举值</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1486,7 +1489,7 @@
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap29.html#VkPipelineColorBlendStateCreateInfo">VkPipelineColorBlendStateCreateInfo</a> 的成员说明</p></th>
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap30.html#VkPipelineColorBlendStateCreateInfo">VkPipelineColorBlendStateCreateInfo</a> 的成员说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1532,7 +1535,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap29.html#VkLogicOp">VkLogicOp</a> 的枚举值（记新生成片元的任一通道值为s，颜色附件中已有的对应通道值为d）</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap30.html#VkLogicOp">VkLogicOp</a> 的枚举值（记新生成片元的任一通道值为s，颜色附件中已有的对应通道值为d）</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1616,7 +1619,7 @@
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap29.html#VkPipelineColorBlendAttachmentState">VkPipelineColorBlendAttachmentState</a> 的成员说明</p></th>
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap30.html#VkPipelineColorBlendAttachmentState">VkPipelineColorBlendAttachmentState</a> 的成员说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1674,7 +1677,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap29.html#VkBlendOp">VkBlendOp</a> 的枚举值（记新生成片元的任一通道值为s，颜色附件中已有的对应通道值为d，混色因子分别为fs和fd）</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap30.html#VkBlendOp">VkBlendOp</a> 的枚举值（记新生成片元的任一通道值为s，颜色附件中已有的对应通道值为d，混色因子分别为fs和fd）</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1708,7 +1711,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap29.html#VkBlendFactor">VkBlendFactor</a> 的枚举值（记新生成片元的颜色值为s.rgba，另一混色来源的颜色值为s1.rgba，颜色附件中已有的颜色值为d.rgba）</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap30.html#VkBlendFactor">VkBlendFactor</a> 的枚举值（记新生成片元的颜色值为s.rgba，另一混色来源的颜色值为s1.rgba，颜色附件中已有的颜色值为d.rgba）</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1952,7 +1955,7 @@
     </li>
     <li>
         <p>
-            同在创建管线时指定的模板测试参数不同，<span class="enum">VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK</span>、<span class="enum">VK_DYNAMIC_STATE_STENCIL_WRITE_MASK</span>、<span class="enum">VK_DYNAMIC_STATE_STENCIL_REFERENCE</span>、<span class="enum">VK_DYNAMIC_STATE_STENCIL_OP</span>等动态状态指定的模板参数有两套，相关命令函数中具有类型为<a href="https://renderdoc.org/vkspec_chunked/chap28.html#VkStencilFaceFlagBits">VkStencilFaceFlagBits</a>的参数，使得你能为三角形正面和反面分别指定模板测试参数。
+            同在创建管线时指定的模板测试参数不同，<span class="enum">VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK</span>、<span class="enum">VK_DYNAMIC_STATE_STENCIL_WRITE_MASK</span>、<span class="enum">VK_DYNAMIC_STATE_STENCIL_REFERENCE</span>、<span class="enum">VK_DYNAMIC_STATE_STENCIL_OP</span>等动态状态指定的模板参数有两套，相关命令函数中具有类型为<a href="https://renderdoc.org/vkspec_chunked/chap29.html#VkStencilFaceFlagBits">VkStencilFaceFlagBits</a>的参数，使得你能为三角形正面和反面分别指定模板测试参数。
         </p>
     </li>
 </ul></section>

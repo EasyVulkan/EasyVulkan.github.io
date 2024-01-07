@@ -101,6 +101,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a></li>
 </ul>
 
         </div>
@@ -493,7 +494,7 @@ extensionNames = <span class="type">glfwGetRequiredInstanceExtensions</span>(&am
 </p><section id="id4">
 <h3>检查层是否可用<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
 <p>
-    用<a href="https://renderdoc.org/vkspec_chunked/chap40.html#vkEnumerateInstanceLayerProperties">vkEnumerateInstanceLayerProperties</a>(...)取得可用层的列表。
+    用<a href="https://renderdoc.org/vkspec_chunked/chap46.html#vkEnumerateInstanceLayerProperties">vkEnumerateInstanceLayerProperties</a>(...)取得可用层的列表。
 </p>
 <table class="docutils align-default">
     <colgroup>
@@ -502,7 +503,7 @@ extensionNames = <span class="type">glfwGetRequiredInstanceExtensions</span>(&am
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap40.html#vkEnumerateInstanceLayerProperties">vkEnumerateInstanceLayerProperties</a>(...) 的参数说明</p></th>
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap46.html#vkEnumerateInstanceLayerProperties">vkEnumerateInstanceLayerProperties</a>(...) 的参数说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -564,14 +565,14 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
 <ul>
     <li>
         <p>
-            两次调用<a href="https://renderdoc.org/vkspec_chunked/chap40.html#vkEnumerateInstanceLayerProperties">vkEnumerateInstanceLayerProperties</a>(...)，第一次取得layerCount，第二次取得layerCount个<span class="type">VkLayerProperties</span>，因此第二次调用该函数时若执行成功，必然只可能返回<span class="enum">VK_SUCCESS</span>，于是这里就只需要验证<span class="var">result</span>是否为<span class="enum">VK_SUCCESS</span>而不需要验证是否为<span class="enum">VK_INCOMPLETE</span>了。
+            两次调用<a href="https://renderdoc.org/vkspec_chunked/chap46.html#vkEnumerateInstanceLayerProperties">vkEnumerateInstanceLayerProperties</a>(...)，第一次取得layerCount，第二次取得layerCount个<span class="type">VkLayerProperties</span>，因此第二次调用该函数时若执行成功，必然只可能返回<span class="enum">VK_SUCCESS</span>，于是这里就只需要验证<span class="var">result</span>是否为<span class="enum">VK_SUCCESS</span>而不需要验证是否为<span class="enum">VK_INCOMPLETE</span>了。
         </p>
     </li>
 </ul></section>
 <section id="id5">
 <h3>检查实例级别扩展是否可用<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
 <p>
-    <a href="https://renderdoc.org/vkspec_chunked/chap40.html#vkEnumerateInstanceExtensionProperties">vkEnumerateInstanceExtensionProperties</a>(...)取得可用扩展的列表：
+    <a href="https://renderdoc.org/vkspec_chunked/chap46.html#vkEnumerateInstanceExtensionProperties">vkEnumerateInstanceExtensionProperties</a>(...)取得可用扩展的列表：
 </p>
 <table class="docutils align-default">
     <colgroup>
@@ -580,7 +581,7 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap40.html#vkEnumerateInstanceExtensionProperties">vkEnumerateInstanceExtensionProperties</a>(...) 的参数说明</p></th>
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap46.html#vkEnumerateInstanceExtensionProperties">vkEnumerateInstanceExtensionProperties</a>(...) 的参数说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -651,7 +652,7 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap45.html#vkCreateDebugUtilsMessengerEXT">vkCreateDebugUtilsMessengerEXT</a>(...) 的参数说明</p></th>
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap51.html#vkCreateDebugUtilsMessengerEXT">vkCreateDebugUtilsMessengerEXT</a>(...) 的参数说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -674,7 +675,7 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
     </tbody>
 </table>
 <p>
-    于是来看一下这个<a href="https://renderdoc.org/vkspec_chunked/chap45.html#VkDebugUtilsMessengerCreateInfoEXT">VkDebugUtilsMessengerCreateInfoEXT</a>：
+    于是来看一下这个<a href="https://renderdoc.org/vkspec_chunked/chap51.html#VkDebugUtilsMessengerCreateInfoEXT">VkDebugUtilsMessengerCreateInfoEXT</a>：
 </p>
 <table class="docutils align-default">
     <colgroup>
@@ -683,7 +684,7 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap45.html#VkDebugUtilsMessengerCreateInfoEXT">VkDebugUtilsMessengerCreateInfoEXT</a> 的成员说明</p></th>
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap51.html#VkDebugUtilsMessengerCreateInfoEXT">VkDebugUtilsMessengerCreateInfoEXT</a> 的成员说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -740,7 +741,7 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
     <thead>
         <tr class="row-odd">
             <th class="head" colspan="2"><p><span class="kw">typedef</span> <span class="type">VkBool32</span>
-            (<span class="mcr">VKAPI_PTR</span> <a href="https://renderdoc.org/vkspec_chunked/chap45.html#PFN_vkDebugUtilsMessengerCallbackEXT">PFN_vkDebugUtilsMessengerCallbackEXT</a>) 的参数说明</p></th>
+            (<span class="mcr">VKAPI_PTR</span> <a href="https://renderdoc.org/vkspec_chunked/chap51.html#PFN_vkDebugUtilsMessengerCallbackEXT">PFN_vkDebugUtilsMessengerCallbackEXT</a>) 的参数说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -770,7 +771,7 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
     </li>
     <li>
         <p>
-            这里对<a href="https://renderdoc.org/vkspec_chunked/chap45.html#VkDebugUtilsMessengerCallbackDataEXT">VkDebugUtilsMessengerCallbackDataEXT</a>不做详细展开，请自行点击超链接了解。
+            这里对<a href="https://renderdoc.org/vkspec_chunked/chap51.html#VkDebugUtilsMessengerCallbackDataEXT">VkDebugUtilsMessengerCallbackDataEXT</a>不做详细展开，请自行点击超链接了解。
         </p>
     </li>
 </ul>
@@ -788,7 +789,7 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
 };
 </pre>
 <p>
-    我让这个lambda表达式除了输出debug信息到控制台外啥都不干。然后来填写<a href="https://renderdoc.org/vkspec_chunked/chap45.html#VkDebugUtilsMessengerCreateInfoEXT">VkDebugUtilsMessengerCreateInfoEXT</a>：
+    我让这个lambda表达式除了输出debug信息到控制台外啥都不干。然后来填写<a href="https://renderdoc.org/vkspec_chunked/chap51.html#VkDebugUtilsMessengerCreateInfoEXT">VkDebugUtilsMessengerCreateInfoEXT</a>：
 </p>
 <pre class="code">
 <span class="type">VkDebugUtilsMessengerCreateInfoEXT</span> debugUtilsMessengerCreateInfo = {
@@ -811,7 +812,7 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
     </li>
 </ul>
 <p>
-    这之后就是获取并调用<a href="https://renderdoc.org/vkspec_chunked/chap45.html#vkCreateDebugUtilsMessengerEXT">vkCreateDebugUtilsMessengerEXT</a>(...)，整个<span class="fn">CreateDebugMessenger</span>(...)如下：
+    这之后就是获取并调用<a href="https://renderdoc.org/vkspec_chunked/chap51.html#vkCreateDebugUtilsMessengerEXT">vkCreateDebugUtilsMessengerEXT</a>(...)，整个<span class="fn">CreateDebugMessenger</span>(...)如下：
 </p>
 <pre class="code">
 <span class="type">VkResult</span> <span class="fn">CreateDebugMessenger</span>() {
@@ -849,7 +850,7 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
 <ul>
     <li>
         <p>
-            虽然在正确书写函数名字符串的情况下应当不可能，如果无法取得<a href="https://renderdoc.org/vkspec_chunked/chap45.html#vkCreateDebugUtilsMessengerEXT">vkCreateDebugUtilsMessengerEXT</a>(...)，返回<span class="enum">VK_RESULT_MAX_ENUM</span>，其值为<span class="mcr">INT32_MAX</span>。这并不是个有效的错误代码，正是因此才使用这个数值，一来因为<a href="https://renderdoc.org/vkspec_chunked/chap3.html#VkResult">VkResult</a>的枚举值中没有任何符合该种情况的返回值，二来这个数值不会跟任何Vulkan函数的返回值重合。注意，不要使用<span class="enum">VK_ERROR_UNKNOWN</span>，一些函数在失败时能返回这个数值。<strong>因没有合适的错误代码而返回<span class="enum">VK_RESULT_MAX_ENUM</span>的情况在这套教程中还会出现很多次。</strong>
+            虽然在正确书写函数名字符串的情况下应当不可能，如果无法取得<a href="https://renderdoc.org/vkspec_chunked/chap51.html#vkCreateDebugUtilsMessengerEXT">vkCreateDebugUtilsMessengerEXT</a>(...)，返回<span class="enum">VK_RESULT_MAX_ENUM</span>，其值为<span class="mcr">INT32_MAX</span>。这并不是个有效的错误代码，正是因此才使用这个数值，一来因为<a href="https://renderdoc.org/vkspec_chunked/chap3.html#VkResult">VkResult</a>的枚举值中没有任何符合该种情况的返回值，二来这个数值不会跟任何Vulkan函数的返回值重合。注意，不要使用<span class="enum">VK_ERROR_UNKNOWN</span>，一些函数在失败时能返回这个数值。<strong>因没有合适的错误代码而返回<span class="enum">VK_RESULT_MAX_ENUM</span>的情况在这套教程中还会出现很多次。</strong>
         </p>
     </li>
 </ul></section>
@@ -1109,7 +1110,7 @@ queueFamilyIndex_compute = ic;
 <ul>
     <li>
         <p>
-            用<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkGetPhysicalDeviceSurfaceSupportKHR">vkGetPhysicalDeviceSurfaceSupportKHR</a>(...)查询队列族是否支持将图像呈现到该surface，各个参数含义应该一目了然，在此不做赘述。
+            用<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkGetPhysicalDeviceSurfaceSupportKHR">vkGetPhysicalDeviceSurfaceSupportKHR</a>(...)查询队列族是否支持将图像呈现到该surface，各个参数含义应该一目了然，在此不做赘述。
         </p>
     </li>
     <li>
@@ -1400,7 +1401,7 @@ queueFamilyIndex_compute = ic;
     </li>
 </ul>
 <p>
-    接着用<a href="https://renderdoc.org/vkspec_chunked/chap41.html#vkGetPhysicalDeviceFeatures">vkGetPhysicalDeviceFeatures</a>(...)获取物理设备特性：
+    接着用<a href="https://renderdoc.org/vkspec_chunked/chap47.html#vkGetPhysicalDeviceFeatures">vkGetPhysicalDeviceFeatures</a>(...)获取物理设备特性：
 </p>
 <pre class="code">
 <span class="type">VkPhysicalDeviceFeatures</span> physicalDeviceFeatures;

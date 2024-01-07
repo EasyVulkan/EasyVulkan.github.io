@@ -106,6 +106,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a></li>
 </ul>
 
         </div>
@@ -524,9 +525,9 @@
 <p>
     <strong>情形1：在渲染循环中获取下一张交换连图像</strong>
     <br>
-    通过<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)获取图像，参见<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id3">获取交换链图像索引</a>，这个函数没有pNext参数。
+    通过<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)获取图像，参见<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id3">获取交换链图像索引</a>，这个函数没有pNext参数。
     <br>
-    Vulkan1.1中提供了<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkAcquireNextImage2KHR">vkAcquireNextImage2KHR</a>(...)，其参数之一为<a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkAcquireNextImageInfoKHR">VkAcquireNextImageInfoKHR</a>类型，该结构体中有pNext，但标准中规定其必须为<span class="kw">nullptr</span>（即目前该pNext无用处），因此在渲染循环中获取下一张交换连图像时，必须使用二值信号量。
+    Vulkan1.1中提供了<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImage2KHR">vkAcquireNextImage2KHR</a>(...)，其参数之一为<a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkAcquireNextImageInfoKHR">VkAcquireNextImageInfoKHR</a>类型，该结构体中有pNext，但标准中规定其必须为<span class="kw">nullptr</span>（即目前该pNext无用处），因此在渲染循环中获取下一张交换连图像时，必须使用二值信号量。
 </p>
 <p>
     <strong>情形2：提交命令缓冲区</strong>
@@ -537,9 +538,9 @@
 </p>
 <p>
     <strong>情形3：呈现图像</strong>
-    调用<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...)呈现图像，具体参见<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id5">呈现图像</a>。
+    调用<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...)呈现图像，具体参见<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id5">呈现图像</a>。
     <br>
-    标准中所规定的<a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkPresentInfoKHR">VkPresentInfoKHR</a>的pNext链中容许的结构体类型中，不包括<a href="https://renderdoc.org/vkspec_chunked/chap6.html#VkTimelineSemaphoreSubmitInfoKHR">VkTimelineSemaphoreSubmitInfoKHR</a>，因此呈现图像时只能等待二值信号量，但是可以在<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...)之前使用<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkWaitSemaphores">vkWaitSemaphores</a>(...)手动等待时间线信号量。
+    标准中所规定的<a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkPresentInfoKHR">VkPresentInfoKHR</a>的pNext链中容许的结构体类型中，不包括<a href="https://renderdoc.org/vkspec_chunked/chap6.html#VkTimelineSemaphoreSubmitInfoKHR">VkTimelineSemaphoreSubmitInfoKHR</a>，因此呈现图像时只能等待二值信号量，但是可以在<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...)之前使用<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkWaitSemaphores">vkWaitSemaphores</a>(...)手动等待时间线信号量。
 </p></section>
 <section id="id9">
 <h3>封装为semaphore类<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
@@ -828,7 +829,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkAccessFlags">VkAccessFlags</a> 的枚举值</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkAccessFlagBits">VkAccessFlagBits</a> 的枚举值</p></th>
         </tr>
     </thead>
     <tbody>
@@ -901,7 +902,7 @@
             <td><p><span class="enum">VK_ACCESS_MEMORY_READ_BIT                    </span>表示任何读取操作</p></td>
         </tr>
         <tr>
-            <td><p>1.0 + VK_KHR_swapchain</p></td>
+            <td><p>1.0</p></td>
             <td><p><span class="enum">VK_ACCESS_MEMORY_WRITE_BIT                   </span>表示任何写入操作</p></td>
         </tr>
     </tbody>

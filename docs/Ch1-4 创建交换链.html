@@ -101,6 +101,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a></li>
 </ul>
 
         </div>
@@ -131,7 +132,7 @@
 <section id="id1">
 <h2>交换链的创建信息<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
 <p>
-    用<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkCreateSwapchainKHR">vkCreateSwapchainKHR</a>(...)创建交换链：
+    用<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkCreateSwapchainKHR">vkCreateSwapchainKHR</a>(...)创建交换链：
 </p>
 <table class="docutils align-default">
     <colgroup>
@@ -140,7 +141,7 @@
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkCreateSwapchainKHR">vkCreateSwapchainKHR</a>(...) 的参数说明</p></th>
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkCreateSwapchainKHR">vkCreateSwapchainKHR</a>(...) 的参数说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -163,7 +164,7 @@
     </tbody>
 </table>
 <p>
-    然后来看下<a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkSwapchainCreateInfoKHR">VkSwapchainCreateInfoKHR</a>：
+    然后来看下<a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkSwapchainCreateInfoKHR">VkSwapchainCreateInfoKHR</a>：
 </p>
 <table class="docutils align-default">
     <colgroup>
@@ -172,7 +173,7 @@
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkSwapchainCreateInfoKHR">VkSwapchainCreateInfoKHR</a> 的成员说明</p></th>
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkSwapchainCreateInfoKHR">VkSwapchainCreateInfoKHR</a> 的成员说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -255,10 +256,10 @@
 </p><section id="vksurfacecapabilitieskhr">
 <h3>VkSurfaceCapabilitiesKHR相关的参数<a class="headerlink" href="#vksurfacecapabilitieskhr" title="Permalink to this heading"></a></h3>
 <p>
-    与<a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkSurfaceCapabilitiesKHR">VkSurfaceCapabilitiesKHR</a>相关的参数有：交换链图像的数量、尺寸、视点数、变换、透明通道的方式、图像的用途。
+    与<a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkSurfaceCapabilitiesKHR">VkSurfaceCapabilitiesKHR</a>相关的参数有：交换链图像的数量、尺寸、视点数、变换、透明通道的方式、图像的用途。
 </p>
 <p>
-    首先用<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkGetPhysicalDeviceSurfaceCapabilitiesKHR">vkGetPhysicalDeviceSurfaceCapabilitiesKHR</a>(...)获取window surface的<a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkSurfaceCapabilitiesKHR">VkSurfaceCapabilitiesKHR</a>：
+    首先用<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkGetPhysicalDeviceSurfaceCapabilitiesKHR">vkGetPhysicalDeviceSurfaceCapabilitiesKHR</a>(...)获取window surface的<a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkSurfaceCapabilitiesKHR">VkSurfaceCapabilitiesKHR</a>：
 </p>
 <pre class="code">
 <span class="type">VkSurfaceCapabilitiesKHR</span> surfaceCapabilities = {};
@@ -268,7 +269,7 @@
 }
 </pre>
 <p>
-    <a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkGetPhysicalDeviceSurfaceCapabilitiesKHR">vkGetPhysicalDeviceSurfaceCapabilitiesKHR</a>(...)各个参数的含义应当一目了然，来看一下<a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkSurfaceCapabilitiesKHR">VkSurfaceCapabilitiesKHR</a>：
+    <a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkGetPhysicalDeviceSurfaceCapabilitiesKHR">vkGetPhysicalDeviceSurfaceCapabilitiesKHR</a>(...)各个参数的含义应当一目了然，来看一下<a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkSurfaceCapabilitiesKHR">VkSurfaceCapabilitiesKHR</a>：
 </p>
 <table class="docutils align-default">
     <colgroup>
@@ -277,7 +278,7 @@
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkSurfaceCapabilitiesKHR">VkSurfaceCapabilitiesKHR</a> 的成员说明</p></th>
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkSurfaceCapabilitiesKHR">VkSurfaceCapabilitiesKHR</a> 的成员说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -341,7 +342,7 @@ swapchainCreateInfo.minImageCount = surfaceCapabilities.minImageCount + (surface
 <ul>
     <li>
         <p>
-            一般<a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkSurfaceCapabilitiesKHR">VkSurfaceCapabilitiesKHR</a>::minImageCount会是2，多一张图像可以实现三重缓冲。
+            一般<a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkSurfaceCapabilitiesKHR">VkSurfaceCapabilitiesKHR</a>::minImageCount会是2，多一张图像可以实现三重缓冲。
         </p>
     </li>
 </ul>
@@ -433,7 +434,7 @@ swapchainCreateInfo.preTransform = = surfaceCapabilities.currentTransform;
 <div class="admonition note">
     <p class="admonition-title">Note</p>
     <p>
-        如果你想使用透明背景的窗口，这里提示一种<span class="strong">不具有普遍性</span>的实现方法：
+        如果你想使用透明背景的窗口，这里提示一种<strong>不具有普遍性</strong>的实现方法：
         <br>
         1.在初始化GLFW后，调用<a href="https://www.glfw.org/docs/latest/group__init.html#ga110fd1d3f0412822b4f1908c026f724a">glfwWindowHint</a>(<span class="mcr">GLFW_TRANSPARENT_FRAMEBUFFER</span>, <span class="kw">true</span>)，在Windows上，GLFW对此的底层实现是使用dwmapi中的<a href="https://docs.microsoft.com/en-us/windows/win32/api/dwmapi/nf-dwmapi-dwmenableblurbehindwindow">DwmEnableBlurBehindWindow</a>(...)，你也可以自行调用该函数。
         <br>
@@ -463,7 +464,7 @@ swapchainCreateInfo.imageUsage = <span class="enum">VK_IMAGE_USAGE_COLOR_ATTACHM
 <section id="id2">
 <h3>指定图像格式<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
 <p>
-    首先来填充vulkan::<span class="type">graphicsBase</span>::<span class="fn">GetSurfaceFormats</span>()，用<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkGetPhysicalDeviceSurfaceFormatsKHR">vkGetPhysicalDeviceSurfaceFormatsKHR</a>(...)来取得surface的可用图像格式及色彩空间：
+    首先来填充vulkan::<span class="type">graphicsBase</span>::<span class="fn">GetSurfaceFormats</span>()，用<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkGetPhysicalDeviceSurfaceFormatsKHR">vkGetPhysicalDeviceSurfaceFormatsKHR</a>(...)来取得surface的可用图像格式及色彩空间：
 </p>
 <pre class="code">
 <span class="type">VkResult</span> <span class="fn">GetSurfaceFormats</span>() {
@@ -483,7 +484,7 @@ swapchainCreateInfo.imageUsage = <span class="enum">VK_IMAGE_USAGE_COLOR_ATTACHM
 }
 </pre>
 <p>
-    <a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkSurfaceFormatKHR">VkSurfaceFormatKHR</a>代表了一组可用的图像格式和色彩空间的组合：
+    <a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkSurfaceFormatKHR">VkSurfaceFormatKHR</a>代表了一组可用的图像格式和色彩空间的组合：
 </p>
 <table class="docutils align-default">
     <colgroup>
@@ -492,7 +493,7 @@ swapchainCreateInfo.imageUsage = <span class="enum">VK_IMAGE_USAGE_COLOR_ATTACHM
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkSurfaceFormatKHR">VkSurfaceFormatKHR</a> 的成员说明</p></th>
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkSurfaceFormatKHR">VkSurfaceFormatKHR</a> 的成员说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -599,10 +600,10 @@ swapchainCreateInfo.imageUsage = <span class="enum">VK_IMAGE_USAGE_COLOR_ATTACHM
     <p>
         一些早期的Vulkan教程中提到：
         <br>
-        如果<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkGetPhysicalDeviceSurfaceFormatsKHR">vkGetPhysicalDeviceSurfaceFormatsKHR</a>(...)返回的<a href="https://renderdoc.org/vkspec_chunked/chap33.html#VkSurfaceFormatKHR">VkSurfaceFormatKHR</a>数组只有一个元素且其成员变量format的数值为<span class="enum">VK_FORMAT_UNDEFINED</span>时，表示surface没有偏好的图像格式，此时可以使用任何格式。
+        如果<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkGetPhysicalDeviceSurfaceFormatsKHR">vkGetPhysicalDeviceSurfaceFormatsKHR</a>(...)返回的<a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkSurfaceFormatKHR">VkSurfaceFormatKHR</a>数组只有一个元素且其成员变量format的数值为<span class="enum">VK_FORMAT_UNDEFINED</span>时，表示surface没有偏好的图像格式，此时可以使用任何格式。
         <br>
         然而，早在Vulkan1.0.14标准中便已明确：
-        <span class="ref">pSurfaceFormats <span class="strong">must</span> not contain an entry whose value for format is VK_FORMAT_UNDEFINED.</span>
+        <span class="ref">pSurfaceFormats <strong>must</strong> not contain an entry whose value for format is VK_FORMAT_UNDEFINED.</span>
         <br>
         因此哪怕对于Vulkan1.0而言（不关心patch版本号），前述说法也是不成立的。
     </p>
@@ -610,7 +611,7 @@ swapchainCreateInfo.imageUsage = <span class="enum">VK_IMAGE_USAGE_COLOR_ATTACHM
 <section id="id3">
 <h3>指定呈现模式<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
 <p>
-    首先用<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkGetPhysicalDeviceSurfacePresentModesKHR">vkGetPhysicalDeviceSurfacePresentModesKHR</a>(...)获取surface支持的呈现模式：
+    首先用<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkGetPhysicalDeviceSurfacePresentModesKHR">vkGetPhysicalDeviceSurfacePresentModesKHR</a>(...)获取surface支持的呈现模式：
 </p>
 <pre class="code">
 <span class="type">uint32_t</span> surfacePresentModeCount;
@@ -702,7 +703,7 @@ swapchainCreateInfo.clipped = <span class="mcr">VK_TRUE</span>;
 </pre><section id="id6">
 <h3>获取交换链图像<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
 <p>
-    继续填充vulkan::<span class="type">graphicsBase</span>::<span class="fn">CreateSwapchain_Internal</span>()，用<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkGetSwapchainImagesKHR">vkGetSwapchainImagesKHR</a>(...)获取交换链图像：
+    继续填充vulkan::<span class="type">graphicsBase</span>::<span class="fn">CreateSwapchain_Internal</span>()，用<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkGetSwapchainImagesKHR">vkGetSwapchainImagesKHR</a>(...)获取交换链图像：
 </p>
 <pre class="code">
 <span class="type">uint32_t</span> swapchainImageCount;
@@ -1153,7 +1154,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
 <ul>
     <li>
         <p>
-            用<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkDestroySwapchainKHR">vkDestroySwapchainKHR</a>(...)销毁交换链，用法与<a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkDestroyImageView">vkDestroyImageView</a>(...)类似，在此不做赘述。
+            用<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkDestroySwapchainKHR">vkDestroySwapchainKHR</a>(...)销毁交换链，用法与<a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkDestroyImageView">vkDestroyImageView</a>(...)类似，在此不做赘述。
         </p>
     </li>
 </ul>
@@ -1275,7 +1276,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
 }
 </pre>
 <p>
-    用<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkDestroySurfaceKHR">vkDestroySurfaceKHR</a>(...)销毁surface：
+    用<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkDestroySurfaceKHR">vkDestroySurfaceKHR</a>(...)销毁surface：
 </p>
 <table class="docutils align-default">
     <colgroup>
@@ -1284,7 +1285,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkDestroySurfaceKHR">vkDestroySurfaceKHR</a>(...) 的参数说明</p></th>
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkDestroySurfaceKHR">vkDestroySurfaceKHR</a>(...) 的参数说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1307,8 +1308,8 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
     <span class="fn">vkDestroySurfaceKHR</span>(instance, surface, <span class="kw">nullptr</span>);
 </pre>
 <p>
-    销毁debug messenger的函数<a href="https://renderdoc.org/vkspec_chunked/chap45.html#vkDestroyDebugUtilsMessengerEXT">vkDestroyDebugUtilsMessengerEXT</a>(...)同
-    <a href="https://renderdoc.org/vkspec_chunked/chap45.html#vkCreateDebugUtilsMessengerEXT">vkCreateDebugUtilsMessengerEXT</a>(...)一样，都需要用<a href="https://renderdoc.org/vkspec_chunked/chap4.html#vkGetInstanceProcAddr">vkGetInstanceProcAddr</a>(...)取得，<a href="https://renderdoc.org/vkspec_chunked/chap45.html#vkDestroyDebugUtilsMessengerEXT">vkDestroyDebugUtilsMessengerEXT</a>(...)用法与<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkDestroySurfaceKHR">vkDestroySurfaceKHR</a>(...)类似，不做赘述：
+    销毁debug messenger的函数<a href="https://renderdoc.org/vkspec_chunked/chap51.html#vkDestroyDebugUtilsMessengerEXT">vkDestroyDebugUtilsMessengerEXT</a>(...)同
+    <a href="https://renderdoc.org/vkspec_chunked/chap51.html#vkCreateDebugUtilsMessengerEXT">vkCreateDebugUtilsMessengerEXT</a>(...)一样，都需要用<a href="https://renderdoc.org/vkspec_chunked/chap4.html#vkGetInstanceProcAddr">vkGetInstanceProcAddr</a>(...)取得，<a href="https://renderdoc.org/vkspec_chunked/chap51.html#vkDestroyDebugUtilsMessengerEXT">vkDestroyDebugUtilsMessengerEXT</a>(...)用法与<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkDestroySurfaceKHR">vkDestroySurfaceKHR</a>(...)类似，不做赘述：
 </p>
 <pre class="code">
 <span class="kw">if</span> (debugUtilsMessenger) {

@@ -394,7 +394,7 @@ namespace vulkan {
 				CreateDebugMessenger();
 			return VK_SUCCESS;
 		}
-		result_t CheckInstanceLayers(std::span<const char*> layersToCheck) const {
+		result_t CheckInstanceLayers(arrayRef<const char*> layersToCheck) const {
 			uint32_t layerCount;
 			std::vector<VkLayerProperties> availableLayers;
 			if (VkResult result = vkEnumerateInstanceLayerProperties(&layerCount, nullptr)) {
@@ -423,7 +423,7 @@ namespace vulkan {
 					i = nullptr;
 			return VK_SUCCESS;
 		}
-		result_t CheckInstanceExtensions(std::span<const char*> extensionsToCheck, const char* layerName) const {
+		result_t CheckInstanceExtensions(arrayRef<const char*> extensionsToCheck, const char* layerName) const {
 			uint32_t extensionCount;
 			std::vector<VkExtensionProperties> availableExtensions;
 			if (VkResult result = vkEnumerateInstanceExtensionProperties(layerName, &extensionCount, nullptr)) {
@@ -576,7 +576,36 @@ namespace vulkan {
 				i();
 			return VK_SUCCESS;
 		}
-		result_t CheckDeviceExtensions(std::span<const char*> extensionsToCheck, const char* layerName = nullptr) const {
+		result_t CheckDeviceExtensions(arrayRef<const char*> extensionsToCheck, const char* layerName = nullptr) const {
+			uint32_t extensionCount;
+			std::vector<VkExtensionProperties> availableExtensions;
+			if (VkResult result = vkEnumerateDeviceExtensionProperties(physicalDevice, layerName, &extensionCount, nullptr)) {
+				layerName ?
+					outStream << std::format("[ graphicsBase ] ERROR\nFailed to get the count of device extensions!\nLayer name:{}\n", layerName) :
+					outStream << std::format("[ graphicsBase ] ERROR\nFailed to get the count of device extensions!\n");
+				return result;
+			}
+			if (extensionCount) {
+				availableExtensions.resize(extensionCount);
+				if (VkResult result = vkEnumerateDeviceExtensionProperties(physicalDevice, layerName, &extensionCount, availableExtensions.data())) {
+					outStream << std::format("[ graphicsBase ] ERROR\nFailed to enumerate device extension properties!\nError code: {}\n", int32_t(result));
+					return result;
+				}
+				for (auto& i : extensionsToCheck) {
+					bool found = false;
+					for (auto& j : availableExtensions)
+						if (!strcmp(i, j.extensionName)) {
+							found = true;
+							break;
+						}
+					if (!found)
+						i = nullptr;//If a required extension isn't available, set it to nullptr
+				}
+			}
+			else
+				for (auto& i : extensionsToCheck)
+					i = nullptr;
+			return VK_SUCCESS;
 		}
 		void DeviceExtensions(const std::vector<const char*>& extensionNames) {
 			deviceExtensions = extensionNames;
@@ -910,8 +939,7 @@ namespace vulkan {
 		VkSemaphore handle = VK_NULL_HANDLE;
 	public:
 		semaphore() {
-			if (graphicsBase::Base().Device())
-				Create();
+			Create();
 		}
 		semaphore(VkSemaphoreCreateInfo& createInfo) {
 			Create(createInfo);
@@ -938,8 +966,7 @@ namespace vulkan {
 		VkFence handle = VK_NULL_HANDLE;
 	public:
 		fence(bool signaled = false) {
-			if (graphicsBase::Base().Device())
-				Create(signaled);
+			Create(signaled);
 		}
 		fence(VkFenceCreateInfo& createInfo) {
 			Create(createInfo);

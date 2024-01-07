@@ -94,6 +94,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a></li>
 </ul>
 
         </div>
@@ -381,7 +382,7 @@
 </p>
 <img alt="_images/ch3-7-2.png" src="_images/ch3-7-2.png">
 <p>
-    上图中实现了基于图像的BRDF光照（mipmap非原图的缩小版本，而是积分得到的环境贴图），下半张图像应用了<code>mipLodBias = 0.2f</code>。
+    图中实现了基于图像的BRDF光照（这意味着被采样的mipmap非原图的缩小版本，而是对原图积分得到的环境贴图，没听说过的话，你姑且可以粗略地理解为是原图的模糊版本），下半张图像应用了<code>mipLodBias = 0.2f</code>。
     <br>
     这里的LOD等级为在着色器中显式指定，与粗糙度存在映射关系，应用0.2的mipLodBias相当于将粗糙度一概增加一些。
     <br>
@@ -504,7 +505,7 @@
 <ul>
     <li>
         <p>
-            “OPAQUE”和“WHITE”仅说明a和rgb分量上的数值是否为1，而数值为1不代表100%不透明或颜色饱和。通常而言，如果你的图像附件为UNORM/SRGB格式，那么你的片段着色器输出的浮点数色值的有效范围在0.f~1.f之间，因此，处理整数格式色值的时候，会在着色器中除以255.f，这种情况下，上文的<span class="enum">VK_BORDER_COLOR_INT_OPAQUE_WHITE</span>对应的色值就是<code>{ 1/255.f, 1/255.f, 1/255.f, 1/255.f }</code>。基于这一点而言，如果图像的image view的格式中带有UINT或SINT字样，你难以通过<span class="enum">VK_BORDER_COLOR_INT_OPAQUE_BLACK</span>或<span class="enum">VK_BORDER_COLOR_INT_OPAQUE_WHITE</span>实现黑色或白色边框色（而带FLOAT字样的因底层数据非整形同样不必考虑）。
+            “OPAQUE”和“WHITE”仅说明a和rgb分量上的数值是否为1，而数值为1不代表100%不透明或颜色饱和。通常而言，如果你的图像附件为UNORM/SRGB格式，那么你的片段着色器输出的浮点数色值的有效范围在0.f~1.f之间，因此，处理整数格式色值的时候，会在着色器中除以255.f，这种情况下，上文的<span class="enum">VK_BORDER_COLOR_INT_OPAQUE_WHITE</span>对应的色值就是<code>{ 1/255.f, 1/255.f, 1/255.f, 1/255.f }</code>。基于这一点而言，如果图像的image view的格式中带有UINT或SINT字样，你<strong>难以</strong>通过<span class="enum">VK_BORDER_COLOR_INT_OPAQUE_BLACK</span>或<span class="enum">VK_BORDER_COLOR_INT_OPAQUE_WHITE</span>实现黑色或白色边框色（而带FLOAT字样的因底层数据非整形同样不必考虑）。
         </p>
     </li>
 </ul>

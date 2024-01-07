@@ -95,6 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a></li>
 </ul>
 
         </div>
@@ -329,7 +330,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;
 <p>
     在创建了glfw窗口和Vulkan实例后，用<a href="https://www.glfw.org/docs/3.3/group__vulkan.html#ga1a24536bec3f80b08ead18e28e6ae965">glfwCreateWindowSurface</a>(...)创建window surface。这一步会写在之前的<span class="type">InitializeWindow</span>(...)中。
     <br>
-    如果你是自行用WindowsAPI创建的窗口，用<a href="https://renderdoc.org/vkspec_chunked/chap33.html#vkCreateWin32SurfaceKHR">vkCreateWin32SurfaceKHR</a>(...)来创建窗口window surface，具体参考示例代码中的<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch8/WinGeneral.hpp">WinGeneral.hpp</a>。
+    如果你是自行用WindowsAPI创建的窗口，用<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkCreateWin32SurfaceKHR">vkCreateWin32SurfaceKHR</a>(...)来创建窗口window surface，具体参考示例代码中的<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch8/WinGeneral.hpp">WinGeneral.hpp</a>。
 </p>
 <p>
     创建了window surface后当然需要将其存起来以备使用，于是在<span class="type">graphicsBase</span>中加入以下内容：
