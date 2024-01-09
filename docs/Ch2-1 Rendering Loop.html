@@ -913,7 +913,7 @@
     .image = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapchainImage</span>(currentImageIndex),
     .subresourceRange = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, 1 }
 };
-<span class="fn">vkCmdPipelineBarrier</span>(commandBuffer, <span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>, <span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT<span>, 0,
+<span class="fn">vkCmdPipelineBarrier</span>(commandBuffer, <span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>, <span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span>, 0,
     0, <span class="kw">nullptr</span>, 0, <span class="kw">nullptr</span>, 1, &amp;imageMemoryBarrier_g2p_acquire);
 </pre>
 <ul>

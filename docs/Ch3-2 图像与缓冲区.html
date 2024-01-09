@@ -333,7 +333,7 @@ size = (size - offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCohe
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkMapMemory">vkMapMemory</a>(...) 的参数说明</p></th>
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkInvalidateMappedMemoryRanges">vkInvalidateMappedMemoryRanges</a>(...) 的参数说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -411,7 +411,7 @@ size = (size - offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCohe
     </tbody>
 </table>
 <p>
-    如果内存属性中不具有<span class="enum">VK_MEMORY_PROPERTY_HOST_COHERENT_BIT</span>，使用<a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkFlushMappedMemoryRanges">vkInvalidateMappedMemoryRanges</a>(...)确保CPU侧对该片内存的写入结果可以被物理设备正确读取
+    如果内存属性中不具有<span class="enum">VK_MEMORY_PROPERTY_HOST_COHERENT_BIT</span>，使用<a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkFlushMappedMemoryRanges">vkFlushMappedMemoryRanges</a>(...)确保CPU侧对该片内存的写入结果可以被物理设备正确读取
 </p>
 <table class="docutils align-default">
     <colgroup>
@@ -420,7 +420,7 @@ size = (size - offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCohe
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkFlushMappedMemoryRanges">vkInvalidateMappedMemoryRanges</a>(...) 的参数说明</p></th>
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkFlushMappedMemoryRanges">vkFlushMappedMemoryRanges</a>(...) 的参数说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1355,7 +1355,7 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
     </tbody>
 </table>
 <p>
-    关于图像的内存布局，参见<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#id12">图像内存屏障</a>。
+    关于图像的内存布局，参见<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#id13">图像内存屏障</a>。
 </p></section>
 <section id="id11">
 <h3>获取图像的内存分配要求<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>

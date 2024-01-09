@@ -358,7 +358,7 @@
     </li>
 </ul>
 <p>
-    关于内存布局，参见<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#id12">图像内存屏障</a>。关于内存布局在渲染通道中的转换，见下一段。
+    关于内存布局，参见<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#id13">图像内存屏障</a>。关于内存布局在渲染通道中的转换，见下一段。
 </p></section>
 <section id="id3">
 <h4>子通道<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h4>
@@ -558,6 +558,7 @@
     <br>
     2.确保第一同步域中srcAccessMask所注明的任何写入操作的结果，能被第二同步域中dstAccessMask所注明的任何读取操作正确读取，这构成一种<strong>内存依赖</strong>。
     <br>
+    关于执行依赖和内存依赖的更多说明，见<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#id10">内存屏障的作用</a>。
 </p>
 <div class="admonition note">
     <p class="admonition-title">Note</p>
@@ -599,7 +600,7 @@
         </tr>
         <tr>
             <td><p>1.1</p></td>
-            <td><p><span class="enum">VK_DEPENDENCY_VIEW_LOCAL_BIT   </span>表示一个自依赖的子通道使用多个视点</p></td>
+            <td><p><span class="enum">VK_DEPENDENCY_VIEW_LOCAL_BIT   </span>表示多视点的子通道dstSubpass中的每个视点依赖于srcSubpass中的单个（而不是所有或任意多个）视点，这称为view-local</p></td>
         </tr>
     </tbody>
 </table>

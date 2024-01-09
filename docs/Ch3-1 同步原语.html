@@ -74,9 +74,10 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#pipeline-barrier">Pipeline Barrier</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id10">全局内存屏障</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id11">缓冲区内存屏障</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id12">图像内存屏障</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">内存屏障的作用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">全局内存屏障</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">缓冲区内存屏障</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">图像内存屏障</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#event">Event</a></li>
@@ -143,7 +144,7 @@
     <br>
     3.信号量，Vulkan1.0以来的二值信号量用于队列之间（可为队列与其自身）同步
     <br>
-    4.内存屏障，用于执行命令时的同步，同步范围通常为同一队列中的命令之间，也可为不同队列的命令间、或命令与外部操作间
+    4.管线屏障（及可附带的内存屏障），用于执行命令时的同步，同步范围通常为同一队列中的命令之间，也可为不同队列的命令间、或命令与外部操作间
     <br>
     5.子通道依赖，相当于在渲染通道的子通道开始和结束时自动执行的内存屏障，见<a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html#id4">子通道依赖</a>。
     <br>
@@ -584,11 +585,11 @@
 <section id="pipeline-barrier">
 <h2>Pipeline Barrier<a class="headerlink" href="#pipeline-barrier" title="Permalink to this heading"></a></h2>
 <p>
-    内存屏障（pipeline barrier）是作为命令录制在命令缓冲区中的同步方式，使用内存屏障不需要创建Vulkan对象。
+    管线屏障（pipeline barrier）是作为命令录制在命令缓冲区中的同步方式，使用管线屏障不需要创建Vulkan对象。
     <br>
-    虽然内存屏障是作为命令录制的，但是其同步范围不只是包含该内存屏障的命令缓冲区，执行该命令缓冲区的队列上的所有命令都能被纳入同步范围。
+    虽然管线屏障是作为命令录制的，但是其同步范围不只是包含该管线屏障的命令缓冲区，执行该命令缓冲区的队列上的所有命令都能被纳入同步范围。
     <br>
-    自Vulkan1.0以来，可以通过<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkCmdPipelineBarrier">vkCmdPipelineBarrier</a>(...)设置内存屏障。从Vulkan1.3开始（在之前版本中也可以通过扩展使用），也可以使用<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkCmdPipelineBarrier2">vkCmdPipelineBarrier2</a>(...)。
+    自Vulkan1.0以来，可以通过<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkCmdPipelineBarrier">vkCmdPipelineBarrier</a>(...)设置管线屏障。从Vulkan1.3开始（在之前版本中也可以通过扩展使用），也可以使用<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkCmdPipelineBarrier2">vkCmdPipelineBarrier2</a>(...)。
     <br>
     本套教程就Vulkan1.0版本中的用法进行解说：
 </p>
@@ -663,7 +664,7 @@
         </tr>
         <tr>
             <td><p>1.0</p></td>
-            <td><p><span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT                    </span>表示管线的起始</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT                    </span>表示各类命令的起始</p></td>
         </tr>
         <tr>
             <td><p>1.0</p></td>
@@ -715,7 +716,7 @@
         </tr>
         <tr>
             <td><p>1.0</p></td>
-            <td><p><span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT                 </span>表示管线的底部</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT                 </span>表示各类命令的结束</p></td>
         </tr>
         <tr>
             <td><p>1.0</p></td>
@@ -761,15 +762,15 @@
     <tbody>
         <tr>
             <td><p>1.0</p></td>
-            <td><p><span class="enum">VK_DEPENDENCY_BY_REGION_BIT    </span>表示该内存屏障所定义的依赖是framebuffer-local的</p></td>
+            <td><p><span class="enum">VK_DEPENDENCY_BY_REGION_BIT    </span>表示该管线屏障所定义的依赖是framebuffer-local的</p></td>
         </tr>
         <tr>
             <td><p>1.1</p></td>
-            <td><p><span class="enum">VK_DEPENDENCY_DEVICE_GROUP_BIT </span>表示该内存屏障所定义的依赖涉及到多个物理设备</p></td>
+            <td><p><span class="enum">VK_DEPENDENCY_DEVICE_GROUP_BIT </span>表示该管线屏障所定义的依赖涉及到多个物理设备</p></td>
         </tr>
         <tr>
             <td><p>1.1</p></td>
-            <td><p><span class="enum">VK_DEPENDENCY_VIEW_LOCAL_BIT   </span>表示一个自依赖的子通道使用多个视点（仅适用于在渲染通道内使用的内存屏障）</p></td>
+            <td><p><span class="enum">VK_DEPENDENCY_VIEW_LOCAL_BIT   </span>简短说明见下方链接，对于管线屏障，仅适用于在渲染通道内使用的管线屏障</p></td>
         </tr>
     </tbody>
 </table>
@@ -783,14 +784,67 @@
 <p>
     不考虑各个内存屏障结构体（或者说若memoryBarrierCount、bufferMemoryBarrierCount、imageMemoryBarrierCount皆为0），那么<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkCmdPipelineBarrier">vkCmdPipelineBarrier</a>(...)的效果是：
     <br>
-    在执行该命令的队列中，于该命令前（即按提交和录制顺序先于该命令）的命令中由srcStageMask注明的阶段，在该命令后的命令中由dstStageMask注明的阶段前完成，这构成一种<strong>执行依赖</strong>。
+    在执行该命令的队列中，于该命令前（即按提交和录制顺序先于该管线屏障命令）的命令中由srcStageMask注明的阶段，在该命令后的命令中由dstStageMask注明的阶段前完成，这意味着管线屏障的作用之一是满足<strong>执行依赖</strong>。简而言之，管线屏障<strong>注明其前后的命令在执行时，有哪些阶段不能重叠</strong>。
+    <br>
+    你能在<a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a>找到解说较为详细的使用例。
 </p>
 <p>
-    在渲染通道中使用内存屏障时，必须在一个自依赖的子通道中使用，且由同步域（srcStageMask、dstStageMask）和访问域（srcAccessMask、dstAccessMask）指定的同步范围必须是子通道自依赖中同步范围的子集。
+    在渲染通道中使用管线屏障时，必须在一个自依赖的子通道中使用，且由srcStageMask、dstStageMask（见后文内存屏障）和srcAccessMask、dstAccessMask指定的同步范围必须是子通道自依赖中同步范围的子集，framebuffer-local和view-local与否（由dependencyFlags注明）也必须与子通道依赖一致（<a href="https://renderdoc.org/vkspec_chunked/chap7.html#VUID-vkCmdPipelineBarrier-None-07889">出处</a>，如我阅读理解有误请指出）。
 </p><section id="id10">
-<h3>全局内存屏障<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
+<h3>内存屏障的作用<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
 <p>
-    全局内存屏障相当简单，它作用于所有资源（缓冲区/图像），仅指定访问域，确保在内存屏障前的命令中srcStageMask注明的阶段中srcAccessMask注明的写入操作的结果，能被内存屏障后的命令中dstStageMask注明的阶段中dstAccessMask注明的任何读取操作正确读取，构成一种<strong>内存依赖</strong>。
+    后述的三种内存屏障都有满足<strong>内存依赖</strong>（memory dependency）的作用，即确保可获性（availability）和可见性（visibility）。
+    <br>
+    需要先提一下：<a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkMemoryBarrier">VkMemoryBarrier</a>、<a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkBufferMemoryBarrier">VkBufferMemoryBarrier</a>、<a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkImageMemoryBarrier">VkImageMemoryBarrier</a>，都有srcAccessMask和dstAccessMask这俩成员。
+</p>
+<p>
+    所谓可获性，指的是资源<strong>能被读写</strong>，内存屏障确保资源在其之后的命令中由dstStageMask注明的阶段中dstAccessMask注明的操作可以访问资源。
+    <br>
+    可见性指的是资源的内容<strong>能被正确读取</strong>，内存屏障确保在其之前的命令中srcStageMask注明的阶段中srcAccessMask注明的<strong>写入操作</strong>的结果，能被内存屏障后的命令中dstStageMask注明的阶段中dstAccessMask注明的<strong>读取操作</strong>正确读取。
+<p>
+<p>
+    可获性和可见性可以分别通过两个内存屏障来确保，即使用两次内存屏障，前一次的srcAccessMask注明写操作，dstAccessMask为0（仅确保可获性），后一次的srcAccessMask为0，dstAccessMask非0（使得dstAccessMask注明的操作获得资源可见性）。你能在 TODO Ch7-6 找到使用例。
+</p>
+<div class="admonition note">
+    <p class="admonition-title">Note</p>
+    <p>
+        可以在srcAccessMask中填入诸如<span class="enum">VK_ACCESS_COLOR_ATTACHMENT_READ_BIT</span>之类的读操作，但没意义。要确保先前的读操作已结束，正确填写srcStageMask便已足够。
+    </p>
+</div>
+<p>
+    内存屏障并非确保可获性和可见性的唯一方式（因而你不必因为知道了这俩概念而过分注意和担心），比如：
+</p>
+<ul>
+    <li>
+        <p>
+            子通道依赖。
+        </p>
+    </li>
+    <li>
+        <p>
+            <a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkQueueSubmit">vkQueueSubmit</a>(...)能确保早前CPU侧的写入在GPU侧可见（<a href="https://renderdoc.org/vkspec_chunked/chap7.html#synchronization-host-access-types">官方标准中的说明见此处的Note</a>）。
+        </p>
+    </li>
+    <li>
+        <p>
+            置位信号量能确保资源在同一队列族的队列间的可获性，等待信号量能确保可见性（从<a href="https://renderdoc.org/vkspec_chunked/chap7.html#synchronization-semaphores-signaling">官方标准中关于置位和等待信号量的说明</a>推理可得）。但是不适用于不同队列族间（需要用内存屏障做<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id8">队列族所有权转移</a>）。
+        </p>
+    </li>
+    <li>
+        <p>
+            置位栅栏能确保资源在CPU侧的可获性，但资源得有<span class="enum">VK_MEMORY_PROPERTY_HOST_COHERENT_BIT</span>内存属性才可见，否则得调用函数手动确保可见性，如<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html#id3">映射内存区</a>所言（<a href="https://renderdoc.org/vkspec_chunked/chap7.html#synchronization-fences-waiting">官方标准中的说明见此处的Note</a>）。
+        </p>
+    </li>
+    <li>
+        <p>
+            呈现图像时使用的<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...)会确保交换链图像对呈现引擎可见。
+        </p>
+    </li>
+</ul></section>
+<section id="id11">
+<h3>全局内存屏障<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>
+<p>
+    全局内存屏障相当简单，它作用于所有资源（缓冲区/图像），仅指定访问域。
 </p>
 <table class="docutils align-default">
     <colgroup>
@@ -910,14 +964,19 @@
 <ul>
     <li>
         <p>
-            关于各个管线阶段可以发生哪些访问操作，请参考<a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkAccessFlagBits">官方文档</a>中的 Table 4. Supported access types。
+            关于各个管线阶段可以发生哪些访问操作，请参考<a href="https://renderdoc.org/vkspec_chunked/chap7.html#synchronization-access-types-supported">官方文档</a>中的 Table 4. Supported access types。
+        </p>
+    </li>
+    <li>
+        <p>
+            当srcStageMask为<span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>或<span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span>时，srcAccessMask必须为0（<span class="enum">VK_ACCESS_NONE</span>），dstStageMask和dstAccessMask也是同理。
         </p>
     </li>
 </ul></section>
-<section id="id11">
-<h3>缓冲区内存屏障<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>
+<section id="id12">
+<h3>缓冲区内存屏障<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h3>
 <p>
-    缓冲区内存屏障作用于特定缓冲区的指定资源范围，除了设置内存依赖外，它还能进行资源的队列族所有权转移。
+    缓冲区内存屏障作用于特定缓冲区的指定资源范围，相比全局内存屏障，它还能进行资源的队列族所有权转移。
 </p>
 <table class="docutils align-default">
     <colgroup>
@@ -975,10 +1034,12 @@
         </p>
     </li>
 </ul></section>
-<section id="id12">
-<h3>图像内存屏障<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h3>
+<section id="id13">
+<h3>图像内存屏障<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h3>
 <p>
-    图像内存屏障作用于特定图像的指定资源范围，除了设置内存依赖外、进行资源的队列族所有权转移外，它还能转换图像的内存布局。
+    图像内存屏障作用于特定图像的指定资源范围，相比缓冲区内存屏障，它还能转换图像的内存布局。
+    <br>
+    图像内存布局的转换发生在可获后、可见前。
 </p>
 <table class="docutils align-default">
     <colgroup>
@@ -1164,52 +1225,13 @@
         </tr>
     </tbody>
 </table>
-<table class="docutils align-default">
-    <colgroup>
-        <col>
-        <col>
-    </colgroup>
-    <thead>
-        <tr class="row-odd">
-            <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkImageAspectFlagBits">VkImageAspectFlagBits</a> 的枚举值</p></th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td><p>1.3</p></td>
-            <td><p><span class="enum">VK_IMAGE_ASPECT_NONE         </span>表示不使用任何层面</p></td>
-        </tr>
-        <tr>
-            <td><p>1.0</p></td>
-            <td><p><span class="enum">VK_IMAGE_ASPECT_COLOR_BIT    </span>表示颜色层面</p></td>
-        </tr>
-        <tr>
-            <td><p>1.0</p></td>
-            <td><p><span class="enum">VK_IMAGE_ASPECT_DEPTH_BIT    </span>表示深度层面</p></td>
-        </tr>
-        <tr>
-            <td><p>1.0</p></td>
-            <td><p><span class="enum">VK_IMAGE_ASPECT_STENCIL_BIT  </span>表示模板层面</p></td>
-        </tr>
-        <tr>
-            <td><p>1.0</p></td>
-            <td><p><span class="enum">VK_IMAGE_ASPECT_METADATA_BIT </span>表示元数据层面（用于稀疏绑定）</p></td>
-        </tr>
-        <tr>
-            <td><p>1.1</p></td>
-            <td><p><span class="enum">VK_IMAGE_ASPECT_PLANE_0_BIT  </span>表示多层面（multi-planar）图像格式的0号平面</p></td>
-        </tr>
-        <tr>
-            <td><p>1.1</p></td>
-            <td><p><span class="enum">VK_IMAGE_ASPECT_PLANE_1_BIT  </span>表示多层面（multi-planar）图像格式的1号平面</p></td>
-        </tr>
-        <tr>
-            <td><p>1.1</p></td>
-            <td><p><span class="enum">VK_IMAGE_ASPECT_PLANE_2_BIT  </span>表示多层面（multi-planar）图像格式的2号平面</p></td>
-        </tr>
-    </tbody>
-</table></section>
+<ul>
+    <li>
+        <p>
+            <span class="type">VkImageSubresourceRange的</span>解说见<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html#image-view">Image View</a>
+        </p>
+    </li>
+</ul></section>
 </section>
 <section id="event">
 <h2>Event<a class="headerlink" href="#event" title="Permalink to this heading"></a></h2>

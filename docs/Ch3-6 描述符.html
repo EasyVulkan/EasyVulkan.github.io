@@ -210,7 +210,7 @@
 <ul>
     <li>
         <p>
-            在<strong>写入</strong>描述符时，可以指定uniform缓冲区和storage缓冲区的offset，而动态uniform缓冲区和动态storage缓冲区是在此基础上，在<strong>绑定</strong>时，可以指定offset的缓冲区，换言之多个具有同类数据的uniform/storage缓冲区可以被放进单个动态uniform/storage缓冲区中。
+            在<strong>写入</strong>描述符时，可以指定uniform缓冲区和storage缓冲区的offset，而动态uniform缓冲区和动态storage缓冲区是在此基础上，在<strong>绑定</strong>时，可以再多指定一个offset的缓冲区。这意味着，你可以将多个具有同类数据的uniform/storage缓冲区放进单个动态uniform/storage缓冲区中，然后在绑定时指定不同的offset来使用。
         </p>
     </li>
     <li>
