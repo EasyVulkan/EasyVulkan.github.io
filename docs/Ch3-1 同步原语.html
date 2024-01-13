@@ -789,7 +789,7 @@
     你能在<a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a>找到解说较为详细的使用例。
 </p>
 <p>
-    在渲染通道中使用管线屏障时，必须在一个自依赖的子通道中使用，且由srcStageMask、dstStageMask（见后文内存屏障）和srcAccessMask、dstAccessMask指定的同步范围必须是子通道自依赖中同步范围的子集，framebuffer-local和view-local与否（由dependencyFlags注明）也必须与子通道依赖一致（<a href="https://renderdoc.org/vkspec_chunked/chap7.html#VUID-vkCmdPipelineBarrier-None-07889">出处</a>，如我阅读理解有误请指出）。
+    在渲染通道中使用管线屏障时，必须在一个自依赖的子通道中使用，且由srcStageMask、dstStageMask（见后文内存屏障）和srcAccessMask、dstAccessMask指定的同步范围必须是子通道自依赖中同步范围的子集，framebuffer-local和view-local与否（由dependencyFlags注明）也必须与子通道依赖一致（<a href="https://renderdoc.org/vkspec_chunked/chap7.html#VUID-vkCmdPipelineBarrier-None-07889">官方标准出处见此</a>，如我阅读理解有误请指出）。
 </p><section id="id10">
 <h3>内存屏障的作用<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
 <p>
@@ -964,7 +964,7 @@
 <ul>
     <li>
         <p>
-            关于各个管线阶段可以发生哪些访问操作，请参考<a href="https://renderdoc.org/vkspec_chunked/chap7.html#synchronization-access-types-supported">官方文档</a>中的 Table 4. Supported access types。
+            关于各个管线阶段可以发生哪些访问操作，请参考官方文档中的<a href="https://renderdoc.org/vkspec_chunked/chap7.html#synchronization-access-types-supported">Table 4. Supported access types</a>。
         </p>
     </li>
     <li>

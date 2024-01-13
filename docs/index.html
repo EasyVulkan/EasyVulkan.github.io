@@ -262,70 +262,103 @@
 </section>
 <section id="id4">
 <h2>更新履历<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<p>2024.01.13</p>
+<ul>
+    <li>
+        <p>
+            <a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a> 完成，同时修正了先前（在完成Ch7-5前便已上传的该节的示例）代码中的一些错误。
+        </p>
+    </li>
+</ul>
 <p>2024.01.09</p>
 <ul>
     <li>
-        详细说明了内存依赖：<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#id10">内存屏障的作用</a>。
+        <p>
+            详细说明了内存依赖：<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#id10">内存屏障的作用</a>。
+        </p>
     </li>
     <li>
-        改正了<span class="enum">VK_DEPENDENCY_VIEW_LOCAL_BIT</span>的简短说明
-    </li>
-    <li>
-        Ch7-5 还剩一半。
+        <p>
+            改正了<span class="enum">VK_DEPENDENCY_VIEW_LOCAL_BIT</span>的简短说明
+        </p>
     </li>
 </ul>
 <p>2024.01.07</p>
 <ul>
     <li>
-        根据Vulkan标准更新后的章节划分，修正了到renderdoc的超链接。
+        <p>
+            根据Vulkan标准更新后的章节划分，修正了到renderdoc的超链接。
+        </p>
     </li>
     <li>
-        略微增加了一些说明。
+        <p>
+            略微增加了一些说明。
+        </p>
     </li>
     <li>
-        改正一些typo。连代码里都有，但是没人反馈，o(╥﹏╥)o。
+        <p>
+            改正一些typo。连代码里都有，但是没人反馈，o(╥﹏╥)o。
+        </p>
     </li>
 </ul>
 <p>2023.10.13</p>
 <ul>
     <li>
-        新增<a class="reference internal" href="Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html">Ch3-7 采样器</a>。
+        <p>
+            新增<a class="reference internal" href="Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html">Ch3-7 采样器</a>。
+        </p>
     </li>
 </ul>
 <p>2023.03.14</p>
 <ul>
     <li>
-        修正几处笔误。
+        <p>
+            修正几处笔误。
+        </p>
     </li>
 </ul>
 <p>2023.01.11</p>
 <ul>
     <li>
-        修改了一些函数名和类名。
+        <p>
+            修改了一些函数名和类名。
+        </p>
     </li>
     <li>
-        示例代码中，增加了一些<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch7/EasyVKStart.h#L53">数学函数</a>备用。
+        <p>
+            示例代码中，增加了一些<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch7/EasyVKStart.h#L53">数学函数</a>备用。
+        </p>
     </li>
     <li>
-        删了个在参数中间省略默认参数<span class="var">renderArea</span>的函数<span class="type">renderPass</span>::<span class="fn">CmdBegin</span>(...)←这种不良习惯容易导致Bug！并相应修改代码。
+        <p>
+            删了个在参数中间省略默认参数<span class="var">renderArea</span>的函数<span class="type">renderPass</span>::<span class="fn">CmdBegin</span>(...)←这种不良习惯容易导致Bug！并相应修改代码。
+        </p>
     </li>
     <li>
-        Ch1-4<a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html#id11">最后</a>应该要更新<span class="fn">TerminateWindow</span>()，<a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html#id9">若需要重建逻辑设备</a>末尾应该要向<span class="type">graphicsBase</span>::<span class="fn">CreateDevice</span>()增加一小段执行回调函数的代码，原本忘记了现在补上。在<a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html#id8">创建和销毁交换链时的回调函数</a>末尾添加了关于使用range-based for循环执行回调函数的注释。
+        <p>
+            Ch1-4<a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html#id11">最后</a>应该要更新<span class="fn">TerminateWindow</span>()，<a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html#id9">若需要重建逻辑设备</a>末尾应该要向<span class="type">graphicsBase</span>::<span class="fn">CreateDevice</span>()增加一小段执行回调函数的代码，原本忘记了现在补上。在<a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html#id8">创建和销毁交换链时的回调函数</a>末尾添加了关于使用range-based for循环执行回调函数的注释。
+        </p>
     </li>
     <li>
-        Ch7的示例代码中增加<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch7/EasyVulkan.hpp#L73">用于快速显示启动画面的函数BootScreen()</a>（因为后续没多少要初始化的东西，没阻塞所以会一闪而过，不是bug）及<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch7/Ch7-5.hpp">Ch7-5的示例HPP</a>，以及<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch7/VkBase+.h#L456">2D贴图、2D贴图数组、立方体贴图的封装</a>，最近忙疯了+没人看+没人反馈，不怎么想更教程，有条件的自己啃吧。
+        <p>
+            Ch7的示例代码中增加<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch7/EasyVulkan.hpp#L73">用于快速显示启动画面的函数BootScreen()</a>（因为后续没多少要初始化的东西，没阻塞所以会一闪而过，不是bug）及<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch7/Ch7-5.hpp">Ch7-5的示例HPP</a>，以及<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch7/VkBase+.h#L456">2D贴图、2D贴图数组、立方体贴图的封装</a>，最近忙疯了+没人看+没人反馈，不怎么想更教程，有条件的自己啃吧。
+        </p>
     </li>
 </ul>
 <p>2022.11.30</p>
 <ul>
     <li>
-        新增关于线性图像中填充字节的说明，见<a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html#staging-buffer">stagingBuffer</a>的部分（哇块一周过去了完全不想更新的章节呢）。
+        <p>
+            新增关于线性图像中填充字节的说明，见<a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html#staging-buffer">stagingBuffer</a>的部分。
+        </p>
     </li>
 </ul>
 <p>2022.11.24</p>
 <ul>
     <li>
-        基础部分重写完毕（其实老早写好了，但因为没人催，懒得检查也懒得写示例，毕竟自己写的文章看了也不会有长进）。
+        <p>
+            基础部分重写完毕。
+        </p>
     </li>
 </ul></section>
 <section id="id5">
