@@ -85,14 +85,16 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-3 初识Push Constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识Uniform缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-6 使用贴图</a></li>
 </ul>
 
         </div>
@@ -150,7 +152,7 @@
     <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
         <span class="kw">return</span> -1;
 
-    <span class="type">fence</span> fence(<span class="kw">true</span>);
+    <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
     <span class="type">semaphore</span> semaphore_imageIsAvailable;
     <span class="type">semaphore</span> semaphore_renderingIsOver;
 
@@ -216,12 +218,12 @@
     <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
         <span class="kw">return</span> -1;
 
-    <span class="type">fence</span> fence(<span class="kw">true</span>);
+    <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
     <span class="type">semaphore</span> semaphore_imageIsAvailable;
     <span class="type">semaphore</span> semaphore_renderingIsOver;
 
     <span class="type">commandBuffer</span> commandBuffer;
-    <span class="type">commandPool</span> commandPool(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>());
+    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
     commandPool.<span class="type">AllocateBuffers</span>(commandBuffer);
 
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
@@ -360,12 +362,12 @@
     <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
         <span class="kw">return</span> -1;
 
-    <span class="type">fence</span> fence(<span class="kw">true</span>);
+    <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
     <span class="type">semaphore</span> semaphore_imageIsAvailable;
     <span class="type">semaphore</span> semaphore_renderingIsOver;
 
     <span class="type">commandBuffer</span> commandBuffer;
-    <span class="type">commandPool</span> commandPool(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>());
+    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
     commandPool.<span class="type">AllocateBuffers</span>(commandBuffer);
 
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
@@ -390,12 +392,12 @@
     <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
         <span class="kw">return</span> -1;
 
-    <span class="type">fence</span> fence(<span class="kw">true</span>);
+    <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
     <span class="type">semaphore</span> semaphore_imageIsAvailable;
     <span class="type">semaphore</span> semaphore_renderingIsOver;
 
     <span class="type">commandBuffer</span> commandBuffer;
-    <span class="type">commandPool</span> commandPool(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>());
+    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
     commandPool.<span class="type">AllocateBuffers</span>(commandBuffer);
 
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
@@ -432,6 +434,7 @@
 <pre class="code">
 <span class="kw">public</span>:
 <span class="cmt">//该函数用于将命令缓冲区提交到用于图形的队列</span>
+<span class="cmt">//该函数用于将只包含数据转移命令的命令缓冲区提交到用于图形的队列，因此不需要使用信号量</span>
 <span class="type">result_t</span> <span class="fn">SubmitCommandBuffer_Graphics</span>(<span class="type">VkSubmitInfo</span>&amp; submitInfo, <span class="type">VkFence</span> fence = <span class="mcr">VK_NULL_HANDLE</span>) <span class="kw">const</span> {
     submitInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_SUBMIT_INFO</span>;
     <span class="type">VkResult</span> result = vkQueueSubmit(queue_graphics, 1, &amp;submitInfo, fence);
@@ -456,6 +459,14 @@
         submitInfo.pSignalSemaphores = &amp;semaphore_renderingIsOver;
     <span class="kw">return</span> <span class="fn">SubmitCommandBuffer_Graphics</span>(submitInfo, fence);
 }
+<span class="cmt">//该函数用于将命令缓冲区提交到用于图形的队列，且只使用栅栏的常见情形</span>
+<span class="type">result_t</span> <span class="fn">SubmitCommandBuffer_Graphics</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkFence</span> fence = <span class="mcr">VK_NULL_HANDLE</span>) <span class="kw">const</span> {
+    <span class="type">VkSubmitInfo</span> submitInfo = {
+        .commandBufferCount = 1,
+        .pCommandBuffers = &amp;commandBuffer
+    };
+    <span class="kw">return</span> <span class="fn">SubmitCommandBuffer_Graphics</span>(submitInfo, fence);
+}
 <span class="cmt">//该函数用于将命令缓冲区提交到用于计算的队列</span>
 <span class="type">result_t</span> <span class="fn">SubmitCommandBuffer_Compute</span>(<span class="type">VkSubmitInfo</span>&amp; submitInfo, <span class="type">VkFence</span> fence = <span class="mcr">VK_NULL_HANDLE</span>) <span class="kw">const</span> {
     submitInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_SUBMIT_INFO</span>;
@@ -472,14 +483,6 @@
     };
     <span class="kw">return</span> <span class="fn">SubmitCommandBuffer_Compute</span>(submitInfo, fence);
 }
-<span class="cmt">//该函数用于将只包含数据转移命令的命令缓冲区提交到用于图形的队列，因此不需要使用信号量</span>
-<span class="type">result_t</span> <span class="fn">SubmitCommandBuffer_Transfer</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkFence</span> fence = <span class="mcr">VK_NULL_HANDLE</span>) <span class="kw">const</span> {
-    <span class="type">VkSubmitInfo</span> submitInfo = {
-        .commandBufferCount = 1,
-        .pCommandBuffers = &amp;commandBuffer
-    };
-    <span class="kw">return</span> <span class="fn">SubmitCommandBuffer_Graphics</span>(submitInfo, fence);
-}
 </pre>
 <ul>
     <li>
@@ -489,7 +492,7 @@
     </li>
     <li>
         <p>
-            包含图形命令的命令缓冲区可能不带任何信号量（在渲染循环之外完全有理由这么做），这种情况我会在代码中写<code><span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, 0, 0, fence)</code>这样的代码，而<span class="fn">SubmitCommandBuffer_Transfer</span>(...)会在今后的示例代码中专用于提交只包含数据传送命令的命令缓冲区。尽管<span class="fn">SubmitCommandBuffer_Transfer</span>(...)同样是将缓冲区提交到图形队列，对其函数名做区分是为了便于查找并能在阅读代码时一目了然地区分所提交命令缓冲区的用途。
+            包含图形命令的命令缓冲区可能不带任何信号量（在渲染循环之外完全有理由这么做），而只包含数据转移命令的话通常也不会带任何信号量（就使用情形而言多是在“加载”这一环节中），数据转移命令可以被提交给图形或计算队列。
         </p>
     </li>
 </ul>
@@ -504,12 +507,12 @@
     <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
         <span class="kw">return</span> -1;
 
-    <span class="type">fence</span> fence(<span class="kw">true</span>);
+    <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
     <span class="type">semaphore</span> semaphore_imageIsAvailable;
     <span class="type">semaphore</span> semaphore_renderingIsOver;
 
     <span class="type">commandBuffer</span> commandBuffer;
-    <span class="type">commandPool</span> commandPool(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>());
+    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
     commandPool.<span class="type">AllocateBuffers</span>(commandBuffer);
 
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
@@ -644,12 +647,12 @@
     <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
         <span class="kw">return</span> -1;
 
-    <span class="type">fence</span> fence(<span class="kw">true</span>);
+    <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
     <span class="type">semaphore</span> semaphore_imageIsAvailable;
     <span class="type">semaphore</span> semaphore_renderingIsOver;
 
     <span class="type">commandBuffer</span> commandBuffer;
-    <span class="type">commandPool</span> commandPool(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>());
+    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
     commandPool.<span class="type">AllocateBuffers</span>(commandBuffer);
 
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
@@ -749,7 +752,7 @@
         <span class="type">commandBuffer</span> commandBuffer;
     };
     std::<span class="type">vector</span>&lt;<span class="type">preFrameObjects_t</span>&gt; preFrameObjects(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageCount</span>());
-    <span class="type">commandPool</span> commandPool(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>());
+    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
     commandPool.<span class="type">AllocateBuffers</span>({ commandBuffers.<span class="fn">data</span>(), <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageCount</span>() });
     <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : perFrameObjects)
     commandPool.<span class="fn">AllocateBuffers</span>(i.commandBuffer);
@@ -798,7 +801,7 @@
         <span class="type">commandBuffer</span> commandBuffer;
     };
     std::<span class="type">vector</span>&lt;<span class="type">preFrameObjects_t</span>&gt; preFrameObjects(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageCount</span>());
-    <span class="type">commandPool</span> commandPool(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>());
+    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
     commandPool.<span class="type">AllocateBuffers</span>({ commandBuffers.<span class="fn">data</span>(), <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageCount</span>() });
     <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : perFrameObjects)
     commandPool.<span class="fn">AllocateBuffers</span>(i.commandBuffer);
@@ -854,7 +857,7 @@
     这套教程中不会做队列族所有权转移（日后更新说不准），因为实际上你总能找到一个同时支持图形、呈现、计算的队列族（虽然我不敢100%肯定，但至少用来开发图形程序的PC不应该糟糕到连这都无法满足），仅在这里简单演示一下，从用于图形的队列将所有权转移到用于呈现的队列。
 </p>
 <p>
-    通常而言，出于对资源访问效率的考虑，资源在某一时刻只应被单一队列族独占访问，当资源要被另一队列族访问时，有必要事先显式地告知Vulkan。
+    通常而言，出于对资源访问效率的考虑，资源在某一时刻只应被单一队列族独占访问，并在创建资源时将sharingMode指定为<span class="enum">VK_SHARING_MODE_EXCLUSIVE</span>。当这样的资源要被另一队列族访问时，应当事先显式地告知Vulkan。
     <br>
     队列所有权转移的必要性为同时满足以下两点：
     <br>
@@ -933,14 +936,14 @@
     <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
         <span class="kw">return</span> -1;
 
-    <span class="type">fence</span> fence(<span class="kw">true</span>);
+    <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
     <span class="type">semaphore</span> semaphore_imageIsAvailable;
     <span class="type">semaphore</span> semaphore_renderingIsOver;
     <span class="type">semaphore</span> semaphore_ownershipIsTransfered;
 
     <span class="type">commandBuffer</span> commandBuffer_graphics;
     <span class="type">commandBuffer</span> commandBuffer_presentation;
-    <span class="type">commandPool</span> commandPool_graphics(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>());
+    <span class="type">commandPool</span> commandPool_graphics(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
     <span class="type">commandPool</span> commandPool_presentation(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>());
     commandPool_graphics.<span class="type">AllocateBuffers</span>(commandBuffer_graphics);
     commandPool_presentation.<span class="type">AllocateBuffers</span>(commandBuffer_presentation);
@@ -1059,13 +1062,13 @@
     <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
         <span class="kw">return</span> -1;
 
-    <span class="type">fence</span> fence(<span class="kw">true</span>);
+    <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
     <span class="type">semaphore</span> semaphore_imageIsAvailable;
     <span class="type">semaphore</span> semaphore_ownershipIsTransfered;
 
     <span class="type">commandBuffer</span> commandBuffer_graphics;
     <span class="type">commandBuffer</span> commandBuffer_presentation;
-    <span class="type">commandPool</span> commandPool_graphics(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>());
+    <span class="type">commandPool</span> commandPool_graphics(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
     <span class="type">commandPool</span> commandPool_presentation(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>());
     commandPool_graphics.<span class="type">AllocateBuffers</span>(commandBuffer_graphics);
     commandPool_presentation.<span class="type">AllocateBuffers</span>(commandBuffer_presentation);

@@ -20,7 +20,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="prev" title="Ch7-4 初识uniform缓冲区" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html" /> 
+    <link rel="next" title="Ch7-6 使用贴图" href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html" />
+    <link rel="prev" title="Ch7-4 初识Uniform缓冲区" href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -74,13 +75,14 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-3 初识Push Constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识Uniform缓冲区</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Ch7-5 拷贝图像到屏幕</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id1">将图像拷贝到交换链图像的流程</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id2">读取图像数据</a></li>
@@ -95,6 +97,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#blit">从暂存图像blit到交换链图像</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-6 使用贴图</a></li>
 </ul>
 
         </div>
@@ -129,6 +132,8 @@
     由于到成功渲染出图像为止有诸多步骤，本套教程中分两步走。
     <br>
     本节学习如何使用stb_image读取图像数据、如何将图像数据拷贝到设备内存，以及blit命令。
+    <br>
+    阅读本节前请确保已阅读<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html#image">Ch3-2中关于image的说明</a>。
 </p><section id="id1">
 <h2>将图像拷贝到交换链图像的流程<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
 <p>
@@ -403,7 +408,9 @@
 </pre>
 <ul>
     <li>
-        这里为了让代码不太难看，使用了<span class="fn">Between_Closed</span>(...)来替代先前相同的代码逻辑，该函数见示例代码中的<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch7/EasyVKStart.h#L71">EasyVKStart.h</a>。
+        <p>
+            这里为了让代码不太难看，使用了<span class="fn">Between_Closed</span>(...)来替代先前相同的代码逻辑，该函数见示例代码中的<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch7/EasyVKStart.h#L71">EasyVKStart.h</a>。
+        </p>
     </li>
 </ul>
 <p>
@@ -421,11 +428,11 @@
 <span class="kw">public</span>:
     [[nodiscard]]
     <span class="kw">static</span> std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; <span class="fn">LoadFile</span>(<span class="kw">const char</span>* filepath, <span class="type">VkExtent2D</span>&amp; extent, <span class="type">formatInfo</span> requiredFormatInfo) {
-        <span class="kw">return</span> <span class="kw">LoadFile_Internal</span>(filepath, 0, extent, requiredFormatInfo);
+        <span class="kw">return</span> <span class="fn">LoadFile_Internal</span>(filepath, 0, extent, requiredFormatInfo);
     }
     [[nodiscard]]
     <span class="kw">static</span> std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; <span class="fn">LoadFile</span>(<span class="kw">const</span> <span class="type">uint8_t</span>* fileBinaries, <span class="type">size_t</span> fileSize, <span class="type">VkExtent2D</span>&amp; extent, <span class="type">formatInfo</span> requiredFormatInfo) {
-        <span class="kw">return</span> <span class="kw">LoadFile_Internal</span>(fileBinaries, fileSize, extent, requiredFormatInfo);
+        <span class="kw">return</span> <span class="fn">LoadFile_Internal</span>(fileBinaries, fileSize, extent, requiredFormatInfo);
     }
 };
 </pre>
@@ -1455,7 +1462,7 @@ commandBuffer.<span class="fn">End</span>();
         imageFormat != <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat;
     <span class="type">imageMemory</span> imageMemory;
     <span class="kw">if</span> (blit) {
-        <span class="type">VkImage</span> image = <span class="type">stagingBuffer</span>::<span class="fn">AliasedImage2d_MainThread</span>    (imageFormat, imageExtent);
+        <span class="type">VkImage</span> image = <span class="type">stagingBuffer</span>::<span class="fn">AliasedImage2d_MainThread</span>(imageFormat, imageExtent);
         <span class="kw">if</span> (image) {
             <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
                 <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
@@ -1561,7 +1568,8 @@ commandBuffer.<span class="fn">End</span>();
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-left" title="Ch7-4 初识uniform缓冲区" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-left" title="Ch7-4 初识Uniform缓冲区" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html" class="btn btn-neutral float-right" title="Ch7-6 使用贴图" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

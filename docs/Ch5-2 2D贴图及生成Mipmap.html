@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch5-2 2D贴图及生成Mipmap &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ch7-1 初识顶点缓冲区" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html" />
+    <link rel="prev" title="Ch5-1 各种缓冲区" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html">Ch3-7 采样器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch5-2 2D贴图及生成Mipmap</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">贴图基类</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#d">2D贴图</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mipmap">生成mipmap</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-3 初识Push Constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识Uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-6 使用贴图</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch5-2 2D贴图及生成Mipmap</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch5-2-2dmipmap">
+<h1>Ch5-2 2D贴图及生成Mipmap<a class="headerlink" href="#ch5-2-2dmipmap" title="Permalink to this heading"></a></h1>
+<p>
+    请搭配<a class="reference internal" href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-6 使用贴图</a>食用本节。
+</p><section id="id1">
+<h2>贴图基类<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>
+    先前已在<a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html#id2">读取图像数据</a>中创建了<span class="type">texture</span>类，这个类将会是之后一系列贴图类的基类。
+    <br>
+    之后每个贴图类，都会需要一个<span class="type">imageView</span>对象和<span class="type">imageMemory</span>对象，先定义相应的成员变量、Getter和创建函数：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">texture</span> {
+<span class="kw">protected</span>:
+    <span class="type">imageView</span> imageView;
+    <span class="type">imageMemory</span> imageMemory;
+    <span class="cmt">//--------------------</span>
+    <span class="fn">texture</span>() = <span class="kw">default</span>;
+    <span class="cmt">//该函数用于方便地创建imageMemory</span>
+    <span class="kw">void</span> <span class="fn">CreateImageMemory</span>(<span class="type">VkImageType</span> imageType, <span class="type">VkFormat</span> format, <span class="type">VkExtent3D</span> extent, <span class="type">uint32_t</span> mipLevelCount, <span class="type">uint32_t</span> arrayLayerCount, <span class="type">VkImageCreateFlags</span> flags = 0) {
+        <span class="type">VkImageCreateInfo</span> imageCreateInfo = {
+            .flags = flags,
+            .imageType = imageType,
+            .format = format,
+            .extent = extent,
+            .mipLevels = mipLevelCount,
+            .arrayLayers = arrayLayerCount,
+            .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+            .usage = <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span> | <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span> | <span class="enum">VK_IMAGE_USAGE_SAMPLED_BIT</span>
+        };
+        imageMemory.<span class="fn">Create</span>(imageCreateInfo, <span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>);
+    }
+    <span class="cmt">//该函数用于方便地创建imageView</span>
+    <span class="kw">void</span> <span class="fn">CreateImageView</span>(<span class="type">VkImageViewType</span> viewType, <span class="type">VkFormat</span> format, <span class="type">uint32_t</span> mipLevelCount, <span class="type">uint32_t</span> arrayLayerCount, <span class="type">VkImageViewCreateFlags</span> flags = 0) {
+        imageView.<span class="fn">Create</span>(imageMemory.<span class="fn">Image</span>(), viewType, format, { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, mipLevelCount, 0, arrayLayerCount }, flags);
+    }
+    <span class="cmt">//Static Function</span>
+    <span class="kw">static</span> std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; <span class="fn">LoadFile_Internal</span>(<span class="kw">const auto</span>* address, <span class="type">size_t</span> fileSize, <span class="type">VkExtent2D</span>&amp; extent, <span class="type">formatInfo</span> requiredFormatInfo) {
+        <span class="cmt">/.../</span>
+    }
+<span class="kw">public</span>:
+    <span class="cmt">//Getter</span>
+    <span class="type">VkImageView</span> <span class="fn">ImageView</span>() <span class="kw">const</span> { <span class="kw">return</span> imageView; }
+    <span class="type">VkImage</span> <span class="fn">Image</span>() <span class="kw">const</span> { <span class="kw">return</span> imageMemory.<span class="fn">Image</span>(); }
+    <span class="kw">const</span> <span class="type">VkImageView</span>* <span class="fn">AddressOfImageView</span>() <span class="kw">const</span> { <span class="kw">return</span> imageView.<span class="fn">Address</span>(); }
+    <span class="kw">const</span> <span class="type">VkImage</span>* <span class="fn">AddressOfImage</span>() <span class="kw">const</span> { <span class="kw">return</span> imageMemory.<span class="fn">AddressOfImage</span>(); }
+    <span class="cmt">//Const Function</span>
+    <span class="type">VkDescriptorImageInfo</span> <span class="fn">DescriptorImageInfo</span>(<span class="type">VkSampler</span> sampler) <span class="kw">const</span> {
+        <span class="kw">return</span> { sampler, imageView, <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span> };
+    }
+    <span class="cmt">//Static Function</span>
+    [[nodiscard]]
+    <span class="kw">static</span> std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; <span class="fn">LoadFile</span>(<span class="kw">const char</span>* filepath, <span class="type">VkExtent2D</span>&amp; extent, <span class="type">formatInfo</span> requiredFormatInfo) {
+        <span class="kw">return</span> <span class="fn">LoadFile_Internal</span>(filepath, 0, extent, requiredFormatInfo);
+    }
+    [[nodiscard]]
+    <span class="kw">static</span> std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; <span class="fn">LoadFile</span>(<span class="kw">const</span> <span class="type">uint8_t</span>* fileBinaries, <span class="type">size_t</span> fileSize, <span class="type">VkExtent2D</span>&amp; extent, <span class="type">formatInfo</span> requiredFormatInfo) {
+        <span class="kw">return</span> <span class="fn">LoadFile_Internal</span>(fileBinaries, fileSize, extent, requiredFormatInfo);
+    }
+    <span class="kw">static</span> <span class="type">uint32_t</span> <span class="fn">CalculateMipLevelCount</span>(<span class="type">VkExtent2D</span> extent) {
+        <span class="cmt">/*涉及生成mipmap，待填充*/</span>
+    }
+    <span class="kw">static void</span> <span class="fn">CopyBlitAndGenerateMipmap2d</span>(<span class="type">VkBuffer</span> buffer_copyFrom, <span class="type">VkImage</span> image_copyTo, <span class="type">VkImage</span> image_blitTo, <span class="type">VkExtent2D</span> imageExtent,
+        <span class="type">uint32_t</span> mipLevelCount = 1, <span class="type">uint32_t</span> layerCount = 1, <span class="type">VkFilter</span> minFilter = <span class="enum">VK_FILTER_LINEAR</span>) {
+        <span class="cmt">/*涉及生成mipmap，待填充*/</span>
+    }
+    <span class="kw">static void</span> <span class="fn">BlitAndGenerateMipmap2d</span>(<span class="type">VkImage</span> image_preinitialized, <span class="type">VkImage</span> image_final, <span class="type">VkExtent2D</span> imageExtent,
+        <span class="cmt">/*涉及生成mipmap，待填充*/</span>
+    }
+    <span class="kw">static</span> <span class="type">VkSamplerCreateInfo</span> <span class="fn">SamplerCreateInfo</span>() {
+        <span class="kw">return</span> {
+            .sType = <span class="enum">VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO</span>,
+            .magFilter = <span class="enum">VK_FILTER_LINEAR</span>,
+            .minFilter = <span class="enum">VK_FILTER_LINEAR</span>,
+            .mipmapMode = <span class="enum">VK_SAMPLER_MIPMAP_MODE_LINEAR</span>,
+            .addressModeU = <span class="enum">VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE</span>,
+            .addressModeV = <span class="enum">VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE</span>,
+            .addressModeW = <span class="enum">VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE</span>,
+            .mipLodBias = 0.f,
+            .anisotropyEnable = <span class="mcr">VK_TRUE</span>,
+            .maxAnisotropy = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxSamplerAnisotropy,
+            .compareEnable = <span class="mcr">VK_FALSE</span>,
+            .compareOp = <span class="enum">VK_COMPARE_OP_ALWAYS</span>,
+            .minLod = 0.f,
+            .maxLod = <span class="mcr">VK_LOD_CLAMP_NONE</span>,
+            .borderColor = {},
+            .unnormalizedCoordinates = <span class="mcr">VK_FALSE</span>
+        };
+    }
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            既然是被用来采样的图像，图像用途当然得包含<span class="enum">VK_IMAGE_USAGE_SAMPLED_BIT</span>，而包含<span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>是因为之后生成mipmap时要将其作为源图像。
+        </p>
+    </li>
+    <li>
+        <p>
+            贴图的采样点个数当然，亦必须，是<span class="enum">VK_SAMPLE_COUNT_1_BIT</span>。多重采样是图像附件才有的概念，而且多重采样图像不能被用作各种传输命令的源和目标，也不能将其image view写入描述符。
+        </p>
+    </li>
+    <li>
+        <p>
+            <span class="fn">DescriptorImageInfo</span>(...)返回写入描述符时所需的信息，因为图像被用于在着色器中采样，内存布局当然是<span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>。
+        </p>
+    </li>
+    <li>
+        <p>
+            <span class="fn">SamplerCreateInfo</span>()返回一个最寻常的采样器的创建信息，具体解说见<a class="reference internal" href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-6 使用贴图</a>。
+        </p>
+    </li>
+</ul></section>
+<section id="d">
+<h2>2D贴图<a class="headerlink" href="#d" title="Permalink to this heading"></a></h2>
+<p>
+    从<span class="type">texture</span>派生出<span class="type">texture2d</span>，新增的成员变量只有记录图像大小的extent：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">texture2d</span> :<span class="kw">public</span> <span class="type">texture</span> {
+<span class="kw">protected</span>:
+    <span class="type">VkExtent2D</span> extent = {};
+    <span class="cmt">//--------------------</span>
+    <span class="kw">void</span> <span class="fn">Create_Internal</span>(<span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap) {
+        <span class="cmt">/*待填充*/</span>
+        <span class="type">uint32_t</span> mipLevelCount = generateMipmap ? <span class="fn">CalculateMipLevelCount</span>(extent) : 1;
+        <span class="cmt">//创建图像并分配内存</span>
+        <span class="fn">CreateImageMemory</span>(<span class="enum">VK_IMAGE_TYPE_2D</span>, format_final, { extent.width, extent.height, 1 }, mipLevelCount, 1);
+        <span class="cmt">//创建图像视图</span>
+        <span class="fn">CreateImageView</span>(<span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>, format_final, mipLevelCount, 1);
+        <span class="cmt">//Blit数据到图像，并生成mipmap</span>
+        if (format_initial == format_final)
+            CopyBlitAndGenerateMipmap2d(stagingBuffer::Buffer_MainThread(), imageMemory.Image(), imageMemory.Image(), extent, mipLevelCount, 1);
+        else
+            if (VkImage image_conversion = stagingBuffer::AliasedImage2d_MainThread(format_initial, extent))
+                BlitAndGenerateMipmap2d(image_conversion, imageMemory.Image(), extent, mipLevelCount, 1);
+            else {
+                VkImageCreateInfo imageCreateInfo = {
+                    .imageType = VK_IMAGE_TYPE_2D,
+                    .format = format_initial,
+                    .extent = { extent.width, extent.height, 1 },
+                    .mipLevels = 1,
+                    .arrayLayers = 1,
+                    .samples = VK_SAMPLE_COUNT_1_BIT,
+                    .usage = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT
+                };
+                vulkan::imageMemory imageMemory_conversion(imageCreateInfo, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+                CopyBlitAndGenerateMipmap2d(stagingBuffer::Buffer_MainThread(), imageMemory_conversion.Image(), imageMemory.Image(), extent,    mipLevelCount, 1);
+            }
+    }
+<span class="kw">public</span>:
+    <span class="fn">texture2d</span>() = <span class="kw">default</span>;
+    <span class="fn">texture2d</span>(<span class="kw">const char</span>* filepath, <span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
+        <span class="fn">Create</span>(filepath, format_initial, format_final, generateMipmap);
+    }
+    <span class="fn">texture2d</span>(<span class="kw">const</span> <span class="type">uint8_t</span>* pImageData, <span class="type">VkExtent2D</span> extent, <span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
+        <span class="fn">Create</span>(pImageData, extent, format_initial, format_final, generateMipmap);
+    }
+    <span class="cmt">//Getter</span>
+    <span class="type">VkExtent2D</span> <span class="fn">Extent</span>() <span class="kw">const</span> { <span class="kw">return</span> extent; }
+    <span class="type">uint32_t</span> <span class="fn">Width</span>() <span class="kw">const</span> { <span class="kw">return</span> extent.width; }
+    <span class="type">uint32_t</span> <span class="fn">Height</span>() <span class="kw">const</span> { <span class="kw">return</span> extent.height; }
+    <span class="cmt">//Non-const Function</span>
+    <span class="kw">void</span> <span class="fn">Create</span>(<span class="kw">const char</span>* filepath, <span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
+        <span class="type">VkExtent2D</span> extent;
+        <span class="type">formatInfo</span> formatInfo = <span class="fn">FormatInfo</span>(format_initial);<span class="cmt">//根据指定的format_initial取得格式信息</span>
+        std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; pImageData = <span class="fn">LoadFile</span>(filepath, extent, formatInfo);
+        <span class="kw">if</span> (pImageData)
+            <span class="fn">Create</span>(pImageData.<span class="fn">get</span>(), extent, format_initial, format_final, generateMipmap);
+    }
+    <span class="kw">void</span> <span class="fn">Create</span>(<span class="kw">const</span> <span class="type">uint8_t</span>* pImageData, <span class="type">VkExtent2D</span> extent, <span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
+        <span class="kw">this</span>->extent = extent;
+        <span class="type">size_t</span> imageDataSize = <span class="type">size_t</span>(<span class="fn">FormatInfo</span>(format_initial).sizePerPixel) * extent.width * extent.height;
+        <span class="type">stagingBuffer</span>::<span class="fn">BufferData_MainThread</span>(pImageData, imageDataSize);<span class="cmt">//拷贝数据到暂存缓冲区</span>
+        <span class="fn">Create_Internal</span>(format_initial, format_final, generateMipmap);
+    }
+};
+</pre>
+<p>
+    注意到参数<span class="var">format_initial</span>和<span class="var">format_final</span>，读取到的图像数据的格式，可能与我们最终期望的图像格式不同，比如stb_image读取hdr文件得到的是32位浮点数，而通常16位的精度便已足够，出于节省设备内存的目的，往往会使用blit命令进行图像格式转换。
+    <br>
+    填充<span class="fn">Create_Internal</span>(...)，首先根据<span class="var">generateMipmap</span>的值，确定是否调用<span class="fn">CalculateMipLevelCount</span>(...)计算mipmap的等级总数：
+</p>
+<pre class="code">
+<span class="type">uint32_t</span> mipLevelCount = generateMipmap ? <span class="fn">CalculateMipLevelCount</span>(extent) : 1;
+</pre>
+<p>
+    <span class="fn">CalculateMipLevelCount</span>(...)的函数体留到下一小节填充，先接着往下写，创建imageMemory和imageView：
+</p>
+<pre class="code">
+<span class="type">uint32_t</span> mipLevelCount = generateMipmap ? <span class="fn">CalculateMipLevelCount</span>(extent) : 1;
+<span class="cmt">//创建图像并分配内存</span>
+<span class="fn">CreateImageMemory</span>(<span class="enum">VK_IMAGE_TYPE_2D</span>, format_final, { extent.width, extent.height, 1 }mipLevelCount, 1);
+<span class="cmt">//创建图像视图</span>
+<span class="fn">CreateImageView</span>(<span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>, format_final, mipLevelCount, 1);
+</pre>
+<p>
+    接下来的分支中需要使用先前声明的两个函数：
+    <br>
+    <span class="fn">CopyBlitAndGenerateMipmap2d</span>(...)
+    <span class="fn">BlitAndGenerateMipmap2d</span>(...)
+    <br>
+    <br>
+    <br>
+    <br>
+    TODO 还没写完。
+</p></section>
+<section id="mipmap">
+<h2>生成mipmap<a class="headerlink" href="#mipmap" title="Permalink to this heading"></a></h2>
+<p>
+    Mipmap是一组原图像的的微缩版本，每个等级mipmap的长宽都是上一等级的一半，如下图所示：
+</p>
+<p>
+
+</p></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-left" title="Ch5-1 各种缓冲区" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-right" title="Ch7-1 初识顶点缓冲区" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -118,14 +118,16 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-3 初识Push Constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识Uniform缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-6 使用贴图</a></li>
 </ul>
 
         </div>
@@ -1100,7 +1102,7 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
     <span class="fn">bufferView</span>(<span class="type">VkBufferViewCreateInfo</span>&amp; createInfo) {
         <span class="fn">Create</span>(createInfo);
     }
-    <span class="fn">bufferView</span>(<span class="type">VkBuffer</span> buffer, <span class="type">VkFormat</span> format, <span class="type">VkDeviceSize</span> offset = 0, <span class="type">VkDeviceSize</span> range = 0) {
+    <span class="fn">bufferView</span>(<span class="type">VkBuffer</span> buffer, <span class="type">VkFormat</span> format, <span class="type">VkDeviceSize</span> offset = 0, <span class="type">VkDeviceSize</span> range = 0 <span class="cmt">/*VkBufferViewCreateFlags flags*/</span>) {
         <span class="fn">Create</span>(buffer, format, offset, range);
     }
     <span class="fn">bufferView</span>(<span class="type">bufferView</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
@@ -1116,7 +1118,7 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ bufferView ] ERROR\nFailed to create a buffer view!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
-    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkBuffer</span> buffer, <span class="type">VkFormat</span> format, <span class="type">VkDeviceSize</span> offset = 0, <span class="type">VkDeviceSize</span> range = 0) {
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkBuffer</span> buffer, <span class="type">VkFormat</span> format, <span class="type">VkDeviceSize</span> offset = 0, <span class="type">VkDeviceSize</span> range = 0 <span class="cmt">/*VkBufferViewCreateFlags flags*/</span>) {
         <span class="type">VkBufferViewCreateInfo</span> createInfo = {
             .buffer = buffer,
             .format = format,
@@ -1203,7 +1205,7 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
         </tr>
         <tr class="row-even">
             <td><p><span class="type">uint32_t</span> mipLevels</p></td>
-            <td><p>图像的mipmap等级，应用于需要生成mipmap的图像</p></td>
+            <td><p>图像的mip等级数，应用于需要生成mipmap的图像</p></td>
         </tr>
         <tr class="row-odd">
             <td><p><span class="type">uint32_t</span> arrayLayers</p></td>
@@ -1843,8 +1845,8 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
     <span class="fn">imageView</span>(<span class="type">VkImageViewCreateInfo</span>&amp; createInfo) {
         <span class="fn">Create</span>(createInfo);
     }
-    <span class="fn">imageView</span>(<span class="type">VkImage</span> image, <span class="type">VkImageViewType</span> viewType, <span class="type">VkFormat</span> format, <span class="kw">const</span> <span class="type">VkImageSubresourceRange</span>&amp; subresourceRange) {
-        <span class="fn">Create</span>(image, viewType, format, subresourceRange);
+    <span class="fn">imageView</span>(<span class="type">VkImage</span> image, <span class="type">VkImageViewType</span> viewType, <span class="type">VkFormat</span> format, <span class="kw">const</span> <span class="type">VkImageSubresourceRange</span>&amp; subresourceRange, <span class="fn">VkImageViewCreateFlags</span> flags = 0) {
+        <span class="fn">Create</span>(image, viewType, format, subresourceRange, flags);
     }
     <span class="fn">imageView</span>(<span class="type">imageView</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
     ~<span class="fn">imageView</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyImageView</span>); }
@@ -1859,8 +1861,9 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ imageView ] ERROR\nFailed to create an image view!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
-    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkImage</span> image, <span class="type">VkImageViewType</span> viewType, <span class="type">VkFormat</span> format, <span class="kw">const</span> <span class="type">VkImageSubresourceRange</span>&amp; subresourceRange) {
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkImage</span> image, <span class="type">VkImageViewType</span> viewType, <span class="type">VkFormat</span> format, <span class="kw">const</span> <span class="type">VkImageSubresourceRange</span>&amp; subresourceRange, <span class="fn">VkImageViewCreateFlags</span> flags = 0) {
         <span class="type">VkImageViewCreateInfo</span> createInfo = {
+            .flags = flags,
             .image = image,
             .viewType = viewType,
             .format = format,

@@ -100,14 +100,16 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-3 初识Push Constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识Uniform缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-6 使用贴图</a></li>
 </ul>
 
         </div>
@@ -148,7 +150,7 @@
     <br>
     5.子通道依赖，相当于在渲染通道的子通道开始和结束时自动执行的内存屏障，见<a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html#id4">子通道依赖</a>。
     <br>
-    6.事件，对在同一队列中的命令进行同步，事件被设置前和事件被等待后的命令纳入同步范围（中间的不受影响），也可用于让队列等待程序（CPU一侧）
+    6.事件，同步范围通常为同一队列中的命令之间，事件被设置前和事件被等待后的命令纳入同步范围（中间的不受影响），也可用于让队列等待程序（CPU一侧）
     <br>
 </p>
 <p>
@@ -376,12 +378,13 @@
 <span class="kw">class</span> <span class="type">fence</span> {
     <span class="type">VkFence</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
 <span class="kw">public</span>:
-    <span class="cmt">//默认构造器创建未置位的栅栏</span>
-    <span class="fn">fence</span>(<span class="kw">bool</span> signaled = <span class="kw">false</span>) {
-        <span class="fn">Create</span>(signaled);
-    }
+    <span class="cmt">//fence() = default;</span>
     <span class="fn">fence</span>(<span class="type">VkFenceCreateInfo</span>&amp; createInfo) {
         <span class="fn">Create</span>(createInfo);
+    }
+    <span class="cmt">//默认构造器创建未置位的栅栏</span>
+    <span class="fn">fence</span>(<span class="type">VkFenceCreateFlags</span> flags = 0) {
+        <span class="fn">Create</span>(flags);
     }
     <span class="fn">fence</span>(<span class="type">fence</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
     ~<span class="fn">fence</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyFence</span>); }
@@ -421,14 +424,21 @@
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ fence ] ERROR\nFailed to create a fence!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
-    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="kw">bool</span> signaled = <span class="kw">false</span>) {
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkFenceCreateFlags</span> flags = 0) {
         <span class="type">VkFenceCreateInfo</span> createInfo = {
-            .flags = signaled
+            .flags = flags
         };
         <span class="kw">return</span> <span class="fn">Create</span>(createInfo);
     }
 };
-</pre></section>
+</pre>
+<ul>
+    <li>
+        <p>
+            这套教程里，其他类的默认构造函数不会自动创建相应的Vulkan对象。出于方便，且因为可以不指定任何参数，我令fence和semaphore的默认构造函数自动创建相应的Vulkan对象。
+        </p>
+    </li>
+</ul></section>
 </section>
 <section id="semaphore">
 <h2>Semaphore<a class="headerlink" href="#semaphore" title="Permalink to this heading"></a></h2>
@@ -552,12 +562,13 @@
 <span class="kw">class</span> <span class="type">semaphore</span> {
     <span class="type">VkSemaphore</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
 <span class="kw">public</span>:
-    <span class="cmt">//默认构造器创建未置位的信号量</span>
-    <span class="fn">semaphore</span>() {
-        <span class="fn">Create</span>();
-    }
+    <span class="cmt">//semaphore() = default;</span>
     <span class="fn">semaphore</span>(<span class="type">VkSemaphoreCreateInfo</span>&amp; createInfo) {
         <span class="fn">Create</span>(createInfo);
+    }
+    <span class="cmt">//默认构造器创建未置位的信号量</span>
+    <span class="fn">semaphore</span>(<span class="cmt">/*VkSemaphoreCreateFlags flags*/</span>) {
+        <span class="fn">Create</span>();
     }
     <span class="fn">semaphore</span>(<span class="type">semaphore</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
     ~<span class="fn">semaphore</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroySemaphore</span>); }
@@ -572,12 +583,19 @@
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ semaphore ] ERROR\nFailed to create a semaphore!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
-    <span class="type">result_t</span> Create() {
+    <span class="type">result_t</span> Create(<span class="cmt">/*VkSemaphoreCreateFlags flags*/</span>) {
         <span class="type">VkSemaphoreCreateInfo</span> createInfo = {};
         <span class="kw">return</span> <span class="fn">Create</span>(createInfo);
     }
 };
 </pre>
+<ul>
+    <li>
+        <p>
+            如前文所言，<span class="type">VkSemaphoreCreateFlags</span>到Vulkan1.3为止没用。<span class="type">VkBufferViewCreateFlags</span>、<span class="type">VkShaderModuleCreateFlags</span>、<span class="type">VkQueryPoolCreateFlags</span>也都是类似的情况。
+        </p>
+    </li>
+</ul>
 <p>
     虽然这套教程里预计不会使用，我在//TODO <a href="">VkBase+.h</a>中也提供了时间线信号量的封装。
 </p></section>
@@ -798,12 +816,9 @@
     需要先提一下：<a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkMemoryBarrier">VkMemoryBarrier</a>、<a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkBufferMemoryBarrier">VkBufferMemoryBarrier</a>、<a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkImageMemoryBarrier">VkImageMemoryBarrier</a>，都有srcAccessMask和dstAccessMask这俩成员。
 </p>
 <p>
-    所谓可获性，指的是资源<strong>能被读写</strong>，内存屏障确保资源在其之后的命令中由dstStageMask注明的阶段中dstAccessMask注明的操作可以访问资源。
+    所谓可获性，指的是<strong>已完成资源的写入</strong>，内存屏障确保在其之前的命令中srcStageMask注明的阶段中srcAccessMask注明的<strong>写入操作</strong>已完成，然后可以被后续操作<strong>读写</strong>。
     <br>
-    可见性指的是资源的内容<strong>能被正确读取</strong>，内存屏障确保在其之前的命令中srcStageMask注明的阶段中srcAccessMask注明的<strong>写入操作</strong>的结果，能被内存屏障后的命令中dstStageMask注明的阶段中dstAccessMask注明的<strong>读取操作</strong>正确读取。
-<p>
-<p>
-    可获性和可见性可以分别通过两个内存屏障来确保，即使用两次内存屏障，前一次的srcAccessMask注明写操作，dstAccessMask为0（仅确保可获性），后一次的srcAccessMask为0，dstAccessMask非0（使得dstAccessMask注明的操作获得资源可见性）。你能在 TODO Ch7-6 找到使用例。
+    可见性指的是<strong>能正确读取资源的内容</strong>，内存屏障确保在其之前的命令中srcStageMask注明的阶段中srcAccessMask注明的<strong>写入操作</strong>的结果，能被内存屏障后的命令中dstStageMask注明的阶段中dstAccessMask注明的<strong>读写操作</strong>正确读取。
 </p>
 <div class="admonition note">
     <p class="admonition-title">Note</p>
@@ -811,6 +826,19 @@
         可以在srcAccessMask中填入诸如<span class="enum">VK_ACCESS_COLOR_ATTACHMENT_READ_BIT</span>之类的读操作，但没意义。要确保先前的读操作已结束，正确填写srcStageMask便已足够。
     </p>
 </div>
+<p>
+    <strong>后续的读操作当然要考虑先前的写入，但后续的写操作跟先前写入的结果有什么关系？</strong>
+    <br>
+    这其实是一个并发访问的问题。无论GPU还是CPU都不是只有单个简简单单的缓存，处理器的存储设备是多级结构，数据被更新后要在多级结构中传递，而且很可能是一块块而不是逐个字节依次更新的，也就是说，写入也是要看基于什么来写的。
+</p>
+<p>
+    <strong>为什么不把可获性和可见性合并成一个概念？</strong>
+    <br>
+    其一，两个概念适用范围不同，可获性是对于内存领域（memory domain）的概念，而可见性是对于代理和引用对（agent & reference）的概念，这几个名词搞不懂没事，放心至少这套教程里不会再出现。其二，可见必须在可获后确保，即便一个操作能确保可见性，如果资源不可获那也就不会可见。
+<p>
+<p>
+    可获性和可见性可以分别通过两个内存屏障来确保，即使用两次内存屏障，前一次的srcAccessMask注明写操作，dstAccessMask为0（仅确保可获性），后一次的srcAccessMask为0，dstAccessMask非0（使得dstAccessMask注明的操作获得资源可见性）。你能在 TODO Ch7-6 找到使用例。
+</p>
 <p>
     内存屏障并非确保可获性和可见性的唯一方式（因而你不必因为知道了这俩概念而过分注意和担心），比如：
 </p>
@@ -822,17 +850,22 @@
     </li>
     <li>
         <p>
-            <a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkQueueSubmit">vkQueueSubmit</a>(...)能确保早前CPU侧的写入在GPU侧可见（<a href="https://renderdoc.org/vkspec_chunked/chap7.html#synchronization-host-access-types">官方标准中的说明见此处的Note</a>）。
+            <a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkQueueSubmit">vkQueueSubmit</a>(...)能确保早前CPU侧的写入在该队列族间可见（<a href="https://renderdoc.org/vkspec_chunked/chap7.html#synchronization-host-access-types">官方标准中的说明见此处的Note</a>），以及使得先前其他提交到同一队列族的命令涉及的资源，在同一队列族的队列间可见（<a href="https://renderdoc.org/vkspec_chunked/chap53.html#memory-model-vulkan-availability-visibility">出处</a>）。
         </p>
     </li>
     <li>
         <p>
-            置位信号量能确保资源在同一队列族的队列间的可获性，等待信号量能确保可见性（从<a href="https://renderdoc.org/vkspec_chunked/chap7.html#synchronization-semaphores-signaling">官方标准中关于置位和等待信号量的说明</a>推理可得）。但是不适用于不同队列族间（需要用内存屏障做<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id8">队列族所有权转移</a>）。
+            置位栅栏会确保所跟随的命令缓冲区中涉及的资源，在同一队列族的队列间的可获（<a href="https://renderdoc.org/vkspec_chunked/chap7.html#synchronization-fences-signaling">"The first access scope includes all memory access performed by the device"</a>）。
         </p>
     </li>
     <li>
         <p>
-            置位栅栏能确保资源在CPU侧的可获性，但资源得有<span class="enum">VK_MEMORY_PROPERTY_HOST_COHERENT_BIT</span>内存属性才可见，否则得调用函数手动确保可见性，如<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html#id3">映射内存区</a>所言（<a href="https://renderdoc.org/vkspec_chunked/chap7.html#synchronization-fences-waiting">官方标准中的说明见此处的Note</a>）。
+            若资源有<span class="enum">VK_MEMORY_PROPERTY_HOST_COHERENT_BIT</span>内存属性，则置位并等待栅栏使得资源对CPU侧可见，否则得调用函数手动确保可见性，如<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html#id3">映射内存区</a>所言（<a href="https://renderdoc.org/vkspec_chunked/chap7.html#synchronization-fences-waiting">官方标准中的说明见此处的Note</a>）。
+        </p>
+    </li>
+    <li>
+        <p>
+            置位信号量会确保所跟随的命令缓冲区中涉及的资源，在同一队列族的队列间的可获，等待信号量能确保可见性（<a href="https://renderdoc.org/vkspec_chunked/chap7.html#synchronization-semaphores-signaling">"The first access scope includes all memory access performed by the device"</a>）。
         </p>
     </li>
     <li>
@@ -840,7 +873,16 @@
             呈现图像时使用的<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...)会确保交换链图像对呈现引擎可见。
         </p>
     </li>
-</ul></section>
+</ul>
+<p>
+    总结地讲，在提交进行数据传输的命令缓冲区（比如用来加载资源）时只要带上一个栅栏并等待，就足以确保<a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html#device-local-buffer">各类缓冲区</a>能被之后的命令正确读写了（但对于图像，你仍旧可能需要图像内存屏障以确保内存布局转换在正确的时机发生）。
+</p>
+<p>
+    注意虽然官方标准中没有到处提及，同步操作的作用若无明确说明，默认不适用于不同队列族间，这时候得（虽然你应该已经读过了）：<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id8">队列族所有权转移</a>。
+</p>
+<p>
+    写到这里我真的得吐槽下：<strong>那些说C++官方标准太学术化太难啃的程序员，真该看看Vulkan官方标准！</strong>
+</p></section>
 <section id="id11">
 <h3>全局内存屏障<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>
 <p>
@@ -1228,7 +1270,7 @@
 <ul>
     <li>
         <p>
-            <span class="type">VkImageSubresourceRange的</span>解说见<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html#image-view">Image View</a>
+            <span class="type">VkImageSubresourceRange</span>的解说见<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html#image-view">Image View</a>
         </p>
     </li>
 </ul></section>

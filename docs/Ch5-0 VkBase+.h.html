@@ -79,14 +79,16 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-3 初识Push Constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识Uniform缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-6 使用贴图</a></li>
 </ul>
 
         </div>
@@ -117,7 +119,7 @@
 <p>
     之前在<a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a>中应当创建过<span class="path">VkBase+.h</span>，并且在里面定义了<span class="type">graphicsPipelineCreateInfoPack</span>类。
     <br>
-    第五章中各种常用对象的封装会被放在<span class="path">VkBase+.h</span>当中。
+    第五章中对各种常用对象的封装会被放在<span class="path">VkBase+.h</span>当中。
     <br>
     在这一节定义<span class="type">graphicsBasePlus</span>类，以及图像格式相关的一些函数，方便后续编程。
 </p>
@@ -195,7 +197,7 @@
     </li>
 </ul>
 <p>
-    Vulkan程序必然需要命令池以及命令缓冲区，这里为图形、呈现、计算队列定义不同的<span class="type">commandPool</span>对象，以及由于之后的一些常用对象封装当中经常需要数据传送，定义一个<span class="type">commandBuffer</span>对象专用于此，若图形与呈现的队列族不同，那么还需要一个能被提交给呈现队列的命令缓冲区。
+    Vulkan程序必然需要命令池以及命令缓冲区，这里为图形、呈现、计算队列定义不同的<span class="type">commandPool</span>对象。以及由于之后的一些常用对象封装当中经常需要数据传送，定义一个<span class="type">commandBuffer</span>对象专用于此，若图形与呈现的队列族不同，那么还需要一个能被提交给呈现队列的命令缓冲区。
 </p>
 <pre class="code">
 <span class="kw">class</span> <span class="type">graphicsBasePlus</span> {
@@ -220,6 +222,18 @@
     <span class="kw">const</span> <span class="type">commandPool</span>&amp; <span class="fn">CommandPool_Compute</span>() const { <span class="kw">return</span> commandPool_compute; }
     <span class="kw">const</span> <span class="type">commandBuffer</span>&amp; <span class="fn">CommandBuffer_Transfer</span>() const { <span class="kw">return</span> commandBuffer_transfer; }
     <span class="cmt">//Const Function</span>
+    <span class="cmt">//简化命令提交</span>
+    <span class="type">result_t</span> <span class="fn">ExecuteCommandBuffer_Graphics</span>(<span class="type">VkCommandBuffer</span> commandBuffer) <span class="kw">const</span> {
+        <span class="type">fence</span> fence;
+        <span class="type">VkSubmitInfo</span> submitInfo = {
+            .commandBufferCount = 1,
+            .pCommandBuffers = &amp;commandBuffer
+        };
+        <span class="type">VkResult</span> result = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(submitInfo, fence);
+        <span class="kw">if</span> (!result)
+            fence.<span class="fn">Wait</span>();
+        <span class="kw">return</span> result;
+    }
     <span class="cmt">//该函数专用于向呈现队列提交用于接收交换链图像的队列族所有权的命令缓冲区</span>
     <span class="type">result_t</span> <span class="fn">AcquireImageOwnership_Presentation</span>(<span class="type">VkSemaphore</span> semaphore_renderingIsOver, <span class="type">VkSemaphore</span> semaphore_ownershipIsTransfered, <span class="type">VkFence</span> fence = <span class="mcr">VK_NULL_HANDLE</span>) <span class="kw">const</span> {
         <span class="kw">if</span> (<span class="type">VkResult</span> result = commandBuffer_presentation.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>))
@@ -238,6 +252,11 @@
             由于专用于呈现队列的命令缓冲区只用于接收交换链图像的队列族所有权，不必暴露相应的命令池和命令缓冲的handle。
         </p>
     </li>
+    <li>
+        <p>
+            在渲染循环外提交命令缓冲区时，常常会有只需要带一个用完就丢的栅栏的情形（比如进入渲染循环前将各种资源加载到设备内存的时候），定义<span class="fn">ExecuteCommandBuffer_Graphics</span>(...)便于后续使用。
+        </p>
+    </li>
 </ul>
 <p>
     我打算无论图形和计算的队列是否相同，让它们有各自的命令池，而若负责呈现的队列与图形队列不同，才为其创建命令池：
@@ -247,14 +266,14 @@
     <span class="cmt">//在创建逻辑设备时执行Initialize()</span>
     <span class="kw">auto</span> Initialize = [] {
         <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>() != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
-            singleton.commandPool_graphics.<span class="fn">Create</span>(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>()),
+            singleton.commandPool_graphics.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>),
             singleton.commandPool_graphics.<span class="fn">AllocateBuffers</span>(singleton.commandBuffer_transfer);
         <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Compute</span>() != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
-            singleton.commandPool_compute.<span class="fn">Create</span>(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Compute</span>());
+            singleton.commandPool_compute.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Compute</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
         <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>() != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp;
             <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>() != <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>() &amp;&amp;
             <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageSharingMode == <span class="enum">VK_SHARING_MODE_EXCLUSIVE</span>)
-            singleton.commandPool_presentation.<span class="fn">Create</span>(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>()),
+            singleton.commandPool_presentation.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>),
             singleton.commandPool_presentation.<span class="fn">AllocateBuffers</span>(singleton.commandBuffer_presentation);
         <span class="cmt">/*待后续填充*/</span>
     };
@@ -272,7 +291,7 @@
 }
 </pre>
 <p>
-    于是乎，利用静态成员变量的初始化机制，上述代码使得在创建逻辑设备后，程序会自动创建前文所述的命令池和命令缓冲区。
+    于是乎，利用C++中静态成员变量的初始化机制，上述代码使得在创建逻辑设备后，程序会自动创建前文所述的命令池和命令缓冲区。
 </p></section>
 <section id="id1">
 <h2>图像格式相关<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
@@ -415,14 +434,14 @@
     <span class="fn">graphicsBasePlus</span>() {
         <span class="kw">auto</span> Initialize = [] {
             <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>() != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
-                singleton.commandPool_graphics.<span class="fn">Create</span>(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>()),
+                singleton.commandPool_graphics.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>),
                 singleton.commandPool_graphics.<span class="fn">AllocateBuffers</span>(singleton.commandBuffer_transfer);
             <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Compute</span>() != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
-                singleton.commandPool_compute.<span class="fn">Create</span>(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Compute</span>());
+                singleton.commandPool_compute.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Compute</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
             <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>() != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp;
                 <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>() != <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>() &amp;&amp;
                 <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageSharingMode == <span class="enum">VK_SHARING_MODE_EXCLUSIVE</span>)
-                singleton.commandPool_presentation.<span class="fn">Create</span>(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>()),
+                singleton.commandPool_presentation.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>),
                 singleton.commandPool_presentation.<span class="fn">AllocateBuffers</span>(singleton.commandBuffer_presentation);
             <span class="cmt">//新增------------------------------------</span>
             <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; std::<span class="fn">size</span>(singleton.formatProperties); i++)
@@ -454,6 +473,17 @@
     <span class="kw">const</span> <span class="type">commandPool</span>&amp; <span class="fn">CommandPool_Compute</span>() const { <span class="kw">return</span> commandPool_compute; }
     <span class="kw">const</span> <span class="type">commandBuffer</span>&amp; <span class="fn">CommandBuffer_Transfer</span>() const { <span class="kw">return</span> commandBuffer_transfer; }
     <span class="cmt">//Const Function</span>
+    <span class="type">result_t</span> <span class="fn">ExecuteCommandBuffer_Graphics</span>(<span class="type">VkCommandBuffer</span> commandBuffer) <span class="kw">const</span> {
+        <span class="type">fence</span> fence;
+        <span class="type">VkSubmitInfo</span> submitInfo = {
+            .commandBufferCount = 1,
+            .pCommandBuffers = &amp;commandBuffer
+        };
+        <span class="type">VkResult</span> result = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(submitInfo, fence);
+        <span class="kw">if</span> (!result)
+            fence.<span class="fn">Wait</span>();
+        <span class="kw">return</span> result;
+    }
     <span class="type">result_t</span> <span class="fn">AcquireImageOwnership_Presentation</span>(<span class="type">VkSemaphore</span> semaphore_renderingIsOver, <span class="type">VkSemaphore</span> semaphore_ownershipIsTransfered, <span class="type">VkFence</span> fence = <span class="mcr">VK_NULL_HANDLE</span>) <span class="kw">const</span> {
         <span class="kw">if</span> (<span class="type">VkResult</span> result = commandBuffer_presentation.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>))
             <span class="kw">return</span> result;
