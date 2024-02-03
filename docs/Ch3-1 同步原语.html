@@ -816,29 +816,31 @@
     需要先提一下：<a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkMemoryBarrier">VkMemoryBarrier</a>、<a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkBufferMemoryBarrier">VkBufferMemoryBarrier</a>、<a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkImageMemoryBarrier">VkImageMemoryBarrier</a>，都有srcAccessMask和dstAccessMask这俩成员。
 </p>
 <p>
-    所谓可获性，指的是<strong>已完成资源的写入</strong>，内存屏障确保在其之前的命令中srcStageMask注明的阶段中srcAccessMask注明的<strong>写入操作</strong>已完成，然后可以被后续操作<strong>读写</strong>。
+    所谓可获性，指的是<strong>已完成资源的写入</strong>，内存屏障确保在其之前的命令中srcStageMask注明的阶段中srcAccessMask注明的<strong>写入操作</strong>已完成，然后等待被后续操作<strong>读写</strong>。
     <br>
     可见性指的是<strong>能正确读取资源的内容</strong>，内存屏障确保在其之前的命令中srcStageMask注明的阶段中srcAccessMask注明的<strong>写入操作</strong>的结果，能被内存屏障后的命令中dstStageMask注明的阶段中dstAccessMask注明的<strong>读写操作</strong>正确读取。
 </p>
-<div class="admonition note">
-    <p class="admonition-title">Note</p>
-    <p>
-        可以在srcAccessMask中填入诸如<span class="enum">VK_ACCESS_COLOR_ATTACHMENT_READ_BIT</span>之类的读操作，但没意义。要确保先前的读操作已结束，正确填写srcStageMask便已足够。
-    </p>
-</div>
 <p>
     <strong>后续的读操作当然要考虑先前的写入，但后续的写操作跟先前写入的结果有什么关系？</strong>
     <br>
-    这其实是一个并发访问的问题。无论GPU还是CPU都不是只有单个简简单单的缓存，处理器的存储设备是多级结构，数据被更新后要在多级结构中传递，而且很可能是一块块而不是逐个字节依次更新的，也就是说，写入也是要看基于什么来写的。
+    这其实是一个并发访问的问题。无论GPU还是CPU都不是只有单个构造简单的缓存，处理器具有多级存储结构，每个处理单元都可以有其专用的高速缓存。数据被更新后要在多级结构中传递，而且很可能是一块块而不是逐个字节依次更新的，也就是说，写入也是要看基于什么来写的。
+    <br>
+    Vulkan的官方标准中并没有提及数据是被如何传递的（它只是个API标准，底层的事情取决于物理设备的具体构造）。确保可获性和可见性，是显式地告诉物理设备你将要如何使用资源，确保可获性可能意味着数据被复制到更远离处理单元的存储中，这跟单纯的执行依赖存在差别。
 </p>
 <p>
     <strong>为什么不把可获性和可见性合并成一个概念？</strong>
     <br>
-    其一，两个概念适用范围不同，可获性是对于内存领域（memory domain）的概念，而可见性是对于代理和引用对（agent & reference）的概念，这几个名词搞不懂没事，放心至少这套教程里不会再出现。其二，可见必须在可获后确保，即便一个操作能确保可见性，如果资源不可获那也就不会可见。
+    其一，两个概念适用范围不同，可获性是对于内存领域（memory domain）的概念，而可见性是对于代理和引用对（agent & reference）的概念，这几个名词搞不懂也无妨，至少这套教程里不会再出现。其二，可见必须在可获后确保，即便一个操作能确保可见性，如果资源不可获那也就不会可见。
 <p>
 <p>
     可获性和可见性可以分别通过两个内存屏障来确保，即使用两次内存屏障，前一次的srcAccessMask注明写操作，dstAccessMask为0（仅确保可获性），后一次的srcAccessMask为0，dstAccessMask非0（使得dstAccessMask注明的操作获得资源可见性）。你能在 TODO Ch7-6 找到使用例。
 </p>
+<div class="admonition note">
+    <p class="admonition-title">Note</p>
+    <p>
+        可以在srcAccessMask中填入诸如<span class="enum">VK_ACCESS_COLOR_ATTACHMENT_READ_BIT</span>之类的读操作，但没意义。要确保先前的读操作已结束，正确填写srcStageMask，即仅满足执行依赖便已足够。
+    </p>
+</div>
 <p>
     内存屏障并非确保可获性和可见性的唯一方式（因而你不必因为知道了这俩概念而过分注意和担心），比如：
 </p>

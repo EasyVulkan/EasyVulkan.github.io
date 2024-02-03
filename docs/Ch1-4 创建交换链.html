@@ -519,8 +519,8 @@ swapchainCreateInfo.imageUsage = <span class="enum">VK_IMAGE_USAGE_COLOR_ATTACHM
         <span class="cmt">//如果格式未指定，只匹配色彩空间，图像格式有啥就用啥</span>
         <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : availableSurfaceFormats)
             <span class="kw">if</span> (i.colorSpace == surfaceFormat.colorSpace) {
-                swapchainCreateInfo.imageFormat = surfaceFormat.format;
-                swapchainCreateInfo.imageColorSpace = surfaceFormat.colorSpace;
+                swapchainCreateInfo.imageFormat = i.format;
+                swapchainCreateInfo.imageColorSpace = i.colorSpace;
                 formatIsAvailable = <span class="kw">true</span>;
                 <span class="kw">break</span>;
             }
@@ -530,8 +530,8 @@ swapchainCreateInfo.imageUsage = <span class="enum">VK_IMAGE_USAGE_COLOR_ATTACHM
         <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : availableSurfaceFormats)
             <span class="kw">if</span> (i.format == surfaceFormat.format &amp;&amp;
                 i.colorSpace == surfaceFormat.colorSpace) {
-                swapchainCreateInfo.imageFormat = surfaceFormat.format;
-                swapchainCreateInfo.imageColorSpace = surfaceFormat.colorSpace;
+                swapchainCreateInfo.imageFormat = i.format;
+                swapchainCreateInfo.imageColorSpace = i.colorSpace;
                 formatIsAvailable = <span class="kw">true</span>;
                 <span class="kw">break</span>;
             }

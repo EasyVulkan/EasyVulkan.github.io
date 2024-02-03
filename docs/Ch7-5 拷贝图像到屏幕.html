@@ -630,7 +630,7 @@ commandBuffer.<span class="fn">End</span>();
 <p>
     顾名思义，<span class="type">imageOperation</span>是图像操作相关的类，除了本节中用于从缓冲区将数据拷贝到图像的<span class="fn">CmdCopyBufferToImage</span>(...)，以及将数据从图像blit到另一图像的<span class="fn">CmdBlitImage</span>(...)外，之后还会有生成mipmap的函数，这些函数都将会非常实用。
     <br>
-    其中<span class="type">imageMemoryBarrierParameterPack</span>是用于指定管线屏障及图像内存屏障的参数集合，其定义如下：
+    其中<span class="type">imageMemoryBarrierParameterPack</span>是用于指定<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#pipeline-barrier">管线屏障及图像内存屏障</a>的参数集合，其定义如下：
 </p>
 <pre class="code">
 <span class="kw">struct</span> <span class="type">imageMemoryBarrierParameterPack</span> {
@@ -711,31 +711,9 @@ commandBuffer.<span class="fn">End</span>();
     <br>
     以防你没有仔细阅读<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#pipeline-barrier">管线屏障相关的说明</a>，再次强调，简而言之，管线屏障注明其前后的命令在执行时，有哪些阶段不能重叠。
     <br>
-    图像的内存布局会在两个同步域间（第一同步域已结束，第二同步域尚未开始的期间），由<span class="var">imb_from</span>.layout转到<span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span>。
+    图像的内存布局会在两个同步域间，由<span class="var">imb_from</span>.layout转到<span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span>。
     <br>
-    ...
-    <br>
-    问：那么<span class="var">imb_from</span>.accessMask的作用是啥？
-    <br>
-    ...
-    <br>
-    ...
-    <br>
-    ...
-    <br>
-    ...
-    <br>
-    ...
-    <br>
-    ...
-    <br>
-    ...
-    <br>
-    ...
-    <br>
-    答：没什么卵用。<span class="var">imb_from</span>.accessMask在这里被用作srcAccessMask，只有指定写操作才有意义。而拷贝命令只写不读，只需确保目标图像可获，无需读取目标图像原有的内容。
-    <br>
-    如果没答出来的话，再去读一下<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#pipeline-barrier">Pipeline Barrier</a>。
+    此处的内存屏障还应当确保传输命令的写入操作（<span class="enum">VK_ACCESS_TRANSFER_WRITE_BIT</span>），在由<span class="var">imb_from</span>.access指明的、先前的写入操作的结果的基础上发生。
 </p>
 <p>
     于是拷贝前的管线屏障为：
@@ -745,7 +723,7 @@ commandBuffer.<span class="fn">End</span>();
 <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
     <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
     <span class="kw">nullptr</span>,
-    0, <span class="cmt">//imb_from.access</span>
+    imb_from.access,
     <span class="enum">VK_ACCESS_TRANSFER_WRITE_BIT</span>,
     imb_from.layout,
     <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span>,
@@ -764,9 +742,7 @@ commandBuffer.<span class="fn">End</span>();
         0, <span class="kw">nullptr</span>, 0, <span class="kw">nullptr</span>, 1, &amp;imageMemoryBarrier);
 </pre>
 <p>
-    类似地，你该也能举一反三地明白拷贝后的图像管线屏障的意义了，要说有什么不同，<span class="var">imb_to</span>.accessMask并非没什么卵用。
-    <br>
-    简单修改<span class="var">imageMemoryBarrier</span>后，书写拷贝后的管线屏障：
+    类似地，你该也能举一反三地明白拷贝后的图像管线屏障的意义了。简单修改<span class="var">imageMemoryBarrier</span>后，书写拷贝后的管线屏障：
 </p>
 <pre class="code">
 <span class="kw">if</span> (imb_to.isNeeded) {
@@ -922,7 +898,7 @@ commandBuffer.<span class="fn">End</span>();
     <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
         <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
         <span class="kw">nullptr</span>,
-        0, <span class="cmt">//imb_from.access</span>
+        imb_from.access,
         <span class="enum">VK_ACCESS_TRANSFER_WRITE_BIT</span>,
         imb_from.layout,
         <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span>,
@@ -960,7 +936,7 @@ commandBuffer.<span class="fn">End</span>();
     <span class="type">VkCommandBuffer</span> commandBuffer, <span class="cmt">//命令缓冲区的handle</span>
     <span class="type">VkImage</span> image_src,             <span class="cmt">//作为数据来源的图像</span>
     <span class="type">VkImage</span> image_dst,             <span class="cmt">//接收数据的目标图像</span>
-    <span class="kw">const</span> <span class="type">VkImageBlit</span>&amp; region, <span class="cmt">//指定将源图像哪些部分拷贝到目标图像的哪些部分</span>
+    <span class="kw">const</span> <span class="type">VkImageBlit</span>&amp; region,     <span class="cmt">//指定将源图像哪些部分拷贝到目标图像的哪些部分</span>
     <span class="type">imageMemoryBarrierParameterPack</span> imb_dst_from,
     <span class="type">imageMemoryBarrierParameterPack</span> imb_dst_to,
     <span class="type">VkFilter</span> filter = <span class="mcr">VK_FILTER_LINEAR</span>) { <span class="cmt">//若图像可能被放缩，在此指定滤波方式</span>
@@ -987,7 +963,7 @@ commandBuffer.<span class="fn">End</span>();
     <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
         <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
         <span class="kw">nullptr</span>,
-        0, <span class="cmt">//imb_dst_from.access</span>
+        imb_dst_from.access,
         <span class="enum">VK_ACCESS_TRANSFER_WRITE_BIT</span>,
         imb_dst_from.layout,
         <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span>,
@@ -1127,7 +1103,7 @@ commandBuffer.<span class="fn">End</span>();
     <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
         <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
         <span class="kw">nullptr</span>,
-        0, <span class="cmt">//imb_dst_from.access</span>
+        imb_dst_from.access,
         <span class="enum">VK_ACCESS_TRANSFER_WRITE_BIT</span>,
         imb_dst_from.layout,
         <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span>,

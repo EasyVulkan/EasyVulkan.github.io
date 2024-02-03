@@ -77,8 +77,15 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Ch5-2 2D贴图及生成Mipmap</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id1">贴图基类</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#d">2D贴图</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#mipmap">生成mipmap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#d">2D贴图</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#blitandgeneratemipmap2d">BlitAndGenerateMipmap2d</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#copyblitandgeneratemipmap2d">CopyBlitAndGenerateMipmap2d</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#mipmap">生成mipmap</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">计算mipmap等级</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -182,6 +189,7 @@
         <span class="cmt">/*涉及生成mipmap，待填充*/</span>
     }
     <span class="kw">static void</span> <span class="fn">BlitAndGenerateMipmap2d</span>(<span class="type">VkImage</span> image_preinitialized, <span class="type">VkImage</span> image_final, <span class="type">VkExtent2D</span> imageExtent,
+        <span class="type">uint32_t</span> mipLevelCount = 1, <span class="type">uint32_t</span> layerCount = 1, <span class="type">VkFilter</span> minFilter = <span class="enum">VK_FILTER_LINEAR</span>) {
         <span class="cmt">/*涉及生成mipmap，待填充*/</span>
     }
     <span class="kw">static</span> <span class="type">VkSamplerCreateInfo</span> <span class="fn">SamplerCreateInfo</span>() {
@@ -240,30 +248,6 @@
     <span class="cmt">//--------------------</span>
     <span class="kw">void</span> <span class="fn">Create_Internal</span>(<span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap) {
         <span class="cmt">/*待填充*/</span>
-        <span class="type">uint32_t</span> mipLevelCount = generateMipmap ? <span class="fn">CalculateMipLevelCount</span>(extent) : 1;
-        <span class="cmt">//创建图像并分配内存</span>
-        <span class="fn">CreateImageMemory</span>(<span class="enum">VK_IMAGE_TYPE_2D</span>, format_final, { extent.width, extent.height, 1 }, mipLevelCount, 1);
-        <span class="cmt">//创建图像视图</span>
-        <span class="fn">CreateImageView</span>(<span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>, format_final, mipLevelCount, 1);
-        <span class="cmt">//Blit数据到图像，并生成mipmap</span>
-        if (format_initial == format_final)
-            CopyBlitAndGenerateMipmap2d(stagingBuffer::Buffer_MainThread(), imageMemory.Image(), imageMemory.Image(), extent, mipLevelCount, 1);
-        else
-            if (VkImage image_conversion = stagingBuffer::AliasedImage2d_MainThread(format_initial, extent))
-                BlitAndGenerateMipmap2d(image_conversion, imageMemory.Image(), extent, mipLevelCount, 1);
-            else {
-                VkImageCreateInfo imageCreateInfo = {
-                    .imageType = VK_IMAGE_TYPE_2D,
-                    .format = format_initial,
-                    .extent = { extent.width, extent.height, 1 },
-                    .mipLevels = 1,
-                    .arrayLayers = 1,
-                    .samples = VK_SAMPLE_COUNT_1_BIT,
-                    .usage = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT
-                };
-                vulkan::imageMemory imageMemory_conversion(imageCreateInfo, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-                CopyBlitAndGenerateMipmap2d(stagingBuffer::Buffer_MainThread(), imageMemory_conversion.Image(), imageMemory.Image(), extent,    mipLevelCount, 1);
-            }
     }
 <span class="kw">public</span>:
     <span class="fn">texture2d</span>() = <span class="kw">default</span>;
@@ -307,29 +291,324 @@
 <pre class="code">
 <span class="type">uint32_t</span> mipLevelCount = generateMipmap ? <span class="fn">CalculateMipLevelCount</span>(extent) : 1;
 <span class="cmt">//创建图像并分配内存</span>
-<span class="fn">CreateImageMemory</span>(<span class="enum">VK_IMAGE_TYPE_2D</span>, format_final, { extent.width, extent.height, 1 }mipLevelCount, 1);
+<span class="fn">CreateImageMemory</span>(<span class="enum">VK_IMAGE_TYPE_2D</span>, format_final, { extent.width, extent.height, 1 }, mipLevelCount, 1);
 <span class="cmt">//创建图像视图</span>
 <span class="fn">CreateImageView</span>(<span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>, format_final, mipLevelCount, 1);
 </pre>
 <p>
-    接下来的分支中需要使用先前声明的两个函数：
+    根据是否需要格式转换来进行分支：
+</p>
+<pre class="code">
+<span class="kw">if</span> (format_initial == format_final)
+    <span class="cmt">/*待填充*/</span>
+<span class="kw">else</span>
+    <span class="cmt">/*待填充*/</span>
+</pre>
+<p>
+    接下来需要使用先前声明的两个函数：
+</p>
+<ul>
+    <li>
+        <p>
+            <span class="fn">CopyBlitAndGenerateMipmap2d</span>(<span class="type">VkBuffer</span> buffer_copyFrom, <span class="type">VkImage</span> image_copyTo, <span class="type">VkImage</span> image_blitTo, <span class="cmt">/*...*/</span>)
+            <br>
+            将数据从<span class="var">buffer_copyFrom</span>拷贝到<span class="var">image_copyTo</span>，然后在从<span class="var">image_copyTo</span>将数据blit到<span class="var">image_blitTo</span>，然后生成mipmap。
+        </p>
+    </li>
+    <li>
+        <p>
+            <span class="fn">BlitAndGenerateMipmap2d</span>(<span class="type">VkImage</span> image_preinitialized, <span class="type">VkImage</span> image_final, <span class="cmt">/*...*/</span>)
+            <br>
+            从<span class="var">image_preinitialized</span>将数据blit到<span class="var">image_final</span>，其中<span class="var">image_preinitialized</span>指的是暂存缓冲区的混叠图像，然后生成mipmap。
+        </p>
+    </li>
+</ul>
+<p>
+    两个函数中还会处理如下逻辑：若blit的源图像和目标图像一致，则不会进行blit。
     <br>
-    <span class="fn">CopyBlitAndGenerateMipmap2d</span>(...)
-    <span class="fn">BlitAndGenerateMipmap2d</span>(...)
-    <br>
-    <br>
-    <br>
-    <br>
-    TODO 还没写完。
-</p></section>
+    希望这不会让你觉得过度封装。<span class="fn">CopyBlitAndGenerateMipmap2d</span>(...)还会在之后创建2D贴图数组和立方体贴图时派上用场，如果不做这种封装，代码会写得重复而麻烦。函数体留到之后填充，先完成这块的代码逻辑。
+</p>
+<p>
+    你可以回忆下<a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html#id1">Ch7-5</a>，然后就会明白为何会有上述两个函数，以及该如何区分使用它们：重点在于能否为暂存缓冲区创建混叠图像。
+</p>
+<pre class="code">
+<span class="kw">if</span> (format_initial == format_final)
+    <span class="cmt">//若不需要格式转换，直接从暂存缓冲区拷贝到图像，不发生blit</span>
+    <span class="fn">CopyBlitAndGenerateMipmap2d</span>(<span class="type">stagingBuffer</span>::<span class="fn">Buffer_MainThread</span>(), imageMemory.<span class="fn">Image</span>(), imageMemory.<span class="fn">Image</span>(), extent, mipLevelCount, 1);
+<span class="kw">else</span>
+    <span class="kw">if</span> (<span class="type">VkImage</span> image_conversion = <span class="type">stagingBuffer</span>::<span class="fn">AliasedImage2d_MainThread</span>(format_initial, extent))
+        <span class="cmt">//若需要格式转换，但是能为暂存缓冲区创建混叠图像，则直接blit</span>
+        <span class="fn">BlitAndGenerateMipmap2d</span>(image_conversion, imageMemory.<span class="fn">Image</span>(), extent, mipLevelCount, 1);
+    <span class="kw">else</span> {
+        <span class="cmt">//否则，创建新的暂存图像用于中转</span>
+        <span class="type">VkImageCreateInfo</span> imageCreateInfo = {
+            .imageType = <span class="enum">VK_IMAGE_TYPE_2D</span>,
+            .format = format_initial,
+            .extent = { extent.width, extent.height, 1 },
+            .mipLevels = 1,
+            .arrayLayers = 1,
+            .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+            .usage = <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span> | <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>
+        };
+        vulkan::<span class="type">imageMemory</span> imageMemory_conversion(imageCreateInfo, <span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>);
+        <span class="cmt">//从暂存缓冲区拷贝到图像，然后再blit</span>
+        <span class="fn">CopyBlitAndGenerateMipmap2d</span>(<span class="type">stagingBuffer</span>::<span class="fn">Buffer_MainThread</span>(), imageMemory_conversion.<span class="fn">Image</span>(), imageMemory.<span class="fn">Image</span>(), extent, mipLevelCount, 1);
+    }
+</pre>
+<p>
+    相信上述逻辑不需要多做说明，整个<span class="fn">Create_Internal</span>(...)如下：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">Create_Internal</span>(<span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap) {
+    <span class="type">uint32_t</span> mipLevelCount = generateMipmap ? <span class="fn">CalculateMipLevelCount</span>(extent) : 1;
+    <span class="cmt">//创建图像并分配内存</span>
+    <span class="fn">CreateImageMemory</span>(<span class="enum">VK_IMAGE_TYPE_2D</span>, format_final, { extent.width, extent.height, 1 }, mipLevelCount, 1);
+    <span class="cmt">//创建图像视图</span>
+    <span class="fn">CreateImageView</span>(<span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>, format_final, mipLevelCount, 1);
+    <span class="cmt">//Blit数据到图像，并生成mipmap</span>
+    <span class="kw">if</span> (format_initial == format_final)
+        <span class="fn">CopyBlitAndGenerateMipmap2d</span>(<span class="type">stagingBuffer</span>::<span class="fn">Buffer_MainThread</span>(), imageMemory.<span class="fn">Image</span>(), imageMemory.<span class="fn">Image</span>(), extent, mipLevelCount, 1);
+    <span class="kw">else</span>
+        <span class="kw">if</span> (<span class="type">VkImage</span> image_conversion = <span class="type">stagingBuffer</span>::<span class="fn">AliasedImage2d_MainThread</span>(format_initial, extent))
+            <span class="fn">BlitAndGenerateMipmap2d</span>(image_conversion, imageMemory.<span class="fn">Image</span>(), extent, mipLevelCount, 1);
+        <span class="kw">else</span> {
+            <span class="type">VkImageCreateInfo</span> imageCreateInfo = {
+                .imageType = <span class="enum">VK_IMAGE_TYPE_2D</span>,
+                .format = format_initial,
+                .extent = { extent.width, extent.height, 1 },
+                .mipLevels = 1,
+                .arrayLayers = 1,
+                .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+                .usage = <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span> | <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>
+            };
+            vulkan::<span class="type">imageMemory</span> imageMemory_conversion(imageCreateInfo, <span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>);
+            <span class="fn">CopyBlitAndGenerateMipmap2d</span>(<span class="type">stagingBuffer</span>::<span class="fn">Buffer_MainThread</span>(), imageMemory_conversion.<span class="fn">Image</span>(), imageMemory.<span class="fn">Image</span>(), extent, mipLevelCount, 1);
+        }
+}
+</pre><section id="blitandgeneratemipmap2d">
+<h3>BlitAndGenerateMipmap2d<a class="headerlink" href="#blitandgeneratemipmap2d" title="Permalink to this heading"></a></h3>
+<p>
+    填充<span class="fn">BlitAndGenerateMipmap2d</span>(...)，首先来判定是否有必要blit或生成mipmap，如皆无必要则函数直接执行完毕：
+</p>
+<pre class="code">
+<span class="kw">static void</span> <span class="fn">BlitAndGenerateMipmap2d</span>(<span class="type">VkImage</span> image_preinitialized, <span class="type">VkImage</span> image_final, <span class="type">VkExtent2D</span> imageExtent,
+    <span class="type">uint32_t</span> mipLevelCount = 1, <span class="type">uint32_t</span> layerCount = 1, <span class="type">VkFilter</span> minFilter = <span class="enum">VK_FILTER_LINEAR</span>) {
+    <span class="cmt">//生成mipmap的条件是mip等级大于1</span>
+    <span class="kw">bool</span> generateMipmap = mipLevelCount > 1;
+    <span class="cmt">//发生成blit的条件是源图像和目标图像不同</span>
+    <span class="kw">bool</span> blitMipLevel0 = image_preinitialized != image_final;
+    <span class="kw">if</span> (generateMipmap || blitMipLevel0) {
+        <span class="cmt">//满足条件的话录制命令</span>
+        <span class="kw">auto</span>&amp; commandBuffer = <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">CommandBuffer_Transfer</span>();
+        commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
+
+        <span class="cmt">/*待填充*/</span>
+
+        commandBuffer.<span class="fn">End</span>();
+        <span class="cmt">//执行命令</span>
+        <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">ExecuteCommandBuffer_Graphics</span>(commandBuffer);
+    }
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            当然存在只生成mipmap的情况（比如为程序运行期间渲染的图像生成mipmap），尽管在本套教程中不会涉及此类使用场景。
+        </p>
+    </li>
+</ul>
+<p>
+    不必多说，在blit前将源图像<span class="var">image_preinitialized</span>的内存布局从<span class="enum">VK_IMAGE_LAYOUT_PREINITIALIZED</span>转换到<span class="enum">VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL</span>：
+</p>
+<pre class="code">
+<span class="kw">if</span> (generateMipmap || blitMipLevel0) {
+    <span class="kw">auto</span>&amp; commandBuffer = <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">CommandBuffer_Transfer</span>();
+    commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
+
+    <span class="cmt">//如有必要，从image_preinitialized将原图blit到image_final</span>
+    <span class="kw">if</span> (blitMipLevel0) {
+        <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
+            <span class="kw">nullptr</span>,
+            0,
+            <span class="enum">VK_ACCESS_TRANSFER_READ_BIT</span>,
+            <span class="enum">VK_IMAGE_LAYOUT_PREINITIALIZED</span>,
+            <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL</span>,
+            <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
+            <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
+            image_preinitialized,
+            { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, layerCount }
+        };
+        <span class="fn">vkCmdPipelineBarrier</span>(commandBuffer, <span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>, <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, 0,
+            0, <span class="kw">nullptr</span>, 0, <span class="kw">nullptr</span>, 1, &amp;imageMemoryBarrier);
+        <span class="cmt">/*待填充*/</span>
+    }
+
+    <span class="cmt">//如有必要，生成mipmap</span>
+    <span class="cmt">/*待填充*/</span>
+
+    commandBuffer.<span class="fn">End</span>();
+    <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">ExecuteCommandBuffer_Graphics</span>(commandBuffer);
+}
+</pre>
+<p>
+    填写<span class="type">VkImageBlit</span>并调用<span class="fn">CmdBlitImage</span>(...)，内容很简单：
+</p>
+<pre class="code">
+<span class="kw">if</span> (generateMipmap || blitMipLevel0) {
+    <span class="kw">auto</span>&amp; commandBuffer = <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">CommandBuffer_Transfer</span>();
+    commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
+
+    <span class="cmt">//如有必要，从image_preinitialized将原图blit到image_final</span>
+    <span class="kw">if</span> (blitMipLevel0) {
+    <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
+        <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
+            <span class="kw">nullptr</span>,
+            0,
+            <span class="enum">VK_ACCESS_TRANSFER_READ_BIT</span>,
+            <span class="enum">VK_IMAGE_LAYOUT_PREINITIALIZED</span>,
+            <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL</span>,
+            <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
+            <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
+            image_preinitialized,
+            { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, layerCount }
+        };
+        <span class="fn">vkCmdPipelineBarrier</span>(commandBuffer, <span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>, <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, 0,
+            0, <span class="kw">nullptr</span>, 0, <span class="kw">nullptr</span>, 1, &amp;imageMemoryBarrier);
+        <span class="type">VkImageBlit</span> region = {
+            { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 0, layerCount },
+            { {}, { <span class="type">int32_t</span>(imageExtent.width), <span class="type">int32_t</span>(imageExtent.height), 1 } },
+            { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 0, layerCount },
+            { {}, { <span class="type">int32_t</span>(imageExtent.width), <span class="type">int32_t</span>(imageExtent.height), 1 } }
+        };
+        <span class="type">imageOperation</span>::<span class="fn">CmdBlitImage</span>(commandBuffer, image_preinitialized, image_final, region,
+            { <span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>, 0, <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span> },
+            { <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, <span class="enum">VK_ACCESS_TRANSFER_READ_BIT</span>, <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL</span> }, minFilter); <span class="cmt">//因为没有放缩，滤波方式无所谓</span>
+    }
+
+    <span class="cmt">//如有必要，生成mipmap</span>
+    <span class="cmt">/*待填充*/</span>
+
+    commandBuffer.<span class="fn">End</span>();
+    <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">ExecuteCommandBuffer_Graphics</span>(commandBuffer);
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            这里将<span class="var">image_final</span>的内存布局转换到<span class="enum">VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL</span>，以备后续生成mipmap（剧透：生成mipmap也是通过blit命令达成的），若无需生成mipmap，届时也会有相应处理。
+        </p>
+    </li>
+</ul></section>
+<section id="copyblitandgeneratemipmap2d">
+<h3>CopyBlitAndGenerateMipmap2d<a class="headerlink" href="#copyblitandgeneratemipmap2d" title="Permalink to this heading"></a></h3>
+<p>
+    <span class="fn">CopyBlitAndGenerateMipmap2d</span>(...)的逻辑与<span class="fn">BlitAndGenerateMipmap2d</span>(...)类似，只不过copy这一步一定发生：
+</p>
+<pre class="code">
+<span class="kw">static void</span> <span class="fn">CopyBlitAndGenerateMipmap2d</span>(<span class="type">VkBuffer</span> buffer_copyFrom, <span class="type">VkImage</span> image_copyTo, <span class="type">VkImage</span> image_blitTo, <span class="type">VkExtent2D</span> imageExtent,
+    <span class="type">uint32_t</span> mipLevelCount = 1, <span class="type">uint32_t</span> layerCount = 1, <span class="type">VkFilter</span> minFilter = <span class="enum">VK_FILTER_LINEAR</span>) {
+    <span class="cmt">//生成mipmap的条件是mip等级大于1</span>
+    <span class="kw">bool</span> generateMipmap = mipLevelCount > 1;
+    <span class="cmt">//发生成blit的条件是源图像和目标图像不同</span>
+    <span class="kw">bool</span> blitMipLevel0 = image_copyTo != image_final;
+    <span class="cmt">//录制命令</span>
+    <span class="kw">auto</span>&amp; commandBuffer = <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">CommandBuffer_Transfer</span>();
+    commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
+
+    <span class="type">VkBufferImageCopy</span> region = {
+        .imageSubresource = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 0, layerCount },
+        .imageExtent = { imageExtent.width, imageExtent.height, 1 }
+    };
+    <span class="kw">if</span> (generateMipmap || blitMipLevel0) {
+        <span class="cmt">/*待填充*/</span>
+    }
+    <span class="kw">else</span>
+        <span class="cmt">/*待填充*/</span>
+
+    commandBuffer.<span class="fn">End</span>();
+    <span class="cmt">//执行命令</span>
+    <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">ExecuteCommandBuffer_Graphics</span>(commandBuffer);
+}
+</pre>
+<p>
+    在两个分支中各调用<span class="type">imageOperation</span>::<span class="fn">CmdCopyBufferToImage</span>(...)将图像从缓冲区<span class="var">buffer_copyFrom</span>拷贝到图像<span class="var">image_copyTo</span>：
+</p>
+<pre class="code">
+<span class="type">VkBufferImageCopy</span> region = {
+    .imageSubresource = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 0, layerCount },
+    .imageExtent = { imageExtent.width, imageExtent.height, 1 }
+};
+<span class="kw">if</span> (generateMipmap || blitMipLevel0) {
+    <span class="type">imageOperation</span>::<span class="fn">CmdCopyBufferToImage</span>(commandBuffer, buffer_copyFrom, image_copyTo, region,
+        { <span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>, 0, <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span> },
+        { <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, <span class="enum">VK_ACCESS_TRANSFER_READ_BIT</span>, <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL</span> });
+    <span class="cmt">/*待填充*/</span>
+}
+<span class="kw">else</span>
+    <span class="type">imageOperation</span>::<span class="fn">CmdCopyBufferToImage</span>(commandBuffer, buffer_copyFrom, image_copyTo, region,
+        { <span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>, 0, <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span> },
+        { <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>, <span class="enum">VK_ACCESS_SHADER_READ_BIT</span>, <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span> });
+</pre>
+<ul>
+    <li>
+        <p>
+            <span class="kw">else</span>分支中，后置内存屏障将内存布局转换到<span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>，以备在片段着色器（对应<span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>）中被采样（属于<span class="enum">VK_ACCESS_SHADER_READ_BIT</span>）。
+        </p>
+    </li>
+</ul>
+<p>
+    接着从<span class="var">image_copyTo</span>将数据blit到<span class="var">image_blitTo</span>，写法跟<span class="fn">BlitAndGenerateMipmap2d</span>(...)中一样：
+</p>
+<pre class="code">
+<span class="type">VkBufferImageCopy</span> region = {
+    .imageSubresource = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 0, layerCount },
+    .imageExtent = { imageExtent.width, imageExtent.height, 1 }
+};
+<span class="kw">if</span> (generateMipmap || blitMipLevel0) {
+    <span class="type">imageOperation</span>::<span class="fn">CmdCopyBufferToImage</span>(commandBuffer, buffer_copyFrom, image_copyTo, region,
+        { <span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>, 0, <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span> },
+        { <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, <span class="enum">VK_ACCESS_TRANSFER_READ_BIT</span>, <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL</span> });
+
+    <span class="cmt">//如有必要，进行blit</span>
+    <span class="kw">if</span> (blitMipLevel0) {
+        <span class="type">VkImageBlit</span> region = {
+            { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 0, layerCount },
+            { {}, { <span class="type">int32_t</span>(imageExtent.width), <span class="type">int32_t</span>(imageExtent.height), 1 } },
+            { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 0, layerCount },
+            { {}, { <span class="type">int32_t</span>(imageExtent.width), <span class="type">int32_t</span>(imageExtent.height), 1 } }
+        };
+        <span class="type">imageOperation</span>::<span class="fn">CmdBlitImage</span>(commandBuffer, image_preinitialized, image_final, region,
+            { <span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>, 0, <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span> },
+            { <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, <span class="enum">VK_ACCESS_TRANSFER_READ_BIT</span>, <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL</span> }, minFilter);
+    }
+
+    <span class="cmt">//如有必要，生成mipmap</span>
+    <span class="cmt">/*待填充*/</span>
+}
+<span class="kw">else</span>
+    <span class="type">imageOperation</span>::<span class="fn">CmdCopyBufferToImage</span>(commandBuffer, buffer_copyFrom, image_copyTo, region,
+        { <span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>, 0, <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span> },
+        { <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>, <span class="enum">VK_ACCESS_SHADER_READ_BIT</span>, <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span> });
+</pre></section>
+</section>
 <section id="mipmap">
 <h2>生成mipmap<a class="headerlink" href="#mipmap" title="Permalink to this heading"></a></h2>
 <p>
     Mipmap是一组原图像的的微缩版本，每个等级mipmap的长宽都是上一等级的一半，如下图所示：
 </p>
+<img alt="_images/ch5-2-1.png" src="_images/ch5-2-1.png" width="480px">
 <p>
-
+    <strong>Mipmap的存在意义是降低采样开销。</strong>
+    <br>
+    举例而言：将一张16x16大小的图像渲染到4x4大小，滤波方式为线性插值<span class="enum">VK_FILTER_LINEAR</span>，那么渲染出的一个像素就对应原图中4x4的区域，每个像素得采样原图的16个像素。
+    <br>
+    若没有mipmap且滤波方式不是<span class="enum">VK_FILTER_NEAREST</span>的话，无论原图被渲染到多小，都得采样整张原图，这在原图很大时显然很不划算。事先生成mipmap，再根据渲染时的放缩程度选择相应的mip等级进行采样，就能大幅降低开销。
+</p><section id="id2">
+<h3>计算mipmap等级<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<p>
+    TODO 施工中
 </p></section>
+</section>
 </section>
 
 
