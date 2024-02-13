@@ -260,16 +260,24 @@
 </section>
 <section id="id4">
 <h2>更新履历<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<p>2024.02.13</p>
+<ul>
+    <li>
+        <p>
+            <a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a>完成。
+        </p>
+    </li>
+    <li>
+        <p>
+            <a class="reference internal" href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-6 使用贴图</a>写了一点点。
+        </p>
+    </li>
+</ul>
 <p>2024.02.04</p>
 <ul>
     <li>
         <p>
             根据先前所写的关于内存屏障的说明的基础上，修正<a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕 #CmdCopyBufferToImage</a>中关于内存屏障的部分说明（-_-||）。
-        </p>
-    </li>
-    <li>
-        <p>
-            <a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a> 写完2/3。
         </p>
     </li>
 </ul>
@@ -316,7 +324,7 @@
     </li>
     <li>
         <p>
-            改正一些typo。连代码里都有，但是没人反馈，o(╥﹏╥)o。
+            改正一些typo。
         </p>
     </li>
 </ul>
@@ -356,11 +364,6 @@
     <li>
         <p>
             Ch1-4<a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html#id11">最后</a>应该要更新<span class="fn">TerminateWindow</span>()，<a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html#id9">若需要重建逻辑设备</a>末尾应该要向<span class="type">graphicsBase</span>::<span class="fn">CreateDevice</span>()增加一小段执行回调函数的代码，原本忘记了现在补上。在<a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html#id8">创建和销毁交换链时的回调函数</a>末尾添加了关于使用range-based for循环执行回调函数的注释。
-        </p>
-    </li>
-    <li>
-        <p>
-            Ch7的示例代码中增加<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch7/EasyVulkan.hpp#L73">用于快速显示启动画面的函数BootScreen()</a>（因为后续没多少要初始化的东西，没阻塞所以会一闪而过，不是bug）及<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch7/Ch7-5.hpp">Ch7-5的示例HPP</a>，以及<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch7/VkBase+.h#L456">2D贴图、2D贴图数组、立方体贴图的封装</a>，最近忙疯了+没人看+没人反馈，不怎么想更教程，有条件的自己啃吧。
         </p>
     </li>
 </ul>

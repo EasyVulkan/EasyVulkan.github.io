@@ -290,7 +290,12 @@
     </li>
     <li>
         <p>
-            若在timeout指定的时限内无法取得任何一张可用于渲染的图像，则返回<span class="enum">VK_NOT_READY</span>。
+            若在timeout指定的时限内无法取得任何一张可用于渲染的图像，则返回<span class="enum">VK_TIMEOUT</span>。
+        </p>
+    </li>
+    <li>
+        <p>
+            若在timeout指定为0且无法当即取得任何一张可用于渲染的图像，则返回<span class="enum">VK_NOT_READY</span>。
         </p>
     </li>
     <li>
@@ -330,29 +335,31 @@
         swapchainCreateInfo.oldSwapchain = <span class="mcr">VK_NULL_HANDLE</span>;
     }
     <span class="cmt">//获取交换链图像索引</span>
-    <span class="kw">switch</span> (<span class="type">VkResult</span> result = <span class="fn">vkAcquireNextImageKHR</span>(device, swapchain, <span class="mcr">UINT64_MAX</span>, semaphore_imageIsAvailable, <span class="mcr">VK_NULL_HANDLE</span>, &amp;currentImageIndex)) {
-    <span class="kw">case</span> <span class="enum">VK_SUBOPTIMAL_KHR</span>:
-    <span class="kw">case</span> <span class="enum">VK_ERROR_OUT_OF_DATE_KHR</span>:
-        <span class="kw">return</span> <span class="fn">RecreateSwapchain</span>();
-    <span class="kw">case</span> <span class="enum">VK_SUCCESS</span>:
-        <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
-    <span class="kw">default</span>:
-        outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to acquire the next image!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
-        <span class="kw">return</span> result;
-    }
+    <span class="kw">while</span> (<span class="type">VkResult</span> result = <span class="fn">vkAcquireNextImageKHR</span>(device, swapchain, <span class="mcr">UINT64_MAX</span>, semaphore_imageIsAvailable, <span class="mcr">VK_NULL_HANDLE</span>, &amp;currentImageIndex))
+        <span class="kw">switch</span> (result) {
+        <span class="kw">case</span> <span class="enum">VK_SUBOPTIMAL_KHR</span>:
+        <span class="kw">case</span> <span class="enum">VK_ERROR_OUT_OF_DATE_KHR</span>:
+            <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">RecreateSwapchain</span>())
+                <span class="kw">return</span> result;
+            <span class="kw">break</span>; <span class="cmt">//注意重建交换链后仍需要获取图像，通过break递归，再次执行while的条件判定语句</span>
+        <span class="kw">default</span>:
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to acquire the next image!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            <span class="kw">return</span> result;
+        }
+    <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
 }
 </pre>
 <ul>
     <li>
         <p>
-            由于超时时间被指定为<span class="mcr">UINT64_MAX</span>，不需要考虑返回<span class="enum">VK_NOT_READY</span>的情况
+            由于超时时间被指定为<span class="mcr">UINT64_MAX</span>，不需要考虑返回<span class="enum">VK_TIMEOUT</span>和<span class="enum">VK_NOT_READY</span>的情况
         </p>
     </li>
 </ul>
 <p>
-    如之前在<a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html#id7">Ch1-4 创建交换链</a>中所说，不能在重建交换链后立刻销毁旧交换链。<span class="fn">SwapImage</span>(...)中的逻辑是，若在当前帧重建交换链，那么在下一帧销毁交换链。
+    如之前在<a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html#id7">Ch1-4 创建交换链</a>中所说，不能在重建交换链后立刻销毁旧交换链。<span class="fn">SwapImage</span>(...)中的逻辑是，若在当前帧重建交换链，那么在下一帧销毁交换链（这也是为什么重建交换链后使用了<span class="kw">break</span>来再次执行<span class="kw">while</span>，而非递归地调用<span class="fn">SwapImage</span>(...)）。
     <br>
-    在<span class="fn">RecreateSwapchain</span>()中，旧交换链的handle被记录在<span class="var">swapchainCreateInfo.oldSwapchain</span>，所以销毁旧交换链的首要条件是验证<span class="var">swapchainCreateInfo.oldSwapchain</span>是否为空。旧交换链应该存活至创建新交换链成功为止，由于<span class="fn">RecreateSwapchain</span>()执行失败是不会覆写成员变量<span class="var">swapchain</span>，因此通过判断<span class="var">swapchainCreateInfo.oldSwapchain</span>与<span class="var">swapchain</span>是否一致，来判断前一帧中<span class="fn">RecreateSwapchain</span>()是否执行成功。两个条件中间添加&amp;&amp;来短路执行。
+    在<span class="fn">RecreateSwapchain</span>()中，旧交换链的handle被记录在<span class="var">swapchainCreateInfo.oldSwapchain</span>，所以销毁旧交换链的首要条件是验证<span class="var">swapchainCreateInfo.oldSwapchain</span>是否为空。旧交换链应该存活至创建新交换链成功为止，由于<span class="fn">RecreateSwapchain</span>()执行失败时不会覆写成员变量<span class="var">swapchain</span>，因此通过判断<span class="var">swapchainCreateInfo.oldSwapchain</span>是否等于<span class="var">swapchain</span>，来判断前一帧中<span class="fn">RecreateSwapchain</span>()是否执行成功。两个条件中间添加&amp;&amp;来短路执行。
 </p>
 <p>
     主函数更新为：
@@ -616,11 +623,11 @@
 <span class="type">result_t</span> <span class="fn">PresentImage</span>(<span class="type">VkPresentInfoKHR</span>&amp; presentInfo) {
     presentInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_PRESENT_INFO_KHR</span>;
     <span class="kw">switch</span> (<span class="type">VkResult</span> result = <span class="fn">vkQueuePresentKHR</span>(queue_presentation, &amp;presentInfo)) {
+    <span class="kw">case</span> <span class="enum">VK_SUCCESS:
+        <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
     <span class="kw">case</span> <span class="enum">VK_SUBOPTIMAL_KHR</span>:
     <span class="kw">case</span> <span class="enum">VK_ERROR_OUT_OF_DATE_KHR</span>:
         <span class="kw">return</span> <span class="fn">RecreateSwapchain</span>();
-    <span class="kw">case</span> <span class="enum">VK_SUCCESS:
-        <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
     <span class="kw">default</span>:
         outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to queue the image for presentation!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
@@ -639,6 +646,13 @@
     <span class="kw">return</span> <span class="fn">PresentImage</span>(presentInfo);
 }
 </pre>
+<ul>
+    <li>
+        <p>
+            跟<span class="fn">SwapImage</span>(...)中的情形不同，<span class="fn">PresentImage</span>(...)在重建交换链后直接返回，这会导致必定丢1帧。要保留这1帧的话，得在重建交换链后再获取交换链图像、呈现图像，考虑到获取交换链图像时还要创建临时的同步对象，代码会写得比较麻烦，按下不表。
+        </p>
+    </li>
+</ul>
 <p>
     主函数更新为：
 </p>

@@ -21,7 +21,7 @@
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="Ch7-2 初识索引缓冲区" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html" />
-    <link rel="prev" title="Ch5-1 各种缓冲区" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html" /> 
+    <link rel="prev" title="Ch5-2 2D贴图及生成Mipmap" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -75,6 +75,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul class="current">
@@ -88,9 +89,10 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-3 初识Push Constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识Uniform缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-6 使用贴图</a></li>
 </ul>
 
         </div>
@@ -179,7 +181,7 @@
 <p>
     这里首先介绍以第一种方式书写代码，第二种方式的写法留到本节最后。
     <br>
-    修改<a href="https://www.baidu.com/baidu?tn=monline_7_dg&ie=utf-8&wd=Ch2-3+%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2">Ch2-3 创建管线并绘制三角形</a>中的主函数，在全局范围内加入如下结构体定义：
+    修改<a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html#id9">Ch2-3 创建管线并绘制三角形</a>中的主函数，在全局范围内加入如下结构体定义：
 </p>
 <pre class="code">
 <span class="kw">struct</span> <span class="type">vertex</span> {
@@ -368,7 +370,7 @@ pipelineCiPack.vertexInputAttributes.<span class="type">emplace_back</span>(1, 1
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-left" title="Ch5-1 各种缓冲区" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html" class="btn btn-neutral float-left" title="Ch5-2 2D贴图及生成Mipmap" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
         <a href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-right" title="Ch7-2 初识索引缓冲区" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

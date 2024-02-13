@@ -1084,6 +1084,8 @@
     图像内存屏障作用于特定图像的指定资源范围，相比缓冲区内存屏障，它还能转换图像的内存布局。
     <br>
     图像内存布局的转换发生在可获后、可见前。
+    <br>
+    <strong>内存布局转换具有隐式同步保证</strong>：即使两次图像内存布局转换间，没有任何命令使用该图像干任何事，转换也必定依序发生（<a href="https://renderdoc.org/vkspec_chunked/chap7.html#synchronization-image-barrier-layout-transition-order">官方文档出处</a>）。比如，先后使用两个除了内存布局外参数完全一致的图像内存屏障，那么结果等效于将内存布局转换到第二个屏障指定的目标布局。在<a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html#cmdgeneratemipmap2d">Ch5-2 2D贴图及生成Mipmap</a>有利用到这一点。
 </p>
 <table class="docutils align-default">
     <colgroup>

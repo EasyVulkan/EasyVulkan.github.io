@@ -16,14 +16,14 @@ namespace vulkan {
 		graphicsBasePlus() {
 			auto Initialize = [] {
 				if (graphicsBase::Base().QueueFamilyIndex_Graphics() != VK_QUEUE_FAMILY_IGNORED)
-					singleton.commandPool_graphics.Create(VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, graphicsBase::Base().QueueFamilyIndex_Graphics()),
+					singleton.commandPool_graphics.Create(graphicsBase::Base().QueueFamilyIndex_Graphics(), VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT),
 					singleton.commandPool_graphics.AllocateBuffers(singleton.commandBuffer_transfer);
 				if (graphicsBase::Base().QueueFamilyIndex_Compute() != VK_QUEUE_FAMILY_IGNORED)
-					singleton.commandPool_compute.Create(VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, graphicsBase::Base().QueueFamilyIndex_Compute());
+					singleton.commandPool_compute.Create(graphicsBase::Base().QueueFamilyIndex_Compute(), VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT);
 				if (graphicsBase::Base().QueueFamilyIndex_Presentation() != VK_QUEUE_FAMILY_IGNORED &&
 					graphicsBase::Base().QueueFamilyIndex_Presentation() != graphicsBase::Base().QueueFamilyIndex_Graphics() &&
 					graphicsBase::Base().SwapchainCreateInfo().imageSharingMode == VK_SHARING_MODE_EXCLUSIVE)
-					singleton.commandPool_presentation.Create(VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, graphicsBase::Base().QueueFamilyIndex_Presentation()),
+					singleton.commandPool_presentation.Create(graphicsBase::Base().QueueFamilyIndex_Presentation(), VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT),
 					singleton.commandPool_presentation.AllocateBuffers(singleton.commandBuffer_presentation);
 				for (size_t i = 0; i < std::size(singleton.formatProperties); i++)
 					vkGetPhysicalDeviceFormatProperties(graphicsBase::Base().PhysicalDevice(), VkFormat(i), &singleton.formatProperties[i]);
@@ -41,10 +41,6 @@ namespace vulkan {
 		~graphicsBasePlus() = default;
 	public:
 		//Getter
-		const commandPool& CommandPool_Graphics() const { return commandPool_graphics; }
-		const commandPool& CommandPool_Compute() const { return commandPool_compute; }
-		const commandBuffer& CommandBuffer_Transfer() const { return commandBuffer_transfer; }
-		//Const Function
 		const VkFormatProperties& FormatProperties(VkFormat format) const {
 #ifndef NDEBUG
 			if (uint32_t(format) >= std::size(formatInfos_v1_0))
@@ -52,6 +48,32 @@ namespace vulkan {
 				abort();
 #endif
 			return formatProperties[format];
+		}
+		const commandPool& CommandPool_Graphics() const { return commandPool_graphics; }
+		const commandPool& CommandPool_Compute() const { return commandPool_compute; }
+		const commandBuffer& CommandBuffer_Transfer() const { return commandBuffer_transfer; }
+		//Const Function
+		result_t ExecuteCommandBuffer_Graphics(VkCommandBuffer commandBuffer) const {
+			fence fence;
+			VkSubmitInfo submitInfo = {
+				.commandBufferCount = 1,
+				.pCommandBuffers = &commandBuffer
+			};
+			VkResult result = graphicsBase::Base().SubmitCommandBuffer_Graphics(submitInfo, fence);
+			if (!result)
+				fence.Wait();
+			return result;
+		}
+		result_t ExecuteCommandBuffer_Compute(VkCommandBuffer commandBuffer) const {
+			fence fence;
+			VkSubmitInfo submitInfo = {
+				.commandBufferCount = 1,
+				.pCommandBuffers = &commandBuffer
+			};
+			VkResult result = graphicsBase::Base().SubmitCommandBuffer_Compute(submitInfo, fence);
+			if (!result)
+				fence.Wait();
+			return result;
 		}
 		result_t AcquireImageOwnership_Presentation(VkSemaphore semaphore_renderingIsOver, VkSemaphore semaphore_ownershipIsTransfered, VkFence fence = VK_NULL_HANDLE) const {
 			if (VkResult result = commandBuffer_presentation.Begin(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT))
@@ -335,14 +357,12 @@ namespace vulkan {
 				return;
 			}
 			stagingBuffer::BufferData_MainThread(pData_src, size);
-			fence fence;
 			auto& commandBuffer = graphicsBase::Plus().CommandBuffer_Transfer();
 			commandBuffer.Begin(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 			VkBufferCopy region = { 0, offset, size };
 			vkCmdCopyBuffer(commandBuffer, stagingBuffer::Buffer_MainThread(), bufferMemory.Buffer(), 1, &region);
 			commandBuffer.End();
-			graphicsBase::Base().SubmitCommandBuffer_Transfer(commandBuffer, fence);
-			fence.Wait();
+			graphicsBase::Plus().ExecuteCommandBuffer_Graphics(commandBuffer);
 		}
 		void TransferData(const void* pData_src, uint32_t elementCount, VkDeviceSize elementSize, VkDeviceSize stride_src, VkDeviceSize stride_dst, VkDeviceSize offset = 0) const {
 			if (bufferMemory.MemoryProperties() & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) {
@@ -354,18 +374,14 @@ namespace vulkan {
 				return;
 			}
 			stagingBuffer::BufferData_MainThread(pData_src, stride_src * elementCount);
-			fence fence;
-			{
-				auto& commandBuffer = graphicsBase::Plus().CommandBuffer_Transfer();
-				commandBuffer.Begin(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
-				std::unique_ptr<VkBufferCopy[]> regions = std::make_unique<VkBufferCopy[]>(elementCount);
-				for (size_t i = 0; i < elementCount; i++)
-					regions[i] = { stride_src * i, stride_dst * i + offset, elementSize };
-				vkCmdCopyBuffer(commandBuffer, stagingBuffer::Buffer_MainThread(), bufferMemory.Buffer(), elementCount, regions.get());
-				commandBuffer.End();
-				graphicsBase::Base().SubmitCommandBuffer_Transfer(commandBuffer, fence);
-			}
-			fence.Wait();
+			auto& commandBuffer = graphicsBase::Plus().CommandBuffer_Transfer();
+			commandBuffer.Begin(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
+			std::unique_ptr<VkBufferCopy[]> regions = std::make_unique<VkBufferCopy[]>(elementCount);
+			for (size_t i = 0; i < elementCount; i++)
+				regions[i] = { stride_src * i, stride_dst * i + offset, elementSize };
+			vkCmdCopyBuffer(commandBuffer, stagingBuffer::Buffer_MainThread(), bufferMemory.Buffer(), elementCount, regions.get());
+			commandBuffer.End();
+			graphicsBase::Plus().ExecuteCommandBuffer_Graphics(commandBuffer);
 		}
 		void TransferData(const auto& data_src) const {
 			TransferData(&data_src, sizeof data_src);
@@ -460,12 +476,13 @@ namespace vulkan {
 			const VkPipelineStageFlags stage = 0;
 			const VkAccessFlags access = 0;
 			const VkImageLayout layout = VK_IMAGE_LAYOUT_UNDEFINED;
-			imageMemoryBarrierParameterPack() = default;
-			imageMemoryBarrierParameterPack(VkPipelineStageFlags stage, VkAccessFlags access, VkImageLayout layout) :
+			constexpr imageMemoryBarrierParameterPack() = default;
+			constexpr imageMemoryBarrierParameterPack(VkPipelineStageFlags stage, VkAccessFlags access, VkImageLayout layout) :
 				isNeeded(true), stage(stage), access(access), layout(layout) {}
 		};
 		static void CmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer buffer, VkImage image, const VkBufferImageCopy& region,
 			imageMemoryBarrierParameterPack imb_from, imageMemoryBarrierParameterPack imb_to) {
+			//Pre-copy barrier
 			VkImageMemoryBarrier imageMemoryBarrier = {
 				VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
 				nullptr,
@@ -499,7 +516,7 @@ namespace vulkan {
 			}
 		}
 		static void CmdBlitImage(VkCommandBuffer commandBuffer, VkImage image_src, VkImage image_dst, const VkImageBlit& region,
-			imageMemoryBarrierParameterPack imb_dst_from, imageMemoryBarrierParameterPack imb_dst_to, VkFilter minFilter = VK_FILTER_LINEAR) {
+			imageMemoryBarrierParameterPack imb_dst_from, imageMemoryBarrierParameterPack imb_dst_to, VkFilter filter = VK_FILTER_LINEAR) {
 			//Pre-blit barrier
 			VkImageMemoryBarrier imageMemoryBarrier = {
 				VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
@@ -525,7 +542,7 @@ namespace vulkan {
 			vkCmdBlitImage(commandBuffer,
 				image_src, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 				image_dst, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-				1, &region, minFilter);
+				1, &region, filter);
 			//Post-blit barrier
 			if (imb_dst_to.isNeeded) {
 				imageMemoryBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
@@ -538,24 +555,72 @@ namespace vulkan {
 		}
 		static void CmdGenerateMipmap2d(VkCommandBuffer commandBuffer, VkImage image, VkExtent2D imageExtent, uint32_t mipLevelCount, uint32_t layerCount,
 			imageMemoryBarrierParameterPack imb_to, VkFilter minFilter = VK_FILTER_LINEAR) {
+			auto MipmapExtent = [](VkExtent2D imageExtent, uint32_t mipLevel) {
+				VkOffset3D extent = { int32_t(imageExtent.width >> mipLevel), int32_t(imageExtent.height >> mipLevel), 1 };
+				extent.x += !extent.x;
+				extent.y += !extent.y;
+				return extent;
+			};
 			//Blit
-			for (uint32_t i = 1; i < mipLevelCount; i++) {
-				VkImageBlit region = {
-					{ VK_IMAGE_ASPECT_COLOR_BIT, i - 1, 0, layerCount },										//srcSubresource
-					{ {}, { int32_t(imageExtent.width) >> i - 1, int32_t(imageExtent.height) >> i - 1, 1 } },	//srcOffsets
-					{ VK_IMAGE_ASPECT_COLOR_BIT, i, 0, layerCount },											//dstSubresource
-					{ {}, { int32_t(imageExtent.width) >> i, int32_t(imageExtent.height) >> i, 1 } }			//dstOffsets
-				};
-				CmdBlitImage(commandBuffer, image, image, region,
-					{ VK_PIPELINE_STAGE_TRANSFER_BIT, 0, VK_IMAGE_LAYOUT_UNDEFINED },
-					{ VK_PIPELINE_STAGE_TRANSFER_BIT, VK_ACCESS_TRANSFER_READ_BIT, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL }, minFilter);
+			if (layerCount > 1) {
+				std::unique_ptr<VkImageBlit[]> regions = std::make_unique<VkImageBlit[]>(layerCount);
+				for (uint32_t i = 1; i < mipLevelCount; i++) {
+					VkOffset3D mipmapExtent_src = MipmapExtent(imageExtent, i - 1);
+					VkOffset3D mipmapExtent_dst = MipmapExtent(imageExtent, i);
+					for (uint32_t j = 0; j < layerCount; j++)
+						regions[j] = {
+							{ VK_IMAGE_ASPECT_COLOR_BIT, i - 1, j, 1 },	//srcSubresource
+							{ {}, mipmapExtent_src },					//srcOffsets
+							{ VK_IMAGE_ASPECT_COLOR_BIT, i, j, 1 },		//dstSubresource
+							{ {}, mipmapExtent_dst }					//dstOffsets
+						};
+					//Pre-blit barrier
+					VkImageMemoryBarrier imageMemoryBarrier = {
+						VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+						nullptr,
+						0,
+						VK_ACCESS_TRANSFER_WRITE_BIT,
+						VK_IMAGE_LAYOUT_UNDEFINED,
+						VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+						VK_QUEUE_FAMILY_IGNORED,
+						VK_QUEUE_FAMILY_IGNORED,
+						image,
+						{ VK_IMAGE_ASPECT_COLOR_BIT, i, 1, 0, layerCount }
+					};
+					vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0,
+						0, nullptr, 0, nullptr, 1, &imageMemoryBarrier);
+					//Blit
+					vkCmdBlitImage(commandBuffer,
+						image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+						image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+						layerCount, regions.get(), minFilter);
+					//Post-blit barrier
+					imageMemoryBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+					imageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+					imageMemoryBarrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+					imageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+					vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0,
+						0, nullptr, 0, nullptr, 1, &imageMemoryBarrier);
+				}
 			}
+			else
+				for (uint32_t i = 1; i < mipLevelCount; i++) {
+					VkImageBlit region = {
+						{ VK_IMAGE_ASPECT_COLOR_BIT, i - 1, 0, layerCount },//srcSubresource
+						{ {}, MipmapExtent(imageExtent, i - 1) },			//srcOffsets
+						{ VK_IMAGE_ASPECT_COLOR_BIT, i, 0, layerCount },	//dstSubresource
+						{ {}, MipmapExtent(imageExtent, i) }				//dstOffsets
+					};
+					CmdBlitImage(commandBuffer, image, image, region,
+						{ VK_PIPELINE_STAGE_TRANSFER_BIT, 0, VK_IMAGE_LAYOUT_UNDEFINED },
+						{ VK_PIPELINE_STAGE_TRANSFER_BIT, VK_ACCESS_TRANSFER_READ_BIT, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL }, minFilter);
+				}
 			//Post-blit barrier
 			if (imb_to.isNeeded) {
 				VkImageMemoryBarrier imageMemoryBarrier = {
 					VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
 					nullptr,
-					VK_ACCESS_TRANSFER_READ_BIT,
+					0,
 					imb_to.access,
 					VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 					imb_to.layout,
@@ -576,9 +641,9 @@ namespace vulkan {
 		imageMemory imageMemory;
 		//--------------------
 		texture() = default;
-		void CreateImageMemory(VkImageCreateFlags createFlags, VkImageType imageType, VkFormat format, VkExtent3D extent, uint32_t mipLevelCount, uint32_t arrayLayerCount) {
+		void CreateImageMemory(VkImageType imageType, VkFormat format, VkExtent3D extent, uint32_t mipLevelCount, uint32_t arrayLayerCount, VkImageCreateFlags flags = 0) {
 			VkImageCreateInfo imageCreateInfo = {
-				.flags = createFlags,
+				.flags = flags,
 				.imageType = imageType,
 				.format = format,
 				.extent = extent,
@@ -588,6 +653,49 @@ namespace vulkan {
 				.usage = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT
 			};
 			imageMemory.Create(imageCreateInfo, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+		}
+		void CreateImageView(VkImageViewType viewType, VkFormat format, uint32_t mipLevelCount, uint32_t arrayLayerCount, VkImageViewCreateFlags flags = 0) {
+			imageView.Create(imageMemory.Image(), viewType, format, { VK_IMAGE_ASPECT_COLOR_BIT, 0, mipLevelCount, 0, arrayLayerCount }, flags);
+		}
+		//Static Function
+		static std::unique_ptr<uint8_t[]> LoadFile_Internal(const auto* address, size_t fileSize, VkExtent2D& extent, formatInfo requiredFormatInfo) {
+#ifndef NDEBUG
+			if (!(requiredFormatInfo.rawDataType == formatInfo::floatingPoint && requiredFormatInfo.sizePerComponent == 4) &&
+				!(requiredFormatInfo.rawDataType == formatInfo::integer && Between_Closed<int32_t>(1, requiredFormatInfo.sizePerComponent, 2)))
+				outStream << std::format("[ texture ] ERROR\nRequired format is not available for source image data!\n"),
+				abort();
+#endif
+			int& width = reinterpret_cast<int&>(extent.width);
+			int& height = reinterpret_cast<int&>(extent.height);
+			int channelCount;
+			void* pImageData = nullptr;
+			if constexpr (std::same_as<decltype(address), const char*>) {
+				if (requiredFormatInfo.rawDataType == formatInfo::integer)
+					if (requiredFormatInfo.sizePerComponent == 1)
+						pImageData = stbi_load(address, &width, &height, &channelCount, requiredFormatInfo.componentCount);
+					else
+						pImageData = stbi_load_16(address, &width, &height, &channelCount, requiredFormatInfo.componentCount);
+				else
+					pImageData = stbi_loadf(address, &width, &height, &channelCount, requiredFormatInfo.componentCount);
+				if (!pImageData)
+					outStream << std::format("[ texture ] ERROR\nFailed to load the file: {}\n", address);
+			}
+			if constexpr (std::same_as<decltype(address), const uint8_t*>) {
+				if (fileSize > INT32_MAX) {
+					outStream << std::format("[ texture ] ERROR\nFailed to load image data from the given address! Data size must be less than 2G!\n");
+					return {};
+				}
+				if (requiredFormatInfo.rawDataType == formatInfo::integer)
+					if (requiredFormatInfo.sizePerComponent == 1)
+						pImageData = stbi_load_from_memory(address, fileSize, &width, &height, &channelCount, requiredFormatInfo.componentCount);
+					else
+						pImageData = stbi_load_16_from_memory(address, fileSize, &width, &height, &channelCount, requiredFormatInfo.componentCount);
+				else
+					pImageData = stbi_loadf_from_memory(address, fileSize, &width, &height, &channelCount, requiredFormatInfo.componentCount);
+				if (!pImageData)
+					outStream << std::format("[ texture ] ERROR\nFailed to load image data from the given address!\n");
+			}
+			return std::unique_ptr<uint8_t[]>(static_cast<uint8_t*>(pImageData));
 		}
 	public:
 		//Getter
@@ -645,95 +753,77 @@ namespace vulkan {
 		}
 		[[nodiscard]]
 		static std::unique_ptr<uint8_t[]> LoadFile(const char* filepath, VkExtent2D& extent, formatInfo requiredFormatInfo) {
-#ifndef NDEBUG
-			if (!(requiredFormatInfo.rawDataType == formatInfo::floatingPoint && requiredFormatInfo.sizePerComponent == 4) &&
-				!(requiredFormatInfo.rawDataType == formatInfo::integer && Between_Closed<int32_t>(1, requiredFormatInfo.sizePerComponent, 2)))
-				outStream << std::format("[ texture ] ERROR\nRequired format is not available for source image data!\n"),
-				abort();
-#endif
-			int& width = reinterpret_cast<int&>(extent.width);
-			int& height = reinterpret_cast<int&>(extent.height);
-			int channels;
-			void* pImageData = nullptr;
-			if (requiredFormatInfo.rawDataType == formatInfo::integer)
-				if (requiredFormatInfo.sizePerComponent == 1)
-					pImageData = stbi_load(filepath, &width, &height, &channels, requiredFormatInfo.componentCount);
-				else
-					pImageData = stbi_load_16(filepath, &width, &height, &channels, requiredFormatInfo.componentCount);
-			else
-				pImageData = stbi_loadf(filepath, &width, &height, &channels, requiredFormatInfo.componentCount);
-			if (!pImageData)
-				outStream << std::format("[ texture ] ERROR\nFailed to load the file: {}\n", filepath);
-			return std::unique_ptr<uint8_t[]>(static_cast<uint8_t*>(pImageData));
+			return LoadFile_Internal(filepath, 0, extent, requiredFormatInfo);
+		}
+		[[nodiscard]]
+		static std::unique_ptr<uint8_t[]> LoadFile(const uint8_t* fileBinaries, size_t fileSize, VkExtent2D& extent, formatInfo requiredFormatInfo) {
+			return LoadFile_Internal(fileBinaries, fileSize, extent, requiredFormatInfo);
 		}
 		static uint32_t CalculateMipLevelCount(VkExtent2D extent) {
-			return uint32_t(std::floor(std::log2(std::min(extent.width, extent.height)))) + 1;
+			return uint32_t(std::floor(std::log2(std::max(extent.width, extent.height)))) + 1;
 		}
 		static void CopyBlitAndGenerateMipmap2d(VkBuffer buffer_copyFrom, VkImage image_copyTo, VkImage image_blitTo, VkExtent2D imageExtent,
 			uint32_t mipLevelCount = 1, uint32_t layerCount = 1, VkFilter minFilter = VK_FILTER_LINEAR) {
-			bool generateMipmap = mipLevelCount - 1;
+			static constexpr imageOperation::imageMemoryBarrierParameterPack imbs[2] = {
+				{ VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, VK_ACCESS_SHADER_READ_BIT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL },
+				{ VK_PIPELINE_STAGE_TRANSFER_BIT, VK_ACCESS_TRANSFER_READ_BIT, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL }
+			};
+			bool generateMipmap = mipLevelCount > 1;
 			bool blitMipLevel0 = image_copyTo != image_blitTo;
-			fence fence;
 			auto& commandBuffer = graphicsBase::Plus().CommandBuffer_Transfer();
 			commandBuffer.Begin(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 			VkBufferImageCopy region = {
 				.imageSubresource = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, layerCount },
 				.imageExtent = { imageExtent.width, imageExtent.height, 1 }
 			};
-			if (generateMipmap || blitMipLevel0) {
-				imageOperation::CmdCopyBufferToImage(commandBuffer, buffer_copyFrom, image_copyTo, region,
-					{ VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, VK_IMAGE_LAYOUT_UNDEFINED },
-					{ VK_PIPELINE_STAGE_TRANSFER_BIT, VK_ACCESS_TRANSFER_READ_BIT, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL });
-				//Blit to another image if necessary
-				if (blitMipLevel0) {
-					VkImageBlit region = {
-						{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, layerCount },
-						{ {}, { int32_t(imageExtent.width), int32_t(imageExtent.height), 1 } },
-						{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, layerCount },
-						{ {}, { int32_t(imageExtent.width), int32_t(imageExtent.height), 1 } }
-					};
-					imageOperation::CmdBlitImage(commandBuffer, image_copyTo, image_blitTo, region,
-						{ VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, VK_IMAGE_LAYOUT_UNDEFINED },
-						{ VK_PIPELINE_STAGE_TRANSFER_BIT, VK_ACCESS_TRANSFER_READ_BIT, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL }, minFilter);
-				}
-				//Generate mipmap if necessary, transition layout
-				imageOperation::CmdGenerateMipmap2d(commandBuffer, image_blitTo, imageExtent, mipLevelCount, layerCount,
-					{ VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, VK_ACCESS_SHADER_READ_BIT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL },
-					minFilter);
+			imageOperation::CmdCopyBufferToImage(commandBuffer, buffer_copyFrom, image_copyTo, region,
+				{ VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, VK_IMAGE_LAYOUT_UNDEFINED }, imbs[generateMipmap || blitMipLevel0]);
+			//Blit to another image if necessary
+			if (blitMipLevel0) {
+				VkImageBlit region = {
+					{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, layerCount },
+					{ {}, { int32_t(imageExtent.width), int32_t(imageExtent.height), 1 } },
+					{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, layerCount },
+					{ {}, { int32_t(imageExtent.width), int32_t(imageExtent.height), 1 } }
+				};
+				imageOperation::CmdBlitImage(commandBuffer, image_copyTo, image_blitTo, region,
+					{ VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, VK_IMAGE_LAYOUT_UNDEFINED }, imbs[generateMipmap], minFilter);
 			}
-			else
-				imageOperation::CmdCopyBufferToImage(commandBuffer, buffer_copyFrom, image_copyTo, region,
-					{ VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, VK_IMAGE_LAYOUT_UNDEFINED },
-					{ VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, VK_ACCESS_SHADER_READ_BIT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL });
+			//Generate mipmap if necessary, transition layout
+			if (generateMipmap)
+				imageOperation::CmdGenerateMipmap2d(commandBuffer, image_blitTo, imageExtent, mipLevelCount, layerCount,
+					{ VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, VK_ACCESS_SHADER_READ_BIT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL }, minFilter);
 			commandBuffer.End();
 			//Submit
-			graphicsBase::Base().SubmitCommandBuffer_Transfer(commandBuffer, fence);
-			fence.Wait();
+			graphicsBase::Plus().ExecuteCommandBuffer_Graphics(commandBuffer);
 		}
 		static void BlitAndGenerateMipmap2d(VkImage image_preinitialized, VkImage image_final, VkExtent2D imageExtent,
 			uint32_t mipLevelCount = 1, uint32_t layerCount = 1, VkFilter minFilter = VK_FILTER_LINEAR) {
-			bool generateMipmap = mipLevelCount - 1;
+			static constexpr imageOperation::imageMemoryBarrierParameterPack imbs[2] = {
+				{ VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, VK_ACCESS_SHADER_READ_BIT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL },
+				{ VK_PIPELINE_STAGE_TRANSFER_BIT, VK_ACCESS_TRANSFER_READ_BIT, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL }
+			};
+			bool generateMipmap = mipLevelCount > 1;
 			bool blitMipLevel0 = image_preinitialized != image_final;
 			if (generateMipmap || blitMipLevel0) {
-				fence fence;
 				auto& commandBuffer = graphicsBase::Plus().CommandBuffer_Transfer();
 				commandBuffer.Begin(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
-				VkImageMemoryBarrier imageMemoryBarrier = {
-					VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-					nullptr,
-					VK_ACCESS_HOST_WRITE_BIT,
-					VK_ACCESS_TRANSFER_READ_BIT,
-					VK_IMAGE_LAYOUT_PREINITIALIZED,
-					VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-					VK_QUEUE_FAMILY_IGNORED,
-					VK_QUEUE_FAMILY_IGNORED,
-					image_preinitialized,
-					{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, layerCount }
-				};
-				vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_HOST_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0,
-					0, nullptr, 0, nullptr, 1, &imageMemoryBarrier);
 				//Blit to another image if necessary
 				if (blitMipLevel0) {
+					VkImageMemoryBarrier imageMemoryBarrier = {
+						VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+						nullptr,
+						0,
+						VK_ACCESS_TRANSFER_READ_BIT,
+						VK_IMAGE_LAYOUT_PREINITIALIZED,
+						VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+						VK_QUEUE_FAMILY_IGNORED,
+						VK_QUEUE_FAMILY_IGNORED,
+						image_preinitialized,
+						{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, layerCount }
+					};
+					vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0,
+						0, nullptr, 0, nullptr, 1, &imageMemoryBarrier);
 					VkImageBlit region = {
 						{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, layerCount },
 						{ {}, { int32_t(imageExtent.width), int32_t(imageExtent.height), 1 } },
@@ -741,20 +831,19 @@ namespace vulkan {
 						{ {}, { int32_t(imageExtent.width), int32_t(imageExtent.height), 1 } }
 					};
 					imageOperation::CmdBlitImage(commandBuffer, image_preinitialized, image_final, region,
-						{ VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, VK_IMAGE_LAYOUT_UNDEFINED },
-						{ VK_PIPELINE_STAGE_TRANSFER_BIT, VK_ACCESS_TRANSFER_READ_BIT, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL }, minFilter);
+						{ VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, VK_IMAGE_LAYOUT_UNDEFINED }, imbs[generateMipmap], minFilter);
 				}
 				//Generate mipmap if necessary, transition layout
-				imageOperation::CmdGenerateMipmap2d(commandBuffer, image_final, imageExtent, mipLevelCount, layerCount,
-					{ VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, VK_ACCESS_SHADER_READ_BIT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL }, minFilter);
+				if (generateMipmap)
+					imageOperation::CmdGenerateMipmap2d(commandBuffer, image_final, imageExtent, mipLevelCount, layerCount,
+						{ VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, VK_ACCESS_SHADER_READ_BIT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL }, minFilter);
 				commandBuffer.End();
 				//Submit
-				graphicsBase::Base().SubmitCommandBuffer_Transfer(commandBuffer, fence);
-				fence.Wait();
+				graphicsBase::Plus().ExecuteCommandBuffer_Graphics(commandBuffer);
 			}
 		}
 		static VkSamplerCreateInfo SamplerCreateInfo() {
-			static VkSamplerCreateInfo createInfo = {
+			return {
 				.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
 				.magFilter = VK_FILTER_LINEAR,
 				.minFilter = VK_FILTER_LINEAR,
@@ -764,6 +853,7 @@ namespace vulkan {
 				.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
 				.mipLodBias = 0.f,
 				.anisotropyEnable = VK_TRUE,
+				.maxAnisotropy = graphicsBase::Base().PhysicalDeviceProperties().limits.maxSamplerAnisotropy,
 				.compareEnable = VK_FALSE,
 				.compareOp = VK_COMPARE_OP_ALWAYS,
 				.minLod = 0.f,
@@ -771,9 +861,6 @@ namespace vulkan {
 				.borderColor = {},
 				.unnormalizedCoordinates = VK_FALSE
 			};
-			//Consider switching physical device
-			createInfo.maxAnisotropy = graphicsBase::Base().PhysicalDeviceProperties().limits.maxSamplerAnisotropy;
-			return createInfo;
 		}
 	};
 
@@ -784,9 +871,9 @@ namespace vulkan {
 		void Create_Internal(VkFormat format_initial, VkFormat format_final, bool generateMipmap) {
 			uint32_t mipLevelCount = generateMipmap ? CalculateMipLevelCount(extent) : 1;
 			//Create image and allocate memory
-			CreateImageMemory(0, VK_IMAGE_TYPE_2D, format_final, { extent.width, extent.height, 1 }, mipLevelCount, 1);
+			CreateImageMemory(VK_IMAGE_TYPE_2D, format_final, { extent.width, extent.height, 1 }, mipLevelCount, 1);
 			//Create view
-			imageView.Create(imageMemory.Image(), VK_IMAGE_VIEW_TYPE_2D, format_final, { VK_IMAGE_ASPECT_COLOR_BIT, 0, mipLevelCount, 0, 1 });
+			CreateImageView(VK_IMAGE_VIEW_TYPE_2D, format_final, mipLevelCount, 1);
 			//Copy data and generate mipmap
 			if (format_initial == format_final)
 				CopyBlitAndGenerateMipmap2d(stagingBuffer::Buffer_MainThread(), imageMemory.Image(), imageMemory.Image(), extent, mipLevelCount, 1);
@@ -812,7 +899,7 @@ namespace vulkan {
 		texture2d(const char* filepath, VkFormat format_initial, VkFormat format_final, bool generateMipmap = true) {
 			Create(filepath, format_initial, format_final, generateMipmap);
 		}
-		texture2d(const void* pImageData, VkExtent2D extent, VkFormat format_initial, VkFormat format_final, bool generateMipmap = true) {
+		texture2d(const uint8_t* pImageData, VkExtent2D extent, VkFormat format_initial, VkFormat format_final, bool generateMipmap = true) {
 			Create(pImageData, extent, format_initial, format_final, generateMipmap);
 		}
 		//Getter
@@ -827,10 +914,10 @@ namespace vulkan {
 			if (pImageData)
 				Create(pImageData.get(), extent, format_initial, format_final, generateMipmap);
 		}
-		void Create(const void* pImageData, VkExtent2D extent, VkFormat format_initial, VkFormat format_final, bool generateMipmap = true) {
+		void Create(const uint8_t* pImageData, VkExtent2D extent, VkFormat format_initial, VkFormat format_final, bool generateMipmap = true) {
 			this->extent = extent;
 			//Copy data to staging buffer
-			VkDeviceSize imageDataSize = VkDeviceSize(FormatInfo(format_initial).sizePerPixel) * extent.width * extent.height;
+			size_t imageDataSize = size_t(FormatInfo(format_initial).sizePerPixel) * extent.width * extent.height;
 			stagingBuffer::BufferData_MainThread(pImageData, imageDataSize);
 			//Create image and allocate memory, create image view, then copy data from staging buffer to image
 			Create_Internal(format_initial, format_final, generateMipmap);
@@ -844,9 +931,9 @@ namespace vulkan {
 		void Create_Internal(VkFormat format_initial, VkFormat format_final, bool generateMipmap) {
 			//Create image and allocate memory
 			uint32_t mipLevelCount = generateMipmap ? CalculateMipLevelCount(extent) : 1;
-			CreateImageMemory(0, VK_IMAGE_TYPE_2D, format_final, { extent.width, extent.height, 1 }, mipLevelCount, layerCount);
+			CreateImageMemory(VK_IMAGE_TYPE_2D, format_final, { extent.width, extent.height, 1 }, mipLevelCount, layerCount);
 			//Create view
-			imageView.Create(imageMemory.Image(), VK_IMAGE_VIEW_TYPE_2D_ARRAY, format_final, { VK_IMAGE_ASPECT_COLOR_BIT, 0, mipLevelCount, 0, layerCount });
+			CreateImageView(VK_IMAGE_VIEW_TYPE_2D_ARRAY, format_final, mipLevelCount, layerCount);
 			//Copy data and generate mipmap
 			if (format_initial == format_final)
 				CopyBlitAndGenerateMipmap2d(stagingBuffer::Buffer_MainThread(), imageMemory.Image(), imageMemory.Image(), extent, mipLevelCount, layerCount);
@@ -869,13 +956,13 @@ namespace vulkan {
 		texture2dArray(const char* filepath, VkExtent2D extentInTiles, VkFormat format_initial, VkFormat format_final, bool generateMipmap = true) {
 			Create(filepath, extentInTiles, format_initial, format_final, generateMipmap);
 		}
-		texture2dArray(const void* pImageData, VkExtent2D fullExtent, VkExtent2D extentInTiles, VkFormat format_initial, VkFormat format_final, bool generateMipmap = true) {
+		texture2dArray(const uint8_t* pImageData, VkExtent2D fullExtent, VkExtent2D extentInTiles, VkFormat format_initial, VkFormat format_final, bool generateMipmap = true) {
 			Create(pImageData, fullExtent, extentInTiles, format_initial, format_final, generateMipmap);
 		}
 		texture2dArray(arrayRef<const char* const> filepaths, VkFormat format_initial, VkFormat format_final, bool generateMipmap = true) {
 			Create(filepaths, format_initial, format_final, generateMipmap);
 		}
-		texture2dArray(arrayRef<const void* const> psImageData, VkExtent2D extent, VkFormat format_initial, VkFormat format_final, bool generateMipmap = true) {
+		texture2dArray(arrayRef<const uint8_t* const> psImageData, VkExtent2D extent, VkFormat format_initial, VkFormat format_final, bool generateMipmap = true) {
 			Create(psImageData, extent, format_initial, format_final, generateMipmap);
 		}
 		//Getter
@@ -903,7 +990,7 @@ namespace vulkan {
 				else
 					Create(pImageData.get(), fullExtent, extentInTiles, format_initial, format_final, generateMipmap);
 		}
-		void Create(const void* pImageData, VkExtent2D fullExtent, VkExtent2D extentInTiles, VkFormat format_initial, VkFormat format_final, bool generateMipmap = true) {
+		void Create(const uint8_t* pImageData, VkExtent2D fullExtent, VkExtent2D extentInTiles, VkFormat format_initial, VkFormat format_final, bool generateMipmap = true) {
 			layerCount = extentInTiles.width * extentInTiles.height;
 			if (layerCount > graphicsBase::Base().PhysicalDeviceProperties().limits.maxImageArrayLayers) {
 				outStream << std::format(
@@ -914,7 +1001,7 @@ namespace vulkan {
 			extent.width = fullExtent.width / extentInTiles.width;
 			extent.height = fullExtent.height / extentInTiles.height;
 			size_t dataSizePerPixel = FormatInfo(format_initial).sizePerPixel;
-			VkDeviceSize imageDataSize = VkDeviceSize(dataSizePerPixel) * fullExtent.width * fullExtent.height;
+			size_t imageDataSize = dataSizePerPixel * fullExtent.width * fullExtent.height;
 			//Data rearrangement can also be peformed by using tiled regions in vkCmdCopyBufferToImage(...).
 			if (extentInTiles.width == 1)
 				stagingBuffer::BufferData_MainThread(pImageData, imageDataSize);
@@ -927,7 +1014,7 @@ namespace vulkan {
 						for (size_t k = 0; k < extent.height; k++)
 							memcpy(
 								pData_dst + offset,
-								static_cast<const uint8_t*>(pImageData) + (i * extent.width + (k + j * extent.height) * fullExtent.width) * dataSizePerPixel,
+								pImageData + (i * extent.width + (k + j * extent.height) * fullExtent.width) * dataSizePerPixel,
 								dataSizePerRow),
 							offset += dataSizePerRow;
 				stagingBuffer::UnmapMemory_MainThread();
@@ -960,9 +1047,9 @@ namespace vulkan {
 				}
 				return;
 			}
-			Create({ reinterpret_cast<const void* const*>(psImageData.get()), filepaths.Count() }, extent, format_initial, format_final, generateMipmap);
+			Create({ reinterpret_cast<const uint8_t* const*>(psImageData.get()), filepaths.Count() }, extent, format_initial, format_final, generateMipmap);
 		}
-		void Create(arrayRef<const void* const> psImageData, VkExtent2D extent, VkFormat format_initial, VkFormat format_final, bool generateMipmap = true) {
+		void Create(arrayRef<const uint8_t* const> psImageData, VkExtent2D extent, VkFormat format_initial, VkFormat format_final, bool generateMipmap = true) {
 			layerCount = psImageData.Count();
 			if (layerCount > graphicsBase::Base().PhysicalDeviceProperties().limits.maxImageArrayLayers) {
 				outStream << std::format(
@@ -972,7 +1059,7 @@ namespace vulkan {
 			}
 			this->extent = extent;
 			size_t dataSizePerImage = size_t(FormatInfo(format_initial).sizePerPixel) * extent.width * extent.height;
-			VkDeviceSize imageDataSize = VkDeviceSize(dataSizePerImage) * layerCount;
+			size_t imageDataSize = dataSizePerImage * layerCount;
 			uint8_t* pData_dst = static_cast<uint8_t*>(stagingBuffer::MapMemory_MainThread(imageDataSize));
 			for (size_t i = 0; i < layerCount; i++)
 				memcpy(pData_dst, psImageData[i], dataSizePerImage),
@@ -1010,9 +1097,9 @@ namespace vulkan {
 		void Create_Internal(VkFormat format_initial, VkFormat format_final, bool generateMipmap) {
 			//Create image and allocate memory
 			uint32_t mipLevelCount = generateMipmap ? CalculateMipLevelCount(extent) : 1;
-			CreateImageMemory(VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT, VK_IMAGE_TYPE_2D, format_final, { extent.width, extent.height, 1 }, mipLevelCount, 6);
+			CreateImageMemory(VK_IMAGE_TYPE_2D, format_final, { extent.width, extent.height, 1 }, mipLevelCount, 6, VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT);
 			//Create view
-			imageView.Create(imageMemory.Image(), VK_IMAGE_VIEW_TYPE_CUBE, format_final, { VK_IMAGE_ASPECT_COLOR_BIT, 0, mipLevelCount, 0, 6 });
+			CreateImageView(VK_IMAGE_VIEW_TYPE_CUBE, format_final, mipLevelCount, 6);
 			//Copy data and generate mipmap
 			if (format_initial == format_final)
 				CopyBlitAndGenerateMipmap2d(stagingBuffer::Buffer_MainThread(), imageMemory.Image(), imageMemory.Image(), extent, mipLevelCount, 6);
@@ -1033,27 +1120,29 @@ namespace vulkan {
 		}
 	public:
 		textureCube() = default;
-		//Order of facePositions[6], in left handed coordinate, looking from inside:
-		//right(+x) left(-x) top(+y) bottom(-y) front(+z) back(-z)
-		//Not related to NDC.
-		//If lookFromOutside is true, the order is the same.
-		//--------------------
-		//Default face positions, looking from inside, is:
-		//[      ][ top  ][      ][      ]
-		//[ left ][front ][right ][ back ]
-		//[      ][bottom][      ][      ]
-		//If lookFromOutside is true, front and back is swapped.
-		//What ever the facePositions are, make sure the image matches the looking which a cube is unwrapped as above.
+		/*
+		  Order of facePositions[6], in left handed coordinate, looking from inside:
+		  right(+x) left(-x) top(+y) bottom(-y) front(+z) back(-z)
+		  Not related to NDC.
+		  If lookFromOutside is true, the order is the same.
+		  --------------------
+		  Default face positions, looking from inside, is:
+		  [      ][ top  ][      ][      ]
+		  [ left ][front ][right ][ back ]
+		  [      ][bottom][      ][      ]
+		  If lookFromOutside is true, front and back is swapped.
+		  What ever the facePositions are, make sure the image matches the looking which a cube is unwrapped as above.
+		*/
 		textureCube(const char* filepath, const glm::uvec2 facePositions[6], VkFormat format_initial, VkFormat format_final, bool lookFromOutside = false, bool generateMipmap = true) {
 			Create(filepath, facePositions, format_initial, format_final, lookFromOutside, generateMipmap);
 		}
-		textureCube(const void* pImageData, VkExtent2D fullExtent, const glm::uvec2 facePositions[6], VkFormat format_initial, VkFormat format_final, bool lookFromOutside = false, bool generateMipmap = true) {
+		textureCube(const uint8_t* pImageData, VkExtent2D fullExtent, const glm::uvec2 facePositions[6], VkFormat format_initial, VkFormat format_final, bool lookFromOutside = false, bool generateMipmap = true) {
 			Create(pImageData, fullExtent, facePositions, format_initial, format_final, lookFromOutside, generateMipmap);
 		}
 		textureCube(const char* const* filepaths, VkFormat format_initial, VkFormat format_final, bool lookFromOutside = false, bool generateMipmap = true) {
 			Create(filepaths, format_initial, format_final, lookFromOutside, generateMipmap);
 		}
-		textureCube(const void* const* psImageData, VkExtent2D extent, VkFormat format_initial, VkFormat format_final, bool lookFromOutside = false, bool generateMipmap = true) {
+		textureCube(const uint8_t* const* psImageData, VkExtent2D extent, VkFormat format_initial, VkFormat format_final, bool lookFromOutside = false, bool generateMipmap = true) {
 			Create(psImageData, extent, format_initial, format_final, lookFromOutside, generateMipmap);
 		}
 		//Getter
@@ -1075,12 +1164,12 @@ namespace vulkan {
 				else {
 					extent.width = fullExtent.width / extentInTiles.width;
 					extent.height = fullExtent.height / extentInTiles.height;
-					Create(pImageData.get(), { fullExtent.width, fullExtent.height | INT32_MIN }, facePositions, format_initial, format_final, lookFromOutside, generateMipmap);
+					Create(pImageData.get(), { fullExtent.width, UINT32_MAX }, facePositions, format_initial, format_final, lookFromOutside, generateMipmap);
 				}
 		}
-		void Create(const void* pImageData, VkExtent2D fullExtent, const glm::uvec2 facePositions[6], VkFormat format_initial, VkFormat format_final, bool lookFromOutside = false, bool generateMipmap = true) {
+		void Create(const uint8_t* pImageData, VkExtent2D fullExtent, const glm::uvec2 facePositions[6], VkFormat format_initial, VkFormat format_final, bool lookFromOutside = false, bool generateMipmap = true) {
 			VkExtent2D extentInTiles;
-			if (fullExtent.height & INT32_MIN)//See previous Create(...), value of fullExtent.height doesn't matter after this if statement
+			if (fullExtent.height == UINT32_MAX)//See previous Create(...), value of fullExtent.height doesn't matter after this if statement
 				extentInTiles = GetExtentInTiles(facePositions, lookFromOutside, true);
 			else {
 				extentInTiles = GetExtentInTiles(facePositions, lookFromOutside);
@@ -1097,7 +1186,7 @@ namespace vulkan {
 			size_t dataSizePerPixel = FormatInfo(format_initial).sizePerPixel;
 			size_t dataSizePerRow = dataSizePerPixel * extent.width;
 			size_t dataSizePerImage = dataSizePerRow * extent.height;
-			VkDeviceSize imageDataSize = VkDeviceSize(dataSizePerImage) * 6;
+			size_t imageDataSize = dataSizePerImage * 6;
 			uint8_t* pData_dst = static_cast<uint8_t*>(stagingBuffer::MapMemory_MainThread(imageDataSize));
 			if (lookFromOutside)
 				for (size_t face = 0; face < 6; face++)
@@ -1106,7 +1195,7 @@ namespace vulkan {
 							for (uint32_t j = 0; j < extent.width; j++)
 								memcpy(
 									pData_dst,
-									static_cast<const uint8_t*>(pImageData) + dataSizePerPixel * (extent.width - 1 - j + facePositions[face].x * extent.width + (i + facePositions[face].y * extent.height) * fullExtent.width),
+									pImageData + dataSizePerPixel * (extent.width - 1 - j + facePositions[face].x * extent.width + (i + facePositions[face].y * extent.height) * fullExtent.width),
 									dataSizePerPixel),
 								pData_dst += dataSizePerPixel;
 					else
@@ -1114,7 +1203,7 @@ namespace vulkan {
 							for (uint32_t k = 0; k < extent.width; k++)
 								memcpy(
 									pData_dst,
-									static_cast<const uint8_t*>(pImageData) + dataSizePerPixel * (k + facePositions[face].x * extent.width + ((extent.height - 1 - j) + facePositions[face].y * extent.height) * fullExtent.width),
+									pImageData + dataSizePerPixel * (k + facePositions[face].x * extent.width + ((extent.height - 1 - j) + facePositions[face].y * extent.height) * fullExtent.width),
 									dataSizePerPixel),
 								pData_dst += dataSizePerPixel;
 			else
@@ -1122,13 +1211,13 @@ namespace vulkan {
 					facePositions[0].y == 0 && facePositions[1].y == 1 &&
 					facePositions[2].y == 2 && facePositions[3].y == 3 &&
 					facePositions[4].y == 4 && facePositions[5].y == 5)
-					stagingBuffer::BufferData_MainThread(pImageData, imageDataSize);
+					memcpy(pData_dst, pImageData, imageDataSize);
 				else
 					for (size_t face = 0; face < 6; face++)
 						for (uint32_t j = 0; j < extent.height; j++)
 							memcpy(
 								pData_dst,
-								static_cast<const uint8_t*>(pImageData) + dataSizePerPixel * (facePositions[face].x * extent.width + (j + facePositions[face].y * extent.height) * fullExtent.width),
+								pImageData + dataSizePerPixel * (facePositions[face].x * extent.width + (j + facePositions[face].y * extent.height) * fullExtent.width),
 								dataSizePerRow),
 							pData_dst += dataSizePerRow;
 			stagingBuffer::UnmapMemory_MainThread();
@@ -1154,13 +1243,13 @@ namespace vulkan {
 				}
 				return;
 			}
-			Create(reinterpret_cast<const void* const*>(psImageData), extent, format_initial, format_final, lookFromOutside, generateMipmap);
+			Create(reinterpret_cast<const uint8_t* const*>(psImageData), extent, format_initial, format_final, lookFromOutside, generateMipmap);
 		}
-		void Create(const void* const* psImageData, VkExtent2D extent, VkFormat format_initial, VkFormat format_final, bool lookFromOutside = false, bool generateMipmap = true) {
+		void Create(const uint8_t* const* psImageData, VkExtent2D extent, VkFormat format_initial, VkFormat format_final, bool lookFromOutside = false, bool generateMipmap = true) {
 			this->extent = extent;
 			size_t dataSizePerPixel = FormatInfo(format_initial).sizePerPixel;
 			size_t dataSizePerImage = dataSizePerPixel * extent.width * extent.height;
-			VkDeviceSize imageDataSize = VkDeviceSize(dataSizePerImage) * 6;
+			size_t imageDataSize = dataSizePerImage * 6;
 			uint8_t* pData_dst = static_cast<uint8_t*>(stagingBuffer::MapMemory_MainThread(imageDataSize));
 			if (lookFromOutside)
 				for (size_t face = 0; face < 6; face++)
@@ -1169,7 +1258,7 @@ namespace vulkan {
 							for (uint32_t i = 0; i < extent.width; i++)
 								memcpy(
 									pData_dst,
-									static_cast<const uint8_t*>(psImageData[face]) + dataSizePerPixel * ((j + 1) * extent.width - 1 - i),
+									psImageData[face] + dataSizePerPixel * ((j + 1) * extent.width - 1 - i),
 									dataSizePerPixel),
 								pData_dst += dataSizePerPixel;
 					else
@@ -1177,7 +1266,7 @@ namespace vulkan {
 							for (uint32_t i = 0; i < extent.width; i++)
 								memcpy(
 									pData_dst,
-									static_cast<const uint8_t*>(psImageData[face]) + dataSizePerPixel * ((extent.height - 1 - j) * extent.width + i),
+									psImageData[face] + dataSizePerPixel * ((extent.height - 1 - j) * extent.width + i),
 									dataSizePerPixel),
 								pData_dst += dataSizePerPixel;
 			else

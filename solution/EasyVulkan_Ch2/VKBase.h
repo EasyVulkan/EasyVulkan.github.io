@@ -208,8 +208,8 @@ namespace vulkan {
 				VkDebugUtilsMessageTypeFlagsEXT messageTypes,
 				const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
 				void* pUserData)->VkBool32 {
-					outStream << std::format("{}\n\n", pCallbackData->pMessage);
-					return VK_FALSE;
+				outStream << std::format("{}\n\n", pCallbackData->pMessage);
+				return VK_FALSE;
 			};
 			VkDebugUtilsMessengerCreateInfoEXT debugUtilsMessengerCreateInfo = {
 				.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
@@ -625,8 +625,8 @@ namespace vulkan {
 			if (!surfaceFormat.format) {
 				for (auto& i : availableSurfaceFormats)
 					if (i.colorSpace == surfaceFormat.colorSpace) {
-						swapchainCreateInfo.imageFormat = surfaceFormat.format;
-						swapchainCreateInfo.imageColorSpace = surfaceFormat.colorSpace;
+						swapchainCreateInfo.imageFormat = i.format;
+						swapchainCreateInfo.imageColorSpace = i.colorSpace;
 						formatIsAvailable = true;
 						break;
 					}
@@ -635,8 +635,8 @@ namespace vulkan {
 				for (auto& i : availableSurfaceFormats)
 					if (i.format == surfaceFormat.format &&
 						i.colorSpace == surfaceFormat.colorSpace) {
-						swapchainCreateInfo.imageFormat = surfaceFormat.format;
-						swapchainCreateInfo.imageColorSpace = surfaceFormat.colorSpace;
+						swapchainCreateInfo.imageFormat = i.format;
+						swapchainCreateInfo.imageColorSpace = i.colorSpace;
 						formatIsAvailable = true;
 						break;
 					}
@@ -805,16 +805,18 @@ namespace vulkan {
 				vkDestroySwapchainKHR(device, swapchainCreateInfo.oldSwapchain, nullptr);
 				swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
 			}
-			switch (VkResult result = vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, semaphore_imageIsAvailable, VK_NULL_HANDLE, &currentImageIndex)) {
-			case VK_SUBOPTIMAL_KHR:
-			case VK_ERROR_OUT_OF_DATE_KHR:
-				return RecreateSwapchain();
-			case VK_SUCCESS:
-				return VK_SUCCESS;
-			default:
-				outStream << std::format("[ graphicsBase ] ERROR\nFailed to acquire the next image!\nError code: {}\n", int32_t(result));
-				return result;
-			}
+			while (VkResult result = vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, semaphore_imageIsAvailable, VK_NULL_HANDLE, &currentImageIndex))
+				switch (result) {
+				case VK_SUBOPTIMAL_KHR:
+				case VK_ERROR_OUT_OF_DATE_KHR:
+					if (VkResult result = RecreateSwapchain())
+						return result;
+					break;
+				default:
+					outStream << std::format("[ graphicsBase ] ERROR\nFailed to acquire the next image!\nError code: {}\n", int32_t(result));
+					return result;
+				}
+			return VK_SUCCESS;
 		}
 		result_t SubmitCommandBuffer_Graphics(VkSubmitInfo& submitInfo, VkFence fence = VK_NULL_HANDLE) const {
 			submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -839,6 +841,13 @@ namespace vulkan {
 				submitInfo.pSignalSemaphores = &semaphore_renderingIsOver;
 			return SubmitCommandBuffer_Graphics(submitInfo, fence);
 		}
+		result_t SubmitCommandBuffer_Graphics(VkCommandBuffer commandBuffer, VkFence fence = VK_NULL_HANDLE) const {
+			VkSubmitInfo submitInfo = {
+				.commandBufferCount = 1,
+				.pCommandBuffers = &commandBuffer
+			};
+			return SubmitCommandBuffer_Graphics(submitInfo, fence);
+		}
 		result_t SubmitCommandBuffer_Compute(VkSubmitInfo& submitInfo, VkFence fence = VK_NULL_HANDLE) const {
 			submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 			VkResult result = vkQueueSubmit(queue_compute, 1, &submitInfo, fence);
@@ -852,13 +861,6 @@ namespace vulkan {
 				.pCommandBuffers = &commandBuffer
 			};
 			return SubmitCommandBuffer_Compute(submitInfo, fence);
-		}
-		result_t SubmitCommandBuffer_Transfer(VkCommandBuffer commandBuffer, VkFence fence = VK_NULL_HANDLE) const {
-			VkSubmitInfo submitInfo = {
-				.commandBufferCount = 1,
-				.pCommandBuffers = &commandBuffer
-			};
-			return SubmitCommandBuffer_Graphics(submitInfo, fence);
 		}
 		result_t SubmitCommandBuffer_Presentation(VkCommandBuffer commandBuffer,
 			VkSemaphore semaphore_renderingIsOver = VK_NULL_HANDLE, VkSemaphore semaphore_ownershipIsTransfered = VK_NULL_HANDLE, VkFence fence = VK_NULL_HANDLE) const {
@@ -898,11 +900,11 @@ namespace vulkan {
 		result_t PresentImage(VkPresentInfoKHR& presentInfo) {
 			presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 			switch (VkResult result = vkQueuePresentKHR(queue_presentation, &presentInfo)) {
+			case VK_SUCCESS:
+				return VK_SUCCESS;
 			case VK_SUBOPTIMAL_KHR:
 			case VK_ERROR_OUT_OF_DATE_KHR:
 				return RecreateSwapchain();
-			case VK_SUCCESS:
-				return VK_SUCCESS;
 			default:
 				outStream << std::format("[ graphicsBase ] ERROR\nFailed to queue the image for presentation!\nError code: {}\n", int32_t(result));
 				return result;
@@ -930,11 +932,12 @@ namespace vulkan {
 	class semaphore {
 		VkSemaphore handle = VK_NULL_HANDLE;
 	public:
-		semaphore() {
-			Create();
-		}
+		//semaphore() = default;
 		semaphore(VkSemaphoreCreateInfo& createInfo) {
 			Create(createInfo);
+		}
+		semaphore(/*reserved for future use*/) {
+			Create();
 		}
 		semaphore(semaphore&& other) noexcept { MoveHandle; }
 		~semaphore() { DestroyHandleBy(vkDestroySemaphore); }
@@ -949,7 +952,7 @@ namespace vulkan {
 				outStream << std::format("[ semaphore ] ERROR\nFailed to create a semaphore!\nError code: {}\n", int32_t(result));
 			return result;
 		}
-		result_t Create() {
+		result_t Create(/*reserved for future use*/) {
 			VkSemaphoreCreateInfo createInfo = {};
 			return Create(createInfo);
 		}
@@ -957,11 +960,12 @@ namespace vulkan {
 	class fence {
 		VkFence handle = VK_NULL_HANDLE;
 	public:
-		fence(bool signaled = false) {
-			Create(signaled);
-		}
+		//fence() = default;
 		fence(VkFenceCreateInfo& createInfo) {
 			Create(createInfo);
+		}
+		fence(VkFenceCreateFlags flags = 0) {
+			Create(flags);
 		}
 		fence(fence&& other) noexcept { MoveHandle; }
 		~fence() { DestroyHandleBy(vkDestroyFence); }
@@ -1000,9 +1004,9 @@ namespace vulkan {
 				outStream << std::format("[ fence ] ERROR\nFailed to create a fence!\nError code: {}\n", int32_t(result));
 			return result;
 		}
-		result_t Create(bool signaled = false) {
+		result_t Create(VkFenceCreateFlags flags = 0) {
 			VkFenceCreateInfo createInfo = {
-				.flags = signaled
+				.flags = flags
 			};
 			return Create(createInfo);
 		}
@@ -1015,8 +1019,11 @@ namespace vulkan {
 		shaderModule(VkShaderModuleCreateInfo& createInfo) {
 			Create(createInfo);
 		}
-		shaderModule(const char* filepath) {
+		shaderModule(const char* filepath /*reserved for future use*/) {
 			Create(filepath);
+		}
+		shaderModule(size_t codeSize, const uint32_t* pCode /*reserved for future use*/) {
+			Create(codeSize, pCode);
 		}
 		shaderModule(shaderModule&& other) noexcept { MoveHandle; }
 		~shaderModule() { DestroyHandleBy(vkDestroyShaderModule); }
@@ -1043,20 +1050,23 @@ namespace vulkan {
 				outStream << std::format("[ shader ] ERROR\nFailed to create a shader module!\nError code: {}\n", int32_t(result));
 			return result;
 		}
-		result_t Create(const char* filepath) {
+		result_t Create(const char* filepath /*reserved for future use*/) {
 			std::ifstream file(filepath, std::ios::ate | std::ios::binary);
 			if (!file) {
 				outStream << std::format("[ shader ] ERROR\nFailed to open the file: {}\n", filepath);
-				return VK_RESULT_MAX_ENUM;
+				return VK_RESULT_MAX_ENUM;//No proper VkResult enum value, don't use VK_ERROR_UNKNOWN
 			}
 			size_t fileSize = size_t(file.tellg());
 			std::vector<uint32_t> binaries(fileSize / 4);
 			file.seekg(0);
 			file.read(reinterpret_cast<char*>(binaries.data()), fileSize);
 			file.close();
+			return Create(fileSize, binaries.data());
+		}
+		result_t Create(size_t codeSize, const uint32_t* pCode /*reserved for future use*/) {
 			VkShaderModuleCreateInfo createInfo = {
-				.codeSize = fileSize,
-				.pCode = binaries.data()
+				.codeSize = codeSize,
+				.pCode = pCode
 			};
 			return Create(createInfo);
 		}
@@ -1226,8 +1236,8 @@ namespace vulkan {
 		commandPool(VkCommandPoolCreateInfo& createInfo) {
 			Create(createInfo);
 		}
-		commandPool(VkCommandPoolCreateFlags createFlags, uint32_t queueFamilyIndex) {
-			Create(createFlags, queueFamilyIndex);
+		commandPool(uint32_t queueFamilyIndex, VkCommandPoolCreateFlags flags = 0) {
+			Create(queueFamilyIndex, flags);
 		}
 		commandPool(commandPool&& other) noexcept { MoveHandle; }
 		~commandPool() { DestroyHandleBy(vkDestroyCommandPool); }
@@ -1267,9 +1277,9 @@ namespace vulkan {
 				outStream << std::format("[ commandPool ] ERROR\nFailed to create a command pool!\nError code: {}\n", int32_t(result));
 			return result;
 		}
-		result_t Create(VkCommandPoolCreateFlags createFlags, uint32_t queueFamilyIndex) {
+		result_t Create(uint32_t queueFamilyIndex, VkCommandPoolCreateFlags flags = 0) {
 			VkCommandPoolCreateInfo createInfo = {
-				.flags = createFlags,
+				.flags = flags,
 				.queueFamilyIndex = queueFamilyIndex
 			};
 			return Create(createInfo);

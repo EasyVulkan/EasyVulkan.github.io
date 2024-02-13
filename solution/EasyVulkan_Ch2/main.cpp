@@ -54,7 +54,7 @@ int main() {
 	semaphore semaphore_renderingIsOver;
 
 	commandBuffer commandBuffer;
-	commandPool commandPool(VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, graphicsBase::Base().QueueFamilyIndex_Graphics());
+	commandPool commandPool(graphicsBase::Base().QueueFamilyIndex_Graphics(), VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT);
 	commandPool.AllocateBuffers(commandBuffer);
 
 	VkClearValue clearColor = { .color = { 1.f, 0.f, 0.f, 1.f } };

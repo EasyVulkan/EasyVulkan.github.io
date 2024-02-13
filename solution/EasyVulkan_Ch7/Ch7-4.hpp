@@ -72,12 +72,12 @@ int main() {
 	CreateLayout();
 	CreatePipeline();
 
-	fence fence(true);
+	fence fence(VK_FENCE_CREATE_SIGNALED_BIT);
 	semaphore semaphore_imageIsAvailable;
 	semaphore semaphore_renderingIsOver;
 
 	commandBuffer commandBuffer;
-	commandPool commandPool(VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, graphicsBase::Base().QueueFamilyIndex_Graphics());
+	commandPool commandPool(graphicsBase::Base().QueueFamilyIndex_Graphics(), VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT);
 	commandPool.AllocateBuffers(commandBuffer);
 
 	vertex vertices[] = {
@@ -98,7 +98,7 @@ int main() {
 	VkDescriptorPoolSize descriptorPoolSizes[] = {
 		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1 }
 	};
-	descriptorPool descriptorPool(0, 1, descriptorPoolSizes);
+	descriptorPool descriptorPool(1, descriptorPoolSizes);
 	descriptorSet descriptorSet_trianglePosition;
 	descriptorPool.AllocateSets(descriptorSet_trianglePosition, descriptorSetLayout_triangle);
 	VkDescriptorBufferInfo bufferInfo = {

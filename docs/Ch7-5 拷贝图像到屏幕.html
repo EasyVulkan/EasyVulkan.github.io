@@ -639,12 +639,19 @@ commandBuffer.<span class="fn">End</span>();
     <span class="kw">const</span> <span class="type">VkAccessFlags</span> access = 0;                         <span class="cmt">//srcAccessMask或dstAccessMask</span>
     <span class="kw">const</span> <span class="type">VkImageLayout</span> layout = <span class="mcr">VK_IMAGE_LAYOUT_UNDEFINED</span>; <span class="cmt">//oldLayout或newLayout</span>
     <span class="cmt">//默认构造器，isNeeded保留为false</span>
-    <span class="fn">imageMemoryBarrierParameterPack</span>() = <span class="kw">default</span>;
+    <span class="kw">constexpr</span> <span class="fn">imageMemoryBarrierParameterPack</span>() = <span class="kw">default</span>;
     <span class="cmt">//若指定参数，三个参数必须被全部显示指定，isNeeded被赋值为true</span>
-    <span class="fn">imageMemoryBarrierParameterPack</span>(<span class="type">VkPipelineStageFlags</span> stage, <span class="type">VkAccessFlags</span> access, <span class="type">VkImageLayout</span> layout) :
+    <span class="kw">constexpr</span> <span class="fn">imageMemoryBarrierParameterPack</span>(<span class="type">VkPipelineStageFlags</span> stage, <span class="type">VkAccessFlags</span> access, <span class="type">VkImageLayout</span> layout) :
         isNeeded(<span class="kw">true</span>), stage(stage), access(access), layout(layout) {}
 };
 </pre>
+<ul>
+    <li>
+        <p>
+            指定构造器为<span class="kw">constexpr</span>以便后续创建可被<a href="https://en.cppreference.com/w/cpp/language/constant_initialization">常量初始化</a>的静态常量（涉及一些简化代码的技巧，会在<a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html#blitandgeneratemipmap2d">Ch5-2</a>用到）。
+        </p>
+    </li>
+</ul>
 <p>
     因为在Vulkan 1.3中stage为0（<span class="enum">VK_PIPELINE_STAGE_NONE</span>）是有效值，<span class="mcr">VK_IMAGE_LAYOUT_UNDEFINED</span>的值是0，那么即便stage、access、layout三者皆为0，也未必构成无效参数。
     <br>
