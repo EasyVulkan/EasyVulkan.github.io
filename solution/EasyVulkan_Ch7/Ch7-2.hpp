@@ -87,9 +87,9 @@ int main() {
 			glfwWaitEvents();
 		TitleFps();
 
+		fence.WaitAndReset();
 		graphicsBase::Base().SwapImage(semaphore_imageIsAvailable);
 		auto i = graphicsBase::Base().CurrentImageIndex();
-		fence.WaitAndReset();
 
 		commandBuffer.Begin(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 		renderPass.CmdBegin(commandBuffer, framebuffers[i], { {}, windowSize }, clearColor);

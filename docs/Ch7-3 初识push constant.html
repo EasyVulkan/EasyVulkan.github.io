@@ -82,11 +82,11 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Ch7-3 初识Push Constant</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#push-constant">使用push constant绘制三角形的流程</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id1">书写push constant所需数据</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#push-constant">使用Push Constant绘制三角形的流程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">书写Push Constant所需数据</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id2">创建新的管线布局</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#firsttriangle-pushconstant-vert-shader">FirstTriangle_PushConstant.vert.shader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">在命令缓冲区中更新push constant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">在命令缓冲区中更新Push Constant</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识Uniform缓冲区</a></li>
@@ -127,7 +127,7 @@
     <br>
     这一节尝试使用push constant来为三角形指定位移，并用实例化来绘制多个在不同位置的三角形。
 </p><section id="push-constant">
-<h2>使用push constant绘制三角形的流程<a class="headerlink" href="#push-constant" title="Permalink to this heading"></a></h2>
+<h2>使用Push Constant绘制三角形的流程<a class="headerlink" href="#push-constant" title="Permalink to this heading"></a></h2>
 <p>
     在之前<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7/Ch7-1.hpp">Ch7-1.hpp</a>用顶点缓冲区绘制三角形代码的基础上，使用顶点和uniform缓冲区绘制三角形需要经历以下步骤：
     <br>
@@ -140,7 +140,7 @@
     4.在命令缓冲区中更新push constant并绘制
 </p></section>
 <section id="id1">
-<h2>书写push constant所需数据<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<h2>书写Push Constant所需数据<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
 <p>
     在主函数里：
 </p>
@@ -152,7 +152,7 @@ glm::<span class="type">vec2</span> pushConstants[] = {
 };
 </pre>
 <p>
-    参见<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id12">块成员的内存布局</a>，push constant在着色器中默认为std430布局，那么以上数组中<span class="type">vec2</span>类型的对齐为8，同C++代码中一致，不需要在以上C++代码中填补额外的空数据。
+    参见<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id15">块成员的内存布局</a>，push constant在着色器中默认为std430布局，那么以上数组中<span class="type">vec2</span>类型的对齐为8，同C++代码中一致，不需要在以上C++代码中填补额外的空数据。
 </p></section>
 <section id="id2">
 <h2>创建新的管线布局<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
@@ -209,7 +209,7 @@ glm::<span class="type">vec2</span> pushConstants[] = {
 }
 </pre></section>
 <section id="id3">
-<h2>在命令缓冲区中更新push constant<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<h2>在命令缓冲区中更新Push Constant<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap14.html#vkCmdPushConstants">vkCmdPushConstants</a>(...)更新push constant：
 </p>

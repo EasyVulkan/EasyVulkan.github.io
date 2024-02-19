@@ -865,7 +865,7 @@ swapchainImageViews.<span class="fn">resize</span>(0);
     </li>
 </ul>
 <p>
-    值得注意的是，这里只销毁了image view，而没销毁其对应的交换链图像，这是因为在销毁旧交换链时会被一并销毁交换链图像，而尽管图形和呈现队列都没有在使用旧图像，无法确保呈现引擎在CPU上做的操作或不会使用旧图像，因此销毁旧交换链的时机需要延后，见<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id3">Ch2-1 Rendering Loop</a>。
+    值得注意的是，这里只销毁了image view，而没销毁其对应的交换链图像，这是因为在销毁旧交换链时会被一并销毁交换链图像。而尽管图形和呈现队列都没有在使用旧图像，无法确保呈现引擎在CPU上做的操作或不会使用旧图像，因此销毁旧交换链的时机需要延后，之后会在<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id2">Ch2-1 Rendering Loop</a>中进行相应处理。
 </p>
 <p>
     最后调用<span class="fn">CreateSwapchain_Internal</span>()来创建交换链：

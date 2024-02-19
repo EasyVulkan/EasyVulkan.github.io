@@ -452,11 +452,10 @@ rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graph
             <span class="fn">glfwWaitEvents</span>();
         <span class="fn">TitleFps</span>();
 
+        fence.<span class="fn">WaitAndReset</span>();
         <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
         <span class="cmt">//因为帧缓冲与所获取的交换链图像一一对应，获取交换链图像索引</span>
         <span class="cmt">/*新增*/</span><span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
-
-        fence.<span class="fn">WaitAndReset</span>();
 
         <span class="cmt">/*操作过程，本章中不会有键鼠操作*/</span>
 

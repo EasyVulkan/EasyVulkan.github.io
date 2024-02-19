@@ -53,8 +53,8 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Ch2-1 Rendering Loop</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id1">创建栅栏和信号量</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id2">创建命令池和命令缓冲区</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">获取交换链图像索引</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">获取交换链图像索引</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">创建命令池和命令缓冲区</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id4">录制及提交命令缓冲区</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id5">呈现图像</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id6">在窗口最小化时暂停渲染循环</a></li>
@@ -124,18 +124,19 @@
 <h1>Ch2-1 Rendering Loop<a class="headerlink" href="#ch2-1-rendering-loop" title="Permalink to this heading"></a></h1>
 <p>
     本节当中我们将构建一个最基本的渲染循环（rendering loop）。
-    <br>
+</p>
+<p>
     就我的写法而言，一个最基本的渲染循环应该是：
     <br>
-    1.获取交换链图像索引，然后置位信号量A
+    1.通过等待一个栅栏，确保前一次的命令已执行完毕（以便接下来覆写同一命令缓冲区）
     <br>
-    2.通过等待一个栅栏，确保前一次的命令缓冲区已执行完毕
+    2.获取交换链图像索引，然后置位信号量A
     <br>
     3.录制命令缓冲区
     <br>
-    4.等待信号量A，提交命令缓冲区，然后置位信号量B和栅栏
+    4.提交命令缓冲区，等待信号量A，命令执行完后置位信号量B和栅栏
     <br>
-    5.待命令执行完后（等待信号量B），呈现图像
+    5.等待信号量B，确保本次的命令执行完毕后，呈现图像
 </p><section id="id1">
 <h2>创建栅栏和信号量<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
 <p>
@@ -158,7 +159,9 @@
 
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         <span class="fn">TitleFps</span>();
+
         <span class="cmt">/*渲染及操作过程，待填充*/</span>
+
         <span class="fn">glfwPollEvents</span>();
     }
     <span class="fn">TerminateWindow</span>();
@@ -168,12 +171,12 @@
 <ul>
     <li>
         <p>
-            以置位状态创建<span class="var">fence</span>，因为我打算在渲染循环的开头等待栅栏被置位，这是为了方便修改代码以应用即时帧（见后文）。
+            <span class="var">fence</span>在渲染完成后被置位。
         </p>
     </li>
     <li>
         <p>
-            <span class="var">fence</span>在渲染完成后被置位，在开始录制命令缓冲区前等待它。
+            我打算在渲染循环的开头等待栅栏被置位（具体而言，在获取下一张交换链图像前，原因见后文），因此以置位状态创建<span class="var">fence</span>（为了在首次执行渲染循环时能完成等待）。
         </p>
     </li>
     <li>
@@ -188,32 +191,36 @@
     </li>
 </ul>
 <p>
-    在渲染完成后置位<span class="var">fence</span>和<span class="var">semaphore_renderingIsOver</span>两个同步对象的原因在于它们用法不同。
+    在渲染完成后置位<span class="var">fence</span>和<span class="var">semaphore_renderingIsOver</span>两个同步对象（而非一个）的原因在于它们用法不同。
     <br>
     开始录制命令缓冲区前需要在CPU一侧手动等待<span class="var">fence</span>被置位以确保先前的命令已完成执行，虽然执行完命令后同样也会点亮<span class="var">semaphore_renderingIsOver</span>，但你不能在CPU一侧手动等待二值信号量。
     <br>
     而用<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...)呈现图像时，其参数中只能指定需要等待被置位的二值信号量而不能指定栅栏，因此才出现了一个操作后需要置位两个同步对象的情况。
 </p>
 <p>
-    24.01.07 更新补充说明：
+    你也可以以非置位状态创建<span class="var">fence</span>，然后在呈现图像前等待它，如此一来<span class="var">semaphore_renderingIsOver</span>就是多余的。
     <br>
-    你可以以非置位状态创建<span class="var">fence</span>，然后在呈现图像前调用函数等待它，如此一来<span class="var">semaphore_renderingIsOver</span>就是多余的。
-    <br>
-    栅栏的同步粒度比信号量粗（因为栅栏是在CPU一侧调用函数等待GPU发来信号嘛），这是否有可见的影响当然与硬件及Vulkan的底层实现有关，而这是否可忽略则取决于你的需求。这里我先教你更妥当的做法。
-</p></section>
-<section id="id2">
-<h2>创建命令池和命令缓冲区<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
-<p>
-    同OpenGL或DirectX11这类API不同，DirectX12、Vulkan等底层API中的命令被录制在命令缓冲区（command buffer）中，而命令缓冲区从命令池（command pool）分配。
-    <br>
-    本节中还不会录制任何实际的命令，仅为完成渲染循环，需要先写好开始录制命令、结束录制命令、提交命令缓冲区用的代码。
-    <br>
-    参见<a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a>，我在该节中对命令缓冲区和命令池做了简单封装，请先阅览该节（关于二级命令缓冲区的部分请暂且无视），并完成封装，请务必弄明白封装命令缓冲区的类<span class="type">commandBuffer</span>和命令池的类<span class="type">commandPool</span>的使用方式。
+    等待栅栏并非异步（见后文），同步粒度比信号量粗（因为栅栏是在CPU一侧调用函数等待GPU发来信号嘛），这是否有可见的影响当然与硬件及Vulkan的底层实现有关，而这是否可忽略则取决于你的需求。这里我先教你更妥当的做法。
 </p>
 <p>
-    在主函数中创建一个命令池，并从中分配一个命令缓冲区：
+    <strong>为什么在获取下一张交换链图像前等待<span class="var">fence</span>，而不是在录制命令缓冲区前？</strong>
+    <br>
+    如先前所言，等待<span class="var">fence</span>被置位，是为确保先前的命令已完成执行，以便接下来覆写同一命令缓冲区。那么为什么不能将等待它这一步，延后到录制命令缓冲区前？
+    <br>
+    为了简化叙事，我在每一帧当中使用了同一套同步对象（你当然可以多创建几套）。
+    <br>
+    假设在获取交换链图像后等待<span class="var">fence</span>，那么：考虑到“获取下一张交换链图像”这一步所需的同步对象是<span class="var">semaphore_imageIsAvailable</span>，而如果前一帧的命令非常轻量，很快录制完毕的话，很可能在本次的“获取交换链图像”时，前一帧的“在执行命令前等待信号量”还没结束，即<span class="var">semaphore_imageIsAvailable</span>可能仍被前一帧占用着。
+    <br>
+    等待<span class="var">fence</span>最主要的目的是确保命令执行完毕，但稍做进一步推理，显然也会顺带确保<span class="var">semaphore_imageIsAvailable</span>和<span class="var">semaphore_renderingIsOver</span>已不再被前一帧占用。
+</p>
+<p>
+    注意，“在GPU侧等待/置位信号量 ”和“在GPU侧置位栅栏”，这类行为是相对于CPU侧异步发生的，进一步推理，命令的执行也是异步的，这是Vulkan与OpenGL的主要不同点之一。而“等待栅栏”则是相对于CPU侧同步的（意味着要求CPU侧等待到栅栏被置位或超时，然后才能执行后续程序）。
+</p>
+<p>
+    如果你对上述说明中的异步还是没有确切概念，来么，先来更新主函数，以此为例：
 </p>
 <pre class="code">
+<span class="kw">using namespace</span> vulkan;
 <span class="kw">int</span> <span class="fn">main</span>() {
     <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
         <span class="kw">return</span> -1;
@@ -222,21 +229,29 @@
     <span class="type">semaphore</span> semaphore_imageIsAvailable;
     <span class="type">semaphore</span> semaphore_renderingIsOver;
 
-    <span class="type">commandBuffer</span> commandBuffer;
-    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
-    commandPool.<span class="type">AllocateBuffers</span>(commandBuffer);
-
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         <span class="fn">TitleFps</span>();
-        <span class="cmt">/*渲染及操作过程，待填充*/</span>
+
+        <span class="cmt">/*假定这里有A部分代码*/</span>
+
+        <span class="cmt">//等待并重置fence</span>
+        fence.<span class="fn">WaitAndReset</span>();
+
+        <span class="cmt">/*假定这里有B部分代码*//*待后续填充*/</span>
+
         <span class="fn">glfwPollEvents</span>();
     }
     <span class="fn">TerminateWindow</span>();
     <span class="kw">return</span> 0;
 }
-</pre></section>
-<section id="id3">
-<h2>获取交换链图像索引<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+</pre>
+<p>
+    在CPU侧执行<code>fence.<span class="fn">WaitAndReset</span>();</code>前的A部分代码时，GPU侧可能正在做其后的B部分代码要求做的事。比如，执行<span class="fn">TitleFps</span>()时，GPU可能正在进行绘制。
+    <br>
+   （太啰嗦吗？虽然我想看这个教程的人大多知道什么是异步，姑且以防万一）
+</p></section>
+<section id="id2">
+<h2>获取交换链图像索引<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)获取下一张用于渲染的交换链图像的索引：
 </p>
@@ -373,14 +388,14 @@
     <span class="type">semaphore</span> semaphore_imageIsAvailable;
     <span class="type">semaphore</span> semaphore_renderingIsOver;
 
-    <span class="type">commandBuffer</span> commandBuffer;
-    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
-    commandPool.<span class="type">AllocateBuffers</span>(commandBuffer);
-
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         <span class="fn">TitleFps</span>();
 
+        <span class="cmt">//等待并重置fence</span>
+        fence.<span class="fn">WaitAndReset</span>();
+        <span class="cmt">//获取交换链图像索引</span>
         <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+
         <span class="cmt">/*待后续填充*/</span>
 
         <span class="fn">glfwPollEvents</span>();
@@ -389,10 +404,17 @@
     <span class="kw">return</span> 0;
 }
 </pre></section>
-<section id="id4">
-<h2>录制及提交命令缓冲区<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<section id="id3">
+<h2>创建命令池和命令缓冲区<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
 <p>
-    首先等待栅栏被置位并将其重置，然后开始命令缓冲区的录制，中间渲染过程留待填充，然后结束命令缓冲区的录制：
+    同OpenGL或DirectX11这类API不同，DirectX12、Vulkan等底层API中的命令被录制在命令缓冲区（command buffer）中，而命令缓冲区从命令池（command pool）分配。
+    <br>
+    本节中还不会录制任何实际的命令，仅为完成渲染循环，需要先写好开始录制命令、结束录制命令、提交命令缓冲区用的代码。
+    <br>
+    参见<a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a>，我在该节中对命令缓冲区和命令池做了简单封装，请先阅览该节（关于二级命令缓冲区的部分请暂且无视），并完成封装，请务必弄明白封装命令缓冲区的类<span class="type">commandBuffer</span>和命令池的类<span class="type">commandPool</span>的使用方式。
+</p>
+<p>
+    在主函数中创建一个命令池，并从中分配一个命令缓冲区：
 </p>
 <pre class="code">
 <span class="kw">int</span> <span class="fn">main</span>() {
@@ -410,8 +432,40 @@
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         <span class="fn">TitleFps</span>();
 
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
         fence.<span class="fn">WaitAndReset</span>();
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+
+        <span class="cmt">/*待后续填充*/</span>
+
+        <span class="fn">glfwPollEvents</span>();
+    }
+    <span class="fn">TerminateWindow</span>();
+    <span class="kw">return</span> 0;
+}
+</pre></section>
+<section id="id4">
+<h2>录制及提交命令缓冲区<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<p>
+    调用函数开始命令缓冲区的录制，中间渲染过程留待填充，然后结束命令缓冲区的录制：
+</p>
+<pre class="code">
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
+        <span class="kw">return</span> -1;
+
+    <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
+    <span class="type">semaphore</span> semaphore_imageIsAvailable;
+    <span class="type">semaphore</span> semaphore_renderingIsOver;
+
+    <span class="type">commandBuffer</span> commandBuffer;
+    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
+    commandPool.<span class="type">AllocateBuffers</span>(commandBuffer);
+
+    <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
+        <span class="fn">TitleFps</span>();
+
+        fence.<span class="fn">WaitAndReset</span>();
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
 
         <span class="cmt">/*操作过程，本章中无操作*/</span>
 
@@ -431,7 +485,7 @@
 <ul>
     <li>
         <p>
-            操作过程在等待栅栏之后，是因为操作可能涉及更新顶点数据或unifrom等需要被着色器读取的数据，典型的比如操作相机后需要更新投影矩阵。
+            操作过程在等待栅栏之后（是否已获取下一张交换链图像无妨，上述代码中纯粹是想把新增片段写在一块），是因为操作可能涉及更新顶点数据或unifrom等需要被着色器读取（且可能正在被读取）的数据，典型的比如操作相机后需要更新投影矩阵。
         </p>
     </li>
 </ul>
@@ -441,7 +495,6 @@
 <pre class="code">
 <span class="kw">public</span>:
 <span class="cmt">//该函数用于将命令缓冲区提交到用于图形的队列</span>
-<span class="cmt">//该函数用于将只包含数据转移命令的命令缓冲区提交到用于图形的队列，因此不需要使用信号量</span>
 <span class="type">result_t</span> <span class="fn">SubmitCommandBuffer_Graphics</span>(<span class="type">VkSubmitInfo</span>&amp; submitInfo, <span class="type">VkFence</span> fence = <span class="mcr">VK_NULL_HANDLE</span>) <span class="kw">const</span> {
     submitInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_SUBMIT_INFO</span>;
     <span class="type">VkResult</span> result = vkQueueSubmit(queue_graphics, 1, &amp;submitInfo, fence);
@@ -525,8 +578,8 @@
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         <span class="fn">TitleFps</span>();
 
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
         fence.<span class="fn">WaitAndReset</span>();
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
 
         <span class="cmt">/*操作过程，本章中不会有键鼠操作*/</span>
 
@@ -672,8 +725,8 @@
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         <span class="fn">TitleFps</span>();
 
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
         fence.<span class="fn">WaitAndReset</span>();
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
 
         <span class="cmt">/*操作过程，本章中不会有键鼠操作*/</span>
 
@@ -708,8 +761,8 @@
     <span class="cmt">//----------------------------------------</span>
     <span class="fn">TitleFps</span>();
 
-    <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
     fence.<span class="fn">WaitAndReset</span>();
+    <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
 
     <span class="cmt">/*操作过程，本章中不会有键鼠操作*/</span>
 
@@ -731,7 +784,7 @@
     </li>
     <li>
         <p>
-            用<span class="fn">glfwWaitEvents</span>()等待事件，因为接收到的事件不会只有“恢复窗口大小”一种，所以需要<span class="kw">while</span>循环直到接收到恢复窗口大小的事件为止。
+            用<span class="fn">glfwWaitEvents</span>()等待事件，因为接收到的事件不会只有“恢复窗口大小”一种（比如键鼠输入），所以需要<span class="kw">while</span>循环反复判定窗口是否被图标化，直到接收到恢复窗口大小的事件为止。
         </p>
     </li>
 </ul></section>
@@ -760,7 +813,7 @@
         <span class="kw">return</span> -1;
 
     <span class="kw">struct</span> <span class="type">preFrameObjects_t</span> {
-        <span class="type">fence</span> fence = { <span class="kw">true</span> };<span class="cmt">//直接 = true也行，这里按照我的编程习惯在初始化类/结构体时保留花括号</span>
+        <span class="type">fence</span> fence = { <span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span> };<span class="cmt">//直接 = VK_FENCE_CREATE_SIGNALED_BIT也行，这里按照我的编程习惯在初始化类/结构体时保留花括号</span>
         <span class="type">semaphore</span> semaphore_imageIsAvailable;
         <span class="type">semaphore</span> semaphore_renderingIsOver;
         <span class="type">commandBuffer</span> commandBuffer;
@@ -780,8 +833,8 @@
         <span class="kw">const auto</span>&amp; [fence, semaphore_imageIsAvailable, semaphore_renderingIsOver, commandBuffer] = perFrameObjects[i];
         i = (i + 1) % <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageCount</span>();
 
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
         fence.<span class="fn">WaitAndReset</span>();
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
 
         <span class="cmt">/*操作过程*/</span>
 
@@ -809,7 +862,7 @@
         <span class="kw">return</span> -1;
 
     <span class="kw">struct</span> <span class="type">preFrameObjects_t</span> {
-        <span class="type">fence</span> fence = { <span class="kw">true</span> };
+        <span class="type">fence</span> fence = { <span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span> };
         <span class="type">semaphore</span> semaphore_imageIsAvailable;
         <span class="type">semaphore</span> semaphore_renderingIsOver;
         <span class="type">commandBuffer</span> commandBuffer;
@@ -832,8 +885,8 @@
         i = (i + 1) % <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageCount</span>();
         semaphore_imageIsAvailable = std::<span class="fn">move</span>(semaphore);<span class="cmt">//需给semaphore定义移动赋值函数</span>
 
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
         fence.<span class="fn">WaitAndReset</span>();
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
 
         <span class="cmt">/*操作过程*/</span>
 
@@ -967,8 +1020,8 @@
             <span class="fn">glfwWaitEvents</span>();
         <span class="fn">TitleFps</span>();
 
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
         fence.<span class="fn">WaitAndReset</span>();
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
 
         <span class="cmt">//提交到图形队列的命令缓冲区</span>
         commandBuffer_graphics.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
@@ -1092,8 +1145,8 @@
             <span class="fn">glfwWaitEvents</span>();
         <span class="fn">TitleFps</span>();
 
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
         fence.<span class="fn">WaitAndReset</span>();
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
 
         <span class="cmt">//提交到图形队列的命令缓冲区</span>
         commandBuffer_graphics.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);

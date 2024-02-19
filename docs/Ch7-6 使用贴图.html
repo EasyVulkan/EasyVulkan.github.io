@@ -85,6 +85,10 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Ch7-6 使用贴图</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id1">到采样贴图为止的流程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">创建采样器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">创建并写入描述符</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#firsttriangle-texture-vert-shader">FirstTriangle_Texture.vert.shader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#firsttriangle-texture-frag-shader">FirstTriangle_Texture.frag.shader</a></li>
 </ul>
 </li>
 </ul>
@@ -124,24 +128,193 @@
 </p><section id="id1">
 <h2>到采样贴图为止的流程<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
 <p>
+    在之前<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7/Ch7-1.hpp">Ch7-1.hpp</a>用顶点缓冲区绘制三角形代码的基础上，到采样贴图为止需要经历以下步骤：
+    <br>
     1.按前一节的内容读取图像并创建相应的<span class="type">VkImage</span>
     <br>
-    2.为图像生成mipmap
+    2.为图像生成mipmap（非必要）
     <br>
     3.为图像创建<span class="type">VkImageView</span>
     <br>
     4.创建采样器
     <br>
-    5.将图像的image view和采样器写入描述符
+    5.创建描述符，将图像的image view和采样器写入描述符
+    <br>
+    6.书写着色器并创建着色器模组
+    <br>
+    7.创建管线
+    <br>
+    8.创建顶点缓冲区
+    <br>
+    9.绑定描述符并绘制
 </p>
 <p>
-    第1~3步参见<a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a>。
+    第1~3步参见<a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a>，完成相应封装。
     <br>
+    然后在主函数中读一张你喜欢的图：
+</p>
+<pre class="code">
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="cmt">/*...*/</span>
+
+    <span class="type">texture2d</span> texture(<span class="str">"image/testImage.png"</span>, <span class="enum">VK_FORMAT_R8G8B8A8_UNORM</span>, <span class="enum">VK_FORMAT_R8G8B8A8_UNORM</span>, <span class="kw">true</span>);
+
+    <span class="cmt">/*...*/</span>
+}
+</pre></section>
+<section id="id2">
+<h2>创建采样器<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<p>
+    由于往后你会经常需要创建采样器，在<span class="type">texture</span>类中添加一个函数来返回一个最普通平常的采样器的创建信息：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">texture</span> {
+<span class="kw">public</span>:
+    <span class="kw">static</span> <span class="type">VkSamplerCreateInfo</span> <span class="fn">SamplerCreateInfo</span>() {
+        <span class="kw">return</span> {
+            .sType = <span class="enum">VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO</span>,
+            .magFilter = <span class="enum">VK_FILTER_LINEAR</span>,
+            .minFilter = <span class="enum">VK_FILTER_LINEAR</span>,
+            .mipmapMode = <span class="enum">VK_SAMPLER_MIPMAP_MODE_LINEAR</span>,
+            .addressModeU = <span class="enum">VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE</span>,
+            .addressModeV = <span class="enum">VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE</span>,
+            .addressModeW = <span class="enum">VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE</span>,
+            .mipLodBias = 0.f,
+            .anisotropyEnable = <span class="mcr">VK_TRUE</span>,
+            .maxAnisotropy = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxSamplerAnisotropy,
+            .compareEnable = <span class="mcr">VK_FALSE</span>,
+            .compareOp = <span class="enum">VK_COMPARE_OP_ALWAYS</span>,
+            .minLod = 0.f,
+            .maxLod = <span class="mcr">VK_LOD_CLAMP_NONE</span>,
+            .borderColor = {},
+            .unnormalizedCoordinates = <span class="mcr">VK_FALSE</span>
+        };
+    }
+};
+</pre>
+<p>
+    各参数应当无需多做说明，有不明白的部分的话再好好读读<a class="reference internal" href="Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html">Ch3-7 采样器</a>。
+</p>
+<p>
+    接着在主函数中创建着色器：
+</p>
+<pre class="code">
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="cmt">/*...*/</span>
+
+    <span class="type">VkSamplerCreateInfo</span> samplerCreateInfo = <span class="type">texture</span>::<span class="fn">SamplerCreateInfo</span>();
+    <span class="type">sampler</span> sampler(samplerCreateInfo);
+
+    <span class="cmt">/*...*/</span>
+}
+</pre></section>
+<section id="id3">
+<h2>创建并写入描述符<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<p>
+    先前在<a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识Uniform缓冲区</a>中已经创建过描述符池和描述符了，这里与之类似，但有两点变更：
     <br>
+    1.描述符类型变为<span class="enum">VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER</span>（带采样器的图像），出于简化叙事的目的使用这一类型。对于采样器和图像作为两个独立描述符使用的情形，会在本节最后给出示例。
     <br>
-    <br>
-    TODO 还没写完。
-</p></section>
+    2.采样发生在片段着色器中，<span class="type">VkDescriptorSetLayoutBinding</span>::stageFlags变更为<span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>。
+</p>
+<pre class="code">
+<span class="type">descriptorSetLayout</span> descriptorSetLayout_texture;
+<span class="type">pipelineLayout</span> pipelineLayout_texture;
+<span class="kw">void</span> <span class="fn">CreateLayout</span>() {
+    <span class="type">VkDescriptorSetLayoutBinding</span> descriptorSetLayoutBinding_texture = {
+        .binding = 0,                                               <span class="cmt">//描述符被绑定到0号binding</span>
+        .descriptorType = <span class="enum">VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER</span>,<span class="cmt">//类型为带采样器的图像</span>
+        .descriptorCount = 1,                                       <span class="cmt">//个数是1个</span>
+        .stageFlags = <span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>                  <span class="cmt">//在片段着色器阶段采样图像</span>
+    };
+    <span class="type">VkDescriptorSetLayoutCreateInfo</span> descriptorSetLayoutCreateInfo_texture = {
+        .bindingCount = 1,
+        .pBindings = &amp;descriptorSetLayoutBinding_texturePosition
+    };
+    descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCreateInfo_texture);
+    <span class="type">VkPipelineLayoutCreateInfo</span> pipelineLayoutCreateInfo = {
+        .setLayoutCount = 1,
+        .pSetLayouts = descriptorSetLayout_texture.<span class="fn">Address</span>()
+    };
+    pipelineLayout_texture.<span class="fn">Create</span>(pipelineLayoutCreateInfo);
+}
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="cmt">/*...*/</span>
+
+    <span class="type">VkDescriptorPoolSize</span> descriptorPoolSizes[] = {
+        { <span class="enum">VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER</span>, 1 }
+    };
+    <span class="type">descriptorPool descriptorPool</span> descriptorPool(1, descriptorPoolSizes);
+    <span class="type">descriptorSet</span> descriptorSet_texture;
+    <span class="cmt">/*待填充*/</span>
+
+    <span class="cmt">/*...*/</span>
+}
+</pre>
+<p>
+    写入描述符：
+</p>
+<pre class="code">
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="cmt">/*...*/</span>
+
+    <span class="type">VkDescriptorPoolSize</span> descriptorPoolSizes[] = {
+        { <span class="enum">VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER</span>, 1 }
+    };
+    <span class="type">descriptorPool descriptorPool</span> descriptorPool(1, descriptorPoolSizes);
+    <span class="type">descriptorSet</span> descriptorSet_texture;
+    descriptorPool.<span class="fn">AllocateSets</span>(descriptorSet_texture, descriptorSetLayout_texture);
+    <span class="type">VkDescriptorImageInfo</span> imageInfo = {
+        .sampler = sampler,
+        .imageView = texture.<span class="fn">ImageView</span>(),
+        .imageLayout = <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>
+    };
+    descriptorSet_texture.<span class="fn">Write</span>(imageInfo, <span class="enum">VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER</span>);
+
+    <span class="cmt">/*...*/</span>
+}
+</pre></section>
+<section id="firsttriangle-texture-vert-shader">
+<h2>FirstTriangle_Texture.vert.shader<a class="headerlink" href="#firsttriangle-texture-vert-shader" title="Permalink to this heading"></a></h2>
+<p>
+    新建<span class="path">FirstTriangle_Texture.vert.shader</span>，基于先前所写的<a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html#firsttriangle-vertexbuffer-vert-shader">FirstTriangle_VertexBuffer.vert.shader</a>进行修改：
+</p>
+<pre class="code"><span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(vertex)
+
+<span class="kw">layout</span>(location = 0) <span class="kw">in</span> <span class="type">vec2</span> i_Position;
+<span class="kw">layout</span>(location = 1) <span class="kw">in</span> <span class="type">vec2</span> i_TexCoord;
+<span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec2</span> o_TexCoord;
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    gl_Position = <span class="type">vec4</span>(i_Position, 0, 1);
+    o_TexCoord = i_TexCoord;<span class="cmt">//直接输出</span>
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            每组顶点数据由顶点坐标和贴图坐标构成。
+        </p>
+    </li>
+</ul></section>
+<section id="firsttriangle-texture-frag-shader">
+<h2>FirstTriangle_Texture.frag.shader<a class="headerlink" href="#firsttriangle-texture-frag-shader" title="Permalink to this heading"></a></h2>
+<p>
+    TODO 施工中
+</p>
+<pre class="code">
+<span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(fragment)
+
+<span class="kw">layout</span>(location = 0) <span class="kw">in</span> <span class="type">vec2</span> i_TexCoord;
+<span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec4</span> o_Color;
+<span class="kw">layout</span>(binding = 0) <span class="kw">uniform</span> <span class="type">sampler2D</span> u_Texture;
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    o_Color = <span class="fn">texture</span>(u_Texture, i_TexCoord);
+}
+</pre></section>
 </section>
 
 

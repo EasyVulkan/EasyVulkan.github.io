@@ -536,7 +536,7 @@
 <p>
     <strong>情形1：在渲染循环中获取下一张交换连图像</strong>
     <br>
-    通过<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)获取图像，参见<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id3">获取交换链图像索引</a>，这个函数没有pNext参数。
+    通过<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)获取图像，参见<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id2">获取交换链图像索引</a>，这个函数没有pNext参数。
     <br>
     Vulkan1.1中提供了<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImage2KHR">vkAcquireNextImage2KHR</a>(...)，其参数之一为<a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkAcquireNextImageInfoKHR">VkAcquireNextImageInfoKHR</a>类型，该结构体中有pNext，但标准中规定其必须为<span class="kw">nullptr</span>（即目前该pNext无用处），因此在渲染循环中获取下一张交换连图像时，必须使用二值信号量。
 </p>

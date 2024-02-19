@@ -82,8 +82,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#copyblitandgeneratemipmap2d">CopyBlitAndGenerateMipmap2d</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#mipmap">生成mipmap</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#mip">计算mip等级数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mipmap">生成Mipmap</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mip">计算Mip等级数</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#cmdgeneratemipmap2d">CmdGenerateMipmap2d</a></li>
 </ul>
 </li>
@@ -193,26 +193,6 @@
         <span class="type">uint32_t</span> mipLevelCount = 1, <span class="type">uint32_t</span> layerCount = 1, <span class="type">VkFilter</span> minFilter = <span class="enum">VK_FILTER_LINEAR</span>) {
         <span class="cmt">/*涉及生成mipmap，待填充*/</span>
     }
-    <span class="kw">static</span> <span class="type">VkSamplerCreateInfo</span> <span class="fn">SamplerCreateInfo</span>() {
-        <span class="kw">return</span> {
-            .sType = <span class="enum">VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO</span>,
-            .magFilter = <span class="enum">VK_FILTER_LINEAR</span>,
-            .minFilter = <span class="enum">VK_FILTER_LINEAR</span>,
-            .mipmapMode = <span class="enum">VK_SAMPLER_MIPMAP_MODE_LINEAR</span>,
-            .addressModeU = <span class="enum">VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE</span>,
-            .addressModeV = <span class="enum">VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE</span>,
-            .addressModeW = <span class="enum">VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE</span>,
-            .mipLodBias = 0.f,
-            .anisotropyEnable = <span class="mcr">VK_TRUE</span>,
-            .maxAnisotropy = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxSamplerAnisotropy,
-            .compareEnable = <span class="mcr">VK_FALSE</span>,
-            .compareOp = <span class="enum">VK_COMPARE_OP_ALWAYS</span>,
-            .minLod = 0.f,
-            .maxLod = <span class="mcr">VK_LOD_CLAMP_NONE</span>,
-            .borderColor = {},
-            .unnormalizedCoordinates = <span class="mcr">VK_FALSE</span>
-        };
-    }
 };
 </pre>
 <ul>
@@ -223,17 +203,12 @@
     </li>
     <li>
         <p>
-            贴图的采样点个数当然，亦必须，是<span class="enum">VK_SAMPLE_COUNT_1_BIT</span>。多重采样是图像附件才有的概念，而且多重采样图像不能被用作各种传输命令的源和目标，也不能将其image view写入描述符。
+            贴图的采样点个数当然是<span class="enum">VK_SAMPLE_COUNT_1_BIT</span>，多重采样图像不能被用作各种传输命令的源和目标，而且指定事先准备好的贴图为多重采样也没有意义（注：GLSL中的<span class="type">texture2DMS</span>等类型，用于需要在着色器中读取多重采样的图像附件的情况，与一般的贴图无关）。
         </p>
     </li>
     <li>
         <p>
             <span class="fn">DescriptorImageInfo</span>(...)返回写入描述符时所需的信息，因为图像被用于在着色器中采样，内存布局当然是<span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>。
-        </p>
-    </li>
-    <li>
-        <p>
-            <span class="fn">SamplerCreateInfo</span>()返回一个最寻常的采样器的创建信息，具体解说见<a class="reference internal" href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-6 使用贴图</a>。
         </p>
     </li>
 </ul></section>
@@ -613,7 +588,7 @@
 </pre></section>
 </section>
 <section id="mipmap">
-<h2>生成mipmap<a class="headerlink" href="#mipmap" title="Permalink to this heading"></a></h2>
+<h2>生成Mipmap<a class="headerlink" href="#mipmap" title="Permalink to this heading"></a></h2>
 <p>
     Mipmap是一组原图像的的微缩版本，每个等级mipmap的长宽都是上一等级的一半，如下图所示：
 </p>
@@ -625,7 +600,7 @@
     <br>
     若没有mipmap且滤波方式不是<span class="enum">VK_FILTER_NEAREST</span>的话，无论原图被渲染到多小，都得采样整张原图，这在原图很大时显然很不划算。事先生成mipmap，再根据渲染时的放缩程度选择相应的mip等级进行采样，就能大幅降低开销。
 </p><section id="mip">
-<h3>计算mip等级数<a class="headerlink" href="#mip" title="Permalink to this heading"></a></h3>
+<h3>计算Mip等级数<a class="headerlink" href="#mip" title="Permalink to this heading"></a></h3>
 <p>
     创建图像时填写的<span clss="enum">VkImageCreateInfo</span>::mipLevels指的是微缩图的总数，计入缩放比为1的原尺寸图像，因此最小为1。
 </p>

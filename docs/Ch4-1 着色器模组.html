@@ -90,9 +90,12 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#push-constant">Push Constant的声明方式</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#uniform">Uniform缓冲区的声明方式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">其他Uniform对象的声明</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">输入附件的的声明</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#storage">Storage缓冲区的声明</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id12">块成员的内存布局</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id13">可特化常量的声明方式和使用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">其他Storage对象的声明</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">块成员的内存布局</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">可特化常量的声明方式和使用</a></li>
 </ul>
 </li>
 </ul>
@@ -938,7 +941,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
     <br>
     Push constant适用于少量数据，Vulkan的实现通常会确保你能在push constant块中使用128个字节。
     <br>
-    这里介绍如何在着色器中声明push constant，关于更新push constant，参见//TODO 描述符与常量。
+    这里介绍如何在着色器中声明push constant，关于更新push constant，参见<a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-3 初识Push Constant</a>。
 </p>
 <pre class="code">
 <span class="kw">layout</span>(内存布局修饰符, push_constant) <span class="kw">uniform</span> 块名称 {
@@ -983,7 +986,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
     <br>
     相比push constant，uniform缓冲区适用于大量数据。
     <br>
-    这里介绍如何在着色器中声明uniform缓冲区，关于如何绑定uniform缓冲区，参见//TODO 描述符与常量。
+    这里介绍如何在着色器中声明uniform缓冲区，关于如何绑定uniform缓冲区，参见<a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识Uniform缓冲区</a>。
 </p>
 <pre class="code">
 <span class="kw">layout</span>(set = 描述符集索引, binding = 绑定索引) <span class="kw">uniform</span> 块名称 {
@@ -1012,13 +1015,99 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
         </p>
     </li>
 </ul></section>
+<section id="id12">
+<h3>其他Uniform对象的声明<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h3>
+<p>
+    注意到上文中声明push constant和uniform缓冲区时皆用到了<span class="kw">uniform</span>这个关键字。
+    <br>
+    Uniform对象指的是着色器中的运行期常量（所谓运行期，指其并非编译期或装配管线时指定），只读不写，且在单次绘制命令的调用中不会改变其数据。
+</p>
+<p>
+    以下几种uniform对象能以类似的方式声明：
+</p>
+<ul>
+    <li>
+        <p>
+            各类贴图：以texture、itexture、utexture开头的一系列类型，如<span class="type">texture2D</span>。无前缀、i、u前缀分别对应浮点、有符号整形和无符号整形（所涉及注意事项见<a class="reference internal" href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-6 使用贴图</a>）。
+        </p>
+    </li>
+    <li>
+        <p>
+            采样器：有<span class="type">sampler</span>和<span class="type">samplerShadow</span>两种。
+        </p>
+    </li>
+    <li>
+        <p>
+            带采样器的贴图：以sampler、isampler、usampler开头的一系列类型，如<span class="type">sampler2D</span>和<span class="type">sampler2DShadow</span>。带Shadow后缀的无i或u前缀版本。
+        </p>
+    </li>
+    <li>
+        <p>
+            Uniform纹素缓冲区：有<span class="type">textureBuffer</span>、<span class="type">itextureBuffer</span>、<span class="type">utextureBuffer</span>三种（写成OpenGL中定义的<span class="type">samplerBuffer</span>、<span class="type">isamplerBuffer</span>、<span class="type">usamplerBuffer</span>也没差，反正都跟采样器没关系）。
+        </p>
+    </li>
+</ul>
+<p>
+    Uniform对象的声明方式非常简单，与uniform缓冲区很相似，只是不需要块：
+</p>
+<pre class="code">
+<span class="kw">layout</span>(set = 描述符集索引, binding = 绑定索引) <span class="kw">uniform</span> 类型 实例名称;
+</pre>
+<ul>
+    <li>
+        <p>
+            类似uniform缓冲区，若省略<code>set = 描述符集索引,</code>，则默认为0号描述符集。
+        </p>
+    </li>
+    <li>
+        <p>
+            类似uniform缓冲区，实例可以为数组，对应的描述符构成数组。
+        </p>
+    </li>
+</ul></section>
+<section id="id13">
+<h3>输入附件的的声明<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h3>
+<p>
+    最后还剩一种uniform对象：子通道输入（subpass input），即输入附件（input attachment）在GLSL中的概念，有<span class="type">subpssInput</span>、<span class="type">subpssInputMS</span>、<span class="type">isubpssInput</span>、<span class="type">isubpssInputMS</span>、<span class="type">usubpssInput</span>、<span class="type">usubpssInputMS</span>六种类型，MS后缀说明是多重采样附件。
+    <br>
+    输入附件的声明方式为：
+</p>
+<pre class="code">
+<span class="kw">layout</span>(set = 描述符集索引, binding = 绑定索引, input_attachment_index = 输入附件索引) <span class="kw">uniform</span> 类型 实例名称;
+</pre>
+<ul>
+    <li>
+        <p>
+            类似uniform缓冲区，若省略<code>set = 描述符集索引,</code>，则默认为0号描述符集。
+        </p>
+    </li>
+</ul>
+<p>
+    输入附件索引对应<span class="type">VkSubpassDescription</span>::pInputAttachments所指代的相应输入附件。
+    <br>
+    实例可以为数组，对应的描述符构成数组。啊？你问这要怎么构成数组？以下式为例：
+    <br>
+    <code><span class="kw">layout</span>(binding = 0, input_attachment_index = 基础索引) <span class="kw">uniform</span> subpassInput u_GBuffers[3];</code>
+    <br>
+    通过表达式<code><span class="var">实例名称</span>[N]</code>进行访问时，访问到<span class="type">VkSubpassDescription</span>::pInputAttachments[基础索引 + N]指代的输入附件。
+    <br>
+    这是<a href="https://github.com/KhronosGroup/GLSL/blob/main/extensions/khr/GL_KHR_vulkan_glsl.txt#L1238">Vulkan的GLSL方言</a>中规定的。在将输入附件对应的image view写入描述符时应当注意顺序。
+</p>
+<p>
+    关于输入附件的具体用例见：TODO 延迟渲染
+</p></section>
 <section id="storage">
 <h3>Storage缓冲区的声明<a class="headerlink" href="#storage" title="Permalink to this heading"></a></h3>
 <p>
     //TODO 等写计算着色器的示例再写。
 </p></section>
-<section id="id12">
-<h3>块成员的内存布局<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h3>
+<section id="id14">
+<h3>其他Storage对象的声明<a class="headerlink" href="#id14" title="Permalink to this heading"></a></h3>
+<p>
+    //TODO 等写计算着色器的示例再写。
+</p></section>
+<section id="id15">
+<h3>块成员的内存布局<a class="headerlink" href="#id15" title="Permalink to this heading"></a></h3>
 <p>
     Vulkan的GLSL着色器中，对于块，允许两种内存布局：std140和std430。不同的内存布局遵循不同的对齐规则。
     <br>
@@ -1129,8 +1218,8 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
     <br>
     我建议始终手动<span class="kw">alignas</span>(...)而非使用GLM的aligned type。
 </p></section>
-<section id="id13">
-<h3>可特化常量的声明方式和使用<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h3>
+<section id="id16">
+<h3>可特化常量的声明方式和使用<a class="headerlink" href="#id16" title="Permalink to this heading"></a></h3>
 <p>
     如前文所述，用以下语法声明可特化的常量：
 </p>

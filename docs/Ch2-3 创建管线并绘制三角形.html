@@ -485,10 +485,9 @@ pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
             <span class="fn">glfwWaitEvents</span>();
         <span class="fn">TitleFps</span>();
 
+        fence.<span class="fn">WaitAndReset</span>();
         <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
         <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
-
-        fence.<span class="fn">WaitAndReset</span>();
 
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
         renderPass.<span class="fn">CmdBegin</span>(commandBuffer, framebuffers[i], { {}, windowSize }, clearColor);
@@ -632,10 +631,9 @@ pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
             <span class="fn">glfwWaitEvents</span>();
         <span class="fn">TitleFps</span>();
 
+        fence.<span class="fn">WaitAndReset</span>();
         <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
         <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
-
-        fence.<span class="fn">WaitAndReset</span>();
 
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
         renderPass.<span class="fn">CmdBegin</span>(commandBuffer, framebuffers[i], { {}, windowSize }, clearColor);
