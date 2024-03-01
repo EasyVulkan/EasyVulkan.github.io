@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ch7-5 拷贝图像到屏幕 &mdash; EasyVulkan</title>
+  <title>Ch7-6 拷贝图像到屏幕 &mdash; EasyVulkan</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/theme.css" type="text/css" />
@@ -20,8 +20,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="Ch7-6 使用贴图" href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html" />
-    <link rel="prev" title="Ch7-4 初识Uniform缓冲区" href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html" /> 
+    <link rel="next" title="Ch7-7 使用贴图" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html" />
+    <link rel="prev" title="Ch7-5 初识Uniform缓冲区" href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -81,9 +81,10 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-3 初识Push Constant</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识Uniform缓冲区</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch7-5 拷贝图像到屏幕</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%BB%98%E5%88%B6.html">Ch7-3 初识实例化绘制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-4 初识Push Constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-5 初识Uniform缓冲区</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch7-6 拷贝图像到屏幕</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id1">将图像拷贝到交换链图像的流程</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id2">读取图像数据</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#bootscreen">BootScreen</a></li>
@@ -97,7 +98,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#blit">从暂存图像blit到交换链图像</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-6 使用贴图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a></li>
 </ul>
 
         </div>
@@ -114,7 +115,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Ch7-5 拷贝图像到屏幕</li>
+      <li>Ch7-6 拷贝图像到屏幕</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -123,10 +124,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="ch7-5">
-<h1>Ch7-5 拷贝图像到屏幕<a class="headerlink" href="#ch7-5" title="Permalink to this heading"></a></h1>
+  <section id="ch7-6">
+<h1>Ch7-6 拷贝图像到屏幕<a class="headerlink" href="#ch7-6" title="Permalink to this heading"></a></h1>
 <p>
-    本节的<span class="path">main.cpp</span>对应示例代码中的：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7/Ch7-5.hpp">Ch7-5.hpp</a>
+    本节的<span class="path">main.cpp</span>对应示例代码中的：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7/Ch7-6.hpp">Ch7-6.hpp</a>
 </p>
 <p>
     由于到成功渲染出图像为止有诸多步骤，本套教程中分两步走。
@@ -1551,8 +1552,8 @@ commandBuffer.<span class="fn">End</span>();
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-left" title="Ch7-4 初识Uniform缓冲区" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
-        <a href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html" class="btn btn-neutral float-right" title="Ch7-6 使用贴图" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-left" title="Ch7-5 初识Uniform缓冲区" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html" class="btn btn-neutral float-right" title="Ch7-7 使用贴图" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

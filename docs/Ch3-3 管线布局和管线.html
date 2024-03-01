@@ -107,10 +107,11 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-3 初识Push Constant</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识Uniform缓冲区</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-6 使用贴图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%BB%98%E5%88%B6.html">Ch7-3 初识实例化绘制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-4 初识Push Constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-5 初识Uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a></li>
 </ul>
 
         </div>
@@ -245,7 +246,7 @@
 <ul>
     <li>
         <p>
-            关于<a href="https://renderdoc.org/vkspec_chunked/chap14.html#VkPushConstantRange">VkPushConstantRange</a>的具体用例，见<a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识Push Constant</a>。
+            关于<a href="https://renderdoc.org/vkspec_chunked/chap14.html#VkPushConstantRange">VkPushConstantRange</a>的具体用例，见<a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-4 初识Push Constant</a>。
         </p>
     </li>
 </ul></section>
@@ -517,7 +518,7 @@
     </li>
     <li>
         <p>
-            <span class="enum">VK_PIPELINE_CREATE_EARLY_RETURN_ON_FAILURE_BIT</span>影响<a href="https://renderdoc.org/vkspec_chunked/chap10.html#vkCreateGraphicsPipelines">vkCreateGraphicsPipelines</a>(...)或<a href="https://renderdoc.org/vkspec_chunked/chap10.html#vkCreateComputePipelines">vkCreateComputePipelines</a>(...)中pCreateInfos所指代其他管线的创建，若当前管线创建信息的flags中包含该bit，且当前管线创建失败，则后续其它管线亦不会被创建。
+            <span class="enum">VK_PIPELINE_CREATE_EARLY_RETURN_ON_FAILURE_BIT</span>影响<a href="https://renderdoc.org/vkspec_chunked/chap10.html#vkCreateGraphicsPipelines">vkCreateGraphicsPipelines</a>(...)或<a href="https://renderdoc.org/vkspec_chunked/chap10.html#vkCreateComputePipelines">vkCreateComputePipelines</a>(...)中pCreateInfos所指代其他管线的创建，若当前管线创建信息的flags中包含该bit，且当前管线创建失败，则后续其他管线亦不会被创建。
         </p>
     </li>
 </ul><section id="vkpipelinevertexinputstatecreateinfo">
@@ -702,13 +703,13 @@
 </p>
 <pre class="code">
 <span class="type">VkVertexInputBindingDescription</span> vertexInputBindings[2] = {
-    { 0, <span class="kw">sizeof</span>(<span class="type">perVertex</span>), <span class="type">VK_VERTEX_INPUT_RATE_VERTEX</span> },
-    { 1, <span class="kw">sizeof</span>(<span class="type">perInstance</span>), <span class="type">VK_VERTEX_INPUT_RATE_INSTANCE</span> },
+    { 0, <span class="kw">sizeof</span>(<span class="type">perVertex</span>), <span class="enum">VK_VERTEX_INPUT_RATE_VERTEX</span> },
+    { 1, <span class="kw">sizeof</span>(<span class="type">perInstance</span>), <span class="enum">VK_VERTEX_INPUT_RATE_INSTANCE</span> },
 };
 <span class="type">VkVertexInputAttributeDescription</span> vertexInputAttributes[3] = {
     { 0, 0, <span class="enum">VK_FORMAT_R32G32_SFLOAT</span>, <span class="mcr">offsetof</span>(<span class="type">perVertex</span>, position) },
-    { 0, 1, <span class="enum">VK_FORMAT_R32G32_SFLOAT</span>, <span class="mcr">offsetof</span>(<span class="type">perVertex</span>, texCoord) },
-    { 1, 2, <span class="enum">VK_FORMAT_R32G32_SFLOAT</span>, <span class="mcr">offsetof</span>(<span class="type">perInstance</span>, position) },
+    { 1, 0, <span class="enum">VK_FORMAT_R32G32_SFLOAT</span>, <span class="mcr">offsetof</span>(<span class="type">perVertex</span>, texCoord) },
+    { 2, 1, <span class="enum">VK_FORMAT_R32G32_SFLOAT</span>, <span class="mcr">offsetof</span>(<span class="type">perInstance</span>, position) },
 };
 </pre>
 <ul>
@@ -1221,7 +1222,7 @@
     <br>
     此处指定的sample mask会与coverage mask做位与，这一步叫做sample mask test，发生在栅格化阶段，片段着色器中gl_SampleMaskIn的数值即此处位与的结果。显然，若在此处把对应某个采样点对应的比特指定为0，就意味着直接把该采样点一概算作不被覆盖了。
     <br>
-    在执行片段着色器前，无论是否经历sample mask test，若一个片段（像素，或多重采样中的多个采样点）的所有采样点coverage mask为0，则该片段被丢弃，不进行后续其它操作。
+    在执行片段着色器前，无论是否经历sample mask test，若一个片段（像素，或多重采样中的多个采样点）的所有采样点coverage mask为0，则该片段被丢弃，不进行后续其他操作。
 </p>
 <div class="admonition note">
     <p class="admonition-title">Note</p>

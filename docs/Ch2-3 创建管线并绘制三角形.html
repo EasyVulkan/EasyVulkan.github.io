@@ -96,10 +96,11 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-3 初识Push Constant</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识Uniform缓冲区</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-6 使用贴图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%BB%98%E5%88%B6.html">Ch7-3 初识实例化绘制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-4 初识Push Constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-5 初识Uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a></li>
 </ul>
 
         </div>
@@ -227,7 +228,7 @@
     </li>
 </ul>
 <p>
-    于是一个最简单的顶点着色器就写好了，之后用<a href="https://renderdoc.org/vkspec_chunked/chap21.html#vkCmdDraw">vkCmdDraw</a>(...)绘制时，指定绘制3个顶点以构建三角形，首个顶点索引为0，那么上述着色器便会依次生成在NDC中坐标为<span class="type">vec4</span>(0, -0.5, 0, 1)、<span class="type">vec4</span>(-0.5, 0.5, 0, 1)、<span class="type">vec4</span>(0.5, 0.5, 0, 1)的三个顶点。
+    于是一个最简单的顶点着色器就写好了，之后用<a href="https://renderdoc.org/vkspec_chunked/chap21.html#vkCmdDraw">vkCmdDraw</a>(...)绘制时，指定绘制3个顶点以构建三角形，首个顶点索引为0，那么上述着色器便会依次生成在NDC中坐标为<code>{ 0, -0.5, 0, 1 }</code>、<code>{ -0.5, 0.5, 0, 1 }</code>、<code>{ 0.5, 0.5, 0, 1 }</code>的三个顶点。
 </p>
 <p>
     书写完着色器后，在<span class="path">shader</span>文件夹下打开控制台（文件浏览器的地址栏中直接输入cmd并回车即可），用以下控制台指令将GLSL着色器其编译到SPIR-V：
@@ -306,11 +307,11 @@ glslc.exe路径 FirstTriangle.vert.shader -c
 </p>
 <pre class="code">
 <span class="kw">void</span> <span class="fn">CreatePipeline</span>() {
-    <span class="kw">static</span> <span class="type">shaderModule</span> vert_triangle(<span class="str">&quot;shader/FirstTriangle.vert.spv&quot;</span>);
-    <span class="kw">static</span> <span class="type">shaderModule</span> frag_triangle(<span class="str">&quot;shader/FirstTriangle.frag.spv&quot;</span>);
+    <span class="kw">static</span> <span class="type">shaderModule</span> vert(<span class="str">&quot;shader/FirstTriangle.vert.spv&quot;</span>);
+    <span class="kw">static</span> <span class="type">shaderModule</span> frag(<span class="str">&quot;shader/FirstTriangle.frag.spv&quot;</span>);
     <span class="kw">static</span> <span class="type">VkPipelineShaderStageCreateInfo</span> shaderStageCreateInfos_triangle[2] = {
-        vert_triangle.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>),
-        frag_triangle.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>)
+        vert.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>),
+        frag.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>)
     };
     <span class="cmt">/*待后续填充*/</span>
 }
@@ -334,15 +335,13 @@ glslc.exe路径 FirstTriangle.vert.shader -c
     参见<a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html#pipeline">Ch3-3 管线布局和管线</a>，我在该节中具体叙述何为管线，以及涉及到的所有管线状态，内容很长，请先完成封装并了解以下内容：
     1.<span class="type">VkGraphicsPipelineCreateInfo</span>有哪些成员
     <br>
-    2.逐顶点和逐实例输入
+    2.图元拓扑类型
     <br>
-    3.图元拓扑类型
+    3.视口和剪裁范围
     <br>
-    4.视口和剪裁范围
+    4.采样点个数
     <br>
-    5.采样点个数
-    <br>
-    6.<span class="type">VkPipelineColorBlendAttachmentState</span>有哪些成员
+    5.<span class="type">VkPipelineColorBlendAttachmentState</span>有哪些成员
     <br>
     你应当会创建一个新的头文件<span class="path">VKBase+.h</span>，这个文件会用来写一些常用但又不那么基础的对象的封装。你可以在主函数里包含它，或者将包含在<span class="path">EasyVulkan.hpp</span>中的<span class="path">VKBase.h</span>替换为<span class="path">VKBase+.h</span>。
 </p>
@@ -351,11 +350,11 @@ glslc.exe路径 FirstTriangle.vert.shader -c
 </p>
 <pre class="code">
 <span class="kw">void</span> <span class="fn">CreatePipeline</span>() {
-    <span class="kw">static</span> <span class="type">shaderModule</span> vert_triangle(<span class="str">&quot;shader/FirstTriangle.vert.spv&quot;</span>);
-    <span class="kw">static</span> <span class="type">shaderModule</span> frag_triangle(<span class="str">&quot;shader/FirstTriangle.frag.spv&quot;</span>);
+    <span class="kw">static</span> <span class="type">shaderModule</span> vert(<span class="str">&quot;shader/FirstTriangle.vert.spv&quot;</span>);
+    <span class="kw">static</span> <span class="type">shaderModule</span> frag(<span class="str">&quot;shader/FirstTriangle.frag.spv&quot;</span>);
     <span class="kw">static</span> <span class="type">VkPipelineShaderStageCreateInfo</span> shaderStageCreateInfos_triangle[2] = {
-        vert_triangle.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>),
-        frag_triangle.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>)
+        vert.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>),
+        frag.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>)
     };
     <span class="kw">auto</span> Create = [] {
         <span class="type">graphicsPipelineCreateInfoPack</span> pipelineCiPack;
@@ -388,7 +387,7 @@ glslc.exe路径 FirstTriangle.vert.shader -c
     只绘制一个三角型，所以图元拓扑类型可为<span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST</span>或<span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP</span>或<span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN</span>：
 </p>
 <pre class="code">
-pipelineCiPack.inputAssemblyStateCi.topology = <span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP</span>;
+pipelineCiPack.inputAssemblyStateCi.topology = <span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST</span>;
 </pre>
 <p>
     接着指定视口和剪裁范围，当然是填满屏幕：
@@ -428,17 +427,17 @@ pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
 </p>
 <pre class="code">
 <span class="kw">void</span> <span class="fn">CreatePipeline</span>() {
-    <span class="kw">static</span> <span class="type">shaderModule</span> vert_triangle(<span class="str">&quot;shader/FirstTriangle.vert.spv&quot;</span>);
-    <span class="kw">static</span> <span class="type">shaderModule</span> frag_triangle(<span class="str">&quot;shader/FirstTriangle.frag.spv&quot;</span>);
+    <span class="kw">static</span> <span class="type">shaderModule</span> vert(<span class="str">&quot;shader/FirstTriangle.vert.spv&quot;</span>);
+    <span class="kw">static</span> <span class="type">shaderModule</span> frag(<span class="str">&quot;shader/FirstTriangle.frag.spv&quot;</span>);
     <span class="kw">static</span> <span class="type">VkPipelineShaderStageCreateInfo</span> shaderStageCreateInfos_triangle[2] = {
-        vert_triangle.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>),
-        frag_triangle.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>)
+        vert.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>),
+        frag.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>)
     };
     <span class="kw">auto</span> Create = [] {
         <span class="type">graphicsPipelineCreateInfoPack</span> pipelineCiPack;
         pipelineCiPack.createInfo.layout = pipelineLayout_triangle;
         pipelineCiPack.createInfo.renderPass = <span class="fn">RenderPassAndFramebuffers</span>().renderPass;
-        pipelineCiPack.inputAssemblyStateCi.topology = <span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP</span>;
+        pipelineCiPack.inputAssemblyStateCi.topology = <span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST</span>;
         pipelineCiPack.viewports.<span class="fn">emplace_back</span>(0.f, 0.f, <span class="kw">float</span>(windowSize.width), <span class="kw">float</span>(windowSize.height), 0.f, 1.f);
         pipelineCiPack.scissors.<span class="fn">emplace_back</span>(<span class="type">VkOffset2D</span>{}, windowSize);
         pipelineCiPack.multisampleStateCi.rasterizationSamples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>;
@@ -590,7 +589,7 @@ pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
         </tr>
         <tr class="row-even">
             <td><p><span class="type">uint32_t</span> instanceCount</p></td>
-            <td><p>要绘制的实例个数</p></td>
+            <td><p>要绘制的图形实例个数</p></td>
         </tr>
         <tr class="row-odd">
             <td><p><span class="type">uint32_t</span> firstVertex</p></td>
@@ -598,12 +597,12 @@ pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
         </tr>
         <tr class="row-even">
             <td><p><span class="type">uint32_t</span> firstInstance</p></td>
-            <td><p>首个实例的索引</p></td>
+            <td><p>首个图形实例的索引</p></td>
         </tr>
     </tbody>
 </table>
 <p>
-    用3个顶点绘制1个三角形，首个顶点和首个实例都是0（实例索引无所谓，考虑到前文中的顶点着色器并没有用到gl_InstanceVertex，那么其执行结果就与实例索引无关）。
+    用3个顶点绘制1个三角形实例，首个顶点和首个实例都是0（这里的执行结果与实例索引无关，也先不用管什么是图形实例）。
     <br>
     最终，主函数变为：
 </p>

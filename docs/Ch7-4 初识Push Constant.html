@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ch7-3 初识Push Constant &mdash; EasyVulkan</title>
+  <title>Ch7-4 初识Push Constant &mdash; EasyVulkan</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/theme.css" type="text/css" />
@@ -20,8 +20,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="Ch7-4 初识Uniform缓冲区" href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html" />
-    <link rel="prev" title="Ch7-2 初识索引缓冲区" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html" /> 
+    <link rel="next" title="Ch7-5 初识Uniform缓冲区" href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html" />
+    <link rel="prev" title="Ch7-3 初识实例化绘制" href="Ch7-3%20%E5%88%9D%E8%AF%86%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%BB%98%E5%88%B6.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -81,17 +81,18 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch7-3 初识Push Constant</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#push-constant">使用Push Constant绘制三角形的流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%BB%98%E5%88%B6.html">Ch7-3 初识实例化绘制</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch7-4 初识Push Constant</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#push-constant">使用Push Constant绘制多个三角形的流程</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id1">书写Push Constant所需数据</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id2">创建新的管线布局</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#firsttriangle-pushconstant-vert-shader">FirstTriangle_PushConstant.vert.shader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pushconstant-vert-shader">PushConstant.vert.shader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id3">在命令缓冲区中更新Push Constant</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识Uniform缓冲区</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-6 使用贴图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-5 初识Uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a></li>
 </ul>
 
         </div>
@@ -108,7 +109,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Ch7-3 初识Push Constant</li>
+      <li>Ch7-4 初识Push Constant</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -117,19 +118,19 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="ch7-3-push-constant">
-<h1>Ch7-3 初识Push Constant<a class="headerlink" href="#ch7-3-push-constant" title="Permalink to this heading"></a></h1>
+  <section id="ch7-4-push-constant">
+<h1>Ch7-4 初识Push Constant<a class="headerlink" href="#ch7-4-push-constant" title="Permalink to this heading"></a></h1>
 <p>
-    本节的<span class="path">main.cpp</span>对应示例代码中的：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7/Ch7-3.hpp">Ch7-3.hpp</a>
+    本节的<span class="path">main.cpp</span>对应示例代码中的：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7/Ch7-4.hpp">Ch7-4.hpp</a>
 </p>
 <p>
     Push constant是在着色器中使用可由CPU侧变更的常量的最简单方式。
     <br>
     这一节尝试使用push constant来为三角形指定位移，并用实例化来绘制多个在不同位置的三角形。
 </p><section id="push-constant">
-<h2>使用Push Constant绘制三角形的流程<a class="headerlink" href="#push-constant" title="Permalink to this heading"></a></h2>
+<h2>使用Push Constant绘制多个三角形的流程<a class="headerlink" href="#push-constant" title="Permalink to this heading"></a></h2>
 <p>
-    在之前<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7/Ch7-1.hpp">Ch7-1.hpp</a>用顶点缓冲区绘制三角形代码的基础上，使用顶点和uniform缓冲区绘制三角形需要经历以下步骤：
+    在之前<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7/Ch7-1.hpp">Ch7-1.hpp</a>用顶点缓冲区绘制三角形代码的基础上，使用顶点和push constant绘制三角形需要经历以下步骤：
     <br>
     1.书写push constant所需数据
     <br>
@@ -142,7 +143,7 @@
 <section id="id1">
 <h2>书写Push Constant所需数据<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
 <p>
-    在主函数里：
+    跟上一节一样，在主函数里添加每个三角形的位移数据，不过这次不建立顶点缓冲区：
 </p>
 <pre class="code">
 glm::<span class="type">vec2</span> pushConstants[] = {
@@ -173,8 +174,11 @@ glm::<span class="type">vec2</span> pushConstants[] = {
     pipelineLayout_triangle.<span class="fn">Create</span>(pipelineLayoutCreateInfo);
 }
 </pre></section>
-<section id="firsttriangle-pushconstant-vert-shader">
-<h2>FirstTriangle_PushConstant.vert.shader<a class="headerlink" href="#firsttriangle-pushconstant-vert-shader" title="Permalink to this heading"></a></h2>
+<section id="pushconstant-vert-shader">
+<h2>PushConstant.vert.shader<a class="headerlink" href="#pushconstant-vert-shader" title="Permalink to this heading"></a></h2>
+<p>
+    新建<span class="path">PushConstant.vert.shader</span>，基于<span class="path">InstancedRendering.vert.shader</span>略作修改即可：
+</p>
 <pre class="code">
 <span class="pragma">#version</span> 460
 <span class="pragma">#pragma shader_stage</span>(vertex)
@@ -188,7 +192,7 @@ glm::<span class="type">vec2</span> pushConstants[] = {
 <span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec4</span> o_Color;
 
 <span class="kw">void</span> <span class="fn">main</span>() {
-    gl_Position = <span class="type">vec4</span>(i_Position + u_Positions[gl_VertexIndex], 0, 1);
+    gl_Position = <span class="type">vec4</span>(i_Position + u_Positions[gl_InstanceIndex], 0, 1);
     o_Color = i_Color;
 }
 </pre>
@@ -198,13 +202,18 @@ glm::<span class="type">vec2</span> pushConstants[] = {
             涉及到的语法：<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#push-constant">Push Constant的声明方式</a>。
         </p>
     </li>
+    <li>
+        <p>
+            实例索引gl_InstanceIndex是<a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html#id1">顶点着色器的内置输入</a>。
+        </p>
+    </li>
 </ul>
 <p>
     别忘了更改<span class="fn">CreatePipeline</span>(...)：
 </p>
 <pre class="code">
 <span class="kw">void</span> <span class="fn">CreatePipeline</span>() {
-    <span class="kw">static</span> <span class="type">shaderModule</span> vert_triangle(<span class="str">"shader/FirstTriangle_PushConstant.vert.spv"</span>);
+    <span class="kw">static</span> <span class="type">shaderModule</span> vert(<span class="str">"shader/PushConstant.vert.spv"</span>);
     <span class="cmt">//省略后续代码</span>
 }
 </pre></section>
@@ -263,7 +272,7 @@ glm::<span class="type">vec2</span> pushConstants[] = {
 <span class="fn">vkCmdDraw</span>(commandBuffer, 3, 3, 0, 0);
 </pre>
 <p>
-    运行程序，你应该会看到以下图像：
+    运行程序，你应该会看到以下图像（跟上一节的一样）：
 </p>
 <img alt="_images/ch7-3-1.png" src="_images/ch7-3-1.png"></section>
 </section>
@@ -272,8 +281,8 @@ glm::<span class="type">vec2</span> pushConstants[] = {
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-left" title="Ch7-2 初识索引缓冲区" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
-        <a href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-right" title="Ch7-4 初识Uniform缓冲区" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Ch7-3%20%E5%88%9D%E8%AF%86%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%BB%98%E5%88%B6.html" class="btn btn-neutral float-left" title="Ch7-3 初识实例化绘制" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-right" title="Ch7-5 初识Uniform缓冲区" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

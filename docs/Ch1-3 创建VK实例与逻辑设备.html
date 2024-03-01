@@ -94,14 +94,17 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86push%20constant.html">Ch7-3 初识push constant</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识uniform缓冲区</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%BB%98%E5%88%B6.html">Ch7-3 初识实例化绘制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-4 初识Push Constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-5 初识Uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a></li>
 </ul>
 
         </div>
@@ -1352,7 +1355,7 @@ queueFamilyIndex_compute = ic;
 <ul>
     <li>
         <p>
-            从Vulkan1.1开始可以将flags指定为<span class="enum">VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT</span>，说明该队列受保护。虽然本套教程不会对Vulkan1.0以上版本的功能做过分展开，由于受保护内存（protected memory）相关的说明在官方标准中很常见（尽管通常不会被使用），这里还是做一下简单提要。Vulkan的设备内存（物理设备为GPU则等同显存）对主机（指CPU一侧）可以是可见的，这就导致有能力的程序员可以通过一些手段，使得一个程序读写其它程序的设备内存，而受保护设备内存则被严格限制只能被设备写入，受保护队列则是能执行受保护操作的队列，这里头还有一些很麻烦的读写守则，这里不做展开，有兴趣请自行参考官方标准。受保护设备内存的主要应用场景是防止从内存中读取DRM内容（也就是防止盗版加密图像啦！DLsite和Fanza的新版电子书阅读器有这种特性），游戏程序员是用不着的。
+            从Vulkan1.1开始可以将flags指定为<span class="enum">VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT</span>，说明该队列受保护。虽然本套教程不会对Vulkan1.0以上版本的功能做过分展开，由于受保护内存（protected memory）相关的说明在官方标准中很常见（尽管通常不会被使用），这里还是做一下简单提要。Vulkan的设备内存（物理设备为GPU则等同显存）对主机（指CPU一侧）可以是可见的，这就导致有能力的程序员可以通过一些手段，使得一个程序读写其他程序的设备内存，而受保护设备内存则被严格限制只能被设备写入，受保护队列则是能执行受保护操作的队列，这里头还有一些很麻烦的读写守则，这里不做展开，有兴趣请自行参考官方标准。受保护设备内存的主要应用场景是防止从内存中读取DRM内容（也就是防止盗版加密图像啦！DLsite和Fanza的新版电子书阅读器有这种特性），游戏程序员是用不着的。
         </p>
     </li>
 </ul>

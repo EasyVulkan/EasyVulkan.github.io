@@ -1,7 +1,8 @@
-#define DISABLE_VK_LAYERS_AND_EXTENSIONS_CHECK
 #include "VKBase.h"
+#include "Input.h"
 #include <windows.h>
-#include <Vulkan/vulkan_win32.h>
+#include <vulkan/vulkan_win32.h>
+#pragma comment(lib, "vulkan-1.lib")
 #ifndef NDEBUG
 #pragma comment(linker, "/subsystem:console")
 #define Main main
@@ -15,41 +16,50 @@ class window {
 	struct windowClass :WNDCLASSEX {
 		windowClass() {
 			//ZeroMemory(this, sizeof(WNDCLASSEX)); No necessary. Static object automatically zeros memory at launch.
-			hInstance = GetModuleHandle(0);
 			cbSize = sizeof(WNDCLASSEX);
 			style = CS_OWNDC;
-			lpfnWndProc = window::HandleMessageSetup;
-			hInstance = GetModuleHandle(0);;
+			lpfnWndProc = WindowProcedureSetup;
+			hInstance = GetModuleHandle(0);
 			hCursor = LoadCursor(NULL, IDC_ARROW);
 			lpszClassName = L"Main WindowClass";
 			RegisterClassEx(this);
 		}
 	};
 	HWND hWindow = nullptr;
-	const wchar_t* name;
 	MSG message = {};
+	bool shouldClose = false;
+	LRESULT(*fHandleMessage)(HWND, UINT, WPARAM, LPARAM) = nullptr;
 	//--------------------
-	static LRESULT CALLBACK HandleMessageSetup(HWND hWindow, UINT message, WPARAM wParam, LPARAM lParam) {
-		if (message == WM_NCCREATE) {//NC means non-client area (e.g. title bar, system menu). This message is sent before WM_CREATE.
-			window* pWindow = reinterpret_cast<window*>(reinterpret_cast<CREATESTRUCTW*>(lParam)->lpCreateParams);
-			//Store a pointer of the user-defined window object, in case you want to acces the object in the WNDPROC function.
-			SetWindowLongPtr(hWindow, GWLP_USERDATA, (LONG_PTR)pWindow);
-			//HandleMessageSetup(...) should be called only once, reset WNDPROC to a static function which calls HandleMessage(...) directly.
-			SetWindowLongPtr(hWindow, GWLP_WNDPROC, (LONG_PTR)HandleMessageThunk);
-			return pWindow->HandleMessage(hWindow, message, wParam, lParam);
+	static LRESULT CALLBACK WindowProcedureSetup(HWND hWindow, UINT message, WPARAM wParam, LPARAM lParam) {
+		if (message != WM_NCCREATE)//NC means non-client area (e.g. title bar, system menu). This message is sent before WM_CREATE.
+			return DefWindowProc(hWindow, message, wParam, lParam);//Def means default.
+		window* pWindow = reinterpret_cast<window*>(reinterpret_cast<CREATESTRUCTW*>(lParam)->lpCreateParams);
+		//Store a pointer of the user-defined window object, in case you want to acces the object in the WNDPROC function.
+		SetWindowLongPtr(hWindow, GWLP_USERDATA, (LONG_PTR)pWindow);
+		//WindowProcedureSetup(...) should be called only once, reset WNDPROC to a static function which calls fHandleMessage(...) directly.
+		SetWindowLongPtr(hWindow, GWLP_WNDPROC, (LONG_PTR)WindowProcedureThunk);
+		return WindowProcedureThunk(hWindow, message, wParam, lParam);
+	}
+	static LRESULT CALLBACK WindowProcedureThunk(HWND hWindow, UINT message, WPARAM wParam, LPARAM lParam) {
+		window* pWindow = reinterpret_cast<window*>(GetWindowLongPtr(hWindow, GWLP_USERDATA));
+		switch (message) {
+			//If the program is running with a console, you should terminate the program by clicking the console's closebox.
+		case WM_CLOSE:
+			pWindow->shouldClose = true;
+			return 0;//When quiting, DestroyWindow(...) is called in ~window()Cno need to return DefWindowProc(...)
+		case WM_DESTROY:
+			PostQuitMessage(0);
+			return 0;
 		}
-		return DefWindowProc(hWindow, message, wParam, lParam);//Def means default.
+		return (
+			pWindow->fHandleMessage ?
+			pWindow->fHandleMessage :
+			DefWindowProc)(hWindow, message, wParam, lParam);
 	}
-	static LRESULT CALLBACK HandleMessageThunk(HWND hWindow, UINT message, WPARAM wParam, LPARAM lParam) {
-		return reinterpret_cast<window*>(GetWindowLongPtr(hWindow, GWLP_USERDATA))->HandleMessage(hWindow, message, wParam, lParam);
-	}
-	LRESULT HandleMessage(HWND hWindow, UINT message, WPARAM wParam, LPARAM lParam);
 public:
-	window(const wchar_t* name) :
-		name(name) {}
-	window(const wchar_t* name, SIZE size, DWORD style = WS_CAPTION | WS_SYSMENU) :
-		name(name) {
-		Create(size, style);
+	window() = default;
+	window(const wchar_t* name, SIZE size, DWORD style, DWORD exStyle = 0, const WNDCLASSEX& windowClass = MainWindowClass()) {
+		Create(name, size, style, exStyle, windowClass);
 	}
 	window(window&&) = delete;
 	~window() {
@@ -57,12 +67,12 @@ public:
 	}
 	//Getter
 	HWND HWindow() const { return hWindow; }
-	const wchar_t* Name() const { return name; }
 	const MSG& Message() const { return message; }
-	//Const Function
-	bool ShouldClose() { return message.message == WM_QUIT; }
+	bool ShouldClose() { return shouldClose; }
+	//Setter
+	void FHandleMessage(LRESULT(*fHandleMessage)(HWND, UINT, WPARAM, LPARAM)) { this->fHandleMessage = fHandleMessage; }
 	//Non-const Function
-	void Create(SIZE size, DWORD style, DWORD exStyle = 0) {
+	void Create(const wchar_t* name, SIZE size, DWORD style, DWORD exStyle = 0, const WNDCLASSEX& windowClass = MainWindowClass()) {
 		RECT sizeRect = { 0, 0, size.cx, size.cy };
 		AdjustWindowRect(&sizeRect, style, false);
 		size.cx = sizeRect.right - sizeRect.left;
@@ -71,40 +81,79 @@ public:
 			(GetSystemMetrics(SM_CXSCREEN) - size.cx) / 2,
 			(GetSystemMetrics(SM_CYSCREEN) - size.cy) / 2
 		};
-		hWindow = CreateWindowEx(exStyle, WindowClass().lpszClassName, name, style,
+		hWindow = CreateWindowEx(exStyle, windowClass.lpszClassName, name, style,
 			view.x, view.y, size.cx, size.cy,
-			nullptr, nullptr, WindowClass().hInstance, this);
+			nullptr, nullptr, windowClass.hInstance, this);
 		if (hWindow)
 			ShowWindow(hWindow, SW_SHOWDEFAULT);
 	}
 	void PollEvents() {
-		while (PeekMessage(&message, nullptr, 0, 0, PM_REMOVE) && !ShouldClose())
+		while (PeekMessage(&message, hWindow, 0, 0, PM_REMOVE))
+			TranslateMessage(&message),
+			DispatchMessage(&message);
+	}
+	void WaitEvent() {
+		if (GetMessage(&message, hWindow, 0, 0))
 			TranslateMessage(&message),
 			DispatchMessage(&message);
 	}
 	//Static Function
-	static const windowClass& WindowClass() {
+	static const WNDCLASSEX& MainWindowClass() {
 		static windowClass mainWindowClass;
 		return mainWindowClass;
 	}
 };
-//Macro
-#define RETURN_MSG return (int)mainWindow.Message().wParam;
 
 //Defalut Variable
-window mainWindow(L"EasyVK");
+window mainWindow;
 DWORD style_windowed;
-/*Input*/
-int32_t currentButton;
-constexpr easyVulkan::mouseStatus& easyVK_mouse = easyVulkan::mouseStatus::mouse;
-inline bool KeyPressed(uint16_t keyCode) { return GetAsyncKeyState(keyCode); }
-easyVulkan::keyManager keyManager(KeyPressed);
+/*Input Related*/
+namespace {
+	input::mouseButton lastButton;
+	bool buttonStates[input::_mouseButtonCount];
+	int16_t scroll = 0;
+}
+input::mouseManager mouse([](input::mouseButton button) { return buttonStates[button - 1]; });
+input::keyManager keys([](uint16_t keyCode) { return bool(GetAsyncKeyState(keyCode)); });
 /*Changeable*/
-template<> ULONGLONG easyVulkan::doubleClickMaxInterval<ULONGLONG> = 500;
+const wchar_t* windowTitle = L"Chime";
 
 //Function
+LRESULT HandleMessage(HWND hWindow, UINT message, WPARAM wParam, LPARAM lParam) {
+	auto ButtonIsClicked = [](HWND hWindow, input::mouseButton button) {
+		buttonStates[button - 1] = true;
+		lastButton = button;
+		SetCapture(hWindow);
+	};
+	auto ButtonIsReleased = [](input::mouseButton button) {
+		buttonStates[button - 1] = false;
+		lastButton = input::none;
+		if (!std::accumulate(buttonStates, buttonStates + input::_mouseButtonCount, 0))
+			ReleaseCapture();
+	};
+	switch (message) {
+	case WM_ACTIVATE:
+		if (wParam != WA_INACTIVE) break;
+		std::fill(buttonStates, buttonStates + input::_mouseButtonCount, 0);
+		lastButton = input::none;
+		ReleaseCapture();
+		break;
+	case WM_LBUTTONDOWN: ButtonIsClicked(hWindow, input::lButton); break;
+	case WM_RBUTTONDOWN: ButtonIsClicked(hWindow, input::rButton); break;
+	case WM_MBUTTONDOWN: ButtonIsClicked(hWindow, input::mButton); break;
+	case WM_LBUTTONUP: ButtonIsReleased(input::lButton); break;
+	case WM_RBUTTONUP: ButtonIsReleased(input::rButton); break;
+	case WM_MBUTTONUP: ButtonIsReleased(input::mButton); break;
+	case WM_MOUSEWHEEL: scroll = short(HIWORD(wParam)) / WHEEL_DELTA; break;
+	case WM_KEYUP:
+		if (wParam != VK_ESCAPE) break;
+		PostMessage(hWindow, WM_CLOSE, 0, 0);
+		return 0;
+	}
+	return DefWindowProc(hWindow, message, wParam, lParam);
+}
 auto PreInitialization_EnableSrgb() {
-	static bool enableSrgb;//Static object will be zero-initialized at launch.
+	static bool enableSrgb;//Static object will be zero-initialized at launch
 	enableSrgb = true;
 	return [] { return enableSrgb; };
 }
@@ -125,19 +174,20 @@ bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable
 	if (isResizable)
 		style_windowed |= WS_SIZEBOX | WS_MAXIMIZEBOX;
 	fullScreen ?
-		mainWindow.Create({ GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) }, WS_POPUP) :
-		mainWindow.Create({ long(size.width), long(size.height) }, style_windowed);
+		mainWindow.Create(windowTitle, { GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) }, WS_POPUP) :
+		mainWindow.Create(windowTitle, { long(size.width), long(size.height) }, style_windowed);
 	if (!mainWindow.HWindow()) {
 		outStream << std::format("[ InitializeWindow ] ERROR\nFailed to create a win32 window!\n");
 		return false;
 	}
-	//Push extensions
-	graphicsBase::Base().PushInstanceExtension(VK_KHR_SURFACE_EXTENSION_NAME);
-	graphicsBase::Base().PushInstanceExtension(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
+	mainWindow.FHandleMessage(HandleMessage);
+	//Add extensions
+	graphicsBase::Base().AddInstanceExtension(VK_KHR_SURFACE_EXTENSION_NAME);
+	graphicsBase::Base().AddInstanceExtension(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
 	auto& hdrColorSpaces = decltype(PreInitialization_TryEnableHdrByOrder({})){}();
 	if (hdrColorSpaces[0])
-		graphicsBase::Base().PushInstanceExtension(VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
-	graphicsBase::Base().PushDeviceExtension(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+		graphicsBase::Base().AddInstanceExtension(VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
+	graphicsBase::Base().AddDeviceExtension(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
 	//Create vulkan instance
 	if (graphicsBase::Base().CreateInstance())
 		return false;
@@ -145,7 +195,7 @@ bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable
 	VkSurfaceKHR surface = VK_NULL_HANDLE;
 	VkWin32SurfaceCreateInfoKHR surfaceCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
-		.hinstance = window::WindowClass().hInstance,
+		.hinstance = window::MainWindowClass().hInstance,
 		.hwnd = mainWindow.HWindow()
 	};
 	if (VkResult result = vkCreateWin32SurfaceKHR(graphicsBase::Base().Instance(), &surfaceCreateInfo, nullptr, &surface)) {
@@ -216,70 +266,27 @@ void TitleFps() {
 	dframe++;
 	if ((dt = duration<double>(time1 - time0).count()) >= 1) {
 		info.precision(1);
-		info << mainWindow.Name() << L"   " << std::fixed << dframe / dt << " FPS";
+		info << windowTitle << L"   " << std::fixed << dframe / dt << " FPS";
 		SetWindowText(mainWindow.HWindow(), info.str().c_str());
 		info.str(L"");
 		time0 = time1;
 		dframe = 0;
 	}
 }
-void UpdateCursorPosition() {
-	//HandleMessage(...) updates the mouse position conditionally when the mouse is out of window.
-	//Call this function manually in every rendering loop.
+/*Call this function manually in every rendering loop*/
+void UpdateInputs() {
+	//Cursor position
+	//HandleMessage(...) receives WM_MOUSEMOVE conditionally if the mouse is out of window.
+	//Following code retrieves cursor position no matter if the window captures the mouse or not.
 	POINT cursorPosition;
 	GetCursorPos(&cursorPosition);
 	ScreenToClient(mainWindow.HWindow(), &cursorPosition);
-	easyVK_mouse.x = cursorPosition.x;
-	easyVK_mouse.y = cursorPosition.y;
-}
-/*Changeable*/
-LRESULT window::HandleMessage(HWND hWindow, UINT message, WPARAM wParam, LPARAM lParam) {
-	switch (message) {
-	case WM_SIZE:
-		//TODO If necessary
-		break;
-	case WM_CHAR:
-		//TODO If necessary
-		break;
-#pragma region Cursor
-	case WM_LBUTTONDOWN:
-		currentButton = easyVulkan::lButton;
-		SetCapture(mainWindow.HWindow());
-		break;
-	case WM_MBUTTONDOWN:
-		currentButton = easyVulkan::mButton;
-		SetCapture(mainWindow.HWindow());
-		break;
-	case WM_RBUTTONDOWN:
-		currentButton = easyVulkan::rButton;
-		SetCapture(mainWindow.HWindow());
-		break;
-	case WM_LBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_RBUTTONUP:
-		currentButton = easyVulkan::none;
-		ReleaseCapture();
-		break;
-	case WM_MOUSEWHEEL:
-		//This is a callback function, easyVulkan_mouse.sy will be updated automatically only when a mouse wheel is scrolled,
-		//which means you should set easyVulkan_mouse.sy to 0 in rendering loop.
-		easyVulkan_mouse.sy = short(HIWORD(wParam)) / 120.0;
-		break;
-#pragma endregion
-	case WM_KEYDOWN:
-		switch (wParam) {
-		default:
-			return DefWindowProc(hWindow, message, wParam, lParam);
-		case VK_ESCAPE:
-			break;
-		}
-		[[fallthrough]];
-	case WM_CLOSE:
-	case WM_QUIT:
-		//If the window wouldn't quit correctly, post quit message until it quits.
-		PostQuitMessage(0);//Argument'll be stored to MSG::wParam. When quiting, DestroyWindow(...) is called in ~window()Cno need to return DefWindowProc(...).
-		return 0;
-		//If the program is running with a console, you should terminate the program by clicking the console's closebox or press Esc key.
-	}
-	return DefWindowProc(hWindow, message, wParam, lParam);
+	mouse.Position(int16_t(cursorPosition.x), int16_t(cursorPosition.y));
+	//Button states
+	mouse.UpdateAllButtonStates();
+	//Scroll delta
+	mouse.ScrollY(scroll);
+	scroll = 0;
+	//Key states
+	keys.UpdateAllKeyStates();
 }

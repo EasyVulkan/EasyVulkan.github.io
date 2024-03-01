@@ -7,7 +7,6 @@ struct vertex {
 	glm::vec4 color;
 };
 
-descriptorSetLayout descriptorSetLayout_triangle;
 pipelineLayout pipelineLayout_triangle;
 pipeline pipeline_triangle;
 const auto& RenderPassAndFramebuffers() {
@@ -15,29 +14,23 @@ const auto& RenderPassAndFramebuffers() {
 	return rpwf_screen;
 }
 void CreateLayout() {
-	VkDescriptorSetLayoutBinding descriptorSetLayoutBinding_trianglePosition = {
-		.binding = 0,
-		.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-		.descriptorCount = 1,
-		.stageFlags = VK_SHADER_STAGE_VERTEX_BIT
+	VkPushConstantRange pushConstantRange = {
+		VK_SHADER_STAGE_VERTEX_BIT,
+		0,
+		24
 	};
-	VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo_triangle = {
-		.bindingCount = 1,
-		.pBindings = &descriptorSetLayoutBinding_trianglePosition
-	};
-	descriptorSetLayout_triangle.Create(descriptorSetLayoutCreateInfo_triangle);
 	VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {
-		.setLayoutCount = 1,
-		.pSetLayouts = descriptorSetLayout_triangle.Address()
+		.pushConstantRangeCount = 1,
+		.pPushConstantRanges = &pushConstantRange
 	};
 	pipelineLayout_triangle.Create(pipelineLayoutCreateInfo);
 }
 void CreatePipeline() {
-	static shaderModule vert_triangle("shader/FirstTriangle_UniformBuffer.vert.spv");
-	static shaderModule frag_triangle("shader/FirstTriangle_VertexBuffer.frag.spv");
+	static shaderModule vert("shader/PushConstant.vert.spv");
+	static shaderModule frag("shader/VertexBuffer.frag.spv");
 	static VkPipelineShaderStageCreateInfo shaderStageCreateInfos_triangle[2] = {
-		vert_triangle.StageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT),
-		frag_triangle.StageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT)
+		vert.StageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT),
+		frag.StageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT)
 	};
 	auto Create = [] {
 		graphicsPipelineCreateInfoPack pipelineCiPack;
@@ -46,7 +39,7 @@ void CreatePipeline() {
 		pipelineCiPack.vertexInputBindings.emplace_back(0, sizeof(vertex), VK_VERTEX_INPUT_RATE_VERTEX);
 		pipelineCiPack.vertexInputAttributes.emplace_back(0, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(vertex, position));
 		pipelineCiPack.vertexInputAttributes.emplace_back(1, 0, VK_FORMAT_R32G32B32A32_SFLOAT, offsetof(vertex, color));
-		pipelineCiPack.inputAssemblyStateCi.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
+		pipelineCiPack.inputAssemblyStateCi.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 		pipelineCiPack.viewports.emplace_back(0.f, 0.f, float(windowSize.width), float(windowSize.height), 0.f, 1.f);
 		pipelineCiPack.scissors.emplace_back(VkOffset2D{}, windowSize);
 		pipelineCiPack.multisampleStateCi.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
@@ -87,26 +80,11 @@ int main() {
 	};
 	vertexBuffer vertexBuffer(sizeof vertices);
 	vertexBuffer.TransferData(vertices);
-	glm::vec2 uniform_positions[] = {
-		{ .0f, .0f }, {},
-		{ -.5f, .0f }, {},
-		{ .5f, .0f }, {}
+	glm::vec2 pushConstants[] = {
+		{ .0f, .0f },
+		{ -.5f, .0f },
+		{ .5f, .0f },
 	};
-	uniformBuffer uniformBuffer(sizeof uniform_positions);
-	uniformBuffer.TransferData(uniform_positions);
-
-	VkDescriptorPoolSize descriptorPoolSizes[] = {
-		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1 }
-	};
-	descriptorPool descriptorPool(1, descriptorPoolSizes);
-	descriptorSet descriptorSet_trianglePosition;
-	descriptorPool.AllocateSets(descriptorSet_trianglePosition, descriptorSetLayout_triangle);
-	VkDescriptorBufferInfo bufferInfo = {
-		.buffer = uniformBuffer,
-		.offset = 0,
-		.range = VK_WHOLE_SIZE
-	};
-	descriptorSet_trianglePosition.Write(bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 
 	VkClearValue clearColor = { .color = { 1.f, 0.f, 0.f, 1.f } };
 
@@ -124,8 +102,7 @@ int main() {
 		VkDeviceSize offset = 0;
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffer.Address(), &offset);
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_triangle);
-		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
-			pipelineLayout_triangle, 0, 1, descriptorSet_trianglePosition.Address(), 0, nullptr);
+		vkCmdPushConstants(commandBuffer, pipelineLayout_triangle, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof pushConstants, &pushConstants);
 		vkCmdDraw(commandBuffer, 3, 3, 0, 0);
 		renderPass.CmdEnd(commandBuffer);
 		commandBuffer.End();

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ch7-6 使用贴图 &mdash; EasyVulkan</title>
+  <title>Ch7-7 使用贴图 &mdash; EasyVulkan</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/theme.css" type="text/css" />
@@ -20,7 +20,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="prev" title="Ch7-5 拷贝图像到屏幕" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html" /> 
+    <link rel="prev" title="Ch7-6 拷贝图像到屏幕" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -80,15 +80,19 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-3 初识Push Constant</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识Uniform缓冲区</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch7-6 使用贴图</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%BB%98%E5%88%B6.html">Ch7-3 初识实例化绘制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-4 初识Push Constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-5 初识Uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch7-7 使用贴图</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id1">到采样贴图为止的流程</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id2">创建采样器</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id3">创建并写入描述符</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#firsttriangle-texture-vert-shader">FirstTriangle_Texture.vert.shader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#firsttriangle-texture-frag-shader">FirstTriangle_Texture.frag.shader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">创建顶点缓冲区并指定顶点属性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#texture-vert-shader">Texture.vert.shader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#texture-frag-shader">Texture.frag.shader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">创建管线并绘制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">使用分开的采样器和图像</a></li>
 </ul>
 </li>
 </ul>
@@ -107,7 +111,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Ch7-6 使用贴图</li>
+      <li>Ch7-7 使用贴图</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -116,10 +120,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="ch7-6">
-<h1>Ch7-6 使用贴图<a class="headerlink" href="#ch7-6" title="Permalink to this heading"></a></h1>
+  <section id="ch7-7">
+<h1>Ch7-7 使用贴图<a class="headerlink" href="#ch7-7" title="Permalink to this heading"></a></h1>
 <p>
-    本节的<span class="path">main.cpp</span>对应示例代码中的：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7/Ch7-6.hpp">Ch7-6.hpp</a>
+    本节的<span class="path">main.cpp</span>对应示例代码中的：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7/Ch7-7.hpp">Ch7-7.hpp</a>
 </p>
 <p>
     经历了上一节的学习后，你应该已经能轻松地完成从读图到将图像数据拷贝到<span class="type">VkImage</span>的一系列步骤。
@@ -140,11 +144,11 @@
     <br>
     5.创建描述符，将图像的image view和采样器写入描述符
     <br>
-    6.书写着色器并创建着色器模组
+    6.创建顶点缓冲区
     <br>
-    7.创建管线
+    7.书写着色器并创建着色器模组
     <br>
-    8.创建顶点缓冲区
+    8.创建管线
     <br>
     9.绑定描述符并绘制
 </p>
@@ -161,7 +165,14 @@
 
     <span class="cmt">/*...*/</span>
 }
-</pre></section>
+</pre>
+<ul>
+    <li>
+        <p>
+            用stb_image读取到的图像数据通常应该为RGBA每个通道8位的整形（但还得取决于具体图像文件）。因此图像初始的格式应该标为VK_FORMAT_R8G8B8A8_开头的非压缩格式。图像最终在着色器中使用时，根据贴图类型的不同使用相应的图像格式（见后文的片段着色器），这里先指定为<span class="enum">VK_FORMAT_R8G8B8A8_UNORM</span>，理由之后再详述。为避免不必要的格式转换，前后都使用<span class="enum">VK_FORMAT_R8G8B8A8_UNORM</span>。
+        </p>
+    </li>
+</ul></section>
 <section id="id2">
 <h2>创建采样器<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
 <p>
@@ -211,7 +222,7 @@
 <section id="id3">
 <h2>创建并写入描述符<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
 <p>
-    先前在<a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识Uniform缓冲区</a>中已经创建过描述符池和描述符了，这里与之类似，但有两点变更：
+    先前在<a class="reference internal" href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-5 初识Uniform缓冲区</a>中已经创建过描述符池和描述符了，这里与之类似，但有两点变更：
     <br>
     1.描述符类型变为<span class="enum">VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER</span>（带采样器的图像），出于简化叙事的目的使用这一类型。对于采样器和图像作为两个独立描述符使用的情形，会在本节最后给出示例。
     <br>
@@ -274,10 +285,43 @@
     <span class="cmt">/*...*/</span>
 }
 </pre></section>
-<section id="firsttriangle-texture-vert-shader">
-<h2>FirstTriangle_Texture.vert.shader<a class="headerlink" href="#firsttriangle-texture-vert-shader" title="Permalink to this heading"></a></h2>
+<section id="id4">
+<h2>创建顶点缓冲区并指定顶点属性<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
 <p>
-    新建<span class="path">FirstTriangle_Texture.vert.shader</span>，基于先前所写的<a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html#firsttriangle-vertexbuffer-vert-shader">FirstTriangle_VertexBuffer.vert.shader</a>进行修改：
+    这次的顶点数据由位置坐标和贴图坐标构成。
+    <br>
+    贴图坐标即采样贴图时的采样位置，（若创建采样器时没有将<span class="type">VkSamplerCreateInfo</span>:: unnormalizedCoordinates指定为<span class="type">VK_TRUE</span>）整张图像的贴图坐标范围为0~1，比如2D图像的左上角为<code>{0.f, 0.f}</code>，右下角为<code>{1.f, 1.f}</code>。
+</p>
+<pre class="code">
+<span class="kw">struct</span> <span class="type">vertex</span> {
+    glm::<span class="type">vec2</span> position;
+    glm::<span class="type">vec2</span> texCoord;
+};
+</pre>
+<p>
+    先前在<a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a>中使用四个顶点画了个长方形，这次也来画长方形：
+</p>
+<pre class="code">
+<span class="type">vertex</span> vertices[] = {
+    { { -.5f, -.5f }, { 0, 0 } },
+    { {  .5f, -.5f }, { 1, 0 } },
+    { { -.5f,  .5f }, { 0, 1 } },
+    { {  .5f,  .5f }, { 1, 1 } }
+};
+<span class="type">vertexBuffer</span> vertexBuffer(<span class="kw">sizeof</span> vertices);
+vertexBuffer.<span class="fn">TransferData</span>(vertices);
+</pre>
+<p>
+    相应地更改顶点属性：
+</p>
+<pre class="code">
+pipelineCiPack.vertexInputAttributes.<span class="fn">emplace_back</span>(0, 0, <span class="enum">VK_FORMAT_R32G32_SFLOAT</span>, <span class="mcr">offsetof</span>(<span class="type">vertex</span>, position));
+pipelineCiPack.vertexInputAttributes.<span class="fn">emplace_back</span>(1, 0, <span class="enum">VK_FORMAT_R32G32_SFLOAT</span>, <span class="mcr">offsetof</span>(<span class="type">vertex</ span>, texCoord));
+</pre></section>
+<section id="texture-vert-shader">
+<h2>Texture.vert.shader<a class="headerlink" href="#texture-vert-shader" title="Permalink to this heading"></a></h2>
+<p>
+    新建<span class="path">Texture.vert.shader</span>，基于先前所写的<a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html#firsttriangle-vertexbuffer-vert-shader">VertexBuffer.vert.shader</a>进行修改：
 </p>
 <pre class="code"><span class="pragma">#version</span> 460
 <span class="pragma">#pragma shader_stage</span>(vertex)
@@ -288,21 +332,11 @@
 
 <span class="kw">void</span> <span class="fn">main</span>() {
     gl_Position = <span class="type">vec4</span>(i_Position, 0, 1);
-    o_TexCoord = i_TexCoord;<span class="cmt">//直接输出</span>
+    o_TexCoord = i_TexCoord;
 }
-</pre>
-<ul>
-    <li>
-        <p>
-            每组顶点数据由顶点坐标和贴图坐标构成。
-        </p>
-    </li>
-</ul></section>
-<section id="firsttriangle-texture-frag-shader">
-<h2>FirstTriangle_Texture.frag.shader<a class="headerlink" href="#firsttriangle-texture-frag-shader" title="Permalink to this heading"></a></h2>
-<p>
-    TODO 施工中
-</p>
+</pre></section>
+<section id="texture-frag-shader">
+<h2>Texture.frag.shader<a class="headerlink" href="#texture-frag-shader" title="Permalink to this heading"></a></h2>
 <pre class="code">
 <span class="pragma">#version</span> 460
 <span class="pragma">#pragma shader_stage</span>(fragment)
@@ -314,14 +348,184 @@
 <span class="kw">void</span> <span class="fn">main</span>() {
     o_Color = <span class="fn">texture</span>(u_Texture, i_TexCoord);
 }
+</pre>
+<ul>
+    <li>
+        <p>
+            涉及到的语法：<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id12">各类贴图的声明</a>。
+        </p>
+    </li>
+    <li>
+        <p>
+           <span class="fn">texture</span>(...)是一个GLSL的内置函数，有多个不同重载，在首个参数为<span class="type">sampler2D</span>类型时，第二个参数应为<span class="type">vec2</span>类型。
+        </p>
+    </li>
+</ul>
+<p>
+    <span class="type">sampler2D</span>要求对应的image view的图像格式为浮点数，即不能是UINT或SINT后缀的类型，我们先前指定了<span class="enum">VK_FORMAT_R8G8B8A8_UNORM</span>，UNORM后缀的图像格式最常见并且被广泛支持，采样结果会把0~255的8位整形标准化到[0, 1]的范围。
+    <br>
+    如果你想使用整数图像格式<span class="enum">VK_FORMAT_R8G8B8A8_UINT</span>，那么在上述代码基础上，<span class="var">u_Texture</span>的类型变更为<span class="type">usampler2D</span>，<span class="var">o_Color</span>要除以255.f。注意整数图像格式很可能不支持线性滤波，相应地也要修改采样器的创建参数。
+</p>
+<p>
+    编译，然后在创建管线时更改要读取的文件：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">CreatePipeline</span>() {
+    <span class="kw">static</span> <span class="type">shaderModule</span> vert(<span class="str">"shader/Texture.vert.spv"</span>);
+    <span class="kw">static</span> <span class="type">shaderModule</span> frag(<span class="str">"shader/Texture.frag.spv"</span>);
+    <span class="cmt">//省略后续代码</span>
+}
 </pre></section>
+<section id="id5">
+<h2>创建管线并绘制<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<p>
+    其他该改的管线创建参数都改了，这次（顺带）尝试将图元拓扑类型改为<span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP</span>，这么一来即使没有绑定索引缓冲区，也能仅靠4个顶点来绘制长方形（使用该种图源拓扑类型时，4个顶点生成2个三角形）：
+</p>
+<pre class="code">
+pipelineCiPack.inputAssemblyStateCi.topology = <span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP</span>;
+</pre>
+<p>
+    <span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP</span>意味着按照0,1,2、1,2,3、2,3,4、...这样的顶点顺序来绘制三角形，每个点和其前两个点构成三角形。这里的编号对应最终读取到的顶点，即，如果你绑定了索引缓冲区并使用<span class="fn">vkCmdDrawIndexed</span>(...)进行索引绘制，那么前文所说的规则应用于根据索引读取到的顶点序列。
+    <br>
+    最后整个<span class="fn">CreatePipeline</span>()如下：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">CreatePipeline</span>() {
+    <span class="kw">static</span> <span class="type">shaderModule</span> vert(<span class="str">"shader/Texture.vert.spv"</span>);
+    <span class="kw">static</span> <span class="type">shaderModule</span> frag(<span class="str">"shader/Texture.frag.spv"</span>);
+    <span class="kw">static</span> <span class="type">VkPipelineShaderStageCreateInfo</span> shaderStageCreateInfos_texture[2] = {
+        vert.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>),
+        frag.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>)
+    };
+    <span class="kw">auto</span> Create = [] {
+        graphicsPipelineCreateInfoPack pipelineCiPack;
+        pipelineCiPack.createInfo.layout = pipelineLayout_texture;
+        pipelineCiPack.createInfo.renderPass = <span class="fn">RenderPassAndFramebuffers</span>().renderPass;
+        pipelineCiPack.vertexInputBindings.<span class="fn">emplace_back</span>(0, <span class="kw">sizeof</span>(vertex), <span class="enum">VK_VERTEX_INPUT_RATE_VERTEX</span>);
+        pipelineCiPack.vertexInputAttributes.<span class="fn">emplace_back</span>(0, 0, <span class="enum">VK_FORMAT_R32G32_SFLOAT</span>, <span class="mcr">offsetof</span>(<span class="type">vertex</span>, position));
+        pipelineCiPack.vertexInputAttributes.<span class="fn">emplace_back</span>(1, 0, <span class="enum">VK_FORMAT_R32G32_SFLOAT</span>, <span class="mcr">offsetof</span>(<span class="type">vertex</span>, texCoord));
+        pipelineCiPack.inputAssemblyStateCi.topology = <span class="type">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP</span>;
+        pipelineCiPack.viewports.<span class="fn">emplace_back</span>(0.f, 0.f, <span class="kw">float</span>(windowSize.width), <span class="kw">float</span>(windowSize.height), 0.f, 1.f);
+        pipelineCiPack.scissors.<span class="fn">emplace_back</span>(<span class="type">VkOffset2D</span>{}, windowSize);
+        pipelineCiPack.multisampleStateCi.rasterizationSamples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>;
+        pipelineCiPack.colorBlendAttachmentStates.<span class="fn">push_back</span>({ .colorWriteMask = 0b1111 });
+        pipelineCiPack.<span class="fn">UpdateAllArrays</span>();
+        pipelineCiPack.createInfo.stageCount = 2;
+        pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_texture;
+        pipeline_texture.<span class="fn">Create</span>(pipelineCiPack);
+    };
+    <span class="kw">auto</span> Destroy = [] {
+        pipeline_texture.<span class="fn">~pipeline</span>();
+    };
+    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_CreateSwapchain</span>(Create);
+    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_DestroySwapchain</span>(Destroy);
+    Create();
+}
+</pre>
+<p>
+    进行绘制。在命令缓冲区中，绑定顶点缓冲区、管线、描述符，然后调用绘制命令，绘制的顶点数量为4：
+</p>
+<pre class="code">
+<span class="cmt">//省略先前代码</span>
+commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
+renderPass.<span class="fn">CmdBegin</span>(commandBuffer, framebuffers[i], { {}, windowSize }, clearColor);
+
+<span class="type">VkDeviceSize</span> offset = 0;
+<span class="fn">vkCmdBindVertexBuffers</span>(commandBuffer, 0, 1, vertexBuffer.<span class="fn">Address</span>(), &amp;offset);
+<span class="fn">vkCmdBindPipeline</span>(commandBuffer, <span class="fn">VK_PIPELINE_BIND_POINT_GRAPHICS</span>, pipeline_texture);
+<span class="fn">vkCmdBindDescriptorSets</span>(commandBuffer, <span class="fn">VK_PIPELINE_BIND_POINT_GRAPHICS</span>,
+    pipelineLayout_texture, 0, 1, descriptorSet_texture.<span class="fn">Address</span>(), 0, <span class="kw">nullptr</span>);
+<span class="fn">vkCmdDraw</span>(commandBuffer, 4, 1, 0, 0);
+
+renderPass.<span class="fn">CmdEnd</span>(commandBuffer);
+commandBuffer.<span class="fn">End</span>();
+<span class="cmt">//省略后续代码</span>
+</pre>
+<p>
+    运行程序，效果如下：
+</p>
+<img alt="_images/ch7-7-1.png" src="_images/ch7-7-1.png"></section>
+<section id="id6">
+<h2>使用分开的采样器和图像<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
+<p>
+    如果你要使用分开的采样器和图像，基于前述代码，做以下变更。
+    <br>
+    首先，创建管线布局时，将binding0和1分别指定为<span class="enum">VK_DESCRIPTOR_TYPE_SAMPLER</span>和<span class="enum">VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE</span>类型的描述符：
+</p>
+<pre class="code">
+<span class="type">VkDescriptorSetLayoutBinding</span> descriptorSetLayoutBindings_texture[2] = {
+    {
+        .binding = 0,
+        .descriptorType = <span class="enum">VK_DESCRIPTOR_TYPE_SAMPLER</span>,
+        .descriptorCount = 1,
+        .stageFlags = <span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>
+    },
+    {
+        .binding = 1,
+        .descriptorType = <span class="enum">VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE</span>,
+        .descriptorCount = 1,
+        .stageFlags = <span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>
+    }
+};
+<span class="type">VkDescriptorSetLayoutCreateInfo</span> descriptorSetLayoutCreateInfo_texture = {
+    .bindingCount = 2,
+    .pBindings = descriptorSetLayoutBindings_texture
+};
+</pre>
+<p>
+    相应地，将采样器和图像各写入描述符的不同binding：
+</p>
+<pre class="code">
+<span class="type">VkDescriptorPoolSize</span> descriptorPoolSizes[] = {
+    { <span class="enum">VK_DESCRIPTOR_TYPE_SAMPLER</span>, 1 },
+    { <span class="enum">VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE</span>, 1 }
+};
+<span class="type">descriptorPool</span> descriptorPool(2, descriptorPoolSizes);
+<span class="type">descriptorSet</span> descriptorSet_texture;
+descriptorPool.<span class="fn">AllocateSets</span>(descriptorSet_texture, descriptorSetLayout_texture);
+
+<span class="type">VkDescriptorImageInfo</span> imageInfos[2] = {
+    {
+        .sampler = sampler,
+    },
+    {
+        .imageView = texture.<span class="fn">ImageView</span>(),
+        .imageLayout = <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>
+    }
+};
+descriptorSet_texture.<span class="fn">Write</span>(imageInfos[0], <span class="enum">VK_DESCRIPTOR_TYPE_SAMPLER</span>, 0);
+descriptorSet_texture.<span class="fn">Write</span>(imageInfos[1], <span class="enum">VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE</span>, 1);
+</pre>
+<p>
+    <span class="path">Texture.vert.shader</span>变为：
+</p>
+<pre class="code">
+<span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(fragment)
+
+<span class="kw">layout</span>(location = 0) <span class="kw">in</span> <span class="type">vec2</span> i_TexCoord;
+<span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec4</span> o_Color;
+<span class="kw">layout</span>(binding = 0) <span class="kw">uniform</span> <span class="type">sampler</span> u_Sampler;
+<span class="kw">layout</span>(binding = 1) <span class="kw">uniform</span> <span class="type">texture2D</span> u_Texture;
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    o_Color = <span class="fn">texture</span>(<span class="type">sampler2D</span>(u_Texture, u_Sampler), i_TexCoord);
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            <span class="fn">texture</span>(...)的首个参数通过构造临时的<span class="type">sampler2D</span>变量获得。
+        </p>
+    </li>
+</ul></section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html" class="btn btn-neutral float-left" title="Ch7-5 拷贝图像到屏幕" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html" class="btn btn-neutral float-left" title="Ch7-6 拷贝图像到屏幕" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
     </div>
 
   <hr/>

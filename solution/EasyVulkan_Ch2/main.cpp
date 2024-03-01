@@ -13,17 +13,17 @@ void CreateLayout() {
 	pipelineLayout_triangle.Create(pipelineLayoutCreateInfo);
 }
 void CreatePipeline() {
-	static shaderModule vert_triangle("shader/FirstTriangle.vert.spv");
-	static shaderModule frag_triangle("shader/FirstTriangle.frag.spv");
+	static shaderModule vert("shader/FirstTriangle.vert.spv");
+	static shaderModule frag("shader/FirstTriangle.frag.spv");
 	static VkPipelineShaderStageCreateInfo shaderStageCreateInfos_triangle[2] = {
-		vert_triangle.StageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT),
-		frag_triangle.StageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT)
+		vert.StageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT),
+		frag.StageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT)
 	};
 	auto Create = [] {
 		graphicsPipelineCreateInfoPack pipelineCiPack;
 		pipelineCiPack.createInfo.layout = pipelineLayout_triangle;
 		pipelineCiPack.createInfo.renderPass = RenderPassAndFramebuffers().renderPass;
-		pipelineCiPack.inputAssemblyStateCi.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
+		pipelineCiPack.inputAssemblyStateCi.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 		pipelineCiPack.viewports.emplace_back(0.f, 0.f, float(windowSize.width), float(windowSize.height), 0.f, 1.f);
 		pipelineCiPack.scissors.emplace_back(VkOffset2D{}, windowSize);
 		pipelineCiPack.multisampleStateCi.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;

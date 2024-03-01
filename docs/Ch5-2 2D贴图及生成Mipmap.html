@@ -94,10 +94,11 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-3 初识Push Constant</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识Uniform缓冲区</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-6 使用贴图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%BB%98%E5%88%B6.html">Ch7-3 初识实例化绘制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-4 初识Push Constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-5 初识Uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a></li>
 </ul>
 
         </div>
@@ -126,11 +127,11 @@
   <section id="ch5-2-2dmipmap">
 <h1>Ch5-2 2D贴图及生成Mipmap<a class="headerlink" href="#ch5-2-2dmipmap" title="Permalink to this heading"></a></h1>
 <p>
-    请搭配<a class="reference internal" href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-6 使用贴图</a>食用本节。
+    请搭配<a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a>食用本节。
 </p><section id="id1">
 <h2>贴图基类<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
 <p>
-    先前已在<a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html#id2">读取图像数据</a>中创建了<span class="type">texture</span>类，这个类将会是之后一系列贴图类的基类。
+    先前已在<a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html#id2">Ch7-6 拷贝图像到屏幕</a>中创建了<span class="type">texture</span>类，这个类将会是之后一系列贴图类的基类。
     <br>
     之后每个贴图类，都会需要一个<span class="type">imageView</span>对象和<span class="type">imageMemory</span>对象，先定义相应的成员变量、Getter和创建函数：
 </p>
@@ -305,7 +306,7 @@
     希望这不会让你觉得过度封装。<span class="fn">CopyBlitAndGenerateMipmap2d</span>(...)还会在之后创建2D贴图数组和立方体贴图时派上用场，如果不做这种封装，代码会写得重复而麻烦。函数体留到之后填充，先完成这块的代码逻辑。
 </p>
 <p>
-    你可以回忆下<a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html#id1">Ch7-5</a>，然后就会明白为何会有上述两个函数，以及该如何区分使用它们：重点在于能否为暂存缓冲区创建混叠图像。
+    你可以回忆下<a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html#id1">Ch7-6</a>，然后就会明白为何会有上述两个函数，以及该如何区分使用它们：重点在于能否为暂存缓冲区创建混叠图像。
 </p>
 <pre class="code">
 <span class="kw">if</span> (format_initial == format_final)
@@ -630,7 +631,7 @@
 <section id="cmdgeneratemipmap2d">
 <h3>CmdGenerateMipmap2d<a class="headerlink" href="#cmdgeneratemipmap2d" title="Permalink to this heading"></a></h3>
 <p>
-    先前在<a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a>定义了<span class="type">imageOperation</span>，现在其中加入静态成员函数<span class="fn">CmdGenerateMipmap2d</span>(...)：
+    先前在<a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕</a>定义了<span class="type">imageOperation</span>，现在其中加入静态成员函数<span class="fn">CmdGenerateMipmap2d</span>(...)：
 </p>
 <pre class="code">
 <span class="kw">static void</span> <span class="fn">CmdGenerateMipmap2d</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkImage</span> image, <span class="type">VkExtent2D</span> imageExtent, <span class="type">uint32_t</span> mipLevelCount, <span class="type">uint32_t</span> layerCount,
@@ -941,7 +942,7 @@
 <p>
     全部代码请比照<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7/VkBase+.h">VkBase+.h</a>。
     <br>
-    接着就是回到<a class="reference internal" href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-6 使用贴图</a>采样贴图了！
+    接着就是回到<a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a>了！
 </p></section>
 </section>
 </section>

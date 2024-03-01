@@ -113,10 +113,11 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-3 初识Push Constant</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识Uniform缓冲区</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-5 拷贝图像到屏幕</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-6 使用贴图</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%BB%98%E5%88%B6.html">Ch7-3 初识实例化绘制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-4 初识Push Constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-5 初识Uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a></li>
 </ul>
 
         </div>
@@ -657,7 +658,7 @@ glslc.exe路径 着色器文件路径 -fshader-stage=阶段名称 -c
     <br>
     注意着色器的接入点函数的返回值只能是<span class="kw">void</span>类型，即不能返回值，但你能在函数体中使用<span class="kw">return</span>关键字显式返回。
     <br>
-    除了主函数外，你当然还能声明其它的函数。
+    除了主函数外，你当然还能声明其他的函数。
 </p></section>
 <section id="id9">
 <h3>数据类型<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
@@ -928,7 +929,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
     <br>
     3.<span class="kw">noperspective</span>进行简单粗暴的线性插值，不考虑透视的影响。
     <br>
-    //TODO 所谓激发顶点，参照//TODO 绘制模式。
+    关于激发顶点，请自行参阅<a href="https://renderdoc.org/vkspec_chunked/chap21.html#drawing-line-lists">Vulkan官方标准中的图示</span>。
     <br>
     下图左侧为通过<span class="kw">noperspective</span>插值的uv坐标绘制的正方体的两个面，右侧则是通过<span class="kw">smooth</span>插值的uv坐标绘制：
 </p>
@@ -941,7 +942,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
     <br>
     Push constant适用于少量数据，Vulkan的实现通常会确保你能在push constant块中使用128个字节。
     <br>
-    这里介绍如何在着色器中声明push constant，关于更新push constant，参见<a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-3 初识Push Constant</a>。
+    这里介绍如何在着色器中声明push constant，关于更新push constant，参见<a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-4 初识Push Constant</a>。
 </p>
 <pre class="code">
 <span class="kw">layout</span>(内存布局修饰符, push_constant) <span class="kw">uniform</span> 块名称 {
@@ -986,7 +987,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
     <br>
     相比push constant，uniform缓冲区适用于大量数据。
     <br>
-    这里介绍如何在着色器中声明uniform缓冲区，关于如何绑定uniform缓冲区，参见<a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-4 初识Uniform缓冲区</a>。
+    这里介绍如何在着色器中声明uniform缓冲区，关于如何绑定uniform缓冲区，参见<a class="reference internal" href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-5 初识Uniform缓冲区</a>。
 </p>
 <pre class="code">
 <span class="kw">layout</span>(set = 描述符集索引, binding = 绑定索引) <span class="kw">uniform</span> 块名称 {
@@ -1028,7 +1029,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
 <ul>
     <li>
         <p>
-            各类贴图：以texture、itexture、utexture开头的一系列类型，如<span class="type">texture2D</span>。无前缀、i、u前缀分别对应浮点、有符号整形和无符号整形（所涉及注意事项见<a class="reference internal" href="Ch7-6%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-6 使用贴图</a>）。
+            各类贴图：以texture、itexture、utexture开头的一系列类型，如<span class="type">texture2D</span>。无前缀、i、u前缀分别对应浮点、有符号整形和无符号整形（所涉及注意事项见<a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a>）。
         </p>
     </li>
     <li>

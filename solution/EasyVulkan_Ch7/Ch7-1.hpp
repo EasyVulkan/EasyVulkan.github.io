@@ -18,11 +18,11 @@ void CreateLayout() {
 	pipelineLayout_triangle.Create(pipelineLayoutCreateInfo);
 }
 void CreatePipeline() {
-	static shaderModule vert_triangle("shader/FirstTriangle_VertexBuffer.vert.spv");
-	static shaderModule frag_triangle("shader/FirstTriangle_VertexBuffer.frag.spv");
+	static shaderModule vert("shader/VertexBuffer.vert.spv");
+	static shaderModule frag("shader/VertexBuffer.frag.spv");
 	static VkPipelineShaderStageCreateInfo shaderStageCreateInfos_triangle[2] = {
-		vert_triangle.StageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT),
-		frag_triangle.StageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT)
+		vert.StageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT),
+		frag.StageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT)
 	};
 	auto Create = [] {
 		graphicsPipelineCreateInfoPack pipelineCiPack;
@@ -31,7 +31,7 @@ void CreatePipeline() {
 		pipelineCiPack.vertexInputBindings.emplace_back(0, sizeof(vertex), VK_VERTEX_INPUT_RATE_VERTEX);
 		pipelineCiPack.vertexInputAttributes.emplace_back(0, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(vertex, position));
 		pipelineCiPack.vertexInputAttributes.emplace_back(1, 0, VK_FORMAT_R32G32B32A32_SFLOAT, offsetof(vertex, color));
-		pipelineCiPack.inputAssemblyStateCi.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
+		pipelineCiPack.inputAssemblyStateCi.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 		pipelineCiPack.viewports.emplace_back(0.f, 0.f, float(windowSize.width), float(windowSize.height), 0.f, 1.f);
 		pipelineCiPack.scissors.emplace_back(VkOffset2D{}, windowSize);
 		pipelineCiPack.multisampleStateCi.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;

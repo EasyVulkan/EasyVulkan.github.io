@@ -28,6 +28,7 @@
     <ClInclude Include="Ch7-4.hpp" />
     <ClInclude Include="Ch7-5.hpp" />
     <ClInclude Include="Ch7-6.hpp" />
+    <ClInclude Include="Ch7-7.hpp" />
     <ClInclude Include="EasyVKStart.h" />
     <ClInclude Include="EasyVulkan.hpp" />
     <ClInclude Include="GlfwGeneral.hpp" />
