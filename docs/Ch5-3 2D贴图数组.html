@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch5-3 2D贴图数组 &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ch7-1 初识顶点缓冲区" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html" />
+    <link rel="prev" title="Ch5-2 2D贴图及生成Mipmap" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html">Ch3-7 采样器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch5-3 2D贴图数组</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#d">2D贴图数组</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#texture2darray">封装为texture2dArray类</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">读取贴图集并切割</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">读取多张大小相同的图像文件</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">采样2D贴图数组</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%BB%98%E5%88%B6.html">Ch7-3 初识实例化绘制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-4 初识Push Constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-5 初识Uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch5-3 2D贴图数组</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch5-3-2d">
+<h1>Ch5-3 2D贴图数组<a class="headerlink" href="#ch5-3-2d" title="Permalink to this heading"></a></h1>
+<p>
+    本节将简单介绍2D贴图数组的使用方式，并完成相应封装。
+    阅读本节前请确保已阅读<a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a>和<a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a>。
+</p><section id="d">
+<h2>2D贴图数组<a class="headerlink" href="#d" title="Permalink to this heading"></a></h2>
+<p>
+    如果将一系列图像格式和尺寸相同的2D图像放在同一个<span class="type">VkImage</span>对象底下管理，则这个<span class="type">VkImage</span>对象代表一个2D图像数组。
+    <br>
+    你可以把这些尺寸相同的贴图平铺到一张贴图中，构成贴图集（texture atlas，网络上一般叫纹理图集）。在Vulkan中你可以将一套贴图集扔进2D图像（<span class="enum">VK_IMAGE_TYPE_2D</span>）中，但存在不得不使用2D图像数组（<span class="enum">VK_IMAGE_TYPE_2D_ARRAY</span>）的情况，就我的经验而言：
+</p>
+<p>
+    1.图像尺寸太大，不得不切割的情况。
+    <br>
+    比如实现文字渲染，如果把中日韩所有汉字的字形渲染到一张贴图集上且字号够大， 那么图像的长或宽可以动辄达到上万像素，而英特尔核显限制2D图像的长或宽不超过16384。
+</p>
+<p>
+    2.为了避免溢色（color bleeding）。
+    <br>
+    如果不对贴图集进行切割，而是根据贴图子块的所在位置计算纹理坐标进行采样，放大渲染并应用线性滤波，便会发生溢色：
+</p>
+<img alt="_images/ch5-3-1.png" src="_images/ch5-3-1.png">
+<img alt="_images/ch5-3-2.png" src="_images/ch5-3-2.png">
+<p>
+    原因不难理解，溢色是线型滤波的结果，即，采样到贴图子块的边缘时，使用了相邻的另一贴图子块的边缘像素进行线性插值所致（因此渲染左上角的贴图子块时，溢色发生在右侧和底侧）。原图被放大得越多，溢色的效果就越显著。
+    <br>
+    如果使用贴图数组，每个贴图子块单独构成一个图层，那么只要寻址模式设定为<span class="enum">VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER</span>，就不必担心溢色的问题了。
+</p><section id="texture2darray">
+<h3>封装为texture2dArray类<a class="headerlink" href="#texture2darray" title="Permalink to this heading"></a></h3>
+<p>
+    从<span class="type">texture</span>派生出<span class="type">texture2dArray</span>，新增的成员变量有记录图像大小的extent和记录图层数的layerCount：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">texture2dArray</span> :<span class="kw">public</span> <span class="type">texture</span> {
+<span class="kw">protected</span>:
+    <span class="type">VkExtent2D</span> extent = {};
+    <span class="type">uint32_t</span> layerCount = 0;
+    <span class="cmt">//--------------------</span>
+    <span class="kw">void</span> <span class="fn">Create_Internal</span>(<span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap) {
+        <span class="cmt">/*待填充*/</span>
+    }
+<span class="kw">public</span>:
+    <span class="fn">texture2dArray</span>() = <span class="kw">default</span>;
+    <span class="fn">texture2dArray</span>(<span class="kw">const char</span>* filepath, <span class="type">VkExtent2D</span> extentInTiles, <span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
+        <span class="fn">Create</span>(filepath, extentInTiles, format_initial, format_final, generateMipmap);
+    }
+    <span class="fn">texture2dArray</span>(<span class="kw">const</span> <span class="type">uint8_t</span>* pImageData, <span class="type">VkExtent2D</span> fullExtent, <span class="type">VkExtent2D</span> extentInTiles, <span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
+        <span class="fn">Create</span>(pImageData, fullExtent, extentInTiles, format_initial, format_final, generateMipmap);
+    }
+    <span class="fn">texture2dArray</span>(<span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">char</span>* <span class="kw">const</span>&gt; filepaths, <span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
+        <span class="fn">Create</span>(filepaths, format_initial, format_final, generateMipmap);
+    }
+    <span class="fn">texture2dArray</span>(<span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">uint8_t</span>* <span class="kw">const</span>&gt; psImageData, <span class="type">VkExtent2D</span> extent, <span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
+        <span class="fn">Create</span>(psImageData, extent, format_initial, format_final, generateMipmap);
+    }
+    <span class="cmt">//Getter</span>
+    <span class="type">VkExtent2D</span> <span class="fn">Extent</span>() <span class="kw">const</span> { <span class="kw">return</span> extent; }
+    <span class="type">uint32_t</span> <span class="fn">Width</span>() <span class="kw">const</span> { <span class="kw">return</span> extent.width; }
+    <span class="type">uint32_t</span> <span class="fn">Height</span>() <span class="kw">const</span> { <span class="kw">return</span> extent.height; }
+    <span class="type">uint32_t</span> <span class="fn">LayerCount</span>() <span class="kw">const</span> { <span class="kw">return</span> layerCount; }
+    <span class="cmt">//Non-const Function</span>
+    <span class="cmt">//从硬盘读取贴图集，并切割</span>
+    <span class="kw">void</span> <span class="fn">Create</span>(<span class="kw">const char</span>* filepath, <span class="type">VkExtent2D</span> extentInTiles, <span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
+        <span class="cmt">/*待填充*/</span>
+    }
+    <span class="cmt">//从内存读取贴图集的文件数据，并切割</span>
+    <span class="kw">void</span> <span class="fn">Create</span>(<span class="kw">const</span> <span class="type">uint8_t</span>* pImageData, <span class="type">VkExtent2D</span> extent, <span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
+        <span class="cmt">/*待填充*/</span>
+    }
+    <span class="cmt">//从硬盘读取多个大小相同的图像文件</span>
+    <span class="fn">Create</span>(<span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">char</span>* <span class="kw">const</span>&gt; filepaths, <span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
+        <span class="cmt">/*待填充*/</span>
+    }
+    <span class="cmt">//从内存读取多个大小相同的图像文件的数据</span>
+    <span class="fn">Create</span>(<span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">uint8_t</span>* <span class="kw">const</span>&gt; psImageData, <span class="type">VkExtent2D</span> extent, <span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
+        <span class="cmt">/*待填充*/</span>
+    }
+};
+</pre><section id="id1">
+<h4>读取贴图集并切割<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h4>
+<p>
+    来填充前面的<span class="fn">Create</span>(...)函数，先来处理需要对贴图集中的子块进行切割的情况。
+</p>
+<p>
+    填充<span class="fn">Create</span>(...)的首个参数为文件地址的重载，首先判定图层总数是否超过硬件限制的最大值。<span class="var">extentInTiles</span>这个参数是贴图集纵横两方向的单元数，因此切割后得到的图层总数就是<code>extentInTiles.width * extentInTiles.height</code>，若该值大于硬件限制则直接返回。
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">Create</span>(
+    <span class="kw">const char</span>* filepath,     <span class="cmt">//贴图集图像文件的路径</span>
+    <span class="type">VkExtent2D</span> extentInTiles, <span class="cmt">//贴图集纵横两方向的单元数</span>
+    <span class="type">VkFormat</span> format_initial,  <span class="cmt">//初始图像格式</span>
+    <span class="type">VkFormat</span> format_final,    <span class="cmt">//目标图像格式</span>
+    <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
+    <span class="cmt">//判定图层数是否超过硬件容许的最大值</span>
+    <span class="kw">if</span> (extentInTiles.width * extentInTiles.height &gt; <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers) {
+        outStream &lt;&lt; std::<span class="fn">format</span>(
+            <span class="str">&quot;[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than: {}\nFile: {}\n&quot;</span>,
+            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers, filepath);
+        <span class="kw">return</span>;
+    }
+    <span class="cmt">/*待后续填充*/</span>
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            通常而言，<a href="https://renderdoc.org/vkspec_chunked/chap48.html#VkPhysicalDeviceLimits">VkPhysicalDeviceLimits</a>::maxImageArrayLayers不会小于2048（任何支持OpenGL4.5和DirectX11的硬件都满足这一要求）。
+        </p>
+    </li>
+</ul>
+<p>
+    确认图层数在限制内，就可以读图了：
+</p>
+<pre class="code">
+<span class="type">VkExtent2D</span> fullExtent;
+<span class="type">formatInfo</span> formatInfo = <span class="fn">FormatInfo</span>(format_initial);
+std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; pImageData = <span class="fn">LoadFile</span>(filepath, fullExtent, formatInfo);
+</pre>
+<p>
+    读取图像后，判定图像的长宽<span class="var">fullExtent</span>能否<span class="var">extentInTiles</span>整除，不能整除的话就不知道该咋办了呀~，抛出错误信息。否则，调用<span class="fn">Create</span>(...)的首个参数为内存地址的重载：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">Create</span>(
+    <span class="kw">const char</span>* filepath, <span class="type">VkExtent2D</span> extentInTiles, <span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
+    <span class="kw">if</span> (extentInTiles.width * extentInTiles.height &gt; <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers) {
+        outStream &lt;&lt; std::<span class="fn">format</span>(
+            <span class="str">&quot;[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than: {}\nFile: {}\n&quot;</span>,
+            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers, filepath);
+        <span class="kw">return</span>;
+    }
+    <span class="type">VkExtent2D</span> fullExtent;
+    <span class="type">formatInfo</span> formatInfo = <span class="fn">FormatInfo</span>(format_initial);
+    std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; pImageData = <span class="fn">LoadFile</span>(filepath, fullExtent, formatInfo);
+    <span class="kw">if</span> (pImageData)
+        <span class="kw">if</span> (fullExtent.width % extentInTiles.width ||
+            fullExtent.height % extentInTiles.height)
+            outStream &lt;&lt; std::<span class="fn">format</span>(
+                <span class="str">&quot;[ texture2dArray ] ERROR\nImage not available!\nFile: {}\nImage width must be in multiples of {}\nImage height must be in multiples of {}\n&quot;</span>,
+                filepath, extentInTiles.width, extentInTiles.height);
+        <span class="kw">else</span>
+            <span class="fn">Create</span>(pImageData.<span class="fn">get</span>(), fullExtent, extentInTiles, format_initial, format_final, generateMipmap);
+}
+</pre>
+<p>
+    填充<span class="fn">Create</span>(...)的首个参数为内存地址的重载。
+    <br>
+    考虑到该函数可能被外部直接调用，因此也在其开头判定会否满足图层限制，以及<span class="var">fullExtent</span>是否能被<span class="var">extentInTiles</span>整除，顺便记下图层数layerCount。
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">Create</span>(<span class="kw">const</span> <span class="type">uint8_t</span>* pImageData, <span class="type">VkExtent2D</span> extent, <span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
+    layerCount = extentInTiles.width * extentInTiles.height;
+    <span class="kw">if</span> (layerCount &gt; <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers) {
+        outStream &lt;&lt; std::<span class="fn">format</span>(
+            <span class="str">&quot;[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than: {}\n&quot;</span>,
+            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers);
+        <span class="kw">return</span>;
+    }
+    <span class="kw">if</span> (fullExtent.width % extentInTiles.width ||
+        fullExtent.height % extentInTiles.height)
+        outStream &lt;&lt; std::<span class="fn">format</span>(
+            <span class="str">&quot;[ texture2dArray ] ERROR\nImage not available!\nImage width must be in multiples of {}\nImage height must be in multiples of {}\n&quot;</span>,
+            extentInTiles.width, extentInTiles.height);
+    <span class="cmt">/*待后续填充*/</span>
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            跟前一个函数的错误信息的差别在于本函数中不打印文件名（因为传入的参数就没有文件名嘛）。没错，如果通过前一个函数调用的话就重复判定了，可以对两个函数做进一步包装来规避这个问题，这里简化叙事按下不表。
+        </p>
+    </li>
+</ul>
+<p>
+    计算单张图像的大小：
+</p>
+<pre class="code">
+extent.width = fullExtent.width / extentInTiles.width;
+extent.height = fullExtent.height / extentInTiles.height;
+</pre>
+<p>
+    计算每个像素的数据大小，以及整张图像的数据大小，以便之后将数据存入暂存缓冲区：
+</p>
+<pre class="code">
+<span class="type">size_t</span> dataSizePerPixel = <span class="fn">FormatInfo</span>(format_initial).sizePerPixel;
+<span class="type">size_t</span> imageDataSize = dataSizePerPixel * fullExtent.width * fullExtent.height;
+</pre>
+<p>
+    接着有两个分支，如果图像每行的单元数是1（即贴图子块是纵向地一个个排下来的），那么将图像数据直接存入暂存缓冲区：
+</p>
+<pre class="code">
+<span class="kw">if</span> (extentInTiles.width == 1)
+    <span class="type">stagingBuffer</span>::<span class="fn">BufferData_MainThread</span>(pImageData, imageDataSize);
+<span class="kw">else</span> {
+    <span class="cmt">/*待后续填充*/</span>
+}
+</pre>
+<p>
+    否则，对图像进行“切割”。
+    <br>
+    每个贴图子块的数据最终应该是逐行紧密排列，一个贴图子块的数据全部完了以后，才轮到下一个贴图子块的数据。而<span class="kw">else</span>分支中的情况是，首个贴图子块的第1行的数据后，跟着的是第二个贴图子块第1行的数据，而非首个贴图子块第2行的数据。所以这一步实际上是要对数据进行搬运。
+    <br>
+    做法很简单，只要把一个贴图子块的数据逐行复制进暂存缓冲区，再把下一个贴图子块的数据逐行复制进去，如此反复即可：
+</p>
+<pre class="code">
+<span class="kw">if</span> (extentInTiles.width == 1)
+    <span class="type">stagingBuffer</span>::<span class="fn">BufferData_MainThread</span>(pImageData, imageDataSize);
+<span class="kw">else</span> {
+    <span class="cmt">//先映射缓冲区，取得用于访问内存区域的指针</span>
+    <span class="type">uint8_t</span>* pData_dst = <span class="kw">static_cast</span>&lt;<span class="type">uint8_t</span>*&gt;(<span class="type">stagingBuffer</span>::<span class="fn">MapMemory_MainThread</span>(imageDataSize));
+    <span class="cmt">//计算每个贴图子块每行的数据大小</span>
+    <span class="type">size_t</span> dataSizePerRow = dataSizePerPixel * extent.width;
+    <span class="cmt">//双循环遍历每个贴图子块</span>
+    <span class="kw">for</span> (<span class="type">size_t</span> j = 0; j &lt; extentInTiles.height; j++)
+        <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; extentInTiles.width; i++)
+            <span class="cmt">//逐行复制数据，一共extent.height行</span>
+            <span class="kw">for</span> (<span class="type">size_t</span> k = 0; k &lt; extent.height; k++)
+                <span class="fn">memcpy</span>(
+                    pData_dst,
+                    pImageData + (i * extent.width + (k + j * extent.height) * fullExtent.width) * dataSizePerPixel,
+                    dataSizePerRow),
+                pData_dst += dataSizePerRow;<span class="cmt">//每拷贝一行，pData_dst向后移动一行的数据大小</span>
+
+    <span class="cmt">//取消映射缓冲区</span>
+    <span class="type">stagingBuffer</span>::<span class="fn">UnmapMemory_MainThread</span>();
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            在以贴图子块为单元的坐标系中，对于横坐标为<span class="var">i</span>、纵坐标为<span class="var">j</span>的贴图子块，从整张贴图集的左侧边缘到其左边界的像素数为<code>i * extent.width</code>，从整张贴图集的顶部到当前被复制行的像素数为<code>k + j * extent.height</code>，因此<code>(i * extent.width + (k + j * extent.height) * fullExtent.width) * dataSizePerPixel</code>即是要被拷贝的行的数据的offset。
+        </p>
+    </li>
+</ul>
+<p>
+    这个“切割”是在CPU上完成的，上述代码在图像很大，贴图子块数量很多时，可能会有0.001到0.01数量级的耗时。
+    <br>
+    你也可以将这一步延后到从暂存缓冲区拷贝数据到图像，用<span class="fn">vkCmdCopyBufferToImage</span>(...)让物理设备完成这一步，会省点时间。
+    <br>
+    我并没有在示例代码中提供通过Vulkan命令完成这一步的代码，出于三个原因：
+    <br>
+    1.后续的代码要改很多地方，会很麻烦（麻烦的是我还要一一解说）。
+    <br>
+    2.跟解析大尺寸PNG或JPEG的时间相比，0.01秒数量级的耗时可以忽略（读取一张预先渲染好的中日韩汉字字体的PNG图像的耗时可能要按秒计算）。
+    <br>
+    3.事先准备贴图子块依序纵向排列的图片不就完了（这样根本就不必有多余的耗时）！
+    <br>
+    作为<span class="fn">vkCmdCopyBufferToImage</span>(...)的用例，这里我还是提供下写法：
+</p>
+<pre class="code">
+std::<span class="type">unique_ptr</span>&lt;<span class="type">VkBufferImageCopy</span>[]&gt; regions = std::<span class="fn">make_unique</span>&lt;<span class="type">VkBufferImageCopy</span>[]&gt;(layerCount);
+<span class="type">uint32_t</span> layer = 0;
+<span class="kw">for</span> (<span class="type">size_t</span> j = 0; j &lt; extentInTiles.height; j++)
+    <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; extentInTiles.width; i++) {
+        regions[layer] = {
+            .bufferOffset = (i * extent.width + (j * extent.height) * fullExtent.width) * dataSizePerPixel,
+            .bufferRowLength = fullExtent.width,
+            .bufferImageHeight = fullExtent.height,
+            .imageSubresource = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, layer, 1 },
+            .imageExtent = { extent.width, extent.height, 1 }
+        };
+        layer++;
+    }
+<span class="fn">vkCmdCopyBufferToImage</span>(commandBuffer, <span class="type">stagingBuffer</span>::<span class="fn">Buffer_MainThread</span>(), bufferMemory.<span class="type">Buffer</span>(), <span class="cmt">/*图像的handle*/</span> , layerCount, regions.<span class="fn">get</span>());
+</pre>
+<p>
+    将数据扔进暂存缓冲区后，后续的事情会在<span class="fn">Create_Internal</span>(...)里完成，调用该函数：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">Create</span>(<span class="kw">const</span> <span class="type">uint8_t</span>* pImageData, <span class="type">VkExtent2D</span> extent, <span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
+    layerCount = extentInTiles.width * extentInTiles.height;
+    <span class="kw">if</span> (layerCount &gt; <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers) {
+        outStream &lt;&lt; std::<span class="fn">format</span>(
+            <span class="str">&quot;[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than: {}\n&quot;</span>,
+            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers);
+        <span class="kw">return</span>;
+    }
+    <span class="kw">if</span> (fullExtent.width % extentInTiles.width ||
+        fullExtent.height % extentInTiles.height)
+        outStream &lt;&lt; std::<span class="fn">format</span>(
+            <span class="str">&quot;[ texture2dArray ] ERROR\nImage not available!\nImage width must be in multiples of {}\nImage height must be in multiples of {}\n&quot;</span>,
+            extentInTiles.width, extentInTiles.height);
+    extent.width = fullExtent.width / extentInTiles.width;
+    extent.height = fullExtent.height / extentInTiles.height;
+    <span class="type">size_t</span> dataSizePerPixel = <span class="fn">FormatInfo</span>(format_initial).sizePerPixel;
+    <span class="type">size_t</span> imageDataSize = dataSizePerPixel * fullExtent.width * fullExtent.height;
+    <span class="kw">if</span> (extentInTiles.width == 1)
+        <span class="type">stagingBuffer</span>::<span class="fn">BufferData_MainThread</span>(pImageData, imageDataSize);
+    <span class="kw">else</span> {
+        <span class="type">uint8_t</span>* pData_dst = <span class="kw">static_cast</span>&lt;<span class="type">uint8_t</span>*&gt;(<span class="type">stagingBuffer</span>::<span class="fn">MapMemory_MainThread</span>(imageDataSize));
+        <span class="type">size_t</span> dataSizePerRow = dataSizePerPixel * extent.width;
+        <span class="kw">for</span> (<span class="type">size_t</span> j = 0; j &lt; extentInTiles.height; j++)
+            <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; extentInTiles.width; i++)
+                <span class="kw">for</span> (<span class="type">size_t</span> k = 0; k &lt; extent.height; k++)
+                    <span class="fn">memcpy</span>(
+                        pData_dst,
+                        pImageData + (i * extent.width + (k + j * extent.height) * fullExtent.width) * dataSizePerPixel,
+                        dataSizePerRow),
+                    pData_dst += dataSizePerRow;
+        <span class="type">stagingBuffer</span>::<span class="fn">UnmapMemory_MainThread</span>();
+    }
+    <span class="fn">Create_Internal</span>(format_initial, format_final, generateMipmap);
+}
+</pre>
+<p>
+    接着填充<span class="type">texture2dArray</span>::<span class="fn">Create_Internal</span>(...)，跟先前<span class="type">texture2d</span>::<span class="fn">Create_Internal</span>(...)非常类似，图像视图的类型变为<span class="enum">VK_IMAGE_VIEW_TYPE_2D_ARRAY</span>，除此之外就是图层数由1变为<span class="var">layerCount</span>：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">Create_Internal</span>(<span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap) {
+    <span class="type">uint32_t</span> mipLevelCount = generateMipmap ? <span class="fn">CalculateMipLevelCount</span>(extent) : 1;
+    <span class="fn">CreateImageMemory</span>(<span class="enum">VK_IMAGE_TYPE_2D</span>, format_final, { extent.width, extent.height, 1 }, mipLevelCount, layerCount);
+    <span class="fn">CreateImageView</span>(<span class="enum">VK_IMAGE_VIEW_TYPE_2D_ARRAY</span>, format_final, mipLevelCount, layerCount);
+    <span class="kw">if</span> (format_initial == format_final)
+        <span class="fn">CopyBlitAndGenerateMipmap2d</span>(<span class="type">stagingBuffer</span>::<span class="fn">Buffer_MainThread</span>(), imageMemory.<span class="fn">Image</span>(), imageMemory.<span class="fn">Image</span>(), extent, mipLevelCount, layerCount);
+    <span class="kw">else</span>
+        <span class="kw">if</span> (<span class="type">VkImage</span> image_conversion = <span class="type">stagingBuffer</span>::<span class="fn">AliasedImage2d_MainThread</span>(format_initial, extent))
+            <span class="fn">BlitAndGenerateMipmap2d</span>(image_conversion, imageMemory.<span class="fn">Image</span>(), extent, mipLevelCount, 1);
+        <span class="kw">else</span> {
+            <span class="type">VkImageCreateInfo</span> imageCreateInfo = {
+                .imageType = <span class="enum">VK_IMAGE_TYPE_2D</span>,
+                .format = format_initial,
+                .extent = { extent.width, extent.height, 1 },
+                .mipLevels = 1,
+                .arrayLayers = layerCount,
+                .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+                .usage = <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span> | <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>
+            };
+            vulkan::<span class="type">imageMemory</span> imageMemory_conversion(imageCreateInfo, <span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>);
+            <span class="fn">CopyBlitAndGenerateMipmap2d</span>(<span class="type">stagingBuffer</span>::<span class="fn">Buffer_MainThread</span>(), imageMemory_conversion.<span class="fn">Image</span>(), imageMemory.<span class="fn">Image</span>(), extent, mipLevelCount, layerCount);
+        }
+}
+</pre></section>
+<section id="id2">
+<h4>读取多张大小相同的图像文件<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h4>
+<p>
+    填充剩下两个<span class="fn">Creat</span>(...)函数，没什么需要解说的，该说的都在注释里：
+</p>
+<pre class="code">
+<span class="cmt">//从硬盘读取多个大小相同的图像文件</span>
+<span class="fn">Create</span>(<span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">char</span>* <span class="kw">const</span>&gt; filepaths, <span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
+    <span class="cmt">//验证图层数是否满足硬件限制</span>
+    <span class="kw">if</span> (filepaths.<span class="fn">Count</span>() &gt; <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers) {
+        outStream &lt;&lt; std::<span class="fn">format</span>(
+            <span class="str">&quot;[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than: {}\nFile: {}\n&quot;</span>,
+            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers, filepath);
+        <span class="kw">return</span>;
+    }
+    <span class="type">formatInfo</span> formatInfo = <span class="fn">FormatInfo</span>(format_initial);
+    <span class="kw">auto</span> psImageData = std::<span class="fn">make_unique</span>&lt;std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt;[]&gt;(filepaths.<span class="fn">Count</span>());
+    <span class="cmt">//遍历文件路径读图</span>
+    <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; filepaths.<span class="fn">Count</span>(); i++) {
+        <span class="type">VkExtent2D</span> extent_currentLayer;
+        psImageData[i] = <span class="fn">LoadFile</span>(filepaths[i], extent_currentLayer, formatInfo);
+        <span class="cmt">//读图成功时进这个if分支</span>
+        <span class="kw">if</span> (psImageData[i]) {
+            <span class="cmt">//记录首张图的大小</span>
+            <span class="kw">if</span> (i == 0)
+                extent = extent_currentLayer;
+            <span class="cmt">//如果本图与首张图大小一致，继续读下一张图</span>
+            <span class="kw">if</span> (extent.width == extent_currentLayer.width &amp;&amp;
+                extent.height == extent_currentLayer.height)
+                <span class="kw">continue</span>;
+            <span class="cmt">//否则，抛出错误信息并返回</span>
+            <span class="kw">else</span>
+                outStream &lt;&lt; std::<span class="fn">format</span>(
+                    <span class="str">&quot;[ texture2dArray ] ERROR\nImage not available!\nFile: {}\nAll the images must be in same size!\n&quot;</span>,
+                    filepaths[i]);<span class="cmt">//直落到一行后的return以返回</span>
+        }
+        <span class="cmt">//读图失败（错误信息已在LoadeFile(...)中写明），或图像大小与首张图像不一致时返回</span>
+        <span class="kw">return</span>;
+    }
+    <span class="cmt">//调用后一个Create(...)</span>
+    <span class="fn">Create</span>({ <span class="kw">reinterpret_cast</span>&lt;<span class="kw">const</span> <span class="type">uint8_t</span>* <span class="kw">const</span>*&gt;(psImageData.<span class="fn">get</span>()), filepaths.<span class="fn">Count</span>() }, extent, format_initial, format_final, generateMipmap);
+}
+<span class="cmt">//从内存读取多个大小相同的图像文件的数据</span>
+<span class="fn">Create</span>(<span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">uint8_t</span>* <span class="kw">const</span>&gt; psImageData, <span class="type">VkExtent2D</span> extent, <span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
+    <span class="cmt">//记录图层数</span>
+    layerCount = psImageData.<span class="fn">Count</span>();
+    <span class="cmt">//验证图层数是否满足硬件限制</span>
+    <span class="kw">if</span> (layerCount &gt; <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers) {
+        outStream &lt;&lt; std::<span class="fn">format</span>(
+            <span class="str">&quot;[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than: {}\nFile: {}\n&quot;</span>,
+            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers, filepath);
+        <span class="kw">return</span>;
+    }
+    <span class="cmt">//记录图像大小</span>
+    <span class="kw">this</span>->extent = extent;
+    <span class="cmt">//计算单张图像的大小</span>
+    <span class="type">size_t</span> dataSizePerImage = <span class="type">size_t</span>(<span class="fn">FormatInfo</span>(format_initial).sizePerPixel) * extent.width * extent.height;
+    <span class="cmt">//计算所有图像的大小</span>
+    <span class="type">size_t</span> imageDataSize = dataSizePerImage * layerCount;
+    <span class="cmt">//映射暂存缓冲区</span>
+    <span class="type">uint8_t</span>* pData_dst = <span class="kw">static_cast</span>&lt;<span class="type">uint8_t</span>*&gt;(<span class="type">stagingBuffer</span>::<span class="fn">MapMemory_MainThread</span>(imageDataSize));
+    <span class="cmt">//将所有图像数据拷贝到暂存缓冲区</span>
+    <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; layerCount; i++) {
+        <span class="type">memcpy</span>(pData_dst, psImageData[i], dataSizePerImage),
+        pData_dst += dataSizePerImage;
+    <span class="cmt">//取消映射暂存缓冲区</span>
+    <span class="type">stagingBuffer</span>::<span class="fn">UnmapMemory_MainThread</span>();
+    <span class="cmt">//调用先前填充的Create_Internal(...)</span>
+    <span class="fn">Create_Internal</span>(format_initial, format_final, generateMipmap);
+}
+</pre></section>
+</section>
+</section>
+<section id="id3">
+<h2>采样2D贴图数组<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<p>
+    采样2D贴图时，基于<a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html#texture-frag-shader">Ch7-7 使用贴图</a>中所写的<span class="path">Texture.vert.shader</span>和<span class="path">Texture.vert.shader</span>进行如下修改：
+</p>
+<pre class="code"><span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(vertex)
+
+<span class="kw">layout</span>(location = 0) <span class="kw">in</span> <span class="type">vec2</span> i_Position;
+<span class="kw">layout</span>(location = 1) <span class="kw">in</span> <span class="type">vec3</span> i_TexCoord;
+<span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec3</span> o_TexCoord;
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    gl_Position = <span class="type">vec4</span>(i_Position, 0, 1);
+    o_TexCoord = i_TexCoord;
+}
+</pre>
+<pre class="code">
+<span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(fragment)
+
+<span class="kw">layout</span>(location = 0) <span class="kw">in</span> <span class="type">vec3</span> i_TexCoord;
+<span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec4</span> o_Color;
+<span class="kw">layout</span>(binding = 0) <span class="kw">uniform</span> <span class="type">sampler2DArray</span> u_Texture;
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    o_Color = <span class="fn">texture</span>(u_Texture, i_TexCoord);
+}
+</pre>
+<p>
+    注意到<span class="fn">texture</span>(...)函数的用法在形式上不变，只是第一个参数是<span class="type">sampler2DArray</span>类型，第二个参数是<span class="type">vec3</span>类型。
+    <br>
+    采样2D贴图需要一个图层参数，所以UV坐标之外还得要一个W坐标。注意同一个三角形中各顶点的W坐标应当一致，三维图像可以基于W坐标进行插值，但二维图像数组只会有如下结果（对应的贴图集原图见本页面首张配图）：
+</p>
+<pre class="code">
+<span class="type">vertex</span> vertices[] = {
+    { { -.5f, -.5f }, { 0, 0, 0 } }, <span class="cmt">//四个顶点贴图坐标的W分量依次使用0~3</span>
+    { {  .5f, -.5f }, { 1, 0, 1 } },
+    { { -.5f,  .5f }, { 0, 1, 2 } },
+    { {  .5f,  .5f }, { 1, 1, 3 } }
+};
+</pre>
+<img alt="_images/ch5-3-3.png" src="_images/ch5-3-3.png"></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html" class="btn btn-neutral float-left" title="Ch5-2 2D贴图及生成Mipmap" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-right" title="Ch7-1 初识顶点缓冲区" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

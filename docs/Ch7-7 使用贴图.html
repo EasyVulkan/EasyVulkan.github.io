@@ -75,6 +75,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul class="current">
@@ -169,7 +170,7 @@
 <ul>
     <li>
         <p>
-            用stb_image读取到的图像数据通常应该为RGBA每个通道8位的整形（但还得取决于具体图像文件）。因此图像初始的格式应该标为VK_FORMAT_R8G8B8A8_开头的非压缩格式。图像最终在着色器中使用时，根据贴图类型的不同使用相应的图像格式（见后文的片段着色器），这里先指定为<span class="enum">VK_FORMAT_R8G8B8A8_UNORM</span>，理由之后再详述。为避免不必要的格式转换，前后都使用<span class="enum">VK_FORMAT_R8G8B8A8_UNORM</span>。
+            用stb_image读取到的图像数据通常应该为RGBA每个通道8位的整形（但还得取决于具体图像文件）。因此图像初始的格式应该标为VK_FORMAT_R8G8B8A8_开头的非压缩格式。根据在着色器中指定的贴图uniform变量类型，使用相应的图像格式（见后文的片段着色器），这里先指定为<span class="enum">VK_FORMAT_R8G8B8A8_UNORM</span>，理由之后再详述。为避免不必要的格式转换，前后都使用<span class="enum">VK_FORMAT_R8G8B8A8_UNORM</span>。
         </p>
     </li>
 </ul></section>

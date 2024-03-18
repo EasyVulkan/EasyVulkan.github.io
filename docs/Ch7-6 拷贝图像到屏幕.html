@@ -76,6 +76,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul class="current">
@@ -173,7 +174,7 @@
     如果你想把所有东西（图像、音频等会在你的程序里用到的资源）都打包进单个可执行程序，或把资源扔进dll，那么得先用平台特定的函数从程序自身或dll读取资源，获得资源的内存地址。然后再从内存读取并解析文件数据。
 </p>
 <p>
-    为了省去重复的代码，我打算将两种情形统一到同一个模板函数中，然后用根据参数类型运用运行期分支。
+    为了省去重复的代码，我打算将两种情形统一到同一个模板函数中，然后根据参数类型应用运行期分支。
     <br>
     在<span class="path">VkBase+.h</span>中，vulkan命名空间中加入类<span class="type">texture</span>，并定义受保护静态成员函数<span class="fn">LoadFile_Internal</span>：
 </p>
@@ -219,7 +220,7 @@
 <span class="kw">if</span> (<span class="cmt">//若要求数据为浮点数，stb_image只支持32位浮点数</span>
     (requiredFormatInfo.rawDataType == formatInfo::<span class="type">floatingPoint</span> &amp;&amp; requiredFormatInfo.sizePerComponent == 4) ||
     <span class="cmt">//若要求数据为整形，stb_image只支持8位或16位每通道</span>
-    (requiredFormatInfo.rawDataType == formatInfo::<span class="type">integer</span> &amp;&amp; requiredFormatInfo.sizePerComponent &gt;= 1 &amp;&amp; requiredFormatInfo.sizePerComponent &lt;    ))
+    (requiredFormatInfo.rawDataType == formatInfo::<span class="type">integer</span> &amp;&amp; requiredFormatInfo.sizePerComponent &gt;= 1 &amp;&amp; requiredFormatInfo.sizePerComponent &lt;= 2))
     <span class="cmt">/*空表达式*/</span>;
 <span class="kw">else</span>
     outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ texture ] ERROR\nRequired format is not available for source image data!\n&quot;</span>),
@@ -233,7 +234,7 @@
 <span class="kw">static</span> std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; <span class="fn">LoadFile_Internal</span>(<span class="kw">const auto</span>* address, <span class="type">size_t</span> fileSize, <span class="type">VkExtent2D</span>&amp; extent, <span class="type">formatInfo</span> requiredFormatInfo) {
 <span class="pragma">#ifndef</span> <span class="mcr">NDEBUG</span>
     <span class="kw">if</span> (!(requiredFormatInfo.rawDataType == formatInfo::<span class="type">floatingPoint</span> &amp;&amp; requiredFormatInfo.sizePerComponent == 4) &amp;&amp;
-        !(requiredFormatInfo.rawDataType == formatInfo::<span class="type">integer</span> &amp;&amp; requiredFormatInfo.sizePerComponent &amp;&amp; requiredFormatInfo.sizePerComponent &lt;    ))
+        !(requiredFormatInfo.rawDataType == formatInfo::<span class="type">integer</span> &amp;&amp; requiredFormatInfo.sizePerComponent &amp;&amp; requiredFormatInfo.sizePerComponent &lt;= 2))
         outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ texture ] ERROR\nRequired format is not available for source image data!\n&quot;</span>),
         <span class="fn">abort</span>();
 <span class="pragma">#endif</span>
@@ -390,7 +391,7 @@
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ texture ] ERROR\nFailed to load the file: {}\n&quot;</span>, address);
     }
     <span class="kw">if constexpr</span> (std::<span class="cncpt">same_as</span>&lt;<span class="kw">decltype</span>(address), <span class="kw">const</span> <span class="type">uint8_t</span>*&gt;) {
-        <span class="kw">if</span> (fileSize > <span class="mcr">INT32_MAX</span>) {
+        <span class="kw">if</span> (fileSize &gt; <span class="mcr">INT32_MAX</span>) {
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ texture ] ERROR\nFailed to load image data from the given address! Data size must be less than 2G!\n&quot;</span>);
             <span class="kw">return</span> {};
         }

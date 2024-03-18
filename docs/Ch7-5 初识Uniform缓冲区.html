@@ -76,6 +76,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul class="current">
@@ -438,7 +439,7 @@ descriptorSet_trianglePosition.<span class="fn">Write</span>(bufferInfo, <span c
     在循环中绑定描述符并绘制：
 </p>
 <pre class="code">
-<span class="kw">for</span> (<span class="type">size_t</span> i = 0; i < 3; i++) {
+<span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; 3; i++) {
     <span class="fn">vkCmdBindDescriptorSets</span>(commandBuffer, <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>,
     pipelineLayout_triangle, 0, 1, descriptorSet_trianglePosition.<span class="fn">Address</span>(), 1, &amp;uniformAlignment);
     <span class="fn">vkCmdDraw</span>(commandBuffer, 3, 1, 0, 0);

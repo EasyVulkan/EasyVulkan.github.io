@@ -44,7 +44,7 @@ namespace vulkan {
 		const VkFormatProperties& FormatProperties(VkFormat format) const {
 #ifndef NDEBUG
 			if (uint32_t(format) >= std::size(formatInfos_v1_0))
-				outStream << std::format("[ FormatInfo ] ERROR\nThis function only supports definite formats provided by VK_VERSION_1_0.\n"),
+				outStream << std::format("[ FormatProperties ] ERROR\nThis function only supports definite formats provided by VK_VERSION_1_0.\n"),
 				abort();
 #endif
 			return formatProperties[format];
@@ -985,7 +985,7 @@ namespace vulkan {
 				if (fullExtent.width % extentInTiles.width ||
 					fullExtent.height % extentInTiles.height)
 					outStream << std::format(
-						"[ texture2dArray ] ERROR\nImage not available!\nFile: {}\nImage width must be in multiples of {}\nImage height must be in multiples of {}\n",
+						"[ texture2dArray ] ERROR\nImage not available!\nFile: {}\nImage width should be in multiples of {}\nImage height should be in multiples of {}\n",
 						filepath, extentInTiles.width, extentInTiles.height);//fallthrough
 				else
 					Create(pImageData.get(), fullExtent, extentInTiles, format_initial, format_final, generateMipmap);
@@ -998,6 +998,13 @@ namespace vulkan {
 					graphicsBase::Base().PhysicalDeviceProperties().limits.maxImageArrayLayers);
 				return;
 			}
+			if (fullExtent.width % extentInTiles.width ||
+				fullExtent.height % extentInTiles.height) {
+				outStream << std::format(
+					"[ texture2dArray ] ERROR\nImage not available!\nImage width should be in multiples of {}\nImage height should be in multiples of {}\n",
+					extentInTiles.width, extentInTiles.height);
+				return;
+			}
 			extent.width = fullExtent.width / extentInTiles.width;
 			extent.height = fullExtent.height / extentInTiles.height;
 			size_t dataSizePerPixel = FormatInfo(format_initial).sizePerPixel;
@@ -1008,15 +1015,14 @@ namespace vulkan {
 			else {
 				uint8_t* pData_dst = static_cast<uint8_t*>(stagingBuffer::MapMemory_MainThread(imageDataSize));
 				size_t dataSizePerRow = dataSizePerPixel * extent.width;
-				size_t offset = 0;
 				for (size_t j = 0; j < extentInTiles.height; j++)
 					for (size_t i = 0; i < extentInTiles.width; i++)
 						for (size_t k = 0; k < extent.height; k++)
 							memcpy(
-								pData_dst + offset,
+								pData_dst,
 								pImageData + (i * extent.width + (k + j * extent.height) * fullExtent.width) * dataSizePerPixel,
 								dataSizePerRow),
-							offset += dataSizePerRow;
+							pData_dst += dataSizePerRow;
 				stagingBuffer::UnmapMemory_MainThread();
 			}
 			//Create image and allocate memory, create image view, then copy data from staging buffer to image
@@ -1042,8 +1048,8 @@ namespace vulkan {
 						continue;
 					else
 						outStream << std::format(
-							"[ texture2dArray ] ERROR\nImage not available!\nFile: {}\nImage width must be {}\nImage height must be {}\n",
-							filepaths[i], extent.width, extent.height);//fallthrough
+							"[ texture2dArray ] ERROR\nImage not available!\nFile: {}\nAll the images must be in same size!\n",
+							filepaths[i]);//fallthrough
 				}
 				return;
 			}
@@ -1159,7 +1165,7 @@ namespace vulkan {
 					fullExtent.width % extentInTiles.width ||
 					fullExtent.height % extentInTiles.height)
 					outStream << std::format(
-						"[ textureCube ] ERROR\nImage not available!\nFile: {}\nImage width must be in multiples of {}\nImage height must be in multiples of {}\n",
+						"[ textureCube ] ERROR\nImage not available!\nFile: {}\nImage width should be in multiples of {}\nImage height should be in multiples of {}\n",
 						filepath, extentInTiles.width, extentInTiles.height);//fallthrough
 				else {
 					extent.width = fullExtent.width / extentInTiles.width;
@@ -1176,7 +1182,7 @@ namespace vulkan {
 				if (fullExtent.width % extentInTiles.width ||
 					fullExtent.height % extentInTiles.height) {
 					outStream << std::format(
-						"[ textureCube ] ERROR\nImage not available!\nImage width must be in multiples of {}\nImage height must be in multiples of {}\n",
+						"[ textureCube ] ERROR\nImage not available!\nImage width should be in multiples of {}\nImage height should be in multiples of {}\n",
 						extentInTiles.width, extentInTiles.height);
 					return;
 				}

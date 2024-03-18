@@ -108,6 +108,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -929,7 +930,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
     <br>
     3.<span class="kw">noperspective</span>进行简单粗暴的线性插值，不考虑透视的影响。
     <br>
-    关于激发顶点，请自行参阅<a href="https://renderdoc.org/vkspec_chunked/chap21.html#drawing-line-lists">Vulkan官方标准中的图示</span>。
+    关于激发顶点，请自行参阅<a href="https://renderdoc.org/vkspec_chunked/chap21.html#drawing-line-lists">Vulkan官方标准中的图示</a>。
     <br>
     下图左侧为通过<span class="kw">noperspective</span>插值的uv坐标绘制的正方体的两个面，右侧则是通过<span class="kw">smooth</span>插值的uv坐标绘制：
 </p>
@@ -952,7 +953,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
 <ul>
     <li>
         <p>
-            若省略<code>内存布局修饰符,</code>，则默认为std430，详见后文。
+            若省略<code>内存布局修饰符,</code>，则默认为std430，详见后文<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id15">块成员的内存布局</a>。
         </p>
     </li>
     <li>

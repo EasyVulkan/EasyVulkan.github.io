@@ -100,6 +100,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -901,7 +902,7 @@
     <span class="cmt">//Const Function</span>
     <span class="type">result_t</span> AllocateSets(<span class="type">arrayRef</span>&lt;<span class="type">VkDescriptorSet</span>&gt; sets, <span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">VkDescriptorSetLayout</span>&gt; setLayouts) <span class="kw">const</span> {
         <span class="kw">if</span> (sets.Count() != setLayouts.Count())
-            <span class="kw">if</span> (sets.Count() < setLayouts.Count()) {
+            <span class="kw">if</span> (sets.Count() &lt; setLayouts.Count()) {
                 outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ descriptorPool ] ERROR\nFor each descriptor set, must provide a corresponding layout!\n&quot;</span>);
                 <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;<span class="cmt">//没有合适的错误代码，别用VK_ERROR_UNKNOWN</span>
             }
