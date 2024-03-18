@@ -101,6 +101,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -413,7 +414,7 @@
     }
     <span class="type">result_t</span> <span class="fn">Status</span>() <span class="kw">const</span> {
         <span class="type">VkResult</span> result = <span class="fn">vkGetFenceStatus</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle);
-        <span class="kw">if</span> (result < 0)<span class="cmt">//vkGetFenceStatus(...)成功时有两种结果，所以不能仅仅判断result是否非0</span>
+        <span class="kw">if</span> (result &lt; 0)<span class="cmt">//vkGetFenceStatus(...)成功时有两种结果，所以不能仅仅判断result是否非0</span>
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ fence ] ERROR\nFailed to get the status of the fence!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }

@@ -83,6 +83,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -396,7 +397,7 @@ pWindow = fullScreen ?
     <span class="kw">static</span> std::<span class="type">stringstream</span> info;
     time1 = <span class="fn">glfwGetTime</span>();
     dframe++;
-    <span class="kw">if</span> ((dt = time1 - time0) >= 1) {
+    <span class="kw">if</span> ((dt = time1 - time0) &gt;= 1) {
         info.<span class="fn">precision</span>(1);
         info &lt;&lt; windowTitle &lt;&lt; <span class="str">&quot;    &quot;</span> &lt;&lt; std::<span class="fn">fixed</span> &lt;&lt; dframe / dt &lt;&lt; <span class="str">&quot; FPS&quot;</span>;
         <span class="fn">glfwSetWindowTitle</span>(pWindow, <span class="fn">info.str</span>().<span class="fn">c_str</span>());

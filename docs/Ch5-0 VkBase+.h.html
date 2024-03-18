@@ -80,6 +80,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -465,7 +466,7 @@
     <span class="cmt">/*新增*/</span><span class="kw">const</span> <span class="type">VkFormatProperties</span>&amp; <span class="fn">FormatProperties</span>(<span class="type">VkFormat</span> format) <span class="kw">const</span> {
 <span class="pragma">#ifndef</span> <span class="mcr">NDEBUG</span>
        <span class="kw">if</span> (<span class="type">uint32_t</span>(format) &gt;= std::<span class="fn">size</span>(formatInfos_v1_0))
-           outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ FormatInfo ] ERROR\nThis function only supports definite formats provided by VK_VERSION_1_0.\n&quot;</span>),
+           outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ FormatProperties ] ERROR\nThis function only supports definite formats provided by VK_VERSION_1_0.\n&quot;</span>),
            <span class="fn">abort</span>();
 <span class="pragma">#endif</span>
         <span class="kw">return</span> formatProperties[format];

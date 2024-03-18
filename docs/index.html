@@ -75,6 +75,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -214,10 +215,10 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
 </ul>
 </div>
 <div class="line-block">
-<div class="line">Ch5-3 2D贴图数组</div>
 <div class="line">Ch5-4 立方体贴图</div>
 <div class="line">Ch5-5 图像附件</div>
 </div>
@@ -252,16 +253,17 @@
 <div class="line">Ch8-7 HDR与sRGB色彩空间</div>
 <div class="line">Ch8-8 曲面细分与置换贴图</div>
 </div>
-<div class="toctree-wrapper compound">
-</div>
-<div class="line-block">
-<div class="line">Ch9-1 为透明图像生成Mipmap</div>
-<div class="line">Ch9-2 截取交换链图像</div>
-<div class="line">Ch9-3 将ERP图像转为Cubemap</div>
-</div>
 </section>
 <section id="id4">
 <h2>更新履历<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<p>2024.03.18</p>
+<ul>
+    <li>
+        <p>
+            <a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a>完成。
+        </p>
+    </li>
+</ul>
 <p>2024.03.01</p>
 <ul>
     <li>
@@ -274,7 +276,6 @@
             <a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a>完成。
         </p>
     </li>
-
 </ul>
 <p>2024.02.19</p>
 <ul>
@@ -405,7 +406,9 @@
 <section id="id5">
 <h2>关于转载<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
 <p>
-    可随意转载，记得带上原文链接并注明作者（<a href="https://space.bilibili.com/600719">TimeRemnant</a>）。
+    请暂时不要转载原文，在写完前述各章节前可能会不断修改细节。
+    <br>
+    也不要fork。
 </P></section>
 <section id="id6">
 <h2>联系方式<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
@@ -420,12 +423,7 @@
     </li>
     <li>
         <p>
-            B站私信：<a href="https://space.bilibili.com/600719">TimeRemnant的个人空间</a>，关于C++语法和Vulkan的答疑可联系，不定期上B站（其实基本不上，而且做编程教学视频大概也赚不了钱）。
-        </p>
-    </li>
-    <li>
-        <p>
-            QQ/邮箱：3013696217@qq.com（不要试图拉我进群之类的）
+            B站私信：<a href="https://space.bilibili.com/600719">TimeRemnant的个人空间</a>，不定期上B站（其实基本不上，而且做编程教学视频大概也赚不了钱）。
         </p>
     </li>
 </ul>
@@ -458,12 +456,7 @@
             文本着色错误（如果你看懂了我的着色规则的话）
         </p>
     </li>
-</ol>
-<p>
-    关于内容：
-    <br>
-    涉及到具体光照算法的内容暂时不开专题，等目前目录中存在的内容写完再议。目前着重于API本身。
-</p></section>
+</ol></section>
 </section>
 
 

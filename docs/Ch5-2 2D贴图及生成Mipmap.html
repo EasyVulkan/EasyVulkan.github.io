@@ -20,7 +20,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="Ch7-1 初识顶点缓冲区" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html" />
+    <link rel="next" title="Ch5-3 2D贴图数组" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html" />
     <link rel="prev" title="Ch5-1 各种缓冲区" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html" /> 
 </head>
 
@@ -89,6 +89,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -239,6 +240,7 @@
     <span class="type">uint32_t</span> <span class="fn">Width</span>() <span class="kw">const</span> { <span class="kw">return</span> extent.width; }
     <span class="type">uint32_t</span> <span class="fn">Height</span>() <span class="kw">const</span> { <span class="kw">return</span> extent.height; }
     <span class="cmt">//Non-const Function</span>
+    <span class="cmt">//直接从硬盘读取文件</span>
     <span class="kw">void</span> <span class="fn">Create</span>(<span class="kw">const char</span>* filepath, <span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
         <span class="type">VkExtent2D</span> extent;
         <span class="type">formatInfo</span> formatInfo = <span class="fn">FormatInfo</span>(format_initial);<span class="cmt">//根据指定的format_initial取得格式信息</span>
@@ -246,6 +248,7 @@
         <span class="kw">if</span> (pImageData)
             <span class="fn">Create</span>(pImageData.<span class="fn">get</span>(), extent, format_initial, format_final, generateMipmap);
     }
+    <span class="cmt">//从内存读取文件数据</span>
     <span class="kw">void</span> <span class="fn">Create</span>(<span class="kw">const</span> <span class="type">uint8_t</span>* pImageData, <span class="type">VkExtent2D</span> extent, <span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
         <span class="kw">this</span>->extent = extent;
         <span class="type">size_t</span> imageDataSize = <span class="type">size_t</span>(<span class="fn">FormatInfo</span>(format_initial).sizePerPixel) * extent.width * extent.height;
@@ -371,7 +374,7 @@
 <span class="kw">static void</span> <span class="fn">BlitAndGenerateMipmap2d</span>(<span class="type">VkImage</span> image_preinitialized, <span class="type">VkImage</span> image_final, <span class="type">VkExtent2D</span> imageExtent,
     <span class="type">uint32_t</span> mipLevelCount = 1, <span class="type">uint32_t</span> layerCount = 1, <span class="type">VkFilter</span> minFilter = <span class="enum">VK_FILTER_LINEAR</span>) {
     <span class="cmt">//生成mipmap的条件是mip等级大于1</span>
-    <span class="kw">bool</span> generateMipmap = mipLevelCount > 1;
+    <span class="kw">bool</span> generateMipmap = mipLevelCount &gt; 1;
     <span class="cmt">//发生成blit的条件是源图像和目标图像不同</span>
     <span class="kw">bool</span> blitMipLevel0 = image_preinitialized != image_final;
     <span class="kw">if</span> (generateMipmap || blitMipLevel0) {
@@ -540,7 +543,7 @@
         { <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, <span class="enum">VK_ACCESS_TRANSFER_READ_BIT</span>, <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL</span> }
     };
     <span class="cmt">//生成mipmap的条件是mip等级大于1</span>
-    <span class="kw">bool</span> generateMipmap = mipLevelCount > 1;
+    <span class="kw">bool</span> generateMipmap = mipLevelCount &gt; 1;
     <span class="cmt">//发生成blit的条件是源图像和目标图像不同</span>
     <span class="kw">bool</span> blitMipLevel0 = image_copyTo != image_final;
     <span class="cmt">//录制命令</span>
@@ -785,7 +788,7 @@
         extent.y += !extent.y;
         <span class="kw">return</span> extent;
     };
-    <span class="kw">if</span> (layerCount > 1) {
+    <span class="kw">if</span> (layerCount &gt; 1) {
         std::<span class="type">unique_ptr</span>&lt;<span class="type">VkImageBlit</span>[]&gt; regions = std::<span class="fn">make_unique</span>&lt;<span class="type">VkImageBlit</span>[]&gt;(layerCount);
         <span class="kw">for</span> (<span class="type">uint32_t</span> i = 1; i &lt; mipLevelCount; i++) {
             <span class="type">VkOffset3D</span> mipmapExtent_src = MipmapExtent(imageExtent, i - 1);
@@ -863,7 +866,7 @@
         { <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>, <span class="enum">VK_ACCESS_SHADER_READ_BIT</span>, <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span> },
         { <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, <span class="enum">VK_ACCESS_TRANSFER_READ_BIT</span>, <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL</span> }
     };
-    <span class="kw">bool</span> generateMipmap = mipLevelCount > 1;
+    <span class="kw">bool</span> generateMipmap = mipLevelCount &gt; 1;
     <span class="kw">bool</span> blitMipLevel0 = image_preinitialized != image_final;
     <span class="kw">if</span> (generateMipmap || blitMipLevel0) {
         <span class="kw">auto</span>&amp; commandBuffer = <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">CommandBuffer_Transfer</span>();
@@ -908,7 +911,7 @@
         { <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>, <span class="enum">VK_ACCESS_SHADER_READ_BIT</span>, <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span> },
         { <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, <span class="enum">VK_ACCESS_TRANSFER_READ_BIT</span>, <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL</span> }
     };
-    <span class="kw">bool</span> generateMipmap = mipLevelCount > 1;
+    <span class="kw">bool</span> generateMipmap = mipLevelCount &gt; 1;
     <span class="kw">bool</span> blitMipLevel0 = image_copyTo != image_final;
     <span class="kw">auto</span>&amp; commandBuffer = <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">CommandBuffer_Transfer</span>();
     commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
@@ -952,7 +955,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-left" title="Ch5-1 各种缓冲区" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
-        <a href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-right" title="Ch7-1 初识顶点缓冲区" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html" class="btn btn-neutral float-right" title="Ch5-3 2D贴图数组" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

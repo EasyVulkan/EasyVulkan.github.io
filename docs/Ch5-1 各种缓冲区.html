@@ -87,6 +87,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -727,7 +728,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
         <span class="cmt">//短路执行，第一行的false||是为了对齐</span>
         <span class="kw">false</span> ||
             bufferMemory.<span class="fn">CreateBuffer</span>(bufferCreateInfo) ||
-            bufferMemory.<span class="fn">AllocateMemory</span>(<span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span> | <span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>) &amp;&amp;<span class="cmt">//&&运算符优先级高于||</span>
+            bufferMemory.<span class="fn">AllocateMemory</span>(<span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span> | <span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>) &amp;&amp; <span class="cmt">//&amp;&amp;运算符优先级高于||</span>
             bufferMemory.<span class="fn">AllocateMemory</span>(<span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>) ||
             bufferMemory.<span class="fn">BindMemory</span>();
     }
