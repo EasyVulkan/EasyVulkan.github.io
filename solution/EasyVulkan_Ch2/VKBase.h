@@ -335,23 +335,23 @@ namespace vulkan {
 		}
 
 		//Non-const Function
-		void PushCallback_CreateSwapchain(void(*function)()) {
+		void AddCallback_CreateSwapchain(void(*function)()) {
 			callbacks_createSwapchain.push_back(function);
 		}
-		void PushCallback_DestroySwapchain(void(*function)()) {
+		void AddCallback_DestroySwapchain(void(*function)()) {
 			callbacks_destroySwapchain.push_back(function);
 		}
-		void PushCallback_CreateDevice(void(*function)()) {
+		void AddCallback_CreateDevice(void(*function)()) {
 			callbacks_createDevice.push_back(function);
 		}
-		void PushCallback_DestroyDevice(void(*function)()) {
+		void AddCallback_DestroyDevice(void(*function)()) {
 			callbacks_destroyDevice.push_back(function);
 		}
 		//                    Create Instance
-		void PushInstanceLayer(const char* layerName) {
+		void AddInstanceLayer(const char* layerName) {
 			AddLayerOrExtension(instanceLayers, layerName);
 		}
-		void PushInstanceExtension(const char* extensionName) {
+		void AddInstanceExtension(const char* extensionName) {
 			AddLayerOrExtension(instanceExtensions, extensionName);
 		}
 		result_t UseLatestApiVersion() {
@@ -359,17 +359,16 @@ namespace vulkan {
 				return vkEnumerateInstanceVersion(&apiVersion);
 			return VK_SUCCESS;
 		}
-		result_t CreateInstance(const void* pNext = nullptr, VkInstanceCreateFlags flags = 0) {
+		result_t CreateInstance(VkInstanceCreateFlags flags = 0) {
 			if constexpr (ENABLE_DEBUG_MESSENGER)
-				PushInstanceLayer("VK_LAYER_KHRONOS_validation"),
-				PushInstanceExtension(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+				AddInstanceLayer("VK_LAYER_KHRONOS_validation"),
+				AddInstanceExtension(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 			VkApplicationInfo applicatianInfo = {
 				.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
 				.apiVersion = apiVersion
 			};
 			VkInstanceCreateInfo instanceCreateInfo = {
 				.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-				.pNext = pNext,
 				.flags = flags,
 				.pApplicationInfo = &applicatianInfo,
 				.enabledLayerCount = uint32_t(instanceLayers.size()),
@@ -462,7 +461,7 @@ namespace vulkan {
 				this->surface = surface;
 		}
 		//                    Create Logical Device
-		void PushDeviceExtension(const char* extensionName) {
+		void AddDeviceExtension(const char* extensionName) {
 			AddLayerOrExtension(deviceExtensions, extensionName);
 		}
 		result_t GetPhysicalDevices() {
@@ -518,7 +517,7 @@ namespace vulkan {
 			physicalDevice = availablePhysicalDevices[deviceIndex];
 			return VK_SUCCESS;
 		}
-		result_t CreateDevice(const void* pNext = nullptr, VkDeviceCreateFlags flags = 0) {
+		result_t CreateDevice(VkDeviceCreateFlags flags = 0) {
 			float queuePriority = 1.f;
 			VkDeviceQueueCreateInfo queueCreateInfos[3] = {
 				{
@@ -547,7 +546,6 @@ namespace vulkan {
 			vkGetPhysicalDeviceFeatures(physicalDevice, &physicalDeviceFeatures);
 			VkDeviceCreateInfo deviceCreateInfo = {
 				.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-				.pNext = pNext,
 				.flags = flags,
 				.queueCreateInfoCount = queueCreateInfoCount,
 				.pQueueCreateInfos = queueCreateInfos,
@@ -646,7 +644,7 @@ namespace vulkan {
 				return RecreateSwapchain();
 			return VK_SUCCESS;
 		}
-		result_t CreateSwapchain(bool limitFrameRate = true, const void* pNext = nullptr, VkSwapchainCreateFlagsKHR flags = 0) {
+		result_t CreateSwapchain(bool limitFrameRate = true, VkSwapchainCreateFlagsKHR flags = 0) {
 			//Get surface capabilities
 			VkSurfaceCapabilitiesKHR surfaceCapabilities = {};
 			if (VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &surfaceCapabilities)) {
@@ -719,7 +717,6 @@ namespace vulkan {
 					}
 
 			swapchainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-			swapchainCreateInfo.pNext = pNext;
 			swapchainCreateInfo.flags = flags;
 			swapchainCreateInfo.surface = surface;
 			swapchainCreateInfo.imageArrayLayers = 1;
@@ -746,7 +743,7 @@ namespace vulkan {
 			swapchainCreateInfo = {};
 			debugUtilsMessenger = VK_NULL_HANDLE;
 		}
-		result_t RecreateDevice(const void* pNext = nullptr, VkDeviceCreateFlags flags = 0) {
+		result_t RecreateDevice(VkDeviceCreateFlags flags = 0) {
 			if (VkResult result = WaitIdle())
 				return result;
 			if (swapchain) {
@@ -765,7 +762,7 @@ namespace vulkan {
 			if (device)
 				vkDestroyDevice(device, nullptr),
 				device = VK_NULL_HANDLE;
-			return CreateDevice(pNext, flags);
+			return CreateDevice(flags);
 		}
 		result_t RecreateSwapchain() {
 			VkSurfaceCapabilitiesKHR surfaceCapabilities = {};

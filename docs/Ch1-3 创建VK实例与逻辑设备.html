@@ -95,6 +95,11 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -149,7 +154,7 @@ extensionNames = <span class="type">glfwGetRequiredInstanceExtensions</span>(&am
     <span class="kw">return false</span>;
 }
 <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; extensionCount; i++)
-    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushInstanceExtension</span>(extensionNames[i]);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(extensionNames[i]);
 </pre>
 <table class="docutils align-default">
     <colgroup>
@@ -188,14 +193,14 @@ extensionNames = <span class="type">glfwGetRequiredInstanceExtensions</span>(&am
     如果明知运行环境是Windows，那么也可以直接push而不需要调用<a href="https://www.glfw.org/docs/latest/group__vulkan.html#ga99ad342d82f4a3421e2864978cb6d1d6">glfwGetRequiredInstanceExtensions</a>(...)：
 </p>
 <pre class="code">
-<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushInstanceExtension</span>(<span class="str">&quot;VK_KHR_surface&quot;</span>);
-<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushInstanceExtension</span>(<span class="str">&quot;VK_KHR_win32_surface&quot;</span>);
+<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(<span class="str">&quot;VK_KHR_surface&quot;</span>);
+<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(<span class="str">&quot;VK_KHR_win32_surface&quot;</span>);
 </pre>
 <p>
     接着是设备级别的扩展，所需的只有<span class="str">&quot;VK_KHR_swapchain&quot;</span>：
 </p>
 <pre class="code">
-<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushDeviceExtension</span>(<span class="mcr">VK_KHR_SWAPCHAIN_EXTENSION_NAME</span>);
+<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_SWAPCHAIN_EXTENSION_NAME</span>);
 </pre>
 <ul>
     <li>
@@ -208,10 +213,10 @@ extensionNames = <span class="type">glfwGetRequiredInstanceExtensions</span>(&am
     除此之外仅需要验证层及debug messenger的扩展，来填充前一节中定义在<span class="path">VKBase.h</span>中的<span class="type">graphicsBase</span>::<span class="fn">CreateInstance</span>(...)：
 </p>
 <pre class="code">
-<span class="type">VkResult</span> <span class="fn">CreateInstance</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkInstanceCreateFlags</span> flags = 0) {
+<span class="type">VkResult</span> <span class="fn">CreateInstance</span>(<span class="type">VkInstanceCreateFlags</span> flags = 0) {
 <span class="pragma">#ifndef</span> <span class="mcr">NDEBUG</span>
-    <span class="fn">PushInstanceLayer</span>(<span class="str">&quot;VK_LAYER_KHRONOS_validation&quot;</span>);
-    <span class="fn">PushInstanceExtension</span>(<span class="mcr">VK_EXT_DEBUG_UTILS_EXTENSION_NAME</span>);
+    <span class="fn">AddInstanceLayer</span>(<span class="str">&quot;VK_LAYER_KHRONOS_validation&quot;</span>);
+    <span class="fn">AddInstanceExtension</span>(<span class="mcr">VK_EXT_DEBUG_UTILS_EXTENSION_NAME</span>);
 <span class="pragma">#endif</span>
     <span class="cmt">/*待后续填充*/</span>
 }
@@ -429,10 +434,10 @@ extensionNames = <span class="type">glfwGetRequiredInstanceExtensions</span>(&am
     于是继续填充<span class="type">graphicsBase</span>::<span class="fn">CreateInstance</span>(...)，最后整个函数如下：
 </p>
 <pre class="code">
-<span class="type">VkResult</span> <span class="fn">CreateInstance</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkInstanceCreateFlags</span> flags = 0) {
+<span class="type">VkResult</span> <span class="fn">CreateInstance</span>(<span class="type">VkInstanceCreateFlags</span> flags = 0) {
 <span class="pragma">#ifndef</span> <span class="mcr">NDEBUG</span>
-    <span class="fn">PushInstanceLayer</span>(<span class="str">&quot;VK_LAYER_KHRONOS_validation&quot;</span>);
-    <span class="fn">PushInstanceExtension</span>(<span class="mcr">VK_EXT_DEBUG_UTILS_EXTENSION_NAME</span>);
+    <span class="fn">AddInstanceLayer</span>(<span class="str">&quot;VK_LAYER_KHRONOS_validation&quot;</span>);
+    <span class="fn">AddInstanceExtension</span>(<span class="mcr">VK_EXT_DEBUG_UTILS_EXTENSION_NAME</span>);
 <span class="pragma">#endif</span>
     <span class="type">VkApplicationInfo</span> applicatianInfo = {
         .sType = <span class="enum">VK_STRUCTURE_TYPE_APPLICATION_INFO</span>,
@@ -440,7 +445,6 @@ extensionNames = <span class="type">glfwGetRequiredInstanceExtensions</span>(&am
     };
     <span class="type">VkInstanceCreateInfo</span> instanceCreateInfo = {
         .sType = <span class="enum">VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO</span>,
-        .pNext = pNext,
         .flags = flags,
         .pApplicationInfo = &amp;applicatianInfo,
         .enabledLayerCount = <span class="type">uint32_t</span>(instanceLayers.<span class="fn">size</span>()),
@@ -488,7 +492,7 @@ extensionNames = <span class="type">glfwGetRequiredInstanceExtensions</span>(&am
     </li>
 </ul>
 <p>
-    之后是在<span class="fn">InitializeWindow</span>(...)中调用<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">CreateInstance</span>(...)，相应代码我会汇总在本节最后。
+    之后是在<span class="fn">InitializeWindow</span>(...)中调用<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CreateInstance</span>(...)，相应代码我会汇总在本节最后。
 </p></section>
 <section id="id3">
 <h2>检查层和实例级别扩展是否可用<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
@@ -786,8 +790,8 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
     <span class="type">VkDebugUtilsMessageSeverityFlagBitsEXT</span> messageSeverity,
     <span class="type">VkDebugUtilsMessageTypeFlagsEXT</span> messageTypes,
     <span class="kw">const</span> <span class="type">VkDebugUtilsMessengerCallbackDataEXT</span>* pCallbackData,
-    <span class="kw">void</span>* pUserData)-><span class="type">VkBool32</span> {
-        std::cout &lt;&lt; std::<span class="type">format</span>(<span class="str">&quot;{}\n\n&quot;</span>, pCallbackData->pMessage);
+    <span class="kw">void</span>* pUserData)-&gt;<span class="type">VkBool32</span> {
+        std::cout &lt;&lt; std::<span class="type">format</span>(<span class="str">&quot;{}\n\n&quot;</span>, pCallbackData-&gt;pMessage);
         <span class="kw">return</span> <span class="mcr">VK_FALSE</span>;
 };
 </pre>
@@ -823,8 +827,8 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
         <span class="type">VkDebugUtilsMessageSeverityFlagBitsEXT</span> messageSeverity,
         <span class="type">VkDebugUtilsMessageTypeFlagsEXT</span> messageTypes,
         <span class="kw">const</span> <span class="type">VkDebugUtilsMessengerCallbackDataEXT</span>* pCallbackData,
-        <span class="kw">void</span>* pUserData)-><span class="type">VkBool32</span> {
-            std::cout &lt;&lt; std::<span class="type">format</span>(<span class="str">&quot;{}\n\n&quot;</span>, pCallbackData->pMessage);
+        <span class="kw">void</span>* pUserData)-&gt;<span class="type">VkBool32</span> {
+            std::cout &lt;&lt; std::<span class="type">format</span>(<span class="str">&quot;{}\n\n&quot;</span>, pCallbackData-&gt;pMessage);
             <span class="kw">return</span> <span class="mcr">VK_FALSE</span>;
     };
     <span class="type">VkDebugUtilsMessengerCreateInfoEXT</span> debugUtilsMessengerCreateInfo = {
@@ -896,12 +900,12 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
 </p>
 <pre class="code">
 <span class="type">VkSurfaceKHR</span> surface = <span class="mcr">VK_NULL_HANDLE</span>;
-<span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">glfwCreateWindowSurface</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Instance</span>(), pWindow, <span class="kw">nullptr</span>, &amp;surface)) {
+<span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">glfwCreateWindowSurface</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Instance</span>(), pWindow, <span class="kw">nullptr</span>, &amp;surface)) {
     std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ] ERROR\nFailed to create a window surface!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
     <span class="fn">glfwTerminate</span>();
     <span class="kw">return false</span>;
 }
-<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Surface</span>(surface);
+<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Surface</span>(surface);
 </pre></section>
 <section id="id6">
 <h2>获取并选择物理设备<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
@@ -1363,7 +1367,7 @@ queueFamilyIndex_compute = ic;
     于是乎，首先在<span class="type">graphicsBase</span>::<span class="fn">CreateDevice</span>(...)中为所需的队列族填写相应的<a href="https://renderdoc.org/vkspec_chunked/chap5.html#VkDeviceQueueCreateInfo">VkDeviceQueueCreateInfo</a>，并记录所需队列的个数：
 </p>
 <pre class="code">
-<span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkDeviceCreateFlags</span> flags = 0) {
+<span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="type">VkDeviceCreateFlags</span> flags = 0) {
     <span class="kw">float</span> queuePriority = 1.f;
     <span class="type">VkDeviceQueueCreateInfo</span> queueCreateInfos[3] = {
         {
@@ -1423,7 +1427,6 @@ queueFamilyIndex_compute = ic;
 <pre class="code">
 <span class="type">VkDeviceCreateInfo</span> deviceCreateInfo = {
     .sType = <span class="enum">VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO</span>,
-    .pNext = pNext,
     .flags = flags,
     .queueCreateInfoCount = queueCreateInfoCount,
     .pQueueCreateInfos = queueCreateInfos,
@@ -1502,7 +1505,7 @@ queueFamilyIndex_compute = ic;
     成功创建逻辑设备后，已没有必要变更物理设备，于是用<a href="https://renderdoc.org/vkspec_chunked/chap5.html#vkGetPhysicalDeviceProperties">vkGetPhysicalDeviceProperties</a>(...)获取物理设备属性，用<a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkGetPhysicalDeviceMemoryProperties">vkGetPhysicalDeviceMemoryProperties</a>(...)获取物理设备内存属性，整个<span class="type">graphicsBase</span>::<span class="fn">CreateDevice</span>()函数如下：
 </p>
 <pre class="code">
-<span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkDeviceCreateFlags</span> flags = 0) {
+<span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="type">VkDeviceCreateFlags</span> flags = 0) {
     <span class="kw">float</span> queuePriority = 1.f;
     <span class="type">VkDeviceQueueCreateInfo</span> queueCreateInfos[3] = {
         {
@@ -1531,7 +1534,6 @@ queueFamilyIndex_compute = ic;
     <span class="fn">vkGetPhysicalDeviceFeatures</span>(physicalDevice, &amp;physicalDeviceFeatures);
     <span class="type">VkDeviceCreateInfo</span> deviceCreateInfo = {
         .sType = <span class="enum">VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO</span>,
-        .pNext = pNext,
         .flags = flags,
         .queueCreateInfoCount = queueCreateInfoCount,
         .pQueueCreateInfos = queueCreateInfos,
@@ -1593,8 +1595,8 @@ queueFamilyIndex_compute = ic;
 
     <span class="cmt">//本节新增--------------------------------</span>
 <span class="pragma">#ifdef</span> <span class="mcr">_WIN32</span>
-    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushInstanceExtension</span>(<span class="str">&quot;VK_KHR_surface&quot;</span>);
-    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushInstanceExtension</span>(<span class="str">&quot;VK_KHR_win32_surface&quot;</span>);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(<span class="str">&quot;VK_KHR_surface&quot;</span>);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(<span class="str">&quot;VK_KHR_win32_surface&quot;</span>);
 <span class="pragma">#else</span>
     <span class="type">uint32_t</span> extensionCount = 0;
     <span class="kw">const char</span>** extensionNames;
@@ -1605,29 +1607,29 @@ queueFamilyIndex_compute = ic;
         <span class="kw">return false</span>;
     }
     <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; extensionCount; i++)
-        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushInstanceExtension</span>(extensionNames[i]);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(extensionNames[i]);
 <span class="pragma">#endif</span>
     <span class="cmt">//在创建window surface前创建Vulkan实例</span>
-    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">UseLatestApiVersion</span>()
-    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">CreateInstance</span>())
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">UseLatestApiVersion</span>()
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CreateInstance</span>())
         <span class="kw">return false</span>;
 
     <span class="cmt">//创建window surface</span>
     <span class="type">VkSurfaceKHR</span> surface = <span class="mcr">VK_NULL_HANDLE</span>;
-    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">glfwCreateWindowSurface</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Instance</span>(), pWindow, <span class="kw">nullptr</span>, &amp;surface)) {
+    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">glfwCreateWindowSurface</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Instance</span>(), pWindow, <span class="kw">nullptr</span>, &amp;surface)) {
         std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ] ERROR\nFailed to create a window surface!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="fn">glfwTerminate</span>();
         <span class="kw">return false</span>;
     }
-    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Surface</span>(surface);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Surface</span>(surface);
 
     <span class="cmt">//通过用||操作符短路执行来省去几行</span>
     <span class="kw">if</span> (<span class="cmt">//获取物理设备，并使用列表中的第一个物理设备，这里不考虑以下任意函数失败后更换物理设备的情况</span>
-        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">GetPhysicalDevices</span>() ||
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">GetPhysicalDevices</span>() ||
         <span class="cmt">//一个true一个false，暂时不需要计算用的队列</span>
-        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">DeterminePhysicalDevice</span>(0, <span class="kw">true</span>, <span class="kw">false</span>) ||
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">DeterminePhysicalDevice</span>(0, <span class="kw">true</span>, <span class="kw">false</span>) ||
         <span class="cmt">//创建逻辑设备</span>
-        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">CreateDevice</span>())
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CreateDevice</span>())
         <span class="kw">return false</span>;
     <span class="cmt">//----------------------------------------</span>
 

@@ -95,6 +95,11 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -714,7 +719,7 @@
             .level = level,
             .commandBufferCount = <span class="type">uint32_t</span>(buffers.<span class="fn">Count</span>())
         };
-        <span class="type">VkResult</span> result = <span class="fn">vkAllocateCommandBuffers</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), &amp;allocateInfo, buffers.<span class="fn">Pointer</span>());
+        <span class="type">VkResult</span> result = <span class="fn">vkAllocateCommandBuffers</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;allocateInfo, buffers.<span class="fn">Pointer</span>());
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandPool ] ERROR\nFailed to allocate command buffers!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
@@ -725,7 +730,7 @@
             level);
     }
     <span class="kw">void</span> <span class="fn">FreeBuffers</span>(<span class="type">arrayRef</span>&lt;<span class="type">VkCommandBuffer</span>&gt; buffers) <span class="kw">const</span> {
-        <span class="fn">vkFreeCommandBuffers</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle, buffers.<span class="fn">Count</span>(), buffers.<span class="fn">Pointer</span>());
+        <span class="fn">vkFreeCommandBuffers</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, buffers.<span class="fn">Count</span>(), buffers.<span class="fn">Pointer</span>());
         <span class="fn">memset</span>(buffers.<span class="fn">Pointer</span>(), 0, buffers.<span class="fn">Count</span>() * <span class="kw">sizeof</span>(<span class="type">VkCommandBuffer</span>));
     }
     <span class="kw">void</span> <span class="fn">FreeBuffers</span>(<span class="type">arrayRef</span>&lt;<span class="type">commandBuffer</span>&gt; buffers) <span class="kw">const</span> {
@@ -734,7 +739,7 @@
     <span class="cmt">//Non-const Function</span>
     <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkCommandPoolCreateInfo</span>&amp; createInfo) {
         createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO</span>;
-        <span class="type">VkResult</span> result = <span class="fn">vkCreateCommandPool</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="enum">nullptr</span>, &amp;handle);
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateCommandPool</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="enum">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandPool ] ERROR\nFailed to create a command pool!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;

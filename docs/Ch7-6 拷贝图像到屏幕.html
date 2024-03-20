@@ -78,6 +78,10 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
+</ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
@@ -176,12 +180,12 @@
 <p>
     为了省去重复的代码，我打算将两种情形统一到同一个模板函数中，然后根据参数类型应用运行期分支。
     <br>
-    在<span class="path">VkBase+.h</span>中，vulkan命名空间中加入类<span class="type">texture</span>，并定义受保护静态成员函数<span class="fn">LoadFile_Internal</span>：
+    在<span class="path">VkBase+.h</span>中，vulkan命名空间中加入类<span class="type">texture</span>，并定义受保护静态成员函数<span class="sfn">LoadFile_Internal</span>：
 </p>
 <pre class="code">
 <span class="kw">class</span> <span class="type">texture</span> {
 <span class="kw">protected</span>:
-    <span class="kw">static</span> std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; <span class="fn">LoadFile_Internal</span>(
+    <span class="kw">static</span> std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; <span class="sfn">LoadFile_Internal</span>(
         <span class="kw">const auto</span>* address,             <span class="cmt">//字符串指针，或资源的内存地址</span>
         <span class="type">size_t</span> fileSize,                 <span class="cmt">//文件大小，当且仅当传入的是资源的内存地址时有需要</span>
         <span class="type">VkExtent2D</span>&amp; extent,              <span class="cmt">//图像大小，将由stb_image的函数写入</span>
@@ -228,10 +232,10 @@
 <span class="pragma">#endif</span>
 </pre>
 <p>
-    做掉<span class="kw">else</span>分支，则目前为止<span class="fn">LoadFile_Internal</span>(...)为：
+    做掉<span class="kw">else</span>分支，则目前为止<span class="sfn">LoadFile_Internal</span>(...)为：
 </p>
 <pre class="code">
-<span class="kw">static</span> std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; <span class="fn">LoadFile_Internal</span>(<span class="kw">const auto</span>* address, <span class="type">size_t</span> fileSize, <span class="type">VkExtent2D</span>&amp; extent, <span class="type">formatInfo</span> requiredFormatInfo) {
+<span class="kw">static</span> std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; <span class="sfn">LoadFile_Internal</span>(<span class="kw">const auto</span>* address, <span class="type">size_t</span> fileSize, <span class="type">VkExtent2D</span>&amp; extent, <span class="type">formatInfo</span> requiredFormatInfo) {
 <span class="pragma">#ifndef</span> <span class="mcr">NDEBUG</span>
     <span class="kw">if</span> (!(requiredFormatInfo.rawDataType == formatInfo::<span class="type">floatingPoint</span> &amp;&amp; requiredFormatInfo.sizePerComponent == 4) &amp;&amp;
         !(requiredFormatInfo.rawDataType == formatInfo::<span class="type">integer</span> &amp;&amp; requiredFormatInfo.sizePerComponent &amp;&amp; requiredFormatInfo.sizePerComponent &lt;= 2))
@@ -365,10 +369,10 @@
 <p>
     既然len的类型是<span class="kw">int</span>，那么显然，文件数据不能达到2G。
     <br>
-    最后整个<span class="fn">LoadFile_Internal</span>(...)如下：
+    最后整个<span class="sfn">LoadFile_Internal</span>(...)如下：
 </p>
 <pre class="code">
-<span class="kw">static</span> std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; <span class="fn">LoadFile_Internal</span>(<span class="kw">const auto</span>* address, <span class="type">size_t</span> fileSize, <span class="type">VkExtent2D</span>&amp; extent, <span class="type">formatInfo</span> requiredFormatInfo) {
+<span class="kw">static</span> std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; <span class="sfn">LoadFile_Internal</span>(<span class="kw">const auto</span>* address, <span class="type">size_t</span> fileSize, <span class="type">VkExtent2D</span>&amp; extent, <span class="type">formatInfo</span> requiredFormatInfo) {
 <span class="pragma">#ifndef</span> <span class="mcr">NDEBUG</span>
     <span class="kw">if</span> (!(requiredFormatInfo.rawDataType == formatInfo::<span class="type">floatingPoint</span> &amp;&amp; requiredFormatInfo.sizePerComponent == 4) &amp;&amp;
         !(requiredFormatInfo.rawDataType == formatInfo::<span class="type">integer</span> &amp;&amp; <span class="fn">Between_Closed</span>&lt;<span class="type">int32_t</span>&gt;(1, requiredFormatInfo.sizePerComponent, 2)))
@@ -424,17 +428,17 @@
 <pre class="code">
 <span class="kw">class</span> <span class="type">texture</span> {
 <span class="kw">protected</span>:
-    <span class="kw">static</span> std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; <span class="fn">LoadFile_Internal</span>(<span class="kw">const auto</span>* address, <span class="type">size_t</span> fileSize, <span class="type">VkExtent2D</span>&amp; extent, <span class="type">formatInfo</span> requiredFormatInfo) {
+    <span class="kw">static</span> std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; <span class="sfn">LoadFile_Internal</span>(<span class="kw">const auto</span>* address, <span class="type">size_t</span> fileSize, <span class="type">VkExtent2D</span>&amp; extent, <span class="type">formatInfo</span> requiredFormatInfo) {
         <span class="cmt">/*...*/</span>
     }
 <span class="kw">public</span>:
     [[nodiscard]]
-    <span class="kw">static</span> std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; <span class="fn">LoadFile</span>(<span class="kw">const char</span>* filepath, <span class="type">VkExtent2D</span>&amp; extent, <span class="type">formatInfo</span> requiredFormatInfo) {
-        <span class="kw">return</span> <span class="fn">LoadFile_Internal</span>(filepath, 0, extent, requiredFormatInfo);
+    <span class="kw">static</span> std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; <span class="sfn">LoadFile</span>(<span class="kw">const char</span>* filepath, <span class="type">VkExtent2D</span>&amp; extent, <span class="type">formatInfo</span> requiredFormatInfo) {
+        <span class="kw">return</span> <span class="sfn">LoadFile_Internal</span>(filepath, 0, extent, requiredFormatInfo);
     }
     [[nodiscard]]
-    <span class="kw">static</span> std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; <span class="fn">LoadFile</span>(<span class="kw">const</span> <span class="type">uint8_t</span>* fileBinaries, <span class="type">size_t</span> fileSize, <span class="type">VkExtent2D</span>&amp; extent, <span class="type">formatInfo</span> requiredFormatInfo) {
-        <span class="kw">return</span> <span class="fn">LoadFile_Internal</span>(fileBinaries, fileSize, extent, requiredFormatInfo);
+    <span class="kw">static</span> std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; <span class="sfn">LoadFile</span>(<span class="kw">const</span> <span class="type">uint8_t</span>* fileBinaries, <span class="type">size_t</span> fileSize, <span class="type">VkExtent2D</span>&amp; extent, <span class="type">formatInfo</span> requiredFormatInfo) {
+        <span class="kw">return</span> <span class="sfn">LoadFile_Internal</span>(fileBinaries, fileSize, extent, requiredFormatInfo);
     }
 };
 </pre>
@@ -464,7 +468,7 @@ std::<span class="type">pair</span>&lt;<span class="kw">const</span> <span class
 <pre class="code">
 <span class="kw">void</span> <span class="fn">BootScreen</span>(<span class="kw">const char</span>* imagePath, <span class="type">VkFormat</span> imageFormat) {
     <span class="type">VkExtent2D</span> imageExtent;
-    std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; pImageData = <span class="type">texture2d</span>::<span class="fn">LoadFile</span>(imagePath, imageExtent, <span class="fn">FormatInfo</span>(imageFormat));
+    std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; pImageData = <span class="type">texture2d</span>::<span class="sfn">LoadFile</span>(imagePath, imageExtent, <span class="fn">FormatInfo</span>(imageFormat));
     <span class="kw">if</span> (!pImageData)
         <span class="kw">return</span>;<span class="cmt">//这里我就偷个懒，不写错误信息了</span>
     <span class="cmt">/*待填充*/</span>
@@ -497,7 +501,7 @@ std::<span class="type">pair</span>&lt;<span class="kw">const</span> <span class
 <span class="kw">void</span> <span class="fn">BootScreen</span>(<span class="kw">const char</span>* imagePath, <span class="type">VkFormat</span> imageFormat) {
     <span class="cmt">//用先前写的函数从硬盘读图</span>
     <span class="type">VkExtent2D</span> imageExtent;
-    std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; pImageData = <span class="type">texture2d</span>::<span class="fn">LoadFile</span>(imagePath, imageExtent, <span class="fn">FormatInfo</span>(imageFormat));
+    std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; pImageData = <span class="type">texture2d</span>::<span class="sfn">LoadFile</span>(imagePath, imageExtent, <span class="fn">FormatInfo</span>(imageFormat));
     <span class="kw">if</span> (!pImageData)
         <span class="kw">return</span>;<span class="cmt">//这里我就偷个懒，不写错误信息了</span>
     <span class="cmt">/*待填充*/</span>
@@ -507,10 +511,10 @@ std::<span class="type">pair</span>&lt;<span class="kw">const</span> <span class
     <span class="type">fence</span> fence;
     <span class="cmt">//分配命令缓冲区</span>
     <span class="type">commandBuffer</span> commandBuffer;
-    <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">CommandPool_Graphics</span>().<span class="fn">AllocateBuffers</span>(commandBuffer);
+    <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>().<span class="fn">CommandPool_Graphics</span>().<span class="fn">AllocateBuffers</span>(commandBuffer);
 
     <span class="cmt">//获取交换链图像</span>
-    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
 
     <span class="cmt">//录制命令缓冲区</span>
     commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
@@ -526,14 +530,14 @@ std::<span class="type">pair</span>&lt;<span class="kw">const</span> <span class
         .commandBufferCount = 1,
         .pCommandBuffers = commandBuffer.<span class="fn">Address</span>()
     };
-    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(submitInfo, fence);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(submitInfo, fence);
     <span class="cmt">//等待命令执行完毕</span>
     fence.<span class="fn">WaitAndReset</span>();
     <span class="cmt">//呈现图像</span>
-    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PresentImage</span>();
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PresentImage</span>();
 
     <span class="cmt">//别忘了释放命令缓冲区</span>
-    <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">CommandPool_Graphics</span>().<span class="fn">FreeBuffers</span>(commandBuffer);
+    <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>().<span class="fn">CommandPool_Graphics</span>().<span class="fn">FreeBuffers</span>(commandBuffer);
 }
 </pre>
 <ul>
@@ -554,17 +558,17 @@ std::<span class="type">pair</span>&lt;<span class="kw">const</span> <span class
 <pre class="code">
 <span class="kw">void</span> <span class="fn">BootScreen</span>(<span class="kw">const char</span>* imagePath, <span class="type">VkFormat</span> imageFormat) {
     <span class="type">VkExtent2D</span> imageExtent;
-    std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; pImageData = <span class="type">texture2d</span>::<span class="fn">LoadFile</span>(imagePath, imageExtent, <span class="fn">FormatInfo</span>(imageFormat));
+    std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; pImageData = <span class="type">texture2d</span>::<span class="sfn">LoadFile</span>(imagePath, imageExtent, <span class="fn">FormatInfo</span>(imageFormat));
     <span class="kw">if</span> (!pImageData)
         <span class="kw">return</span>;
-    <span class="cmt">/*新增*/</span><span class="type">stagingBuffer</span>::<span class="fn">BufferData_MainThread</span>(pImageData.<span class="fn">get</span>(), <span class="fn">FormatInfo</span>(imageFormat).sizePerPixel * imageExtent.width * imageExtent.height);
+    <span class="cmt">/*新增*/</span><span class="type">stagingBuffer</span>::<span class="sfn">BufferData_MainThread</span>(pImageData.<span class="fn">get</span>(), <span class="fn">FormatInfo</span>(imageFormat).sizePerPixel * imageExtent.width * imageExtent.height);
 
     <span class="type">semaphore</span> semaphore_imageIsAvailable;
     <span class="type">fence</span> fence;
     <span class="type">commandBuffer</span> commandBuffer;
-    <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">CommandPool_Graphics</span>().<span class="fn">AllocateBuffers</span>(commandBuffer);
+    <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>().<span class="fn">CommandPool_Graphics</span>().<span class="fn">AllocateBuffers</span>(commandBuffer);
 
-    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
 
     commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
     <span class="cmt">/*待填充*/</span>
@@ -578,11 +582,11 @@ std::<span class="type">pair</span>&lt;<span class="kw">const</span> <span class
         .commandBufferCount = 1,
         .pCommandBuffers = commandBuffer.<span class="fn">Address</span>()
     };
-    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(submitInfo, fence);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(submitInfo, fence);
     fence.<span class="fn">WaitAndReset</span>();
-    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PresentImage</span>();
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PresentImage</span>();
 
-    <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">CommandPool_Graphics</span>().<span class="fn">FreeBuffers</span>(commandBuffer);
+    <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>().<span class="fn">CommandPool_Graphics</span>().<span class="fn">FreeBuffers</span>(commandBuffer);
 }
 </pre>
 <p>
@@ -591,11 +595,11 @@ std::<span class="type">pair</span>&lt;<span class="kw">const</span> <span class
 <pre class="code">
 commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
 
-<span class="type">VkExtent2D</span> swapchainImageSize = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageExtent;
+<span class="type">VkExtent2D</span> swapchainImageSize = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageExtent;
 <span class="kw">bool</span> blit =
     imageExtent.width != swapchainImageSize.width ||                       <span class="cmt">//宽</span>
     imageExtent.height != swapchainImageSize.height ||                     <span class="cmt">//高</span>
-    imageFormat != <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat; <span class="cmt">//图像格式</span>
+    imageFormat != <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat; <span class="cmt">//图像格式</span>
 
     <span class="cmt">/*这里还缺点东西，待填充*/</span>
     <span class="kw">if</span> (blit) {
@@ -619,18 +623,18 @@ commandBuffer.<span class="fn">End</span>();
     <span class="kw">struct</span> <span class="type">imageMemoryBarrierParameterPack</span> {
         <span class="cmt">/*待填充*/</span>
     };
-    <span class="kw">static void</span> <span class="fn">CmdCopyBufferToImage</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkBuffer</span> buffer, <span class="type">VkImage</span> image, <span class="kw">const</span> <span class="type">VkBufferImageCopy</span>&amp; region,
+    <span class="kw">static void</span> <span class="sfn">CmdCopyBufferToImage</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkBuffer</span> buffer, <span class="type">VkImage</span> image, <span class="kw">const</span> <span class="type">VkBufferImageCopy</span>&amp; region,
         <span class="type">imageMemoryBarrierParameterPack</span> imb_from, <span class="type">imageMemoryBarrierParameterPack</span> imb_to) {
         <span class="cmt">/*待填充*/</span>
     }
-    <span class="kw">static void</span> <span class="fn">CmdBlitImage</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkImage</span> image_src, <span class="type">VkImage</span> image_dst, <span class="kw">const</span> <span class="type">VkImageBlit</span>&amp; region,
+    <span class="kw">static void</span> <span class="sfn">CmdBlitImage</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkImage</span> image_src, <span class="type">VkImage</span> image_dst, <span class="kw">const</span> <span class="type">VkImageBlit</span>&amp; region,
         <span class="type">imageMemoryBarrierParameterPack</span> imb_dst_from, <span class="type">imageMemoryBarrierParameterPack</span> imb_dst_to, <span class="type">VkFilter</span> filter = <span class="mcr">VK_FILTER_LINEAR</span>) {
         <span class="cmt">/*待填充*/</span>
     }
 };
 </pre>
 <p>
-    顾名思义，<span class="type">imageOperation</span>是图像操作相关的类，除了本节中用于从缓冲区将数据拷贝到图像的<span class="fn">CmdCopyBufferToImage</span>(...)，以及将数据从图像blit到另一图像的<span class="fn">CmdBlitImage</span>(...)外，之后还会有生成mipmap的函数，这些函数都将会非常实用。
+    顾名思义，<span class="type">imageOperation</span>是图像操作相关的类，除了本节中用于从缓冲区将数据拷贝到图像的<span class="sfn">CmdCopyBufferToImage</span>(...)，以及将数据从图像blit到另一图像的<span class="sfn">CmdBlitImage</span>(...)外，之后还会有生成mipmap的函数，这些函数都将会非常实用。
     <br>
     其中<span class="type">imageMemoryBarrierParameterPack</span>是用于指定<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#pipeline-barrier">管线屏障及图像内存屏障</a>的参数集合，其定义如下：
 </p>
@@ -655,16 +659,16 @@ commandBuffer.<span class="fn">End</span>();
     </li>
 </ul>
 <p>
-    因为在Vulkan 1.3中stage为0（<span class="enum">VK_PIPELINE_STAGE_NONE</span>）是有效值，<span class="mcr">VK_IMAGE_LAYOUT_UNDEFINED</span>的值是0，那么即便stage、access、layout三者皆为0，也未必构成无效参数。
+    在Vulkan 1.3中stage为0（<span class="enum">VK_PIPELINE_STAGE_NONE</span>）是有效值，<span class="mcr">VK_IMAGE_LAYOUT_UNDEFINED</span>的值是0，那么即便stage、access、layout三者皆为0，也未必构成无效参数。
     <br>
-    因此不以三者是否全部为0来判断，而是用一个额外的成员isNeeded来标定是否需要管线屏障。如果不需要，则对传入<span class="fn">CmdCopyBufferToImage</span>(...)和<span class="fn">CmdBlitImage</span>(...)的相应参数使用<code>{}</code>默认初始化即可。
+    因此不以三者是否全部为0来判断，而是用一个额外的成员isNeeded来标定是否需要管线屏障。如果不需要，则对传入<span class="sfn">CmdCopyBufferToImage</span>(...)和<span class="sfn">CmdBlitImage</span>(...)的相应参数使用<code>{}</code>默认初始化即可。
 </p><section id="cmdcopybuffertoimage">
 <h3>CmdCopyBufferToImage<a class="headerlink" href="#cmdcopybuffertoimage" title="Permalink to this heading"></a></h3>
 <p>
-    来简单看一下我为<span class="fn">CmdCopyBufferToImage</span>规定的各个参数：
+    来简单看一下我为<span class="sfn">CmdCopyBufferToImage</span>规定的各个参数：
 </p>
 <pre class="code">
-<span class="kw">static void</span> <span class="fn">CmdCopyBufferToImage</span>(
+<span class="kw">static void</span> <span class="sfn">CmdCopyBufferToImage</span>(
     <span class="type">VkCommandBuffer</span> commandBuffer,   <span class="cmt">//命令缓冲区的handle</span>
     <span class="type">VkBuffer</span> buffer,                 <span class="cmt">//作为数据来源的缓冲区</span>
     <span class="type">VkImage</span> image,                   <span class="cmt">//接收数据的目标图像</span>
@@ -675,10 +679,10 @@ commandBuffer.<span class="fn">End</span>();
 }
 </pre>
 <p>
-    从一个<span class="type">VkBuffer</span>拷贝数据到一个<span class="type">VkImage</span>，通常需要考虑该操作前后是否需要管线屏障，因此我们初步将<span class="fn">CmdCopyBufferToImage</span>变为：
+    从一个<span class="type">VkBuffer</span>拷贝数据到一个<span class="type">VkImage</span>，通常需要考虑该操作前后是否需要管线屏障，因此我们初步将<span class="sfn">CmdCopyBufferToImage</span>变为：
 </p>
 <pre class="code">
-<span class="kw">static void</span> <span class="fn">CmdCopyBufferToImage</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkBuffer</span> buffer, <span class="type">VkImage</span> image, <span class="kw">const</span> <span class="type">VkBufferImageCopy</span>&amp; region,
+<span class="kw">static void</span> <span class="sfn">CmdCopyBufferToImage</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkBuffer</span> buffer, <span class="type">VkImage</span> image, <span class="kw">const</span> <span class="type">VkBufferImageCopy</span>&amp; region,
     <span class="type">imageMemoryBarrierParameterPack</span> imb_from, <span class="type">imageMemoryBarrierParameterPack</span> imb_to) {
     <span class="cmt">//若拷贝前需要管线屏障</span>
     <span class="kw">if</span> (imb_from.isNeeded)
@@ -899,10 +903,10 @@ commandBuffer.<span class="fn">End</span>();
     </li>
 </ul>
 <p>
-    于是补全<span class="fn">CmdCopyBufferToImage</span>(...)如下：
+    于是补全<span class="sfn">CmdCopyBufferToImage</span>(...)如下：
 </p>
 <pre class="code">
-<span class="kw">static void</span> <span class="fn">CmdCopyBufferToImage</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkBuffer</span> buffer, <span class="type">VkImage</span> image, <span class="kw">const</span> <span class="type">VkBufferImageCopy</span>&amp; region,
+<span class="kw">static void</span> <span class="sfn">CmdCopyBufferToImage</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkBuffer</span> buffer, <span class="type">VkImage</span> image, <span class="kw">const</span> <span class="type">VkBufferImageCopy</span>&amp; region,
     <span class="type">imageMemoryBarrierParameterPack</span> imb_from, <span class="type">imageMemoryBarrierParameterPack</span> imb_to) {
     <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
         <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
@@ -938,10 +942,10 @@ commandBuffer.<span class="fn">End</span>();
 <section id="cmdblitimage">
 <h3>CmdBlitImage<a class="headerlink" href="#cmdblitimage" title="Permalink to this heading"></a></h3>
 <p>
-    来简单看一下我为<span class="fn">CmdBlitImage</span>规定的各个参数：
+    来简单看一下我为<span class="sfn">CmdBlitImage</span>规定的各个参数：
 </p>
 <pre class="code">
-<span class="kw">static void</span> <span class="fn">CmdBlitImage</span>(
+<span class="kw">static void</span> <span class="sfn">CmdBlitImage</span>(
     <span class="type">VkCommandBuffer</span> commandBuffer, <span class="cmt">//命令缓冲区的handle</span>
     <span class="type">VkImage</span> image_src,             <span class="cmt">//作为数据来源的图像</span>
     <span class="type">VkImage</span> image_dst,             <span class="cmt">//接收数据的目标图像</span>
@@ -954,20 +958,20 @@ commandBuffer.<span class="fn">End</span>();
 <ul>
     <li>
         <p>
-            imb_dst_from和imb_dst_to与<span class="fn">CmdCopyBufferToImage</span>(...)的imb_from和imb_to作用一致。Blit涉及两张图像，本函数只处理目标图像的同步，这里为避免歧义而添加了后缀。
+            imb_dst_from和imb_dst_to与<span class="sfn">CmdCopyBufferToImage</span>(...)的imb_from和imb_to作用一致。Blit涉及两张图像，本函数只处理目标图像的同步，这里为避免歧义而添加了后缀。
         </p>
     </li>
 </ul>
 <p>
-    本函数不将源图像用作内存屏障的同步对象，一是出于将其用法设计得与<span class="fn">CmdCopyBufferToImage</span>(...)类似的想法。
+    本函数不将源图像用作内存屏障的同步对象，一是出于将其用法设计得与<span class="sfn">CmdCopyBufferToImage</span>(...)类似的想法。
     <br>
     二是，在遇到要调用本函数的情况时，源图像的内存布局转换等，很可能由本函数前后的其他过程完成。比如，流水线中要将一张离屏渲染好的图像作为源图像，blit到交换链图像（像是，出于性能原因，只有UI以屏幕分辨率渲染，游戏主画面以较低分辨率渲染的情况），那么可以直接用渲染通道结束时的子通道依赖进行内存布局转换。
 </p>
 <p>
-    接着，类似我们之前所做的，先将<span class="fn">CmdBlitImage</span>(...)分成三个部分，并写好除了变量名外与<span class="fn">CmdCopyBufferToImage</span>(...)中完全一致的管线屏障：
+    接着，类似我们之前所做的，先将<span class="sfn">CmdBlitImage</span>(...)分成三个部分，并写好除了变量名外与<span class="sfn">CmdCopyBufferToImage</span>(...)中完全一致的管线屏障：
 </p>
 <pre class="code">
-<span class="kw">static void</span> <span class="fn">CmdBlitImage</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkImage</span> image_src, <span class="type">VkImage</span> image_dst, <span class="kw">const</span> <span class="type">VkImageBlit</span>&amp; region,
+<span class="kw">static void</span> <span class="sfn">CmdBlitImage</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkImage</span> image_src, <span class="type">VkImage</span> image_dst, <span class="kw">const</span> <span class="type">VkImageBlit</span>&amp; region,
     <span class="type">imageMemoryBarrierParameterPack</span> imb_dst_from, <span class="type">imageMemoryBarrierParameterPack</span> imb_dst_to, <span class="type">VkFilter</span> filter = <span class="mcr">VK_FILTER_LINEAR</span>) {
     <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
         <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
@@ -1104,10 +1108,10 @@ commandBuffer.<span class="fn">End</span>();
 };
 </pre>
 <p>
-    源图像的内存布局当然该是<span class="enum">VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL</span>，于是补全<span class="fn">CmdBlitImage</span>(...)如下：
+    源图像的内存布局当然该是<span class="enum">VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL</span>，于是补全<span class="sfn">CmdBlitImage</span>(...)如下：
 </p>
 <pre class="code">
-<span class="kw">static void</span> <span class="fn">CmdBlitImage</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkImage</span> image_src, <span class="type">VkImage</span> image_dst, <span class="kw">const</span> <span class="type">VkImageBlit</span>&amp; region,
+<span class="kw">static void</span> <span class="sfn">CmdBlitImage</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkImage</span> image_src, <span class="type">VkImage</span> image_dst, <span class="kw">const</span> <span class="type">VkImageBlit</span>&amp; region,
     <span class="type">imageMemoryBarrierParameterPack</span> imb_dst_from, <span class="type">imageMemoryBarrierParameterPack</span> imb_dst_to, <span class="type">VkFilter</span> filter = <span class="mcr">VK_FILTER_LINEAR</span>) {
     <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
         <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
@@ -1149,7 +1153,7 @@ commandBuffer.<span class="fn">End</span>();
 <p>
     先来处理较为简单的分支。
     <br>
-    于是乎，调用我们所写的<span class="fn">CmdCopyBufferToImage</span>(...)：
+    于是乎，调用我们所写的<span class="sfn">CmdCopyBufferToImage</span>(...)：
 </p>
 <pre class="code">
 <span class="kw">if</span> (blit) {
@@ -1159,16 +1163,16 @@ commandBuffer.<span class="fn">End</span>();
     <span class="type">VkBufferImageCopy</span> region_copy = {
         <span class="cmt">/*待填充*/</span>
     };
-    <span class="type">imageOperation</span>::<span class="fn">CmdCopyBufferToImage</span>(commandBuffer,
-        <span class="type">stagingBuffer</span>::<span class="fn">Buffer_MainThread</span>(),
-        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImage</span>(<span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>()),
+    <span class="type">imageOperation</span>::<span class="sfn">CmdCopyBufferToImage</span>(commandBuffer,
+        <span class="type">stagingBuffer</span>::<span class="sfn">Buffer_MainThread</span>(),
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImage</span>(<span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>()),
         region_copy,
         { <span class="cmt">/*待填充*/</span> },
         { <span class="cmt">/*待填充*/</span> });
 }
 </pre>
 <p>
-    先前调用了<span class="type">stagingBuffer</span>::<span class="fn">BufferData_MainThread</span>(...)将来源图像的数据紧密地存入了暂存缓冲区起始的位置。因而<span class="var">region_copy</span>.bufferOffset、<span class="var">region_copy</span>.bufferRowLength、<span class="var">region_copy</span>.bufferImageHeight皆为0。
+    先前调用了<span class="type">stagingBuffer</span>::<span class="sfn">BufferData_MainThread</span>(...)将来源图像的数据紧密地存入了暂存缓冲区起始的位置。因而<span class="var">region_copy</span>.bufferOffset、<span class="var">region_copy</span>.bufferRowLength、<span class="var">region_copy</span>.bufferImageHeight皆为0。
     <br>
     图像数据被拷入交换链图像的起始位置，因而<span class="var">region_copy</span>.imageOffset皆0。
     <br>
@@ -1194,9 +1198,9 @@ commandBuffer.<span class="fn">End</span>();
         .imageSubresource = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 0, 1 },
         .imageExtent = { imageExtent.width, imageExtent.height, 1 }
     };
-    <span class="type">imageOperation</span>::<span class="fn">CmdCopyBufferToImage</span>(commandBuffer,
-        <span class="type">stagingBuffer</span>::<span class="fn">Buffer_MainThread</span>(),
-        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImage</span>(<span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>()),
+    <span class="type">imageOperation</span>::<span class="sfn">CmdCopyBufferToImage</span>(commandBuffer,
+        <span class="type">stagingBuffer</span>::<span class="sfn">Buffer_MainThread</span>(),
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImage</span>(<span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>()),
         region_copy,
         { <span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>, 0, <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span> },
         { <span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span>, 0, <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR </span> });
@@ -1217,7 +1221,7 @@ commandBuffer.<span class="fn">End</span>();
 <pre class="code">
 <span class="cmt">/*待填充*/</span>
 <span class="kw">if</span> (blit) {
-    <span class="type">VkImage</span> image = <span class="type">stagingBuffer</span>::<span class="fn">AliasedImage2d_MainThread</span>(imageFormat, imageExtent);
+    <span class="type">VkImage</span> image = <span class="type">stagingBuffer</span>::<span class="sfn">AliasedImage2d_MainThread</span>(imageFormat, imageExtent);
     <span class="cmt">/*待填充*/</span>
 }
 <span class="kw">else</span> {
@@ -1234,7 +1238,7 @@ commandBuffer.<span class="fn">End</span>();
 <pre class="code">
 <span class="cmt">/*待填充*/</span>
 <span class="kw">if</span> (blit) {
-    <span class="type">VkImage</span> image = <span class="type">stagingBuffer</span>::<span class="fn">AliasedImage2d_MainThread</span>(imageFormat, imageExtent);
+    <span class="type">VkImage</span> image = <span class="type">stagingBuffer</span>::<span class="sfn">AliasedImage2d_MainThread</span>(imageFormat, imageExtent);
     <span class="kw">if</span> (image) {
         <span class="cmt">/*待填充*/</span>
     }
@@ -1259,7 +1263,7 @@ commandBuffer.<span class="fn">End</span>();
 <pre class="code">
 <span class="cmt">/*待填充*/</span>
 <span class="kw">if</span> (blit) {
-    <span class="type">VkImage</span> image = <span class="type">stagingBuffer</span>::<span class="fn">AliasedImage2d_MainThread</span>(imageFormat, imageExtent);
+    <span class="type">VkImage</span> image = <span class="type">stagingBuffer</span>::<span class="sfn">AliasedImage2d_MainThread</span>(imageFormat, imageExtent);
     <span class="kw">if</span> (image) {
         <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
             <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
@@ -1291,7 +1295,7 @@ commandBuffer.<span class="fn">End</span>();
 <pre class="code">
 <span class="type">imageMemory</span> imageMemory;
 <span class="kw">if</span> (blit) {
-    <span class="type">VkImage</span> image = <span class="type">stagingBuffer</span>::<span class="fn">AliasedImage2d_MainThread</span>(imageFormat, imageExtent);
+    <span class="type">VkImage</span> image = <span class="type">stagingBuffer</span>::<span class="sfn">AliasedImage2d_MainThread</span>(imageFormat, imageExtent);
     <span class="kw">if</span> (image) {
         <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
             <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
@@ -1335,12 +1339,12 @@ commandBuffer.<span class="fn">End</span>();
     </li>
 </ul>
 <p>
-    接着调用<span class="fn">CmdCopyBufferToImage</span>(...)将数据从暂存缓冲区拷贝进去，图像内存屏障需要确保在被之后的blit命令读取前完成内存布局转换，参数也就不言而喻了：
+    接着调用<span class="sfn">CmdCopyBufferToImage</span>(...)将数据从暂存缓冲区拷贝进去，图像内存屏障需要确保在被之后的blit命令读取前完成内存布局转换，参数也就不言而喻了：
 </p>
 <pre class="code">
 <span class="type">imageMemory</span> imageMemory;
 <span class="kw">if</span> (blit) {
-    <span class="type">VkImage</span> image = <span class="type">stagingBuffer</span>::<span class="fn">AliasedImage2d_MainThread</span>(imageFormat, imageExtent);
+    <span class="type">VkImage</span> image = <span class="type">stagingBuffer</span>::<span class="sfn">AliasedImage2d_MainThread</span>(imageFormat, imageExtent);
     <span class="kw">if</span> (image) {
         <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
             <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
@@ -1372,8 +1376,8 @@ commandBuffer.<span class="fn">End</span>();
             .imageSubresource = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 0, 1 },
             .imageExtent = imageCreateInfo.extent
         };
-        <span class="type">imageOperation</span>::<span class="fn">CmdCopyBufferToImage</span>(commandBuffer,
-            <span class="type">stagingBuffer</span>::<span class="fn">Buffer_MainThread</span>(),
+        <span class="type">imageOperation</span>::<span class="sfn">CmdCopyBufferToImage</span>(commandBuffer,
+            <span class="type">stagingBuffer</span>::<span class="sfn">Buffer_MainThread</span>(),
             imageMemory.<span class="fn">Image</span>(),
             region_copy,
             { <span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>, 0, <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span> },
@@ -1392,11 +1396,11 @@ commandBuffer.<span class="fn">End</span>();
 <h2>从暂存图像blit到交换链图像<a class="headerlink" href="#blit" title="Permalink to this heading"></a></h2>
 <p>
     现在，<span class="var">image</span>一定记录了一个有效的handle。
-    调用我们所写的<span class="fn">CmdBlitImage</span>(...)将图像数据从<span class="var">image</span>中blit到交换链图像：
+    调用我们所写的<span class="sfn">CmdBlitImage</span>(...)将图像数据从<span class="var">image</span>中blit到交换链图像：
 </p>
 <pre class="code">
 <span class="kw">if</span> (blit) {
-    <span class="type">VkImage</span> image = <span class="type">stagingBuffer</span>::<span class="fn">AliasedImage2d_MainThread</span>(imageFormat, imageExtent);
+    <span class="type">VkImage</span> image = <span class="type">stagingBuffer</span>::<span class="sfn">AliasedImage2d_MainThread</span>(imageFormat, imageExtent);
     <span class="kw">if</span> (image) {
         <span class="cmt">/*...*/</span>
     }
@@ -1409,9 +1413,9 @@ commandBuffer.<span class="fn">End</span>();
         { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 0, 1 },
         { {}, { <span class="type">int32_t</span>(swapchainImageSize.width), <span class="type">int32_t</span>(swapchainImageSize.height), 1 } }
     };
-    <span class="type">imageOperation</span>::<span class="fn">CmdBlitImage</span>(commandBuffer,
+    <span class="type">imageOperation</span>::<span class="sfn">CmdBlitImage</span>(commandBuffer,
         image,
-        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImage</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">CurrentImageIndex</span>()),
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImage</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CurrentImageIndex</span>()),
         region_blit,
         { <span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>, 0, <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span> },
         { <span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span>, 0, <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span> }, <span class="enum">VK_FILTER_LINEAR</span>);
@@ -1428,26 +1432,26 @@ commandBuffer.<span class="fn">End</span>();
 <pre class="code">
 <span class="kw">void</span> <span class="fn">BootScreen</span>(<span class="kw">const char</span>* imagePath, <span class="type">VkFormat</span> imageFormat) {
     <span class="type">VkExtent2D</span> imageExtent;
-    std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; pImageData = <span class="type">texture2d</span>::<span class="fn">LoadFile</span>(imagePath, imageExtent, <span class="fn">FormatInfo</span>(imageFormat));
+    std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; pImageData = <span class="type">texture2d</span>::<span class="sfn">LoadFile</span>(imagePath, imageExtent, <span class="fn">FormatInfo</span>(imageFormat));
     <span class="kw">if</span> (!pImageData)
         <span class="kw">return</span>;
-    <span class="type">stagingBuffer</span>::<span class="fn">BufferData_MainThread</span>(pImageData.<span class="fn">get</span>(), <span class="fn">FormatInfo</span>(imageFormat).sizePerPixel * imageExtent.width * imageExtent.height);
+    <span class="type">stagingBuffer</span>::<span class="sfn">BufferData_MainThread</span>(pImageData.<span class="fn">get</span>(), <span class="fn">FormatInfo</span>(imageFormat).sizePerPixel * imageExtent.width * imageExtent.height);
 
     <span class="type">semaphore</span> semaphore_imageIsAvailable;
     <span class="type">fence</span> fence;
     <span class="type">commandBuffer</span> commandBuffer;
-    <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">CommandPool_Graphics</span>().<span class="fn">AllocateBuffers</span>(commandBuffer);
+    <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>().<span class="fn">CommandPool_Graphics</span>().<span class="fn">AllocateBuffers</span>(commandBuffer);
 
-    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
     commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
-    <span class="type">VkExtent2D</span> swapchainImageSize = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageExtent;
+    <span class="type">VkExtent2D</span> swapchainImageSize = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageExtent;
     <span class="kw">bool</span> blit =
         imageExtent.width != swapchainImageSize.width ||
         imageExtent.height != swapchainImageSize.height ||
-        imageFormat != <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat;
+        imageFormat != <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat;
     <span class="type">imageMemory</span> imageMemory;
     <span class="kw">if</span> (blit) {
-        <span class="type">VkImage</span> image = <span class="type">stagingBuffer</span>::<span class="fn">AliasedImage2d_MainThread</span>(imageFormat, imageExtent);
+        <span class="type">VkImage</span> image = <span class="type">stagingBuffer</span>::<span class="sfn">AliasedImage2d_MainThread</span>(imageFormat, imageExtent);
         <span class="kw">if</span> (image) {
             <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
                 <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
@@ -1479,8 +1483,8 @@ commandBuffer.<span class="fn">End</span>();
                 .imageSubresource = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 0, 1 },
                 .imageExtent = imageCreateInfo.extent
             };
-            <span class="type">imageOperation</span>::<span class="fn">CmdCopyBufferToImage</span>(commandBuffer,
-                <span class="type">stagingBuffer</span>::<span class="fn">Buffer_MainThread</span>(),
+            <span class="type">imageOperation</span>::<span class="sfn">CmdCopyBufferToImage</span>(commandBuffer,
+                <span class="type">stagingBuffer</span>::<span class="sfn">Buffer_MainThread</span>(),
                 imageMemory.<span class="fn">Image</span>(),
                 region_copy,
                 { <span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>, 0, <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span> },
@@ -1494,9 +1498,9 @@ commandBuffer.<span class="fn">End</span>();
             { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 0, 1 },
             { {}, { <span class="type">int32_t</span>(swapchainImageSize.width), <span class="type">int32_t</span>(swapchainImageSize.height), 1 } }
         };
-        <span class="type">imageOperation</span>::<span class="fn">CmdBlitImage</span>(commandBuffer,
+        <span class="type">imageOperation</span>::<span class="sfn">CmdBlitImage</span>(commandBuffer,
             image,
-            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImage</span>(<span     class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">CurrentImageIndex</span>()),
+            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImage</span>(<span     class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CurrentImageIndex</span>()),
             region_blit,
             { <span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>, 0, <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span> },
             { <span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span>, 0, <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span> }, <span class="enum">VK_FILTER_LINEAR</span>);
@@ -1506,9 +1510,9 @@ commandBuffer.<span class="fn">End</span>();
             .imageSubresource = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 0, 1 },
             .imageExtent = { imageExtent.width, imageExtent.height, 1 }
         };
-        <span class="type">imageOperation</span>::<span class="fn">CmdCopyBufferToImage</span>(commandBuffer,
-            <span class="type">stagingBuffer</span>::<span class="fn">Buffer_MainThread</span>(),
-            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImage</span>(<span     class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>()),
+        <span class="type">imageOperation</span>::<span class="sfn">CmdCopyBufferToImage</span>(commandBuffer,
+            <span class="type">stagingBuffer</span>::<span class="sfn">Buffer_MainThread</span>(),
+            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImage</span>(<span     class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>()),
             region_copy,
             { <span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>, 0, <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span> },
             { <span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span>, 0, <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR </span> });
@@ -1523,11 +1527,11 @@ commandBuffer.<span class="fn">End</span>();
         .commandBufferCount = 1,
         .pCommandBuffers = commandBuffer.<span class="fn">Address</span>()
     };
-    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(submitInfo, fence);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(submitInfo, fence);
     fence.<span class="fn">WaitAndReset</span>();
-    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PresentImage</span>();
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PresentImage</span>();
 
-    <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">CommandPool_Graphics</span>().<span class="fn">FreeBuffers</span>(commandBuffer);
+    <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>().<span class="fn">CommandPool_Graphics</span>().<span class="fn">FreeBuffers</span>(commandBuffer);
 }
 </pre>
 <p>
@@ -1538,7 +1542,7 @@ commandBuffer.<span class="fn">End</span>();
     <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }))
         <span class="kw">return</span> -1;
     easyVulkan::<span class="fn">BootScreen</span>(<span class="cmt">/*你指定的图片路径*/</span>, <span class="enum">VK_FORMAT_R8G8B8A8_UNORM</span>);
-    std::this_thread::<span class="fn">sleep_for</span>(std::chrono::<span class="type">seconds</span>(1));<span class="cmt">//需要#include &lt;thread&gt;</span>
+    std::this_thread::<span class="sfn">sleep_for</span>(std::chrono::<span class="type">seconds</span>(1));<span class="cmt">//需要#include &lt;thread&gt;</span>
     <span class="cmt">/*...*/</span>
 }
 </pre>

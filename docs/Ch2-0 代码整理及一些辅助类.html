@@ -92,6 +92,10 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
+</ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
@@ -161,8 +165,8 @@
         <span class="kw">throw</span> result;
     }
     <span class="kw">operator</span> <span class="type">VkResult</span>() {
-        <span class="type">VkResult</span> result = <span class="kw">this</span>->result;
-        <span class="kw">this</span>->result = <span class="enum">VK_SUCCESS</span>;
+        <span class="type">VkResult</span> result = <span class="kw">this</span>-&gt;result;
+        <span class="kw">this</span>-&gt;result = <span class="enum">VK_SUCCESS</span>;
         <span class="kw">return</span> result;
     }
 };
@@ -245,7 +249,7 @@
 <span class="kw">public</span>:
     <span class="cmt">//省略其他函数</span>
     <span class="kw">void</span> <span class="fn">FreeBuffers</span>(<span class="type">uint32_t</span> commandBufferCount, <span class="kw">const</span> <span class="type">VkCommandBuffer</span>* pCommandBuffers) <span class="kw">const</span> {
-        <span class="fn">vkFreeCommandBuffers</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle, commandBufferCount, pCommandBuffers);
+        <span class="fn">vkFreeCommandBuffers</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, commandBufferCount, pCommandBuffers);
         <span class="fn">memset</span>(pCommandBuffers, 0, commandBufferCount * <span class="kw">sizeof</span>(<span class="type">VkCommandPool</span>));
     }
 };
@@ -314,17 +318,16 @@
     于是之前的vulkan::<span class="type">graphicsBase</span>::<span class="fn">CreateInstance</span>(...)变成这样：
 </p>
 <pre class="code">
-<span class="type">result_t</span> <span class="fn">CreateInstance</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkInstanceCreateFlags</span> flags = 0) {
+<span class="type">result_t</span> <span class="fn">CreateInstance</span>(<span class="type">VkInstanceCreateFlags</span> flags = 0) {
     <span class="kw">if constexpr</span> (<span class="mcr">ENABLE_DEBUG_MESSENGER</span>)
-        <span class="fn">PushInstanceLayer</span>(<span class="str">&quot;VK_LAYER_KHRONOS_validation&quot;</span>),
-        <span class="fn">PushInstanceExtension</span>(<span class="mcr">VK_EXT_DEBUG_UTILS_EXTENSION_NAME</span>);
+        <span class="fn">AddInstanceLayer</span>(<span class="str">&quot;VK_LAYER_KHRONOS_validation&quot;</span>),
+        <span class="fn">AddInstanceExtension</span>(<span class="mcr">VK_EXT_DEBUG_UTILS_EXTENSION_NAME</span>);
     <span class="type">VkApplicationInfo</span> applicatianInfo = {
         .sType = <span class="enum">VK_STRUCTURE_TYPE_APPLICATION_INFO</span>,
         .apiVersion = apiVersion
     };
     <span class="type">VkInstanceCreateInfo</span> instanceCreateInfo = {
         .sType = <span class="enum">VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO</span>,
-        .pNext = pNext,
         .flags = flags,
         .pApplicationInfo = &amp;applicatianInfo,
         .enabledLayerCount = <span class="type">uint32_t</span>(instanceLayers.<span class="fn">size</span>()),
@@ -352,7 +355,7 @@
     用于析构器中销毁Vulkan对象的宏，该宏调用相应Destroy函数后将handle设置为<span class="mcr">VK_NULL_HANDLE</span>，以防止重复析构：
 </p>
 <pre class="code">
-<span class="pragma">#define</span> <span class="mcr">DestroyHandleBy</span>(Func) <span class="kw">if</span> (handle) { Func(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle, <span class="kw">nullptr</span>); handle = <span class="mcr">VK_NULL_HANDLE</span>; }
+<span class="pragma">#define</span> <span class="mcr">DestroyHandleBy</span>(Func) <span class="kw">if</span> (handle) { Func(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, <span class="kw">nullptr</span>); handle = <span class="mcr">VK_NULL_HANDLE</span>; }
 </pre>
 <ul>
     <li>
@@ -372,7 +375,7 @@
         <p>
             如之前在<a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html#id1">单例类</a>所说，定义移动构造器后若不定义复制构造器、复制赋值、移动赋值，那么这三个函数一概不可用，你不应该在封装Vulkan对象的类中定义复制构造/赋值（因为重复析构会导致重复销毁同一Vulkan对象最终导致非法访问），但是移动赋值函数可能在一些场合下有用，本教程后续的示例代码中没有写任何移动赋值函数，有需要请自行添加：
             <br>
-            <code><span class="pragma">#define</span> <span class="mcr">DefineMoveAssignmentOperator</span>(type) type&amp; <span class="kw">operator</span>=(type&amp;&amp; other) { <span class="kw">this</span>->~type(); <span class="mcr">MoveHandle</span>; <span class="kw">return</span> *<span class="kw">this</span>; }</code>
+            <code><span class="pragma">#define</span> <span class="mcr">DefineMoveAssignmentOperator</span>(type) type&amp; <span class="kw">operator</span>=(type&amp;&amp; other) { <span class="kw">this</span>-&gt;~type(); <span class="mcr">MoveHandle</span>; <span class="kw">return</span> *<span class="kw">this</span>; }</code>
         </p>
     </li>
 </ul>

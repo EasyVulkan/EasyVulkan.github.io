@@ -84,6 +84,11 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -177,7 +182,7 @@
 <span class="pragma">#include</span> <span class="str">&quot;VkBase.h&quot;</span>
 
 <span class="kw">using namespace</span> vulkan;
-<span class="kw">const</span> <span class="type">VkExtent2D</span>&amp; windowSize = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageExtent;
+<span class="kw">const</span> <span class="type">VkExtent2D</span>&amp; windowSize = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageExtent;
 
 <span class="kw">namespace</span> easyVulkan {
     <span class="cmt">/*待填充*/</span>
@@ -241,7 +246,7 @@
 </p>
 <pre class="code">
 <span class="type">VkAttachmentDescription</span> attachmentDescription = {
-    .format = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat,
+    .format = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat,
     .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
     .loadOp = <span class="enum">VK_ATTACHMENT_LOAD_OP_CLEAR</span>,
     .storeOp = <span class="enum">VK_ATTACHMENT_STORE_OP_STORE</span>,
@@ -313,7 +318,7 @@ rpwf_screen.renderPass.<span class="fn">Create</span>(renderPassCreateInfo);
     为每张交换链图像创建帧缓冲，首先将<span class="var">rpwf_screen.framebuffers</span>的元素数量<span class="fn">resize</span>(...)到与交换链图像一样多：
 </p>
 <pre class="code">
-rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageCount</span>());
+rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
 </pre>
 <p>
     填写帧缓冲的创建信息，为每张交换链图像创建对应的帧缓冲：
@@ -326,8 +331,8 @@ rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graph
     .height = windowSize.height,
     .layers = 1
 };
-<span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageCount</span>(); i++) {
-    <span class="type">VkImageView</span> attachment = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageView</span>(i);
+<span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>(); i++) {
+    <span class="type">VkImageView</span> attachment = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageView</span>(i);
     framebufferCreateInfo.pAttachments = &amp;attachment;
     rpwf_screen.framebuffers[i].<span class="fn">Create</span>(framebufferCreateInfo);
 }
@@ -337,7 +342,7 @@ rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graph
 </p>
 <pre class="code">
 <span class="kw">auto</span> CreateFramebuffers = [] {
-    rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageCount</span>());
+    rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
     <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
         .renderPass = rpwf_screen.renderPass,
         .attachmentCount = 1,
@@ -345,8 +350,8 @@ rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graph
         .height = windowSize.height,
         .layers = 1
     };
-    <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span        class="fn">SwapchainImageCount</span>(); i++) {
-        <span class="type">VkImageView</span> attachment = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageView</span>(i);
+    <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span        class="fn">SwapchainImageCount</span>(); i++) {
+        <span class="type">VkImageView</span> attachment = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageView</span>(i);
         framebufferCreateInfo.pAttachments = &amp;attachment;
         rpwf_screen.framebuffers[i].<span class="fn">Create</span>(framebufferCreateInfo);
     }
@@ -354,8 +359,8 @@ rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graph
 <span class="kw">auto</span> DestroyFramebuffers = [] {
     rpwf_screen.framebuffers.<span class="fn">clear</span>();<span class="cmt">//清空vector中的元素时会逐一执行析构函数</span>
 };
-<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_CreateSwapchain</span>(CreateFramebuffers);
-<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_DestroySwapchain</span>(DestroyFramebuffers);
+<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>(CreateFramebuffers);
+<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroySwapchain</span>(DestroyFramebuffers);
 </pre>
 <p>
     最后调用<span class="var">CreateFramebuffers</span>()来创建帧缓冲，整个<span class="fn">CreateRpwf_Screen</span>()函数如下：
@@ -367,7 +372,7 @@ rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graph
         outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ easyVulkan ] WARNING\nDon't call CreateRpwf_Screen() twice!\n&quot;</span>);
     <span class="kw">else</span> {
         <span class="type">VkAttachmentDescription</span> attachmentDescription = {
-            .format = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat,
+            .format = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat,
             .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
             .loadOp = <span class="enum">VK_ATTACHMENT_LOAD_OP_CLEAR</span>,
             .storeOp = <span class="enum">VK_ATTACHMENT_STORE_OP_STORE</span>,
@@ -399,7 +404,7 @@ rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graph
         };
         rpwf_screen.renderPass.<span class="fn">Create</span>(renderPassCreateInfo);
         <span class="kw">auto</span> CreateFramebuffers = [] {
-            rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageCount</span>());
+            rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
             <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
                 .renderPass = rpwf_screen.renderPass,
                 .attachmentCount = 1,
@@ -407,8 +412,8 @@ rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graph
                 .height = windowSize.height,
                 .layers = 1
             };
-            <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span        class="fn">SwapchainImageCount</span>(); i++) {
-                <span class="type">VkImageView</span> attachment = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageView</span>(i);
+            <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span        class="fn">SwapchainImageCount</span>(); i++) {
+                <span class="type">VkImageView</span> attachment = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageView</span>(i);
                 framebufferCreateInfo.pAttachments = &amp;attachment;
                 rpwf_screen.framebuffers[i].<span class="fn">Create</span>(framebufferCreateInfo);
             }
@@ -416,8 +421,8 @@ rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graph
         <span class="kw">auto</span> DestroyFramebuffers = [] {
             rpwf_screen.framebuffers.<span class="fn">clear</span>();<span class="cmt">//清空vector中的元素时会逐一执行析构函数</span>
         };
-        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_CreateSwapchain</span>(CreateFramebuffers);
-        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_DestroySwapchain</span>(DestroyFramebuffers);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>(CreateFramebuffers);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroySwapchain</span>(DestroyFramebuffers);
         CreateFramebuffers();
     }
     <span class="kw">return</span> rpwf_screen;
@@ -443,7 +448,7 @@ rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graph
     <span class="type">semaphore</span> semaphore_renderingIsOver;
 
     <span class="type">commandBuffer</span> commandBuffer;
-    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
+    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
     commandPool.<span class="type">AllocateBuffers</span>(commandBuffer);
 
     <span class="cmt">/*新增*/</span><span class="type">VkClearValue</span> clearColor = { .color = { 1.f, 0.f, 0.f, 1.f } };<span class="cmt">//红色</span>

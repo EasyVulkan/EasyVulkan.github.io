@@ -28,8 +28,8 @@ bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable
 	}
 
 #ifdef _WIN32
-	graphicsBase::Base().PushInstanceExtension("VK_KHR_surface");
-	graphicsBase::Base().PushInstanceExtension("VK_KHR_win32_surface");
+	graphicsBase::Base().AddInstanceExtension("VK_KHR_surface");
+	graphicsBase::Base().AddInstanceExtension("VK_KHR_win32_surface");
 #else
 	uint32_t extensionCount = 0;
 	const char** extensionNames;
@@ -40,9 +40,9 @@ bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable
 		return false;
 	}
 	for (size_t i = 0; i < extensionCount; i++)
-		graphicsBase::Base().PushInstanceExtension(extensionNames[i]);
+		graphicsBase::Base().AddInstanceExtension(extensionNames[i]);
 #endif
-	graphicsBase::Base().PushDeviceExtension(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+	graphicsBase::Base().AddDeviceExtension(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
 	graphicsBase::Base().UseLatestApiVersion();
 	if (graphicsBase::Base().CreateInstance())
 		return false;

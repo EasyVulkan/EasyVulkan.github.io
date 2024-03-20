@@ -64,8 +64,8 @@ namespace easyVulkan {
             auto DestroyFramebuffers = [] {
                 rpwf_screen.framebuffers.clear();
             };
-            graphicsBase::Base().PushCallback_CreateSwapchain(CreateFramebuffers);
-            graphicsBase::Base().PushCallback_DestroySwapchain(DestroyFramebuffers);
+            graphicsBase::Base().AddCallback_CreateSwapchain(CreateFramebuffers);
+            graphicsBase::Base().AddCallback_DestroySwapchain(DestroyFramebuffers);
             CreateFramebuffers();
         }
         return rpwf_screen;

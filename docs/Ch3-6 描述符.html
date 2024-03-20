@@ -102,6 +102,10 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
+</ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
@@ -362,7 +366,7 @@
     <span class="cmt">//Non-const Function</span>
     <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkDescriptorSetLayoutCreateInfo</span>&amp; createInfo) {
         createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO</span>;
-        <span class="type">VkResult</span> result = vkCreateDescriptorSetLayout(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+        <span class="type">VkResult</span> result = vkCreateDescriptorSetLayout(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ descriptorSetLayout ] ERROR\nFailed to create a descriptor set layout!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
@@ -617,7 +621,7 @@
             .descriptorType = descriptorType,
             .pImageInfo = descriptorInfos.<span class="fn">Pointer</span>()
         };
-        <span class="fn">Update</span>(writeDescriptorSet);
+        <span class="sfn">Update</span>(writeDescriptorSet);
     }
     <span class="kw">void</span> <span class="fn">Write</span>(<span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">VkDescriptorBufferInfo</span>&gt; descriptorInfos, <span class="type">VkDescriptorType</span> descriptorType, <span class="type">uint32_t</span> dstBinding = 0, <span class="type">uint32_t</span> dstArrayElement = 0) <span class="kw">const</span> {
         <span class="type">VkWriteDescriptorSet</span> writeDescriptorSet = {
@@ -628,7 +632,7 @@
             .descriptorType = descriptorType,
             .pBufferInfo = descriptorInfos.<span class="fn">Pointer</span>()
         };
-        <span class="fn">Update</span>(writeDescriptorSet);
+        <span class="sfn">Update</span>(writeDescriptorSet);
     }
     <span class="kw">void</span> <span class="fn">Write</span>(<span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">VkBufferView</span>&gt; descriptorInfos, <span class="type">VkDescriptorType</span> descriptorType, <span class="type">uint32_t</span> dstBinding = 0, <span class="type">uint32_t</span> dstArrayElement = 0) <span class="kw">const</span> {
         <span class="type">VkWriteDescriptorSet</span> writeDescriptorSet = {
@@ -639,19 +643,19 @@
             .descriptorType = descriptorType,
             .pTexelBufferInfo = descriptorInfos.<span class="fn">Pointer</span>()
         };
-        <span class="fn">Update</span>(writeDescriptorSet);
+        <span class="sfn">Update</span>(writeDescriptorSet);
     }
     <span class="kw">void</span> <span class="fn">Write</span>(<span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">bufferView</span>&gt; descriptorInfos, <span class="type">VkDescriptorType</span> descriptorType, <span class="type">uint32_t</span> dstBinding = 0, <span class="type">uint32_t</span> dstArrayElement = 0) <span class="kw">const</span> {
-            <span class="fn">Write</span>({ descriptorInfos[0].<span class="fn">Address</span>(), descriptorInfos.<span class="fn">Count</span>() }, descriptorType, dstBinding, dstArrayElement);
+        <span class="fn">Write</span>({ descriptorInfos[0].<span class="fn">Address</span>(), descriptorInfos.<span class="fn">Count</span>() }, descriptorType, dstBinding, dstArrayElement);
     }
     <span class="cmt">//Static Function</span>
-    <span class="kw">static void</span> <span class="fn">Update</span>(<span class="type">arrayRef</span>&lt;<span class="type">VkWriteDescriptorSet</span>&gt; writes, <span class="type">arrayRef</span>&lt;<span class="type">VkCopyDescriptorSet</span>&gt; copies = {}) {
+    <span class="kw">static void</span> <span class="sfn">Update</span>(<span class="type">arrayRef</span>&lt;<span class="type">VkWriteDescriptorSet</span>&gt; writes, <span class="type">arrayRef</span>&lt;<span class="type">VkCopyDescriptorSet</span>&gt; copies = {}) {
         <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : writes)
             i.sType = <span class="enum">VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET</span>;
         <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : copies)
             i.sType = <span class="enum">VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET</span>;
         <span class="fn">vkUpdateDescriptorSets</span>(
-            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), writes.<span class="fn">Count</span>(), writes.<span class="fn">Pointer</span>(), copies.<span class="fn">Count</span>(), copies.<span class="fn">Pointer</span>());
+            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), writes.<span class="fn">Count</span>(), writes.<span class="fn">Pointer</span>(), copies.<span class="fn">Count</span>(), copies.<span class="fn">Pointer</span>());
     }
 };
 </pre></section>
@@ -914,7 +918,7 @@
             .descriptorSetCount = <span class="type">uint32_t</span>(sets.<span class="fn">Count</span>()),
             .pSetLayouts = setLayouts.<span class="fn">Pointer</span>()
         };
-        <span class="type">VkResult</span> result = <span class="fn">vkAllocateDescriptorSets</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), &amp;allocateInfo, sets.<span class="fn">Pointer</span>());
+        <span class="type">VkResult</span> result = <span class="fn">vkAllocateDescriptorSets</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;allocateInfo, sets.<span class="fn">Pointer</span>());
         <span class="fn">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ descriptorPool ] ERROR\nFailed to allocate descriptor sets!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
@@ -935,7 +939,7 @@
             { setLayouts[0].<span class="fn">Address</span>(), setLayouts.<span class="fn">Count</span>() });
     }
     <span class="type">result_t</span> <span class="fn">FreeSets</span>(<span class="type">arrayRef</span>&lt;<span class="type">VkDescriptorSet</span>&gt; sets) <span class="kw">const</span> {
-        <span class="type">VkResult</span> result = <span class="fn">vkFreeDescriptorSets</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle, sets.<span class="fn">Count</span>(), sets.<span class="fn">Pointer</span>());
+        <span class="type">VkResult</span> result = <span class="fn">vkFreeDescriptorSets</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, sets.<span class="fn">Count</span>(), sets.<span class="fn">Pointer</span>());
         <span class="fn">memset</span>(sets.<span class="fn">Pointer</span>(), 0, sets.<span class="fn">Count</span>() * <span class="kw">sizeof</span>(<span class="type">VkDescriptorSet</span>));
         <span class="kw">return</span> result;<span class="cmt">//Though vkFreeDescriptorSets(...) can only return VK_SUCCESS</span>
     }
@@ -945,7 +949,7 @@
     <span class="cmt">//Non-const Function</span>
     <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkDescriptorPoolCreateInfo</span>&amp; createInfo) {
         createInfo.sType = <span class="type">VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO</span>;
-        <span class="type">VkResult</span> result = <span class="fn">vkCreateDescriptorPool</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateDescriptorPool</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ descriptorPool ] ERROR\nFailed to create a descriptor pool!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;

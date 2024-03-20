@@ -89,6 +89,10 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
+</ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
@@ -334,7 +338,7 @@
     <span class="kw">if</span> (imageDataSize &gt; <span class="fn">AllocationSize</span>())
         <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;
     <span class="type">VkImageFormatProperties</span> imageFormatProperties = {};
-    <span class="fn">vkGetPhysicalDeviceImageFormatProperties</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDevice</span>(),
+    <span class="fn">vkGetPhysicalDeviceImageFormatProperties</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDevice</span>(),
         format, <span class="enum">VK_IMAGE_TYPE_2D</span>, <span class="enum">VK_IMAGE_TILING_LINEAR</span>, <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>, 0, &amp;imageFormatProperties);
     <span class="cmt">/*待后续填充*/</span>
 }
@@ -350,7 +354,7 @@
     <span class="kw">if</span> (imageDataSize &gt; <span class="fn">AllocationSize</span>())
         <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;
     <span class="type">VkImageFormatProperties</span> imageFormatProperties = {};
-    <span class="fn">vkGetPhysicalDeviceImageFormatProperties</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDevice</span>(),
+    <span class="fn">vkGetPhysicalDeviceImageFormatProperties</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDevice</span>(),
         format, <span class="enum">VK_IMAGE_TYPE_2D</span>, <span class="enum">VK_IMAGE_TILING_LINEAR</span>, <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>, 0, &amp;imageFormatProperties);
     <span class="cmt">//检查各个参数是否在容许范围内</span>
     <span class="kw">if</span> (extent.width &gt; imageFormatProperties.maxExtent.width ||
@@ -481,7 +485,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
 <pre class="code">
 <span class="type">VkImageSubresource</span> subResource = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 0 };
 <span class="type">VkSubresourceLayout</span> subresourceLayout = {};
-<span class="fn">vkGetImageSubresourceLayout</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), aliasedImage, &amp;subResource, &amp;subresourceLayout);
+<span class="fn">vkGetImageSubresourceLayout</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), aliasedImage, &amp;subResource, &amp;subresourceLayout);
 <span class="kw">if</span> (subresourceLayout.size != imageDataSize)
     <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;
 </pre>
@@ -504,7 +508,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
     <span class="kw">if</span> (imageDataSize &gt; <span class="fn">AllocationSize</span>())
         <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;
     <span class="type">VkImageFormatProperties</span> imageFormatProperties = {};
-    <span class="fn">vkGetPhysicalDeviceImageFormatProperties</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDevice</span>(),
+    <span class="fn">vkGetPhysicalDeviceImageFormatProperties</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDevice</span>(),
         format, <span class="enum">VK_IMAGE_TYPE_2D</span>, <span class="enum">VK_IMAGE_TILING_LINEAR</span>, <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>, 0, &amp;imageFormatProperties);
     <span class="kw">if</span> (extent.width &gt; imageFormatProperties.maxExtent.width ||
         extent.height &gt; imageFormatProperties.maxExtent.height ||
@@ -525,7 +529,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
     aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
     <span class="type">VkImageSubresource</span> subResource = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 0 };
     <span class="type">VkSubresourceLayout</span> subresourceLayout = {};
-    <span class="fn">vkGetImageSubresourceLayout</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), aliasedImage, &amp;subResource, &amp;subresourceLayout);
+    <span class="fn">vkGetImageSubresourceLayout</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), aliasedImage, &amp;subResource, &amp;subresourceLayout);
     <span class="kw">if</span> (subresourceLayout.size != imageDataSize)
         <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;
     aliasedImage.<span class="fn">BindMemory</span>(bufferMemory.<span class="fn">Memory</span>());
@@ -554,7 +558,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
         <span class="type">stagingBuffer</span>* pointer = <span class="fn">Create</span>();
         <span class="type">stagingBuffer</span>* <span class="fn">Create</span>() {
             <span class="kw">static</span> <span class="type">stagingBuffer</span> stagingBuffer;
-            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_DestroyDevice</span>([] { stagingBuffer.~<span class="fn">stagingBuffer</span>(); });
+            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroyDevice</span>([] { stagingBuffer.~<span class="fn">stagingBuffer</span>(); });
             <span class="kw">return</span> &amp;stagingBuffer;
         }
         <span class="kw">public</span>:
@@ -585,7 +589,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
         <span class="type">stagingBuffer</span>* <span class="fn">Create</span>() {
             <span class="kw">static</span> <span class="type">stagingBuffer</span> stagingBuffer;
             pointer = &amp;stagingBuffer;
-            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_DestroyDevice</span>([] { stagingBuffer.~<span class="fn">stagingBuffer</span>(); });
+            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroyDevice</span>([] { stagingBuffer.~<span class="fn">stagingBuffer</span>(); });
         }
         <span class="kw">public</span>:
         <span class="type">stagingBuffer</span>&amp; <span class="fn">Get</span>() <span class="kw">const</span> { <span class="kw">return</span> *pointer; }
@@ -645,7 +649,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
         <span class="kw">if</span> (imageDataSize &gt; <span class="fn">AllocationSize</span>())
             <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;
         <span class="type">VkImageFormatProperties</span> imageFormatProperties = {};
-        <span class="fn">vkGetPhysicalDeviceImageFormatProperties</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDevice</span>(),
+        <span class="fn">vkGetPhysicalDeviceImageFormatProperties</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDevice</span>(),
             format, <span class="enum">VK_IMAGE_TYPE_2D</span>, <span class="enum">VK_IMAGE_TILING_LINEAR</span>, <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>, 0, &amp;imageFormatProperties);
         <span class="kw">if</span> (extent.width &gt; imageFormatProperties.maxExtent.width ||
             extent.height &gt; imageFormatProperties.maxExtent.height ||
@@ -666,36 +670,36 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
         aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
         <span class="type">VkImageSubresource</span> subResource = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 0 };
         <span class="type">VkSubresourceLayout</span> subresourceLayout = {};
-        <span class="fn">vkGetImageSubresourceLayout</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), aliasedImage, &amp;subResource, &amp;subresourceLayout);
+        <span class="fn">vkGetImageSubresourceLayout</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), aliasedImage, &amp;subResource, &amp;subresourceLayout);
         <span class="kw">if</span> (subresourceLayout.size != imageDataSize)
             <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;
         aliasedImage.<span class="fn">BindMemory</span>(bufferMemory.<span class="fn">Memory</span>());
         <span class="kw">return</span> aliasedImage;
     }
     <span class="cmt">//Static Function</span>
-    <span class="kw">static</span> <span class="type">VkBuffer</span> <span class="fn">Buffer_MainThread</span>() {
+    <span class="kw">static</span> <span class="type">VkBuffer</span> <span class="sfn">Buffer_MainThread</span>() {
         <span class="kw">return</span> stagingBuffer_mainThread.<span class="fn">Get</span>();
     }
-    <span class="kw">static void</span> <span class="fn">Expand_MainThread</span>(<span class="type">VkDeviceSize</span> size) {
+    <span class="kw">static void</span> <span class="sfn">Expand_MainThread</span>(<span class="type">VkDeviceSize</span> size) {
         stagingBuffer_mainThread.<span class="fn">Get</span>().<span class="fn">Expand</span>(size);
     }
-    <span class="kw">static void</span> <span class="fn">Release_MainThread</span>() {
+    <span class="kw">static void</span> <span class="sfn">Release_MainThread</span>() {
         stagingBuffer_mainThread.<span class="fn">Get</span>().<span class="fn">Release</span>();
     }
-    <span class="kw">static void</span>* <span class="fn">MapMemory_MainThread</span>(<span class="type">VkDeviceSize</span> size) {
+    <span class="kw">static void</span>* <span class="sfn">MapMemory_MainThread</span>(<span class="type">VkDeviceSize</span> size) {
         <span class="kw">return</span> stagingBuffer_mainThread.<span class="fn">Get</span>().<span class="fn">MapMemory</span>(size);
     }
-    <span class="kw">static void</span> <span class="fn">UnmapMemory_MainThread</span>() {
+    <span class="kw">static void</span> <span class="sfn">UnmapMemory_MainThread</span>() {
         stagingBuffer_mainThread.<span class="fn">Get</span>().<span class="fn">UnmapMemory</span>();
     }
-    <span class="kw">static void</span> <span class="fn">BufferData_MainThread</span>(<span class="kw">const void</span>* pData_src, <span class="type">VkDeviceSize</span> size) {
+    <span class="kw">static void</span> <span class="sfn">BufferData_MainThread</span>(<span class="kw">const void</span>* pData_src, <span class="type">VkDeviceSize</span> size) {
         stagingBuffer_mainThread.<span class="fn">Get</span>().<span class="fn">BufferData</span>(pData_src, size);
     }
-    <span class="kw">static void</span> <span class="fn">RetrieveData_MainThread</span>(<span class="kw">void</span>* pData_src, <span class="type">VkDeviceSize</span> size) {
+    <span class="kw">static void</span> <span class="sfn">RetrieveData_MainThread</span>(<span class="kw">void</span>* pData_src, <span class="type">VkDeviceSize</span> size) {
         stagingBuffer_mainThread.<span class="fn">Get</span>().<span class="fn">RetrieveData</span>(pData_src, size);
     }
     [[nodiscard]]
-    <span class="kw">static</span> <span class="type">VkImage</span> <span class="fn">AliasedImage2d_MainThread</span>(<span class="type">VkFormat</span> format, <span class="type">VkExtent2D</span> extent) {
+    <span class="kw">static</span> <span class="type">VkImage</span> <span class="sfn">AliasedImage2d_MainThread</span>(<span class="type">VkFormat</span> format, <span class="type">VkExtent2D</span> extent) {
         <span class="kw">return</span> stagingBuffer_mainThread.<span class="fn">Get</span>().<span class="fn">AliasedImage2d</span>(format, extent);
     }
 };
@@ -733,7 +737,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
             bufferMemory.<span class="fn">BindMemory</span>();
     }
     <span class="kw">void</span> <span class="fn">Recreate</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> desiredUsages_Without_transfer_dst) {
-        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">WaitIdle</span>();
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">WaitIdle</span>();
         bufferMemory.~<span class="fn">bufferMemory</span>();
         <span class="fn">Create</span>(size, desiredUsages_Without_transfer_dst);
     }
@@ -883,13 +887,13 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
             bufferMemory.<span class="fn">BufferData</span>(pData_src, size, offset);
             <span class="kw">return</span>;
         }
-        <span class="type">stagingBuffer</span>::<span class="fn">BufferData_MainThread</span>(pData_src, size);
-        <span class="kw">auto</span>&amp; commandBuffer = <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">CommandBuffer_Transfer</span>();
+        <span class="type">stagingBuffer</span>::<span class="sfn">BufferData_MainThread</span>(pData_src, size);
+        <span class="kw">auto</span>&amp; commandBuffer = <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>().<span class="fn">CommandBuffer_Transfer</span>();
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
         <span class="type">VkBufferCopy</span> region = { 0, offset, size };
-        <span class="fn">vkCmdCopyBuffer</span>(commandBuffer, <span class="type">stagingBuffer</span>::<span class="fn">Buffer_MainThread</span>(), bufferMemory.<span class="fn">Buffer</span>(), 1, &amp;region);
+        <span class="fn">vkCmdCopyBuffer</span>(commandBuffer, <span class="type">stagingBuffer</span>::<span class="sfn">Buffer_MainThread</span>(), bufferMemory.<span class="fn">Buffer</span>(), 1, &amp;region);
         commandBuffer.<span class="fn">End</span>();
-        <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">ExecuteCommandBuffer_Graphics</span>(commandBuffer);
+        <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>().<span class="fn">ExecuteCommandBuffer_Graphics</span>(commandBuffer);
     }
     <span class="cmt">//适用于更新不连续的多块数据，stride是每组数据间的步长，这里offset当然是目标缓冲区中的offset</span>
     <span class="kw">void</span> <span class="fn">TransferData</span>(<span class="kw">const void</span>* pData_src, <span class="type">uint32_t</span> elementCount, <span class="type">VkDeviceSize</span> elementSize, <span class="type">VkDeviceSize</span> stride_src, <span class="type">VkDeviceSize</span> stride_dst, <span class="type">VkDeviceSize</span> offset = 0) <span class="kw">const</span> {
@@ -901,15 +905,15 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
             bufferMemory.<span class="fn">UnmapMemory</span>(elementCount * stride_dst, offset);
             <span class="kw">return</span>;
         }
-        <span class="type">stagingBuffer</span>::<span class="fn">BufferData_MainThread</span>(pData_src, stride_src * elementCount);
-        <span class="kw">auto</span>&amp; commandBuffer = <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">CommandBuffer_Transfer</span>();
+        <span class="type">stagingBuffer</span>::<span class="sfn">BufferData_MainThread</span>(pData_src, stride_src * elementCount);
+        <span class="kw">auto</span>&amp; commandBuffer = <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>().<span class="fn">CommandBuffer_Transfer</span>();
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
         std::<span class="type">unique_ptr</span>&lt;<span class="type">VkBufferCopy</span>[]&gt; regions = std::<span class="fn">make_unique</span>&lt;<span class="type">VkBufferCopy</span>[]&gt;(elementCount);
         <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; elementCount; i++)
             regions[i] = { stride_src * i, stride_dst * i + offset, elementSize };
-        <span class="fn">vkCmdCopyBuffer</span>(commandBuffer, <span class="type">stagingBuffer</span>::<span class="fn">Buffer_MainThread</span>(), bufferMemory.<span class="fn">Buffer</span>(), elementCount, regions.<span class="fn">get</span>());
+        <span class="fn">vkCmdCopyBuffer</span>(commandBuffer, <span class="type">stagingBuffer</span>::<span class="sfn">Buffer_MainThread</span>(), bufferMemory.<span class="fn">Buffer</span>(), elementCount, regions.<span class="fn">get</span>());
         commandBuffer.<span class="fn">End</span>();
-        <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">ExecuteCommandBuffer_Graphics</span>(commandBuffer);
+        <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>().<span class="fn">ExecuteCommandBuffer_Graphics</span>(commandBuffer);
     }
     <span class="cmt">//适用于从缓冲区开头更新连续的数据块，数据大小自动判断</span>
     <span class="kw">void</span> <span class="fn">TransferData</span>(<span class="kw">const auto</span>&amp; data_src) <span class="kw">const</span> {
@@ -939,13 +943,13 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
             bufferMemory.<span class="fn">BufferData</span>(pData_src, size, offset);
             <span class="kw">return</span>;
         }
-        <span class="type">stagingBuffer</span>::<span class="fn">BufferData_MainThread</span>(pData_src, size);
-        <span class="kw">auto</span>&amp; commandBuffer = <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">CommandBuffer_Transfer</span>();
+        <span class="type">stagingBuffer</span>::<span class="sfn">BufferData_MainThread</span>(pData_src, size);
+        <span class="kw">auto</span>&amp; commandBuffer = <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>().<span class="fn">CommandBuffer_Transfer</span>();
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
         <span class="type">VkBufferCopy</span> region = { 0, offset, size };
-        <span class="fn">vkCmdCopyBuffer</span>(commandBuffer, <span class="type">stagingBuffer</span>::<span class="fn">Buffer_MainThread</span>(), bufferMemory.<span class="fn">Buffer</span>(), 1, &amp;region);
+        <span class="fn">vkCmdCopyBuffer</span>(commandBuffer, <span class="type">stagingBuffer</span>::<span class="sfn">Buffer_MainThread</span>(), bufferMemory.<span class="fn">Buffer</span>(), 1, &amp;region);
         commandBuffer.<span class="fn">End</span>();
-        <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">ExecuteCommandBuffer_Graphics</span>(commandBuffer);
+        <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>().<span class="fn">ExecuteCommandBuffer_Graphics</span>(commandBuffer);
     }
     <span class="kw">void</span> <span class="fn">TransferData</span>(<span class="kw">const void</span>* pData_src, <span class="type">uint32_t</span> elementCount, <span class="type">VkDeviceSize</span> elementSize, <span class="type">VkDeviceSize</span> stride_src, <span class="type">VkDeviceSize</span> stride_dst, <span class="type">VkDeviceSize</span> offset = 0) <span class="kw">const</span> {
         <span class="kw">if</span> (bufferMemory.<span class="fn">MemoryProperties</span>() &amp; <span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>) {
@@ -956,15 +960,15 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
             bufferMemory.<span class="fn">UnmapMemory</span>(elementCount * stride_dst, offset);
             <span class="kw">return</span>;
         }
-        <span class="type">stagingBuffer</span>::<span class="fn">BufferData_MainThread</span>(pData_src, stride_src * elementCount);
-        <span class="kw">auto</span>&amp; commandBuffer = <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">CommandBuffer_Transfer</span>();
+        <span class="type">stagingBuffer</span>::<span class="sfn">BufferData_MainThread</span>(pData_src, stride_src * elementCount);
+        <span class="kw">auto</span>&amp; commandBuffer = <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>().<span class="fn">CommandBuffer_Transfer</span>();
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
         std::<span class="type">unique_ptr</span>&lt;<span class="type">VkBufferCopy</span>[]&gt; regions = std::<span class="fn">make_unique</span>&lt;<span class="type">VkBufferCopy</span>[]&gt;(elementCount);
         <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; elementCount; i++)
             regions[i] = { stride_src * i, stride_dst * i + offset, elementSize };
-        <span class="fn">vkCmdCopyBuffer</span>(commandBuffer, <span class="type">stagingBuffer</span>::<span class="fn">Buffer_MainThread</span>(), bufferMemory.<span class="fn">Buffer</span>(), elementCount, regions.<span class="fn">get</span>());
+        <span class="fn">vkCmdCopyBuffer</span>(commandBuffer, <span class="type">stagingBuffer</span>::<span class="sfn">Buffer_MainThread</span>(), bufferMemory.<span class="fn">Buffer</span>(), elementCount, regions.<span class="fn">get</span>());
         commandBuffer.<span class="fn">End</span>();
-        <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">ExecuteCommandBuffer_Graphics</span>(commandBuffer);
+        <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>().<span class="fn">ExecuteCommandBuffer_Graphics</span>(commandBuffer);
     }
     <span class="kw">void</span> <span class="fn">TransferData</span>(<span class="kw">const auto</span>&amp; data_src) <span class="kw">const</span> {
         <span class="fn">TransferData</span>(&amp;data_src, <span class="kw">sizeof</span> data_src);
@@ -988,7 +992,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
             bufferMemory.<span class="fn">BindMemory</span>();
     }
     <span class="kw">void</span> <span class="fn">Recreate</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> desiredUsages_Without_transfer_dst) {
-        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">WaitIdle</span>();
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">WaitIdle</span>();
         bufferMemory.~<span class="fn">bufferMemory</span>();
         <span class="fn">Create</span>(size, desiredUsages_Without_transfer_dst);
     }
@@ -1056,7 +1060,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
     }
     <span class="cmt">//Static Function</span>
     <span class="kw">static</span> <span class="type">VkDeviceSize</span> <span class="fn">CalculateAlignedSize</span>(<span class="type">VkDeviceSize</span> dataSize) {
-        <span class="kw">const</span> <span class="type">VkDeviceSize</span>&amp; alignment = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.minUniformBufferOffsetAlignment;
+        <span class="kw">const</span> <span class="type">VkDeviceSize</span>&amp; alignment = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.minUniformBufferOffsetAlignment;
         <span class="kw">return</span> alignment + dataSize - 1 &amp; ~(alignment - 1);
     }
 };
@@ -1085,7 +1089,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
     }
     <span class="cmt">//Static Function</span>
     <span class="kw">static</span> <span class="type">VkDeviceSize</span> <span class="fn">CalculateAlignedSize</span>(<span class="type">VkDeviceSize</span> dataSize) {
-        <span class="kw">const</span> <span class="type">VkDeviceSize</span>&amp; alignment = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.minStorageBufferOffsetAlignment;
+        <span class="kw">const</span> <span class="type">VkDeviceSize</span>&amp; alignment = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.minStorageBufferOffsetAlignment;
         <span class="kw">return</span> alignment + dataSize - 1 &amp; ~(alignment - 1);
     }
 };

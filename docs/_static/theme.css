@@ -6044,6 +6044,10 @@ span[id*=MathJax-Span] {
     color: #2b91af;
 }
 
+.cncpt {
+    color: #2b91af;
+}
+
 .enum {
     color: #2f4f4f;
     font-family: SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,Courier,monospace;
@@ -6063,8 +6067,8 @@ span[id*=MathJax-Span] {
     color: #008080;
 }
 
-.efn {
-    color: #e21f1f;
+.sfn {
+    color: #74531f;
 }
 
 .pragma {

@@ -78,6 +78,10 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
+</ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
@@ -376,7 +380,7 @@ descriptorSet_trianglePosition.<span class="fn">Write</span>(bufferInfo, <span c
 </p>
 <pre class="code">
 <span class="cmt">//首先取得单位对齐距离</span>
-<span class="type">VkDeviceSize</span> uniformAlignment = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>()limits.minUniformBufferOffsetAlignment;
+<span class="type">VkDeviceSize</span> uniformAlignment = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>()limits.minUniformBufferOffsetAlignment;
 <span class="cmt">//计算每组数据的大小</span>
 <span class="type">VkDeviceSize</span> dataSize[] = { <span class="kw">sizeof</span> A, <span class="kw">sizeof</span> B, <span class="kw">sizeof</span> C };
 <span class="cmt">//每组数据的大小向上凑整到单位对齐距离的整数倍并相加，得到整个缓冲区的大小</span>
@@ -411,7 +415,7 @@ glm::<span class="type">vec2</span> uniform_positions[] = {
     { -.5f, .0f },
     {  .5f, .0f }
 };
-<span class="type">VkDeviceSize</span> uniformAlignment = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.minUniformBufferOffsetAlignment;
+<span class="type">VkDeviceSize</span> uniformAlignment = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.minUniformBufferOffsetAlignment;
 uniformAlignment *= (std::<span class="fn">ceil</span>(<span class="kw">float</span>(<span class="kw">sizeof</span>(glm::<span class="type">vec2</span>)) / uniformAlignment);
 <span class="cmt">//上式可改为：</span>
 <span class="cmt">//uniformAlignment = (uniformAlignment + sizeof(glm::vec2) - 1) & ~(uniformAlignment - 1);</span>

@@ -95,6 +95,11 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -357,7 +362,7 @@ swapchainCreateInfo.minImageCount = surfaceCapabilities.minImageCount + (surface
 <span class="kw">namespace</span> vulkan {
     <span class="kw">constexpr</span> <span class="type">VkExtent2D</span> defaultWindowSize = { 1280, 720 };
     <span class="kw">class</span> <span class="type">graphicsBase</span> {
-        <span class="type">VkResult</span> <span class="fn">CreateSwapchain</span>(<span class="kw">bool</span> limitFrameRate = <span class="kw">true</span>, <span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkSwapchainCreateFlagsKHR</span> flags = 0) {
+        <span class="type">VkResult</span> <span class="fn">CreateSwapchain</span>(<span class="kw">bool</span> limitFrameRate = <span class="kw">true</span>, <span class="type">VkSwapchainCreateFlagsKHR</span> flags = 0) {
             <span class="type">VkSurfaceCapabilitiesKHR</span> surfaceCapabilities = {};
             <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfaceCapabilitiesKHR</span>(physicalDevice, surface, &amp;surfaceCapabilities)) {
                 std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
@@ -677,7 +682,6 @@ swapchainCreateInfo.presentMode = <span class="enum">VK_PRESENT_MODE_FIFO_KHR</s
 <h3>填写剩余的参数<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
 <pre class="code">
 swapchainCreateInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR</span>;
-swapchainCreateInfo.pNext = pNext;
 swapchainCreateInfo.flags = flags;
 swapchainCreateInfo.surface = surface;
 swapchainCreateInfo.imageSharingMode = <span class="enum">VK_SHARING_MODE_EXCLUSIVE</span>;
@@ -942,10 +946,10 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
 std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; callbacks_destroySwapchain;
 
 <span class="kw">public</span>:
-<span class="kw">void</span> <span class="fn">PushCallback_CreateSwapchain</span>(<span class="kw">void</span>(*function)()) {
+<span class="kw">void</span> <span class="fn">AddCallback_CreateSwapchain</span>(<span class="kw">void</span>(*function)()) {
     callbacks_createSwapchain.<span class="fn">push_back</span>(function);
 }
-<span class="kw">void</span> <span class="fn">PushCallback_DestroySwapchain</span>(<span class="kw">void</span>(*function)()) {
+<span class="kw">void</span> <span class="fn">AddCallback_DestroySwapchain</span>(<span class="kw">void</span>(*function)()) {
     callbacks_destroySwapchain.<span class="fn">push_back</span>(function);
 }
 </pre>
@@ -953,7 +957,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
     然后在vulkan::<span class="type">graphicsBase</span>::<span class="fn">CreateSwapchain</span>(...)和vulkan::<span class="type">graphicsBase</span>::<span class="fn">RereateSwapchain</span>(...)中调用相应回调，最后两个函数如下：
 </p>
 <pre class="code">
-<span class="type">VkResult</span> <span class="fn">CreateSwapchain</span>(<span class="kw">bool</span> limitFrameRate = <span class="kw">true</span>, <span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkSwapchainCreateFlagsKHR</span> flags = 0) {
+<span class="type">VkResult</span> <span class="fn">CreateSwapchain</span>(<span class="kw">bool</span> limitFrameRate = <span class="kw">true</span>, <span class="type">VkSwapchainCreateFlagsKHR</span> flags = 0) {
     <span class="cmt">//VkSurfaceCapabilitiesKHR相关的参数</span>
     <span class="type">VkSurfaceCapabilitiesKHR</span> surfaceCapabilities = {};
     <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfaceCapabilitiesKHR</span>(physicalDevice, surface, &amp;surfaceCapabilities)) {
@@ -1027,7 +1031,6 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
 
     <span class="cmt">//剩余参数</span>
     swapchainCreateInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR</span>;
-    swapchainCreateInfo.pNext = pNext;
     swapchainCreateInfo.flags = flags;
     swapchainCreateInfo.surface = surface;
     swapchainCreateInfo.imageArrayLayers = 1;
@@ -1098,10 +1101,10 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
 std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; callbacks_destroyDevice;
 
 <span class="kw">public</span>:
-<span class="kw">void</span> <span class="fn">PushCallback_CreateDevice</span>(<span class="kw">void</span>(*function)()) {
+<span class="kw">void</span> <span class="fn">AddCallback_CreateDevice</span>(<span class="kw">void</span>(*function)()) {
     callbacks_createDevice.<span class="fn">push_back</span>(function);
 }
-<span class="kw">void</span> <span class="fn">PushCallback_DestroyDevice</span>(<span class="kw">void</span>(*function)()) {
+<span class="kw">void</span> <span class="fn">AddCallback_DestroyDevice</span>(<span class="kw">void</span>(*function)()) {
     callbacks_destroyDevice.<span class="fn">push_back</span>(function);
 }
 <span class="cmt">//该函数用于等待逻辑设备空闲</span>
@@ -1112,7 +1115,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
     <span class="kw">return</span> result;
 }
 <span class="cmt">//该函数用于重建逻辑设备</span>
-<span class="type">VkResult</span> <span class="fn">RecreateDevice</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkDeviceCreateFlags</span> flags = 0) {
+<span class="type">VkResult</span> <span class="fn">RecreateDevice</span>(<span class="type">VkDeviceCreateFlags</span> flags = 0) {
     <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">WaitIdle</span>())
         <span class="kw">return</span> result;
     <span class="cmt">/*待后续填充*/</span>
@@ -1196,7 +1199,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
     最后调用<span class="fn">CreateDevice</span>(...)重建逻辑设备，整个vulkan::<span class="type">graphicsBase</span>::<span class="fn">RecreateDevice</span>()如下：
 </p>
 <pre class="code">
-<span class="type">VkResult</span> <span class="fn">RecreateDevice</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkDeviceCreateFlags</span> flags = 0) {
+<span class="type">VkResult</span> <span class="fn">RecreateDevice</span>(<span class="type">VkDeviceCreateFlags</span> flags = 0) {
     <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">WaitIdle</span>())
         <span class="kw">return</span> result;
     <span class="kw">if</span> (swapchain) {
@@ -1215,14 +1218,14 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
     <span class="kw">if</span> (device)
         <span class="fn">vkDestroyDevice</span>(device, <span class="kw">nullptr</span>),
         device = <span class="mcr">VK_NULL_HANDLE</span>;
-    <span class="kw">return</span> <span class="fn">CreateDevice</span>(pNext, flags);
+    <span class="kw">return</span> <span class="fn">CreateDevice</span>(flags);
 }
 </pre>
 <p>
     注意应该在<span class="fn">CreateDevice</span>(...)中执行创建逻辑设备时的回调：
 </p>
     <pre class="code">
-<span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkDeviceCreateFlags</span> flags = 0) {
+<span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="type">VkDeviceCreateFlags</span> flags = 0) {
     <span class="cmt">/*...*/</span>
     std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;Renderer: {}\n&quot;</span>, physicalDeviceProperties.deviceName);
     <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : callbacks_createDevice)
@@ -1362,7 +1365,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
 <pre class="code">
 <span class="kw">public</span>:
 <span class="kw">void</span> <span class="fn">Terminate</span>() {
-    <span class="kw">this</span>->~<span class="fn">graphicsBase</span>();
+    <span class="kw">this</span>-&gt;~<span class="fn">graphicsBase</span>();
     instance = <span class="mcr">VK_NULL_HANDLE</span>;
     physicalDevice = <span class="mcr">VK_NULL_HANDLE</span>;
     device = <span class="mcr">VK_NULL_HANDLE</span>;
@@ -1380,7 +1383,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
 <section id="id11">
 <h2>完成初始化<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h2>
 <p>
-    在<span class="fn">InitializeWindow</span>(...)中调用vulkan::<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">CreateSwapchain</span>(...)：
+    在<span class="fn">InitializeWindow</span>(...)中调用vulkan::<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CreateSwapchain</span>(...)：
 </p>
 <pre class="code">
 <span class="kw">bool</span> <span class="fn">InitializeWindow</span>(<span class="type">VkExtent2D</span> size, <span class="kw">bool</span> fullScreen = <span class="kw">false</span>, <span class="kw">bool</span> isResizable = <span class="kw">true</span>, <span class="kw">bool</span> limitFrameRate = <span class="kw">true</span>) {
@@ -1404,8 +1407,8 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
     }
 
 <span class="pragma">#ifdef</span> <span class="mcr">_WIN32</span>
-    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushInstanceExtension</span>(<span class="str">&quot;VK_KHR_surface&quot;</span>);
-    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushInstanceExtension</span>(<span class="str">&quot;VK_KHR_win32_surface&quot;</span>);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(<span class="str">&quot;VK_KHR_surface&quot;</span>);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(<span class="str">&quot;VK_KHR_win32_surface&quot;</span>);
 <span class="pragma">#else</span>
     <span class="type">uint32_t</span> extensionCount = 0;
     <span class="kw">const char</span>** extensionNames;
@@ -1416,28 +1419,28 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
         <span class="kw">return false</span>;
     }
     <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; extensionCount; i++)
-        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushInstanceExtension</span>(extensionNames[i]);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(extensionNames[i]);
 <span class="pragma">#endif</span>
-    <span class="type">graphicsBase</span>::<span class="fn">Base</span>.<span class="fn">UseLatestApiVersion</span>()
-    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>.<span class="fn">CreateInstance</span>())
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">UseLatestApiVersion</span>()
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">CreateInstance</span>())
         <span class="kw">return false</span>;
 
     <span class="type">VkSurfaceKHR</span> surface = <span class="mcr">VK_NULL_HANDLE</span>;
-    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">glfwCreateWindowSurface</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Instance</span>(), pWindow, <span class="kw">nullptr</span>, &amp;surface)) {
+    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">glfwCreateWindowSurface</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Instance</span>(), pWindow, <span class="kw">nullptr</span>, &amp;surface)) {
         std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ] ERROR\nFailed to create a window surface!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="fn">glfwTerminate</span>();
         <span class="kw">return false</span>;
     }
-    <span class="type">graphicsBase</span>::<span class="fn">Base</span>.<span class="fn">Surface</span>(surface);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">Surface</span>(surface);
 
     <span class="kw">if</span> (
-        <span class="type">graphicsBase</span>::<span class="fn">Base</span>.<span class="fn">GetPhysicalDevices</span>() ||
-        <span class="type">graphicsBase</span>::<span class="fn">Base</span>.<span class="fn">DeterminePhysicalDevice</span>(0, <span class="kw">true</span>, <span class="kw">false</span>) ||
-        <span class="type">graphicsBase</span>::<span class="fn">Base</span>.<span class="fn">CreateDevice</span>())
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">GetPhysicalDevices</span>() ||
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">DeterminePhysicalDevice</span>(0, <span class="kw">true</span>, <span class="kw">false</span>) ||
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">CreateDevice</span>())
         <span class="kw">return false</span>;
 
     <span class="cmt">//本节新增--------------------------------</span>
-    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">CreateSwapchain</span>(limitFrameRate))
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CreateSwapchain</span>(limitFrameRate))
         <span class="kw">return false</span>;
     <span class="cmt">//----------------------------------------</span>
 
@@ -1445,11 +1448,11 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
 }
 </pre>
 <p>
-    终止窗口前应该确保Vulkan没有与窗口系统的呈现引擎进行交互，在<span class="fn">TerminateWindow</span>(...)中调用vulkan::<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">WaitIdle</span>()：
+    终止窗口前应该确保Vulkan没有与窗口系统的呈现引擎进行交互，在<span class="fn">TerminateWindow</span>(...)中调用vulkan::<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">WaitIdle</span>()：
 </p>
 <pre class="code">
 <span class="kw">void</span> <span class="fn">TerminateWindow</span>() {
-    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">WaitIdle</span>()
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">WaitIdle</span>()
     <span class="fn">glfwTerminate</span>();
 }
 </pre>

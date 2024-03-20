@@ -86,6 +86,11 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -330,7 +335,7 @@
     <br>
     举例而言，如果交换链中一共有三张图像，<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)可能总是按0、1、2的顺序获取图像，也可能总是按0、2、1的顺序。更极端的是，其顺序可能在每个周期（这里以交换链图像个数次渲染循环为一个周期）中不同，比如在先按0、1、2的顺序获取并呈现图像，然后在下一个周期中按0、2、1的顺序获取到图像，但这种情况理论上只在待获取图像可能超过一张的情况下发生。
     <br>
-    因此，在渲染循环中总是应当使用<span class="type">graphicsBase</span>::<span class="fn">Base</span>.<span class="fn">CurrentImageIndex</span>()来获取当前图像索引，不要使用一个总是从0到2（假定图像数量为3张）递增的变量。
+    因此，在渲染循环中总是应当使用<span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">CurrentImageIndex</span>()来获取当前图像索引，不要使用一个总是从0到2（假定图像数量为3张）递增的变量。
 </p>
 <p>
     于是在<span class="type">graphicsBase</span>中加入以下内容：
@@ -427,7 +432,7 @@
     <span class="type">semaphore</span> semaphore_renderingIsOver;
 
     <span class="type">commandBuffer</span> commandBuffer;
-    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
+    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
     commandPool.<span class="type">AllocateBuffers</span>(commandBuffer);
 
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
@@ -459,7 +464,7 @@
     <span class="type">semaphore</span> semaphore_renderingIsOver;
 
     <span class="type">commandBuffer</span> commandBuffer;
-    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
+    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
     commandPool.<span class="type">AllocateBuffers</span>(commandBuffer);
 
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
@@ -573,7 +578,7 @@
     <span class="type">semaphore</span> semaphore_renderingIsOver;
 
     <span class="type">commandBuffer</span> commandBuffer;
-    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
+    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
     commandPool.<span class="type">AllocateBuffers</span>(commandBuffer);
 
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
@@ -720,7 +725,7 @@
     <span class="type">semaphore</span> semaphore_renderingIsOver;
 
     <span class="type">commandBuffer</span> commandBuffer;
-    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
+    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
     commandPool.<span class="type">AllocateBuffers</span>(commandBuffer);
 
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
@@ -819,9 +824,9 @@
         <span class="type">semaphore</span> semaphore_renderingIsOver;
         <span class="type">commandBuffer</span> commandBuffer;
     };
-    std::<span class="type">vector</span>&lt;<span class="type">preFrameObjects_t</span>&gt; preFrameObjects(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageCount</span>());
-    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
-    commandPool.<span class="type">AllocateBuffers</span>({ commandBuffers.<span class="fn">data</span>(), <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageCount</span>() });
+    std::<span class="type">vector</span>&lt;<span class="type">preFrameObjects_t</span>&gt; preFrameObjects(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
+    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
+    commandPool.<span class="type">AllocateBuffers</span>({ commandBuffers.<span class="fn">data</span>(), <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>() });
     <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : perFrameObjects)
     commandPool.<span class="fn">AllocateBuffers</span>(i.commandBuffer);
     <span class="type">uint32_t</span> i = 0;
@@ -832,7 +837,7 @@
         <span class="fn">TitleFps</span>();
 
         <span class="kw">const auto</span>&amp; [fence, semaphore_imageIsAvailable, semaphore_renderingIsOver, commandBuffer] = perFrameObjects[i];
-        i = (i + 1) % <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageCount</span>();
+        i = (i + 1) % <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>();
 
         fence.<span class="fn">WaitAndReset</span>();
         <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
@@ -868,9 +873,9 @@
         <span class="type">semaphore</span> semaphore_renderingIsOver;
         <span class="type">commandBuffer</span> commandBuffer;
     };
-    std::<span class="type">vector</span>&lt;<span class="type">preFrameObjects_t</span>&gt; preFrameObjects(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageCount</span>());
-    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
-    commandPool.<span class="type">AllocateBuffers</span>({ commandBuffers.<span class="fn">data</span>(), <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageCount</span>() });
+    std::<span class="type">vector</span>&lt;<span class="type">preFrameObjects_t</span>&gt; preFrameObjects(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
+    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
+    commandPool.<span class="type">AllocateBuffers</span>({ commandBuffers.<span class="fn">data</span>(), <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>() });
     <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : perFrameObjects)
     commandPool.<span class="fn">AllocateBuffers</span>(i.commandBuffer);
     <span class="type">uint32_t</span> i = 0;
@@ -881,9 +886,9 @@
         <span class="fn">TitleFps</span>();
 
         <span class="type">semaphore</span> semaphore;
-        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapImage</span>(semaphore);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore);
         <span class="kw">auto</span>&amp; [fence, semaphore_imageIsAvailable, semaphore_renderingIsOver, commandBuffer] = perFrameObjects[i];
-        i = (i + 1) % <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainImageCount</span>();
+        i = (i + 1) % <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>();
         semaphore_imageIsAvailable = std::<span class="fn">move</span>(semaphore);<span class="cmt">//需给semaphore定义移动赋值函数</span>
 
         fence.<span class="fn">WaitAndReset</span>();
@@ -1011,8 +1016,8 @@
 
     <span class="type">commandBuffer</span> commandBuffer_graphics;
     <span class="type">commandBuffer</span> commandBuffer_presentation;
-    <span class="type">commandPool</span> commandPool_graphics(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
-    <span class="type">commandPool</span> commandPool_presentation(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>());
+    <span class="type">commandPool</span> commandPool_graphics(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
+    <span class="type">commandPool</span> commandPool_presentation(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>());
     commandPool_graphics.<span class="type">AllocateBuffers</span>(commandBuffer_graphics);
     commandPool_presentation.<span class="type">AllocateBuffers</span>(commandBuffer_presentation);
 
@@ -1136,8 +1141,8 @@
 
     <span class="type">commandBuffer</span> commandBuffer_graphics;
     <span class="type">commandBuffer</span> commandBuffer_presentation;
-    <span class="type">commandPool</span> commandPool_graphics(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
-    <span class="type">commandPool</span> commandPool_presentation(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>());
+    <span class="type">commandPool</span> commandPool_graphics(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
+    <span class="type">commandPool</span> commandPool_presentation(<span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>, <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>());
     commandPool_graphics.<span class="type">AllocateBuffers</span>(commandBuffer_graphics);
     commandPool_presentation.<span class="type">AllocateBuffers</span>(commandBuffer_presentation);
 

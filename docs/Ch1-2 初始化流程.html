@@ -89,6 +89,11 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -148,7 +153,7 @@
 <span class="kw">public</span>:
     <span class="cmt">//静态函数</span>
     <span class="cmt">//该函数用于访问单例</span>
-    <span class="kw">static</span> <span class="type">graphicsBase</span>&amp; <span class="fn">Base</span>() {
+    <span class="kw">static</span> <span class="type">graphicsBase</span>&amp; <span class="sfn">Base</span>() {
         <span class="kw">return</span> singleton;
     }
 };
@@ -249,7 +254,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;
 std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt; instanceExtensions;
 
 <span class="cmt">//该函数用于向instanceLayers或instanceExtensions容器中添加字符串指针，并确保不重复</span>
-<span class="kw">static void</span> <span class="fn">AddLayerOrExtension</span>( std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;&amp; container, <span class="kw">const char</span>* name) {
+<span class="kw">static void</span> <span class="sfn">AddLayerOrExtension</span>( std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;&amp; container, <span class="kw">const char</span>* name) {
     <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : container)
         <span class="kw">if</span> (!<span class="fn">strcmp</span>(name, i))<span class="cmt">//strcmp(...)在字符串匹配时返回0</span>
             <span class="kw">return</span>;          <span class="cmt">//如果层/扩展的名称已在容器中，直接返回</span>
@@ -268,14 +273,14 @@ std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;
 }
 
 <span class="cmt">//以下函数用于创建Vulkan实例前</span>
-<span class="kw">void</span> <span class="fn">PushInstanceLayer</span>(<span class="kw">const char</span>* layerName) {
-    <span class="fn">AddLayerOrExtension</span>(instanceLayers, layerName);
+<span class="kw">void</span> <span class="fn">AddInstanceLayer</span>(<span class="kw">const char</span>* layerName) {
+    <span class="sfn">AddLayerOrExtension</span>(instanceLayers, layerName);
 }
-<span class="kw">void</span> <span class="fn">PushInstanceExtension</span>(<span class="kw">const char</span>* extensionName) {
-    <span class="fn">AddLayerOrExtension</span>(instanceExtensions, extensionName);
+<span class="kw">void</span> <span class="fn">AddInstanceExtension</span>(<span class="kw">const char</span>* extensionName) {
+    <span class="sfn">AddLayerOrExtension</span>(instanceExtensions, extensionName);
 }
 <span class="cmt">//该函数用于创建Vulkan实例</span>
-<span class="type">VkResult</span> <span class="fn">CreateInstance</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkInstanceCreateFlags</span> flags = 0) {
+<span class="type">VkResult</span> <span class="fn">CreateInstance</span>(<span class="type">VkInstanceCreateFlags</span> flags = 0) {
     <span class="cmt">/*待Ch1-3填充*/</span>
 }
 <span class="cmt">//以下函数用于创建Vulkan实例失败后</span>
@@ -295,7 +300,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;
 <ul>
     <li>
         <p>
-        <span class="var">pNext</span>和<span class="var">flags</span>的说明见<a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html#id2">Ch1-3</a>。
+            各种<span class="var">flags</span>会之后在<a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html#id2">Ch1-3</a>再做说明。
         </p>
     </li>
     <li>
@@ -307,7 +312,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;
 <p>
     <strong>于是剧本流程是这样的：</strong>
     <br>
-    1.在创建Vulkan实例前，用<span class="fn">PushInstanceLayer</span>(...)和<span class="fn">PushInstanceExtension</span>(...)向对应的<span class="type">vector</span>中添加指向层和扩展名称的指针。
+    1.在创建Vulkan实例前，用<span class="fn">AddInstanceLayer</span>(...)和<span class="fn">AddInstanceExtension</span>(...)向对应的<span class="type">vector</span>中添加指向层和扩展名称的指针。
     <br>
     2.然后尝试用<span class="fn">CreateInstance</span>(...)创建Vulkan实例。
     <br>
@@ -350,8 +355,8 @@ std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;
 
 <span class="cmt">//该函数用于选择物理设备前</span>
 <span class="kw">void</span> <span class="fn">Surface</span>(<span class="type">VkSurfaceKHR</span> surface) {
-    <span class="kw">if</span> (!<span class="kw">this</span>->surface)
-        <span class="kw">this</span>->surface = surface;
+    <span class="kw">if</span> (!<span class="kw">this</span>-&gt;surface)
+        <span class="kw">this</span>-&gt;surface = surface;
 }
 </pre>
 <ul>
@@ -479,8 +484,8 @@ std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;
 }
 
 <span class="cmt">//该函数用于创建逻辑设备前</span>
-<span class="kw">void</span> <span class="fn">PushDeviceExtension</span>(<span class="kw">const char</span>* extensionName) {
-    <span class="fn">AddLayerOrExtension</span>(deviceExtensions, extensionName);
+<span class="kw">void</span> <span class="fn">AddDeviceExtension</span>(<span class="kw">const char</span>* extensionName) {
+    <span class="sfn">AddLayerOrExtension</span>(deviceExtensions, extensionName);
 }
 <span class="cmt">//该函数用于获取物理设备</span>
 <span class="type">VkResult</span> <span class="fn">GetPhysicalDevices</span>() {
@@ -491,7 +496,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;
     <span class="cmt">/*待Ch1-3填充*/</span>
 }
 <span class="cmt">//该函数用于创建逻辑设备，并取得队列</span>
-<span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkDeviceCreateFlags</span> flags = 0) {
+<span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="type">VkDeviceCreateFlags</span> flags = 0) {
     <span class="cmt">/*待Ch1-3填充*/</span>
 }
 <span class="cmt">//以下函数用于创建逻辑设备失败后</span>
@@ -516,7 +521,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;
     <br>
     2.然后，用<span class="fn">DeterminePhysicalDevice</span>(...)判断将要使用的物理设备是否满足要求，如满足则将其记录为所用设备。这一步需要判断物理设备是否支持window surface，正是因此创建window surface一步须在此之前。
     <br>
-    3.然后，用<span class="fn">PushDeviceExtension</span>(...)向<span class="var">deviceExtensions</span>中添加指向各扩展名称的指针。
+    3.然后，用<span class="fn">AddDeviceExtension</span>(...)向<span class="var">deviceExtensions</span>中添加指向各扩展名称的指针。
     <br>
     4.然后尝试用<span class="fn">CreateDevice</span>(...)创建逻辑设备，若创建成功，该函数会取得队列。
     <br>
@@ -593,7 +598,7 @@ std::<span class="type">vector</span> &lt;<span class="type">VkImageView&gt;</sp
     <span class="cmt">/*待Ch1-4填充*/</span>
 }
 <span class="cmt">//该函数用于创建交换链</span>
-<span class="type">VkResult</span> <span class="fn">CreateSwapchain</span>(<span class="kw">bool</span> limitFrameRate = <span class="kw">true</span>, <span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkSwapchainCreateFlagsKHR</span> flags = 0) {
+<span class="type">VkResult</span> <span class="fn">CreateSwapchain</span>(<span class="kw">bool</span> limitFrameRate = <span class="kw">true</span>, <span class="type">VkSwapchainCreateFlagsKHR</span> flags = 0) {
     <span class="cmt">/*待Ch1-4填充*/</span>
 }
 <span class="cmt">//该函数用于重建交换链</span>
@@ -794,25 +799,25 @@ std::<span class="type">vector</span> &lt;<span class="type">VkImageView&gt;</sp
     }
 
     <span class="cmt">//Non-const函数</span>
-    <span class="kw">void</span> <span class="fn">PushInstanceLayer</span>(<span class="kw">const char</span>* layerName) {
+    <span class="kw">void</span> <span class="fn">AddInstanceLayer</span>(<span class="kw">const char</span>* layerName) {
         instanceLayers.<span class="fn">push_back</span>(layerName);
     }
-    <span class="kw">void</span> <span class="fn">PushInstanceExtension</span>(<span class="kw">const char</span>* extensionName) {
+    <span class="kw">void</span> <span class="fn">AddInstanceExtension</span>(<span class="kw">const char</span>* extensionName) {
         instanceExtensions.<span class="fn">push_back</span>(extensionName);
     }
-    <span class="kw">void</span> <span class="fn">PushDeviceExtension</span>(<span class="kw">const char</span>* extensionName) {
+    <span class="kw">void</span> <span class="fn">AddDeviceExtension</span>(<span class="kw">const char</span>* extensionName) {
         deviceExtensions.<span class="fn">push_back</span>(extensionName);
     }
 
     <span class="type">VkResult</span> <span class="fn">UseLatestApiVersion</span>() {
         <span class="cmt">/*待Ch1-3填充*/</span>
     }
-    <span class="type">VkResult</span> <span class="fn">CreateInstance</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkInstanceCreateFlags</span> flags = 0) {
+    <span class="type">VkResult</span> <span class="fn">CreateInstance</span>(<span class="type">VkInstanceCreateFlags</span> flags = 0) {
         <span class="cmt">/*待Ch1-3填充*/</span>
     }
     <span class="kw">void</span> <span class="fn">Surface</span>(<span class="type">VkSurfaceKHR</span> surface) {
-        <span class="kw">if</span> (!<span class="kw">this</span>->surface)
-            <span class="kw">this</span>->surface = surface;
+        <span class="kw">if</span> (!<span class="kw">this</span>-&gt;surface)
+            <span class="kw">this</span>-&gt;surface = surface;
     }
     <span class="type">VkResult</span> <span class="fn">GetPhysicalDevices</span>() {
         <span class="cmt">/*待Ch1-3填充*/</span>
@@ -820,7 +825,7 @@ std::<span class="type">vector</span> &lt;<span class="type">VkImageView&gt;</sp
     <span class="type">VkResult</span> <span class="fn">DeterminePhysicalDevice</span>(<span class="type">uint32_t</span> deviceIndex = 0, <span class="kw">bool</span> enableGraphicsQueue, <span class="kw">bool</span> enableComputeQueue = <span class="kw">true</span>) {
         <span class="cmt">/*待Ch1-3填充*/</span>
     }
-    <span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkDeviceCreateFlags</span> flags = 0) {
+    <span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="type">VkDeviceCreateFlags</span> flags = 0) {
         <span class="cmt">/*待Ch1-3填充*/</span>
     }
     <span class="type">VkResult</span> <span class="fn">GetSurfaceFormats</span>() {
@@ -829,7 +834,7 @@ std::<span class="type">vector</span> &lt;<span class="type">VkImageView&gt;</sp
     <span class="type">VkResult</span> <span class="fn">SetSurfaceFormat</span>(<span class="type">VkSurfaceFormatKHR</span> surfaceFormat) {
         <span class="cmt">/*待Ch1-4填充*/</span>
     }
-    <span class="type">VkResult</span> <span class="fn">CreateSwapchain</span>(<span class="kw">bool</span> limitFrameRate = <span class="kw">true</span>, <span class="kw">const void</span>* pNext = <span class="kw">nullptr</span>, <span class="type">VkSwapchainCreateFlagsKHR</span> flags = 0) {
+    <span class="type">VkResult</span> <span class="fn">CreateSwapchain</span>(<span class="kw">bool</span> limitFrameRate = <span class="kw">true</span>, <span class="type">VkSwapchainCreateFlagsKHR</span> flags = 0) {
         <span class="cmt">/*待Ch1-4填充*/</span>
     }
 
@@ -847,7 +852,7 @@ std::<span class="type">vector</span> &lt;<span class="type">VkImageView&gt;</sp
         <span class="cmt">/*待Ch1-4填充*/</span>
     }
     <span class="cmt">//静态函数</span>
-    <span class="kw">static</span> <span class="type">graphicsBase</span>&amp; <span class="fn">Base</span>() {
+    <span class="kw">static</span> <span class="type">graphicsBase</span>&amp; <span class="sfn">Base</span>() {
         return singleton;
     }
 };

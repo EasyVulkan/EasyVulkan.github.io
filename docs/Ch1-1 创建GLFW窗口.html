@@ -85,6 +85,10 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
+</ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
@@ -329,7 +333,7 @@ pMonitor = <span class="fn">glfwGetPrimaryMonitor</span>();
 </p>
 <pre class="code">
 pWindow = fullScreen ?
-    <span class="fn">glfwCreateWindow</span>(pMode->width, pMode->height, windowTitle, pMonitor, <span class="kw">nullptr</span>) :
+    <span class="fn">glfwCreateWindow</span>(pMode-&gt;width, pMode-&gt;height, windowTitle, pMonitor, <span class="kw">nullptr</span>) :
     <span class="fn">glfwCreateWindow</span>(size.width, size.height, windowTitle, <span class="kw">nullptr</span>, <span class="kw">nullptr</span>);
 </pre>
 <p>
@@ -519,11 +523,11 @@ pWindow = fullScreen ?
 <pre class="code">
 <span class="kw">void</span> <span class="fn">MakeWindowFullScreen</span>() {
     <span class="kw">const</span> <span class="type">GLFWvidmode</span>* pMode = <span class="fn">glfwGetVideoMode</span>(pMonitor);
-    <span class="fn">glfwSetWindowMonitor</span>(pWindow, pMonitor, 0, 0, pMode->width, pMode->height, pMode->refreshRate);
+    <span class="fn">glfwSetWindowMonitor</span>(pWindow, pMonitor, 0, 0, pMode-&gt;width, pMode-&gt;height, pMode-&gt;refreshRate);
 }
 <span class="kw">void</span> <span class="fn">MakeWindowWindowed</span>(<span class="type">VkOffset2D</span> position, <span class="type">VkExtent2D</span> size) {
     <span class="kw">const</span> <span class="type">GLFWvidmode</span>* pMode = <span class="fn">glfwGetVideoMode</span>(pMonitor);
-    <span class="fn">glfwSetWindowMonitor</span>(pWindow, <span class="kw">nullptr</span>, position.x, position.y, size.width, size.height, pMode->refreshRate);
+    <span class="fn">glfwSetWindowMonitor</span>(pWindow, <span class="kw">nullptr</span>, position.x, position.y, size.width, size.height, pMode-&gt;refreshRate);
 }
 </pre>
 <p>

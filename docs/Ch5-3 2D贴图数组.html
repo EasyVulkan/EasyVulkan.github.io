@@ -20,7 +20,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="Ch7-1 初识顶点缓冲区" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html" />
+    <link rel="next" title="Ch6-0 使用新版本特性" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html" />
     <link rel="prev" title="Ch5-2 2D贴图及生成Mipmap" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html" /> 
 </head>
 
@@ -88,6 +88,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#id3">采样2D贴图数组</a></li>
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -218,10 +222,10 @@
     <span class="type">VkFormat</span> format_final,    <span class="cmt">//目标图像格式</span>
     <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
     <span class="cmt">//判定图层数是否超过硬件容许的最大值</span>
-    <span class="kw">if</span> (extentInTiles.width * extentInTiles.height &gt; <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers) {
+    <span class="kw">if</span> (extentInTiles.width * extentInTiles.height &gt; <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers) {
         outStream &lt;&lt; std::<span class="fn">format</span>(
             <span class="str">&quot;[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than: {}\nFile: {}\n&quot;</span>,
-            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers, filepath);
+            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers, filepath);
         <span class="kw">return</span>;
     }
     <span class="cmt">/*待后续填充*/</span>
@@ -240,7 +244,7 @@
 <pre class="code">
 <span class="type">VkExtent2D</span> fullExtent;
 <span class="type">formatInfo</span> formatInfo = <span class="fn">FormatInfo</span>(format_initial);
-std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; pImageData = <span class="fn">LoadFile</span>(filepath, fullExtent, formatInfo);
+std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; pImageData = <span class="sfn">LoadFile</span>(filepath, fullExtent, formatInfo);
 </pre>
 <p>
     读取图像后，判定图像的长宽<span class="var">fullExtent</span>能否<span class="var">extentInTiles</span>整除，不能整除的话就不知道该咋办了呀~，抛出错误信息。否则，调用<span class="fn">Create</span>(...)的首个参数为内存地址的重载：
@@ -248,15 +252,15 @@ std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]
 <pre class="code">
 <span class="kw">void</span> <span class="fn">Create</span>(
     <span class="kw">const char</span>* filepath, <span class="type">VkExtent2D</span> extentInTiles, <span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
-    <span class="kw">if</span> (extentInTiles.width * extentInTiles.height &gt; <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers) {
+    <span class="kw">if</span> (extentInTiles.width * extentInTiles.height &gt; <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers) {
         outStream &lt;&lt; std::<span class="fn">format</span>(
             <span class="str">&quot;[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than: {}\nFile: {}\n&quot;</span>,
-            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers, filepath);
+            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers, filepath);
         <span class="kw">return</span>;
     }
     <span class="type">VkExtent2D</span> fullExtent;
     <span class="type">formatInfo</span> formatInfo = <span class="fn">FormatInfo</span>(format_initial);
-    std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; pImageData = <span class="fn">LoadFile</span>(filepath, fullExtent, formatInfo);
+    std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; pImageData = <span class="sfn">LoadFile</span>(filepath, fullExtent, formatInfo);
     <span class="kw">if</span> (pImageData)
         <span class="kw">if</span> (fullExtent.width % extentInTiles.width ||
             fullExtent.height % extentInTiles.height)
@@ -275,10 +279,10 @@ std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]
 <pre class="code">
 <span class="kw">void</span> <span class="fn">Create</span>(<span class="kw">const</span> <span class="type">uint8_t</span>* pImageData, <span class="type">VkExtent2D</span> extent, <span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
     layerCount = extentInTiles.width * extentInTiles.height;
-    <span class="kw">if</span> (layerCount &gt; <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers) {
+    <span class="kw">if</span> (layerCount &gt; <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers) {
         outStream &lt;&lt; std::<span class="fn">format</span>(
             <span class="str">&quot;[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than: {}\n&quot;</span>,
-            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers);
+            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers);
         <span class="kw">return</span>;
     }
     <span class="kw">if</span> (fullExtent.width % extentInTiles.width ||
@@ -315,7 +319,7 @@ extent.height = fullExtent.height / extentInTiles.height;
 </p>
 <pre class="code">
 <span class="kw">if</span> (extentInTiles.width == 1)
-    <span class="type">stagingBuffer</span>::<span class="fn">BufferData_MainThread</span>(pImageData, imageDataSize);
+    <span class="type">stagingBuffer</span>::<span class="sfn">BufferData_MainThread</span>(pImageData, imageDataSize);
 <span class="kw">else</span> {
     <span class="cmt">/*待后续填充*/</span>
 }
@@ -329,10 +333,10 @@ extent.height = fullExtent.height / extentInTiles.height;
 </p>
 <pre class="code">
 <span class="kw">if</span> (extentInTiles.width == 1)
-    <span class="type">stagingBuffer</span>::<span class="fn">BufferData_MainThread</span>(pImageData, imageDataSize);
+    <span class="type">stagingBuffer</span>::<span class="sfn">BufferData_MainThread</span>(pImageData, imageDataSize);
 <span class="kw">else</span> {
     <span class="cmt">//先映射缓冲区，取得用于访问内存区域的指针</span>
-    <span class="type">uint8_t</span>* pData_dst = <span class="kw">static_cast</span>&lt;<span class="type">uint8_t</span>*&gt;(<span class="type">stagingBuffer</span>::<span class="fn">MapMemory_MainThread</span>(imageDataSize));
+    <span class="type">uint8_t</span>* pData_dst = <span class="kw">static_cast</span>&lt;<span class="type">uint8_t</span>*&gt;(<span class="type">stagingBuffer</span>::<span class="sfn">MapMemory_MainThread</span>(imageDataSize));
     <span class="cmt">//计算每个贴图子块每行的数据大小</span>
     <span class="type">size_t</span> dataSizePerRow = dataSizePerPixel * extent.width;
     <span class="cmt">//双循环遍历每个贴图子块</span>
@@ -347,7 +351,7 @@ extent.height = fullExtent.height / extentInTiles.height;
                 pData_dst += dataSizePerRow;<span class="cmt">//每拷贝一行，pData_dst向后移动一行的数据大小</span>
 
     <span class="cmt">//取消映射缓冲区</span>
-    <span class="type">stagingBuffer</span>::<span class="fn">UnmapMemory_MainThread</span>();
+    <span class="type">stagingBuffer</span>::<span class="sfn">UnmapMemory_MainThread</span>();
 }
 </pre>
 <ul>
@@ -386,7 +390,7 @@ std::<span class="type">unique_ptr</span>&lt;<span class="type">VkBufferImageCop
         };
         layer++;
     }
-<span class="fn">vkCmdCopyBufferToImage</span>(commandBuffer, <span class="type">stagingBuffer</span>::<span class="fn">Buffer_MainThread</span>(), bufferMemory.<span class="type">Buffer</span>(), <span class="cmt">/*图像的handle*/</span> , layerCount, regions.<span class="fn">get</span>());
+<span class="fn">vkCmdCopyBufferToImage</span>(commandBuffer, <span class="type">stagingBuffer</span>::<span class="sfn">Buffer_MainThread</span>(), bufferMemory.<span class="type">Buffer</span>(), <span class="cmt">/*图像的handle*/</span> , layerCount, regions.<span class="fn">get</span>());
 </pre>
 <p>
     将数据扔进暂存缓冲区后，后续的事情会在<span class="fn">Create_Internal</span>(...)里完成，调用该函数：
@@ -394,10 +398,10 @@ std::<span class="type">unique_ptr</span>&lt;<span class="type">VkBufferImageCop
 <pre class="code">
 <span class="kw">void</span> <span class="fn">Create</span>(<span class="kw">const</span> <span class="type">uint8_t</span>* pImageData, <span class="type">VkExtent2D</span> extent, <span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
     layerCount = extentInTiles.width * extentInTiles.height;
-    <span class="kw">if</span> (layerCount &gt; <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers) {
+    <span class="kw">if</span> (layerCount &gt; <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers) {
         outStream &lt;&lt; std::<span class="fn">format</span>(
             <span class="str">&quot;[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than: {}\n&quot;</span>,
-            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers);
+            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers);
         <span class="kw">return</span>;
     }
     <span class="kw">if</span> (fullExtent.width % extentInTiles.width ||
@@ -410,9 +414,9 @@ std::<span class="type">unique_ptr</span>&lt;<span class="type">VkBufferImageCop
     <span class="type">size_t</span> dataSizePerPixel = <span class="fn">FormatInfo</span>(format_initial).sizePerPixel;
     <span class="type">size_t</span> imageDataSize = dataSizePerPixel * fullExtent.width * fullExtent.height;
     <span class="kw">if</span> (extentInTiles.width == 1)
-        <span class="type">stagingBuffer</span>::<span class="fn">BufferData_MainThread</span>(pImageData, imageDataSize);
+        <span class="type">stagingBuffer</span>::<span class="sfn">BufferData_MainThread</span>(pImageData, imageDataSize);
     <span class="kw">else</span> {
-        <span class="type">uint8_t</span>* pData_dst = <span class="kw">static_cast</span>&lt;<span class="type">uint8_t</span>*&gt;(<span class="type">stagingBuffer</span>::<span class="fn">MapMemory_MainThread</span>(imageDataSize));
+        <span class="type">uint8_t</span>* pData_dst = <span class="kw">static_cast</span>&lt;<span class="type">uint8_t</span>*&gt;(<span class="type">stagingBuffer</span>::<span class="sfn">MapMemory_MainThread</span>(imageDataSize));
         <span class="type">size_t</span> dataSizePerRow = dataSizePerPixel * extent.width;
         <span class="kw">for</span> (<span class="type">size_t</span> j = 0; j &lt; extentInTiles.height; j++)
             <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; extentInTiles.width; i++)
@@ -422,7 +426,7 @@ std::<span class="type">unique_ptr</span>&lt;<span class="type">VkBufferImageCop
                         pImageData + (i * extent.width + (k + j * extent.height) * fullExtent.width) * dataSizePerPixel,
                         dataSizePerRow),
                     pData_dst += dataSizePerRow;
-        <span class="type">stagingBuffer</span>::<span class="fn">UnmapMemory_MainThread</span>();
+        <span class="type">stagingBuffer</span>::<span class="sfn">UnmapMemory_MainThread</span>();
     }
     <span class="fn">Create_Internal</span>(format_initial, format_final, generateMipmap);
 }
@@ -432,14 +436,14 @@ std::<span class="type">unique_ptr</span>&lt;<span class="type">VkBufferImageCop
 </p>
 <pre class="code">
 <span class="kw">void</span> <span class="fn">Create_Internal</span>(<span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap) {
-    <span class="type">uint32_t</span> mipLevelCount = generateMipmap ? <span class="fn">CalculateMipLevelCount</span>(extent) : 1;
+    <span class="type">uint32_t</span> mipLevelCount = generateMipmap ? <span class="sfn">CalculateMipLevelCount</span>(extent) : 1;
     <span class="fn">CreateImageMemory</span>(<span class="enum">VK_IMAGE_TYPE_2D</span>, format_final, { extent.width, extent.height, 1 }, mipLevelCount, layerCount);
     <span class="fn">CreateImageView</span>(<span class="enum">VK_IMAGE_VIEW_TYPE_2D_ARRAY</span>, format_final, mipLevelCount, layerCount);
     <span class="kw">if</span> (format_initial == format_final)
-        <span class="fn">CopyBlitAndGenerateMipmap2d</span>(<span class="type">stagingBuffer</span>::<span class="fn">Buffer_MainThread</span>(), imageMemory.<span class="fn">Image</span>(), imageMemory.<span class="fn">Image</span>(), extent, mipLevelCount, layerCount);
+        <span class="sfn">CopyBlitAndGenerateMipmap2d</span>(<span class="type">stagingBuffer</span>::<span class="sfn">Buffer_MainThread</span>(), imageMemory.<span class="fn">Image</span>(), imageMemory.<span class="fn">Image</span>(), extent, mipLevelCount, layerCount);
     <span class="kw">else</span>
-        <span class="kw">if</span> (<span class="type">VkImage</span> image_conversion = <span class="type">stagingBuffer</span>::<span class="fn">AliasedImage2d_MainThread</span>(format_initial, extent))
-            <span class="fn">BlitAndGenerateMipmap2d</span>(image_conversion, imageMemory.<span class="fn">Image</span>(), extent, mipLevelCount, 1);
+        <span class="kw">if</span> (<span class="type">VkImage</span> image_conversion = <span class="type">stagingBuffer</span>::<span class="sfn">AliasedImage2d_MainThread</span>(format_initial, extent))
+            <span class="sfn">BlitAndGenerateMipmap2d</span>(image_conversion, imageMemory.<span class="fn">Image</span>(), extent, mipLevelCount, 1);
         <span class="kw">else</span> {
             <span class="type">VkImageCreateInfo</span> imageCreateInfo = {
                 .imageType = <span class="enum">VK_IMAGE_TYPE_2D</span>,
@@ -451,7 +455,7 @@ std::<span class="type">unique_ptr</span>&lt;<span class="type">VkBufferImageCop
                 .usage = <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span> | <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>
             };
             vulkan::<span class="type">imageMemory</span> imageMemory_conversion(imageCreateInfo, <span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>);
-            <span class="fn">CopyBlitAndGenerateMipmap2d</span>(<span class="type">stagingBuffer</span>::<span class="fn">Buffer_MainThread</span>(), imageMemory_conversion.<span class="fn">Image</span>(), imageMemory.<span class="fn">Image</span>(), extent, mipLevelCount, layerCount);
+            <span class="sfn">CopyBlitAndGenerateMipmap2d</span>(<span class="type">stagingBuffer</span>::<span class="sfn">Buffer_MainThread</span>(), imageMemory_conversion.<span class="fn">Image</span>(), imageMemory.<span class="fn">Image</span>(), extent, mipLevelCount, layerCount);
         }
 }
 </pre></section>
@@ -464,10 +468,10 @@ std::<span class="type">unique_ptr</span>&lt;<span class="type">VkBufferImageCop
 <span class="cmt">//从硬盘读取多个大小相同的图像文件</span>
 <span class="fn">Create</span>(<span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">char</span>* <span class="kw">const</span>&gt; filepaths, <span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
     <span class="cmt">//验证图层数是否满足硬件限制</span>
-    <span class="kw">if</span> (filepaths.<span class="fn">Count</span>() &gt; <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers) {
+    <span class="kw">if</span> (filepaths.<span class="fn">Count</span>() &gt; <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers) {
         outStream &lt;&lt; std::<span class="fn">format</span>(
             <span class="str">&quot;[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than: {}\nFile: {}\n&quot;</span>,
-            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers, filepath);
+            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers, filepath);
         <span class="kw">return</span>;
     }
     <span class="type">formatInfo</span> formatInfo = <span class="fn">FormatInfo</span>(format_initial);
@@ -475,7 +479,7 @@ std::<span class="type">unique_ptr</span>&lt;<span class="type">VkBufferImageCop
     <span class="cmt">//遍历文件路径读图</span>
     <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; filepaths.<span class="fn">Count</span>(); i++) {
         <span class="type">VkExtent2D</span> extent_currentLayer;
-        psImageData[i] = <span class="fn">LoadFile</span>(filepaths[i], extent_currentLayer, formatInfo);
+        psImageData[i] = <span class="sfn">LoadFile</span>(filepaths[i], extent_currentLayer, formatInfo);
         <span class="cmt">//读图成功时进这个if分支</span>
         <span class="kw">if</span> (psImageData[i]) {
             <span class="cmt">//记录首张图的大小</span>
@@ -502,26 +506,26 @@ std::<span class="type">unique_ptr</span>&lt;<span class="type">VkBufferImageCop
     <span class="cmt">//记录图层数</span>
     layerCount = psImageData.<span class="fn">Count</span>();
     <span class="cmt">//验证图层数是否满足硬件限制</span>
-    <span class="kw">if</span> (layerCount &gt; <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers) {
+    <span class="kw">if</span> (layerCount &gt; <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers) {
         outStream &lt;&lt; std::<span class="fn">format</span>(
             <span class="str">&quot;[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than: {}\nFile: {}\n&quot;</span>,
-            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers, filepath);
+            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers, filepath);
         <span class="kw">return</span>;
     }
     <span class="cmt">//记录图像大小</span>
-    <span class="kw">this</span>->extent = extent;
+    <span class="kw">this</span>-&gt;extent = extent;
     <span class="cmt">//计算单张图像的大小</span>
     <span class="type">size_t</span> dataSizePerImage = <span class="type">size_t</span>(<span class="fn">FormatInfo</span>(format_initial).sizePerPixel) * extent.width * extent.height;
     <span class="cmt">//计算所有图像的大小</span>
     <span class="type">size_t</span> imageDataSize = dataSizePerImage * layerCount;
     <span class="cmt">//映射暂存缓冲区</span>
-    <span class="type">uint8_t</span>* pData_dst = <span class="kw">static_cast</span>&lt;<span class="type">uint8_t</span>*&gt;(<span class="type">stagingBuffer</span>::<span class="fn">MapMemory_MainThread</span>(imageDataSize));
+    <span class="type">uint8_t</span>* pData_dst = <span class="kw">static_cast</span>&lt;<span class="type">uint8_t</span>*&gt;(<span class="type">stagingBuffer</span>::<span class="sfn">MapMemory_MainThread</span>(imageDataSize));
     <span class="cmt">//将所有图像数据拷贝到暂存缓冲区</span>
     <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; layerCount; i++) {
         <span class="type">memcpy</span>(pData_dst, psImageData[i], dataSizePerImage),
         pData_dst += dataSizePerImage;
     <span class="cmt">//取消映射暂存缓冲区</span>
-    <span class="type">stagingBuffer</span>::<span class="fn">UnmapMemory_MainThread</span>();
+    <span class="type">stagingBuffer</span>::<span class="sfn">UnmapMemory_MainThread</span>();
     <span class="cmt">//调用先前填充的Create_Internal(...)</span>
     <span class="fn">Create_Internal</span>(format_initial, format_final, generateMipmap);
 }
@@ -531,7 +535,7 @@ std::<span class="type">unique_ptr</span>&lt;<span class="type">VkBufferImageCop
 <section id="id3">
 <h2>采样2D贴图数组<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
 <p>
-    采样2D贴图时，基于<a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html#texture-frag-shader">Ch7-7 使用贴图</a>中所写的<span class="path">Texture.vert.shader</span>和<span class="path">Texture.vert.shader</span>进行如下修改：
+    采样2D贴图时，基于<a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html#texture-frag-shader">Ch7-7 使用贴图</a>中所写的<span class="path">Texture.vert.shader</span>和<span class="path">Texture.frag.shader</span>进行如下修改：
 </p>
 <pre class="code"><span class="pragma">#version</span> 460
 <span class="pragma">#pragma shader_stage</span>(vertex)
@@ -578,7 +582,7 @@ std::<span class="type">unique_ptr</span>&lt;<span class="type">VkBufferImageCop
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html" class="btn btn-neutral float-left" title="Ch5-2 2D贴图及生成Mipmap" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
-        <a href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-right" title="Ch7-1 初识顶点缓冲区" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html" class="btn btn-neutral float-right" title="Ch6-0 使用新版本特性" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

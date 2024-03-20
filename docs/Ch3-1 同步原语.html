@@ -103,6 +103,10 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
+</ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
@@ -395,13 +399,13 @@
     <span class="mcr">DefineAddressFunction</span>;
     <span class="cmt">//Const Function</span>
     <span class="type">result_t</span> <span class="fn">Wait</span>() <span class="kw">const</span> {
-        <span class="type">VkResult</span> result = <span class="fn">vkWaitForFences</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), 1, &amp;handle, <span class="kw">false</span>, <span class="mcr">UINT64_MAX</span>);
+        <span class="type">VkResult</span> result = <span class="fn">vkWaitForFences</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), 1, &amp;handle, <span class="kw">false</span>, <span class="mcr">UINT64_MAX</span>);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ fence ] ERROR\nFailed to wait for the fence!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="type">result_t</span> <span class="fn">Reset</span>() <span class="kw">const</span> {
-        <span class="type">VkResult</span> result = <span class="fn">vkResetFences</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), 1, &amp;handle);
+        <span class="type">VkResult</span> result = <span class="fn">vkResetFences</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), 1, &amp;handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ fence ] ERROR\nFailed to reset the fence!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
@@ -413,7 +417,7 @@
         <span class="kw">return</span> result;
     }
     <span class="type">result_t</span> <span class="fn">Status</span>() <span class="kw">const</span> {
-        <span class="type">VkResult</span> result = <span class="fn">vkGetFenceStatus</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), handle);
+        <span class="type">VkResult</span> result = <span class="fn">vkGetFenceStatus</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle);
         <span class="kw">if</span> (result &lt; 0)<span class="cmt">//vkGetFenceStatus(...)成功时有两种结果，所以不能仅仅判断result是否非0</span>
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ fence ] ERROR\nFailed to get the status of the fence!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
@@ -421,7 +425,7 @@
     <span class="cmt">//Non-const Function</span>
     <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkFenceCreateInfo</span>&amp; createInfo) {
         createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_FENCE_CREATE_INFO</span>;
-        <span class="type">VkResult</span> result = <span class="fn">vkCreateFence</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateFence</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ fence ] ERROR\nFailed to create a fence!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
@@ -580,7 +584,7 @@
     <span class="cmt">//Non-const Function</span>
     <span class="type">result_t</span> Create(<span class="type">VkSemaphoreCreateInfo</span>&amp; createInfo) {
         createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO</span>;
-        <span class="type">VkResult</span> result = <span class="fn">vkCreateSemaphore</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateSemaphore</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ semaphore ] ERROR\nFailed to create a semaphore!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
@@ -835,7 +839,7 @@
     其一，两个概念适用范围不同，可获性是对于内存领域（memory domain）的概念，而可见性是对于代理和引用对（agent & reference）的概念，这几个名词搞不懂也无妨，至少这套教程里不会再出现。其二，可见必须在可获后确保，即便一个操作能确保可见性，如果资源不可获那也就不会可见。
 <p>
 <p>
-    可获性和可见性可以分别通过两个内存屏障来确保，即使用两次内存屏障，前一次的srcAccessMask注明写操作，dstAccessMask为0（仅确保可获性），后一次的srcAccessMask为0，dstAccessMask非0（使得dstAccessMask注明的操作获得资源可见性）。你能在 TODO Ch7-6 找到使用例。
+    可获性和可见性可以分别通过两个内存屏障来确保，即使用两次内存屏障，前一次的srcAccessMask注明写操作，dstAccessMask为0（仅确保可获性），后一次的srcAccessMask为0，dstAccessMask非0（使得dstAccessMask注明的操作获得资源可见性）。
 </p>
 <div class="admonition note">
     <p class="admonition-title">Note</p>

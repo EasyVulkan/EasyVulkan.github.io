@@ -82,6 +82,10 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
+</ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
@@ -153,15 +157,15 @@
 <span class="kw">public</span>:
     <span class="cmt">/*其他成员函数略*/</span>
     <span class="cmt">//*pPlus的Getter</span>
-    <span class="kw">static</span> <span class="type">graphicsBasePlus</span>&amp; <span class="fn">Plus</span>() { <span class="kw">return</span> *singleton.pPlus; }
+    <span class="kw">static</span> <span class="type">graphicsBasePlus</span>&amp; <span class="sfn">Plus</span>() { <span class="kw">return</span> *singleton.pPlus; }
     <span class="cmt">//*pPlus的Setter，只允许设置pPlus一次</span>
-    <span class="kw">static void</span> <span class="fn">Plus</span>(<span class="type">graphicsBasePlus</span>&amp; plus) { <span class="kw">if</span> (!singleton.pPlus) singleton.pPlus = &amp;plus; }
+    <span class="kw">static void</span> <span class="sfn">Plus</span>(<span class="type">graphicsBasePlus</span>&amp; plus) { <span class="kw">if</span> (!singleton.pPlus) singleton.pPlus = &amp;plus; }
 };
 </pre>
 <ul>
     <li>
         <p>
-            这么一来你就可以用<span class="type">graphicsBase</span>::<span class="fn">Plus</span>()来访问<span class="type">graphicsBasePlus</span>::<span class="var">singleton</span>，虽然这么做有点多此一举。。。
+            这么一来你就可以用<span class="type">graphicsBase</span>::<span class="sfn">Plus</span>()来访问<span class="type">graphicsBasePlus</span>::<span class="var">singleton</span>，虽然这么做有点多此一举。。。
         </p>
     </li>
 </ul>
@@ -187,7 +191,7 @@
 <pre class="code">
 <span class="fn">graphicsBasePlus</span>() {
     <span class="cmt">/*待后续填充*/</span>
-    <span class="type">graphicsBase</span>::<span class="fn">Plus</span>(singleton);
+    <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>(singleton);
     <span class="cmt">/*待后续填充*/</span>
 }
 </pre>
@@ -213,7 +217,7 @@
     <span class="cmt">//--------------------</span>
     <span class="fn">graphicsBasePlus</span>() {
         <span class="cmt">/*待后续填充*/</span>
-        <span class="type">graphicsBase</span>::<span class="fn">Plus</span>(singleton);
+        <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>(singleton);
         <span class="cmt">/*待后续填充*/</span>
    }
     <span class="fn">graphicsBasePlus</span>(<span class="type">graphicsBasePlus</span>&amp;&amp;) = <span class="kw">delete</span>;
@@ -231,7 +235,7 @@
             .commandBufferCount = 1,
             .pCommandBuffers = &amp;commandBuffer
         };
-        <span class="type">VkResult</span> result = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(submitInfo, fence);
+        <span class="type">VkResult</span> result = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(submitInfo, fence);
         <span class="kw">if</span> (!result)
             fence.<span class="fn">Wait</span>();
         <span class="kw">return</span> result;
@@ -240,10 +244,10 @@
     <span class="type">result_t</span> <span class="fn">AcquireImageOwnership_Presentation</span>(<span class="type">VkSemaphore</span> semaphore_renderingIsOver, <span class="type">VkSemaphore</span> semaphore_ownershipIsTransfered, <span class="type">VkFence</span> fence = <span class="mcr">VK_NULL_HANDLE</span>) <span class="kw">const</span> {
         <span class="kw">if</span> (<span class="type">VkResult</span> result = commandBuffer_presentation.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>))
             <span class="kw">return</span> result;
-        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">CmdTransferImageOwnership</span>(commandBuffer_presentation);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CmdTransferImageOwnership</span>(commandBuffer_presentation);
         <span class="kw">if</span> (<span class="type">VkResult</span> result = commandBuffer_presentation.<span class="fn">End</span>())
             <span class="kw">return</span> result;
-        <span class="kw">return</span> <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SubmitCommandBuffer_Presentation</span>(commandBuffer_presentation, semaphore_renderingIsOver, semaphore_ownershipIsTransfered, fence);
+        <span class="kw">return</span> <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Presentation</span>(commandBuffer_presentation, semaphore_renderingIsOver, semaphore_ownershipIsTransfered, fence);
     }
 };
 <span class="kw">inline</span> <span class="type">graphicsBasePlus</span> <span class="type">graphicsBasePlus</span>::singleton;
@@ -267,15 +271,15 @@
 <span class="fn">graphicsBasePlus</span>() {
     <span class="cmt">//在创建逻辑设备时执行Initialize()</span>
     <span class="kw">auto</span> Initialize = [] {
-        <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>() != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
-            singleton.commandPool_graphics.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>),
+        <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>() != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
+            singleton.commandPool_graphics.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>),
             singleton.commandPool_graphics.<span class="fn">AllocateBuffers</span>(singleton.commandBuffer_transfer);
-        <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Compute</span>() != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
-            singleton.commandPool_compute.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Compute</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
-        <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>() != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp;
-            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>() != <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>() &amp;&amp;
-            <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageSharingMode == <span class="enum">VK_SHARING_MODE_EXCLUSIVE</span>)
-            singleton.commandPool_presentation.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>),
+        <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Compute</span>() != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
+            singleton.commandPool_compute.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Compute</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
+        <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>() != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp;
+            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>() != <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>() &amp;&amp;
+            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageSharingMode == <span class="enum">VK_SHARING_MODE_EXCLUSIVE</span>)
+            singleton.commandPool_presentation.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>),
             singleton.commandPool_presentation.<span class="fn">AllocateBuffers</span>(singleton.commandBuffer_presentation);
         <span class="cmt">/*待后续填充*/</span>
     };
@@ -287,9 +291,9 @@
         singleton.commandPool_presentation.~<span class="fn">commandPool</span>();
         singleton.commandPool_compute.~<span class="fn">commandPool</span>();
     };
-    <span class="type">graphicsBase</span>::<span class="fn">Plus</span>(singleton);
-    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_CreateDevice</span>(Initialize);
-    <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_DestroyDevice</span>(CleanUp);
+    <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>(singleton);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateDevice</span>(Initialize);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroyDevice</span>(CleanUp);
 }
 </pre>
 <p>
@@ -435,19 +439,19 @@
     <span class="cmt">//--------------------</span>
     <span class="fn">graphicsBasePlus</span>() {
         <span class="kw">auto</span> Initialize = [] {
-            <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>() != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
-                singleton.commandPool_graphics.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>),
+            <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>() != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
+                singleton.commandPool_graphics.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>),
                 singleton.commandPool_graphics.<span class="fn">AllocateBuffers</span>(singleton.commandBuffer_transfer);
-            <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Compute</span>() != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
-                singleton.commandPool_compute.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Compute</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
-            <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>() != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp;
-                <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>() != <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>() &amp;&amp;
-                <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageSharingMode == <span class="enum">VK_SHARING_MODE_EXCLUSIVE</span>)
-                singleton.commandPool_presentation.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>),
+            <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Compute</span>() != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
+                singleton.commandPool_compute.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Compute</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
+            <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>() != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp;
+                <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>() != <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>() &amp;&amp;
+                <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageSharingMode == <span class="enum">VK_SHARING_MODE_EXCLUSIVE</span>)
+                singleton.commandPool_presentation.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>),
                 singleton.commandPool_presentation.<span class="fn">AllocateBuffers</span>(singleton.commandBuffer_presentation);
             <span class="cmt">//新增------------------------------------</span>
             <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; std::<span class="fn">size</span>(singleton.formatProperties); i++)
-                <span class="fn">vkGetPhysicalDeviceFormatProperties</span>(<span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PhysicalDevice</span>(), <span class="type">VkFormat</span>(i), &amp;singleton.formatProperties[i]);
+                <span class="fn">vkGetPhysicalDeviceFormatProperties</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDevice</span>(), <span class="type">VkFormat</span>(i), &amp;singleton.formatProperties[i]);
             <span class="cmt">//----------------------------------------</span>
         };
         <span class="kw">auto</span> CleanUp = [] {
@@ -455,9 +459,9 @@
             singleton.commandPool_presentation.~<span class="fn">commandPool</span>();
             singleton.commandPool_compute.~<span class="fn">commandPool</span>();
         };
-        <span class="type">graphicsBase</span>::<span class="fn">Plus</span>(singleton);
-        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_CreateDevice</span>(Initialize);
-        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">PushCallback_DestroyDevice</span>(CleanUp);
+        <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>(singleton);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateDevice</span>(Initialize);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroyDevice</span>(CleanUp);
     }
     <span class="fn">graphicsBasePlus</span>(<span class="type">graphicsBasePlus</span>&amp;&amp;) = <span class="kw">delete</span>;
     ~<span class="fn">graphicsBasePlus</span>() = <span class="kw">default</span>;
@@ -481,7 +485,7 @@
             .commandBufferCount = 1,
             .pCommandBuffers = &amp;commandBuffer
         };
-        <span class="type">VkResult</span> result = <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(submitInfo, fence);
+        <span class="type">VkResult</span> result = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(submitInfo, fence);
         <span class="kw">if</span> (!result)
             fence.<span class="fn">Wait</span>();
         <span class="kw">return</span> result;
@@ -489,10 +493,10 @@
     <span class="type">result_t</span> <span class="fn">AcquireImageOwnership_Presentation</span>(<span class="type">VkSemaphore</span> semaphore_renderingIsOver, <span class="type">VkSemaphore</span> semaphore_ownershipIsTransfered, <span class="type">VkFence</span> fence = <span class="mcr">VK_NULL_HANDLE</span>) <span class="kw">const</span> {
         <span class="kw">if</span> (<span class="type">VkResult</span> result = commandBuffer_presentation.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>))
             <span class="kw">return</span> result;
-        <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">CmdTransferImageOwnership</span>(commandBuffer_presentation);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CmdTransferImageOwnership</span>(commandBuffer_presentation);
         <span class="kw">if</span> (<span class="type">VkResult</span> result = commandBuffer_presentation.<span class="fn">End</span>())
             <span class="kw">return</span> result;
-        <span class="kw">return</span> <span class="type">graphicsBase</span>::<span class="fn">Base</span>().<span class="fn">SubmitCommandBuffer_Presentation</span>(commandBuffer_presentation, semaphore_renderingIsOver, semaphore_ownershipIsTransfered, fence);
+        <span class="kw">return</span> <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Presentation</span>(commandBuffer_presentation, semaphore_renderingIsOver, semaphore_ownershipIsTransfered, fence);
     }
 };
 <span class="kw">inline</span> <span class="type">graphicsBasePlus</span> <span class="type">graphicsBasePlus</span>::singleton;
@@ -511,7 +515,7 @@
     <br>
     2.<span class="fn">Corresponding16BitFloatFormat</span>(...)获取32位浮点数格式对应的16位浮点数格式类型，这会在之后将32位浮点数的hdr图像数据转到16位浮点数数据时发挥作用。
     <br>
-    3.<span class="fn">FormatProperties</span>(...)用于简化<span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">FormatProperties</span>(...)。
+    3.<span class="fn">FormatProperties</span>(...)用于简化<span class="type">graphicsBase</span>::<span class="sfn">Plus</span>().<span class="fn">FormatProperties</span>(...)。
 </p>
 <pre class="code">
 <span class="kw">constexpr</span> <span class="type">formatInfo</span> <span class="fn">FormatInfo</span>(<span class="type">VkFormat</span> format) {
@@ -536,7 +540,7 @@
     <span class="kw">return</span> format_32BitFloat;
 }
 <span class="kw">const</span> <span class="type">VkFormatProperties</span>&amp; <span class="fn">FormatProperties</span>(<span class="type">VkFormat</span> format) {
-    <span class="kw">return</span> <span class="type">graphicsBase</span>::<span class="fn">Plus</span>().<span class="fn">FormatProperties</span>(format);
+    <span class="kw">return</span> <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>().<span class="fn">FormatProperties</span>(format);
 }
 </pre></section>
 </section>
