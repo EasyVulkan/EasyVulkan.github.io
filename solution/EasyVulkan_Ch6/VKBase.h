@@ -640,7 +640,6 @@ namespace vulkan {
 			GetPhysicalDeviceFeatures();
 			VkDeviceCreateInfo deviceCreateInfo = {
 				.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-				.pNext = pNext_deviceCreateInfo,
 				.flags = flags,
 				.queueCreateInfoCount = queueCreateInfoCount,
 				.pQueueCreateInfos = queueCreateInfos,
@@ -649,9 +648,10 @@ namespace vulkan {
 			};
 			void** ppNext = nullptr;
 			if (apiVersion >= VK_API_VERSION_1_1)
-				ppNext = SetPNext(const_cast<void*&>(deviceCreateInfo.pNext), &physicalDeviceFeatures);
+				ppNext = SetPNext(pNext_deviceCreateInfo, &physicalDeviceFeatures);
 			else
 				deviceCreateInfo.pEnabledFeatures = &physicalDeviceFeatures.features;
+			deviceCreateInfo.pNext = pNext_deviceCreateInfo;
 			VkResult result = vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &device);
 			if (ppNext)
 				*ppNext = nullptr;//Unset &physicalDeviceFeatures

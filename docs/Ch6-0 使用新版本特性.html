@@ -323,7 +323,7 @@
     <span class="type">VkPhysicalDeviceVulkan12Properties</span> physicalDeviceVulkan12Properties;
     <span class="type">VkPhysicalDeviceVulkan13Properties</span> physicalDeviceVulkan13Properties;
     <span class="type">VkPhysicalDeviceMemoryProperties2</span> physicalDeviceMemoryProperties;   <span class="cmt">//不存在VkPhysicalDeviceVulkan11MemoryProperties等</span>
-    <span class="cmt">//获取物理设备属性，逻辑跟GetPhysicalDeviceFeatures一样，解说略</span>
+    <span class="cmt">//获取物理设备属性，逻辑跟GetPhysicalDeviceFeatures()一样，解说略</span>
     <span class="kw">void</span> <span class="type">GetPhysicalDeviceProperties</span>() {
         <span class="kw">if</span> (apiVersion &gt;= <span class="mcr">VK_API_VERSION_1_1</span>) {
             physicalDeviceProperties = { <span class="enum">VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2</span> };
@@ -529,7 +529,7 @@
 <p>
     接着考虑更改创建Vulkan实例、逻辑设备、交换链的函数。
     <br>
-    24.03.20 注：原本在入门教程部分，是在<span class="fn">CreateInstance</span>(...)和<span class="fn">CreateDevice</span>(...)等函数的参数中传入创建信息的pNext，在写本文时对以往教程和示例代码一并修改，去掉了这些函数参数中的<code><span class="kw">const void</span>* pNext</code>。在此日期前没读过我的教程的话不必在意。
+    24.03.20 注：原本在Ch1中，是在<span class="fn">CreateInstance</span>(...)和<span class="fn">CreateDevice</span>(...)等函数的参数中传入创建信息的pNext，在写本文时对以往教程和示例代码一并修改，去掉了这些函数参数中的<code><span class="kw">const void</span>* pNext</code>。在此日期前没读过我的教程的话不必在意。
     <br>
     <span class="fn">CreateSwapchain</span>(...)不用修改，<span class="fn">CreateInstance</span>(...)中只要赋值创建信息的pNext成员就行：
 </p>
@@ -628,7 +628,7 @@
     <span class="cmt">/*变更*/</span><span class="fn">GetPhysicalDeviceFeatures</span>();
     <span class="type">VkDeviceCreateInfo</span> deviceCreateInfo = {
         .sType = <span class="enum">VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO</span>,
-        .pNext = pNext_deviceCreateInfo,<span class="cmt">//新增</span>
+        .pNext = pNext_deviceCreateInfo,<span class="cmt">//新增，不过一会儿还会删掉</span>
         .flags = flags,
         .queueCreateInfoCount = queueCreateInfoCount,
         .pQueueCreateInfos = queueCreateInfos,
@@ -655,7 +655,7 @@
 }
 </pre>
 <p>
-    事情还没完，标准中规定：如果开启的硬件特性由<span class="type">VkPhysicalDeviceFeatures2</span>而非<span class="type">VkPhysicalDeviceFeatures</span>指定，那么<span class="type">VkDeviceCreateInfo</span>::pEnabledFeatures必须填写为空指针，而<span class="type">VkPhysicalDeviceFeatures2</span>必须被接在<span class="type">VkDeviceCreateInfo</span>的pNext链中：
+    事情还没完，标准中规定：如果开启的硬件特性由<span class="type">VkPhysicalDeviceFeatures2</span>而非<span class="type">VkPhysicalDeviceFeatures</span>指定，那么<span class="type">VkPhysicalDeviceFeatures2</span>被接在<span class="type">VkDeviceCreateInfo</span>的pNext链中，而<span class="type">VkDeviceCreateInfo</span>::pEnabledFeatures必须为空指针：
 </p>
 <pre class="code">
 <span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="type">VkDeviceCreateFlags</span> flags = 0) {
@@ -685,26 +685,28 @@
 <ul>
     <li>
         <p>
-            这是整个教程中唯一的一个<span class="kw">const_cast</span>。
+            这里<span class="sfn">SetPNext</span>(...)的首个参数是<code><span class="kw">const_cast</span>&lt;<span class="kw">void</span>*&amp;&gt;(deviceCreateInfo.pNext)</code>，而非pNext_deviceCreateInfo，这是为了防止pNext_deviceCreateInfo为<span class="kw">nullptr</span>的情况（这种情况下，<span class="sfn">SetPNext</span>(...)导致pNext_deviceCreateInfo被赋值为&amp;physicalDeviceFeatures，但<span class="var">deviceCreateInfo.pEnabledFeatures</span>仍为<span class="kw">nullptr</span>）。
+            <br>
+            可以将<span class="var">deviceCreateInfo.pEnabledFeatures</span>的赋值移到<span class="kw">if</span>-<span class="kw">else</span>之后来免除<span class="kw">const_cast</span>。
         </p>
     </li>
 </ul>
 <p>
     事情还是没完，上述代码有个隐藏的风险。
     <br>
-    执行<code><span class="sfn">SetPNext</span>(<span class="kw">const_cast</span>&lt;<span class="kw">void</span>*&amp;&gt;(deviceCreateInfo.pNext), &amp;physicalDeviceFeatures);</code>后，以<span class="var">deviceCreateInfo</span>的pNext链变成了这么个顺序：
+    执行<code><span class="sfn">SetPNext</span>(pNext_deviceCreateInfo, &amp;physicalDeviceFeatures);</code>后，<span class="var">deviceCreateInfo</span>的pNext链变成了这么个顺序：
     <br>
-    <span class="var">deviceCreateInfo</span>本身 -&gt; 调用<span class="fn">CreateDevice</span>(...)前以<span class="var">pNext_deviceCreateInfo</span>起始的pNext链 -&gt; 硬件特性结构体的链表
+    <span class="var">deviceCreateInfo</span>本身 -&gt; 调用<span class="fn">CreateDevice</span>(...)前以pNext_deviceCreateInfo起始的pNext链 -&gt; 硬件特性结构体的链表
 </p>
 <p>
     考虑到重建逻辑设备的需要，<span class="fn">CreateDevice</span>(...)会被<span class="fn">RecreateDevice</span>(...)调用，然后再次执行<span class="fn">GetPhysicalDeviceFeatures</span>()。
     <br>
-    可是，如果重建逻辑设备前在以<span class="var">pNext_deviceCreateInfo</span>起始的pNext链最后接了新的结构体呢（基于开启某些显卡特定的功能等理由）？
+    可是，如果重建逻辑设备前在以pNext_deviceCreateInfo起始的pNext链最后接了新的结构体呢（基于开启某些显卡特定的功能等理由）？
     <br>
-    按上述代码的写法，新的结构体会被接在硬件特性结构体的链表最后，而<span class="fn">vkGetPhysicalDeviceFeatures2</span>(...)只接收与硬件特性有关的的结构体，于是可能运行出错。
+    按上述代码的写法，新的结构体会被接在硬件特性结构体链表的最后，而<span class="fn">vkGetPhysicalDeviceFeatures2</span>(...)只接收与硬件特性有关的的结构体，于是很可能运行出错。
 </p>
 <p>
-    因此，有必要在创建逻辑设备后，再将硬件特性结构体的链表，从以<span class="var">pNext_deviceCreateInfo</span>起始的pNext链中分离出来（这就是让<span class="sfn">SetPNext</span>(...)返回一个<span class="kw">void</span>**类型指针的原因）：
+    因此，有必要在创建逻辑设备后，再将硬件特性结构体链表，从以pNext_deviceCreateInfo起始的pNext链中分离出来（这就是让<span class="sfn">SetPNext</span>(...)返回一个<span class="kw">void</span>**类型指针的原因）：
 </p>
 <pre class="code">
 <span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="type">VkDeviceCreateFlags</span> flags = 0) {
@@ -712,19 +714,20 @@
     <span class="fn">GetPhysicalDeviceFeatures</span>();
     <span class="type">VkDeviceCreateInfo</span> deviceCreateInfo = {
         .sType = <span class="enum">VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO</span>,
-        .pNext = pNext_deviceCreateInfo,
+        <span class="cmt">//.pNext = pNext_deviceCreateInfo</span>,
         .flags = flags,
         .queueCreateInfoCount = queueCreateInfoCount,
         .pQueueCreateInfos = queueCreateInfos,
         .enabledExtensionCount = <span class="type">uint32_t</span>(deviceExtensions.<span class="fn">size</span>()),
         .ppEnabledExtensionNames = deviceExtensions.<span class="fn">data</span>(),
-        .pEnabledFeatures = &amp;physicalDeviceFeatures
+        <span class="cmt">//.pEnabledFeatures = &amp;physicalDeviceFeatures</span>
     };
     <span class="kw">void</span>** ppNext = <span class="kw">nullptr</span>;
     <span class="kw">if</span> (apiVersion &gt;= <span class="mcr">VK_API_VERSION_1_1</span>)
-        ppNext = <span class="sfn">SetPNext</span>(<span class="kw">const_cast</span>&lt;<span class="kw">void</span>*&amp;&gt;(deviceCreateInfo.pNext), &amp;physicalDeviceFeatures);
+        ppNext = <span class="sfn">SetPNext</span>(pNext_deviceCreateInfo, &amp;physicalDeviceFeatures);
     <span class="kw">else</span>
         deviceCreateInfo.pEnabledFeatures = &amp;physicalDeviceFeatures.features;
+    deviceCreateInfo.pNext = pNext_deviceCreateInfo;
     <span class="type">VkResult</span> result = <span class="fn">vkCreateDevice</span>(physicalDevice, &amp;deviceCreateInfo, <span class="kw">nullptr</span>, &amp;device)
     <span class="kw">if</span> (ppNext)
         *ppNext = <span class="kw">nullptr</span>;
@@ -736,7 +739,7 @@
 }
 </pre>
 <p>
-    本节的示例代码可比照：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch6/VkBase.h">VkBase.h</a>
+    本节的示例代码可比照：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch6/VKBase.h">VKBase.h</a>
 </p></section>
 </section>
 

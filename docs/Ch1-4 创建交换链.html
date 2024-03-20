@@ -1407,7 +1407,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
     }
 
 <span class="pragma">#ifdef</span> <span class="mcr">_WIN32</span>
-    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(<span class="str">&quot;VK_KHR_surface&quot;</span>);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(<span class="mcr">VK_KHR_SURFACE_EXTENSION_NAME</span>);
     <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(<span class="str">&quot;VK_KHR_win32_surface&quot;</span>);
 <span class="pragma">#else</span>
     <span class="type">uint32_t</span> extensionCount = 0;

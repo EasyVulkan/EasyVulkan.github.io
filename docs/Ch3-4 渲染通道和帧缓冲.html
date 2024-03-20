@@ -947,15 +947,15 @@
         </tr>
         <tr class="row-odd">
             <td><p><span class="type">uint32_t</span> width</p></td>
-            <td><p>图像附件的宽度</p></td>
+            <td><p>帧缓冲的宽度，必须小于等于图像附件的宽度且非0</p></td>
         </tr>
         <tr class="row-even">
             <td><p><span class="type">uint32_t</span> height</p></td>
-            <td><p>图像附件的高度</p></td>
+            <td><p>帧缓冲的高度，必须小于等于图像附件的高度且非0</p></td>
         </tr>
         <tr class="row-odd">
             <td><p><span class="type">uint32_t</span> layers</p></td>
-            <td><p>图像附件的图层数，适用于2D图像数组</p></td>
+            <td><p>帧缓冲的图层数，必须小于等于图像附件的图层数且非0，适用于2D图像数组</p></td>
         </tr>
     </tbody>
 </table>
