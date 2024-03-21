@@ -22,12 +22,13 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Ch6-1.hpp" />
     <ClInclude Include="EasyVKStart.h" />
     <ClInclude Include="EasyVulkan.hpp" />
     <ClInclude Include="GlfwGeneral.hpp" />
-    <ClInclude Include="VkBase+.h" />
+    <ClInclude Include="VKBase+.h" />
     <ClInclude Include="VKBase.h" />
-    <ClInclude Include="VkFormat.h" />
+    <ClInclude Include="VKFormat.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -105,7 +105,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VKBase%2B.h.html">Ch5-0 VKBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
@@ -113,6 +113,7 @@
 <p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch6-1 无图像帧缓冲</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -418,7 +419,7 @@ file.<span class="fn">close</span>();
         <span class="fn">Create</span>(codeSize, pCode);
     }
     <span class="fn">shaderModule</span>(<span class="type">shaderModule</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
-    ~<span class="fn">shaderModule</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyShaderModule</span>); }
+    <span class="fn">~shaderModule</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyShaderModule</span>); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;

@@ -93,7 +93,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VKBase%2B.h.html">Ch5-0 VKBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
@@ -101,6 +101,7 @@
 <p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch6-1 无图像帧缓冲</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -303,7 +304,7 @@
 <div class="admonition note">
     <p class="admonition-title">Note</p>
     <p>
-        所谓“存储图像附件则发生在该图像附件在渲染通道中最后一次被使用的时候”，简而言之，storeOp仅影响渲染通道结束后如何存储生成的数值，而不影响中间过程，即，无论给被解析的颜色附件和输入附件（相关解释见后文）指定何种storeOp，它们都能正常发挥作用。
+        所谓“存储图像附件则发生在该图像附件在渲染通道中最后一次被使用的时候”，简而言之，storeOp仅影响渲染通道结束后如何存储生成的数值，而不影响中间过程，即，无论给被解析的多重采样颜色附件和输入附件（名词解释见后文）指定何种storeOp，它们都能正常发挥作用。
     </p>
 </div>
 <table class="docutils align-default">
@@ -838,7 +839,7 @@
         <span class="fn">Create</span>(createInfo);
     }
     <span class="fn">renderPass</span>(<span class="type">renderPass</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
-    ~<span class="fn">renderPass</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyRenderPass</span>); }
+    <span class="fn">~renderPass</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyRenderPass</span>); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
@@ -947,15 +948,15 @@
         </tr>
         <tr class="row-odd">
             <td><p><span class="type">uint32_t</span> width</p></td>
-            <td><p>帧缓冲的宽度，必须小于等于图像附件的宽度且非0</p></td>
+            <td><p>帧缓冲的宽度，不得为0，若非创建无图像帧缓冲，必须小于等于图像附件的宽度</p></td>
         </tr>
         <tr class="row-even">
             <td><p><span class="type">uint32_t</span> height</p></td>
-            <td><p>帧缓冲的高度，必须小于等于图像附件的高度且非0</p></td>
+            <td><p>帧缓冲的高度，不得为0，若非创建无图像帧缓冲，必须小于等于图像附件的高度</p></td>
         </tr>
         <tr class="row-odd">
             <td><p><span class="type">uint32_t</span> layers</p></td>
-            <td><p>帧缓冲的图层数，必须小于等于图像附件的图层数且非0，适用于2D图像数组</p></td>
+            <td><p>帧缓冲的图层数，不得为0，若非创建无图像帧缓冲，必须小于等于图像附件的图层数</p></td>
         </tr>
     </tbody>
 </table>
@@ -967,7 +968,12 @@
     </li>
     <li>
         <p>
-            自Vulkan1.2以来，可以在flags中指定<span class="enum">VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT</span>，并使pNext指向一个<a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkFramebufferAttachmentsCreateInfo">VkFramebufferAttachmentsCreateInfo</a>结构体，以创建无图帧缓冲（imageless framebuffer），这种帧缓冲仅指定图像附件的大小、图层数和图像格式，而实际的图像附件则在渲染通道开始时再行指定，详见//TODO Imageless Framebuffer。
+            注意，图像附件指代图像视图（<span class="type">VkImageView</span>），因此图像附件的图层数指的是图像视图的图层数。对于图像附件的宽和高，则不必分辨是图像还是图像视图的宽高，因为创建图像视图时不指定宽高，图像视图的宽高与对应图像的宽高等价。
+        </p>
+    </li>
+    <li>
+        <p>
+            自Vulkan1.2以来，可以在flags中指定<span class="enum">VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT</span>，并使pNext指向一个<a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkFramebufferAttachmentsCreateInfo">VkFramebufferAttachmentsCreateInfo</a>结构体，以创建无图帧缓冲（imageless framebuffer），这种帧缓冲仅指定图像附件的大小、图层数和图像格式，而实际的图像附件则在渲染通道开始时再行指定，详见<a class="reference internal" href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch6-1 无图像帧缓冲</a>。
         </p>
     </li>
 </ul>
@@ -988,7 +994,7 @@
         <span class="fn">Create</span>(createInfo);
     }
     <span class="fn">framebuffer</span>(<span class="type">framebuffer</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
-    ~<span class="fn">framebuffer</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyFramebuffer</span>); }
+    <span class="fn">~framebuffer</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyFramebuffer</span>); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;

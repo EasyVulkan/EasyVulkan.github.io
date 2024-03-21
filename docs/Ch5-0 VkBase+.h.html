@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ch5-0 VkBase+.h &mdash; EasyVulkan</title>
+  <title>Ch5-0 VKBase+.h &mdash; EasyVulkan</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/theme.css" type="text/css" />
@@ -73,7 +73,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch5-0 VkBase+.h</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch5-0 VKBase+.h</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#graphicsbaseplus">graphicsBasePlus</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id1">图像格式相关</a></li>
 </ul>
@@ -85,6 +85,7 @@
 <p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch6-1 无图像帧缓冲</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -111,7 +112,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Ch5-0 VkBase+.h</li>
+      <li>Ch5-0 VKBase+.h</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -121,16 +122,16 @@
            <div itemprop="articleBody">
              
   <section id="ch5-0-vkbase-h">
-<h1>Ch5-0 VkBase+.h<a class="headerlink" href="#ch5-0-vkbase-h" title="Permalink to this heading"></a></h1>
+<h1>Ch5-0 VKBase+.h<a class="headerlink" href="#ch5-0-vkbase-h" title="Permalink to this heading"></a></h1>
 <p>
-    之前在<a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a>中应当创建过<span class="path">VkBase+.h</span>，并且在里面定义了<span class="type">graphicsPipelineCreateInfoPack</span>类。
+    之前在<a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a>中应当创建过<span class="path">VKBase+.h</span>，并且在里面定义了<span class="type">graphicsPipelineCreateInfoPack</span>类。
     <br>
-    第五章中对各种常用对象的封装会被放在<span class="path">VkBase+.h</span>当中。
+    第五章中对各种常用对象的封装会被放在<span class="path">VKBase+.h</span>当中。
     <br>
     在这一节定义<span class="type">graphicsBasePlus</span>类，以及图像格式相关的一些函数，方便后续编程。
 </p>
 <p>
-    在<span class="path">VkBase+.h</span>中包含<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a>一节中写的<span class="path">VkFormat.h</span>，于是<span class="path">VkBase+.h</span>的内容应当如下：
+    在<span class="path">VKBase+.h</span>中包含<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a>一节中写的<span class="path">VKFormat.h</span>，于是<span class="path">VKBase+.h</span>的内容应当如下：
 </p>
 <pre class="code">
 <span class="pragma">#pragma once</span>
@@ -181,7 +182,7 @@
         <span class="cmt">/*待后续填充*/</span>
     }
     <span class="fn">graphicsBasePlus</span>(<span class="type">graphicsBasePlus</span>&amp;&amp;) = <span class="kw">delete</span>;
-    ~<span class="fn">graphicsBasePlus</span>() = <span class="kw">default</span>;
+    <span class="fn">~graphicsBasePlus</span>() = <span class="kw">default</span>;
 };
 <span class="kw">inline</span> <span class="type">graphicsBasePlus</span> <span class="type">graphicsBasePlus</span>::singleton;
 </pre>
@@ -198,7 +199,7 @@
 <ul>
     <li>
         <p>
-            定义时以<span class="kw">inline</span>修饰的静态成员变量（<span class="type">graphicsBase</span>::<span class="var">singleton</span>和<span class="type">graphicsBasePlus</span>::<span class="var">singleton</span>都以<span class="kw">inline</span>修饰）首先发生静态初始化，数值变为零值或默认值，然后按定义顺序发生动态初始化（若有必要），全局/静态变量逆初始化顺序发生析构。由于<span class="path">VkBase+.h</span>包含了<span class="path">VkBase.h</span>，<span class="type">graphicsBasePlus</span>::<span class="var">singleton</span>的初始化器在<span class="type">graphicsBase</span>::<span class="var">singleton</span>初始化后执行，由此可以确保<span class="type">graphicsBase</span>::<span class="var">pPlus</span>不会在被设置后又被刷成<span class="kw">nullptr</span>。
+            定义时以<span class="kw">inline</span>修饰的静态成员变量（<span class="type">graphicsBase</span>::<span class="var">singleton</span>和<span class="type">graphicsBasePlus</span>::<span class="var">singleton</span>都以<span class="kw">inline</span>修饰）首先发生静态初始化，数值变为零值或默认值，然后按定义顺序发生动态初始化（若有必要），全局/静态变量逆初始化顺序发生析构。由于<span class="path">VKBase+.h</span>包含了<span class="path">VKBase.h</span>，<span class="type">graphicsBasePlus</span>::<span class="var">singleton</span>的初始化器在<span class="type">graphicsBase</span>::<span class="var">singleton</span>初始化后执行，由此可以确保<span class="type">graphicsBase</span>::<span class="var">pPlus</span>不会在被设置后又被刷成<span class="kw">nullptr</span>。
         </p>
     </li>
 </ul>
@@ -221,7 +222,7 @@
         <span class="cmt">/*待后续填充*/</span>
    }
     <span class="fn">graphicsBasePlus</span>(<span class="type">graphicsBasePlus</span>&amp;&amp;) = <span class="kw">delete</span>;
-    ~<span class="fn">graphicsBasePlus</span>() = <span class="kw">default</span>;
+    <span class="fn">~graphicsBasePlus</span>() = <span class="kw">default</span>;
 <span class="kw">public</span>:
     <span class="cmt">//Getter</span>
     <span class="kw">const</span> <span class="type">commandPool</span>&amp; <span class="fn">CommandPool_Graphics</span>() const { <span class="kw">return</span> commandPool_graphics; }
@@ -287,9 +288,9 @@
     <span class="cmt">//如果你不需要更换物理设备或在运行中重启Vulkan（皆涉及重建逻辑设备），那么此CleanUp回调非必要</span>
     <span class="cmt">//程序运行结束时，无论是否有这个回调，graphicsBasePlus中的对象必会在析构graphicsBase前被析构掉</span>
     <span class="kw">auto</span> CleanUp = [] {
-        singleton.commandPool_graphics.~<span class="fn">commandPool</span>();
-        singleton.commandPool_presentation.~<span class="fn">commandPool</span>();
-        singleton.commandPool_compute.~<span class="fn">commandPool</span>();
+        singleton.commandPool_graphics.<span class="fn">~commandPool</span>();
+        singleton.commandPool_presentation.<span class="fn">~commandPool</span>();
+        singleton.commandPool_compute.<span class="fn">~commandPool</span>();
     };
     <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>(singleton);
     <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateDevice</span>(Initialize);
@@ -455,16 +456,16 @@
             <span class="cmt">//----------------------------------------</span>
         };
         <span class="kw">auto</span> CleanUp = [] {
-            singleton.commandPool_graphics.~<span class="fn">commandPool</span>();
-            singleton.commandPool_presentation.~<span class="fn">commandPool</span>();
-            singleton.commandPool_compute.~<span class="fn">commandPool</span>();
+            singleton.commandPool_graphics.<span class="fn">~commandPool</span>();
+            singleton.commandPool_presentation.<span class="fn">~commandPool</span>();
+            singleton.commandPool_compute.<span class="fn">~commandPool</span>();
         };
         <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>(singleton);
         <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateDevice</span>(Initialize);
         <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroyDevice</span>(CleanUp);
     }
     <span class="fn">graphicsBasePlus</span>(<span class="type">graphicsBasePlus</span>&amp;&amp;) = <span class="kw">delete</span>;
-    ~<span class="fn">graphicsBasePlus</span>() = <span class="kw">default</span>;
+    <span class="fn">~graphicsBasePlus</span>() = <span class="kw">default</span>;
 <span class="kw">public</span>:
     <span class="cmt">//Getter</span>
     <span class="cmt">/*新增*/</span><span class="kw">const</span> <span class="type">VkFormatProperties</span>&amp; <span class="fn">FormatProperties</span>(<span class="type">VkFormat</span> format) <span class="kw">const</span> {
@@ -504,7 +505,7 @@
 <ul>
     <li>
         <p>
-            <span class="var">formatInfos_v1_0</span>来源于<span class="path">VkFormat.h</span>（如果你是跳着读的，见前文），这里仅获取Vulkan1.0中所提供格式的格式特性。
+            <span class="var">formatInfos_v1_0</span>来源于<span class="path">VKFormat.h</span>（如果你是跳着读的，见前文），这里仅获取Vulkan1.0中所提供格式的格式特性。
         </p>
     </li>
 </ul>

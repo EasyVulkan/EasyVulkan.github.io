@@ -96,7 +96,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#id15">图像及数据的格式</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id16">非压缩颜色格式</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id17">深度模板格式</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#vkformat-h">VkFormat.h</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vkformat-h">VKFormat.h</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#id18">惰性初始化的设备内存</a></li>
@@ -116,7 +116,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VKBase%2B.h.html">Ch5-0 VKBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
@@ -124,6 +124,7 @@
 <p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch6-1 无图像帧缓冲</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -487,7 +488,7 @@ size = (size - offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCohe
         other.allocationSize = 0;
         other.memoryProperties = 0;
     }
-    ~<span class="fn">deviceMemory</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkFreeMemory</span>); allocationSize = 0; memoryProperties = 0; }
+    <span class="fn">~deviceMemory</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkFreeMemory</span>); allocationSize = 0; memoryProperties = 0; }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
@@ -913,7 +914,7 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
         <span class="fn">Create</span>(createInfo);
     }
     <span class="fn">buffer</span>(<span class="type">buffer</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
-    ~<span class="fn">buffer</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyBuffer</span>); }
+    <span class="fn">~buffer</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyBuffer</span>); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
@@ -971,7 +972,7 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
         areBound = other.areBound;
         other.areBound = <span class="kw">false</span>;
     }
-    ~<span class="fn">bufferMemory</span>() { areBound = <span class="kw">false</span>; }
+    <span class="fn">~bufferMemory</span>() { areBound = <span class="kw">false</span>; }
     <span class="cmt">//Getter</span>
     <span class="cmt">//不定义到VkBuffer和VkDeviceMemory的转换函数，因为32位下这俩类型都是uint64_t的别名，会造成冲突（虽然，谁他妈还用32位PC！）</span>
     <span class="type">VkBuffer</span> <span class="fn">Buffer</span>() <span class="kw">const</span> { <span class="kw">return</span> <span class="kw">static_cast</span>&lt;<span class="kw">const</span> <span class="type">buffer</span>&amp;&gt;(*<span class="kw">this</span>); }
@@ -1112,7 +1113,7 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
         <span class="fn">Create</span>(buffer, format, offset, range);
     }
     <span class="fn">bufferView</span>(<span class="type">bufferView</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
-    ~<span class="fn">bufferView</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyBufferView</span>); }
+    <span class="fn">~bufferView</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyBufferView</span>); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
@@ -1473,7 +1474,7 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
         <span class="fn">Create</span>(createInfo);
     }
     <span class="fn">image</span>(<span class="type">image</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
-    ~<span class="fn">image</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyImage</span>); }
+    <span class="fn">~image</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyImage</span>); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
@@ -1535,7 +1536,7 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
         areBound = other.areBound;
         other.areBound = <span class="kw">false</span>;
     }
-    ~<span class="fn">imageMemory</span>() { areBound = <span class="kw">false</span>; }
+    <span class="fn">~imageMemory</span>() { areBound = <span class="kw">false</span>; }
     <span class="cmt">//Getter</span>
     <span class="type">VkImage</span> <span class="fn">Image</span>() <span class="kw">const</span> { <span class="kw">return</span> <span class="kw">static_cast</span>&lt;<span class="kw">const</span> <span class="type">image</span>&amp;&gt;(*<span class="kw">this</span>); }
     <span class="kw">const</span> <span class="type">VkImage</span>* <span class="fn">AddressOfImage</span>() <span class="kw">const</span> { <span class="kw">return</span> <span class="type">image</span>::<span class="fn">Address</span>(); }
@@ -1855,7 +1856,7 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
         <span class="fn">Create</span>(image, viewType, format, subresourceRange, flags);
     }
     <span class="fn">imageView</span>(<span class="type">imageView</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
-    ~<span class="fn">imageView</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyImageView</span>); }
+    <span class="fn">~imageView</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyImageView</span>); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
@@ -2042,14 +2043,14 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
     </li>
 </ul></section>
 <section id="vkformat-h">
-<h3>VkFormat.h<a class="headerlink" href="#vkformat-h" title="Permalink to this heading"></a></h3>
+<h3>VKFormat.h<a class="headerlink" href="#vkformat-h" title="Permalink to this heading"></a></h3>
 <p>
-    为了在从文件读取/存入文件时正确计算图像的大小，这里给出我的<span class="path">VkFormat.h</span>文件，其中记录了各种格式（仅包含Vulkan1.0且不算扩展提供的格式）对应的通道数、每个通道的大小、单个像素的大小，以及数据类型。
+    为了在从文件读取/存入文件时正确计算图像的大小，这里给出我的<span class="path">VKFormat.h</span>文件，其中记录了各种格式（仅包含Vulkan1.0且不算扩展提供的格式）对应的通道数、每个通道的大小、单个像素的大小，以及数据类型。
 </p>
 <p>
     你也可以使用Vulkan官方提供的<span class="path">vulkan_format_traits.hpp</span>，你可以在以下安装目录找到它：<span class="path">VulkanSDK\版本号\Include\vulkan</span>。
     <br>
-    注意我的<span class="path">VkFormat.h</span>与<span class="path">vulkan_format_traits.hpp</span>有所不同，在<span class="path">vulkan_format_traits.hpp</span>中<span class="enum">VK_FORMAT_D32_SFLOAT_S8_UINT</span>格式的blockSize是5，在我的<span class="path">VkFormat.h</span>中<span class="enum">VK_FORMAT_D32_SFLOAT_S8_UINT</span>格式的单个像素大小是8（其实有些格式不应适用“单个像素”这个概念），这种差别是由于我的<span class="path">VkFormat.h</span>的用处是计算线性排列的数据大小。
+    注意我的<span class="path">VKFormat.h</span>与<span class="path">vulkan_format_traits.hpp</span>有所不同，在<span class="path">vulkan_format_traits.hpp</span>中<span class="enum">VK_FORMAT_D32_SFLOAT_S8_UINT</span>格式的blockSize是5，在我的<span class="path">VKFormat.h</span>中<span class="enum">VK_FORMAT_D32_SFLOAT_S8_UINT</span>格式的单个像素大小是8（其实有些格式不应适用“单个像素”这个概念），这种差别是由于我的<span class="path">VKFormat.h</span>的用处是计算线性排列的数据大小。
 </p>
 <pre class="code">
 <span class="pragma">#pragma once</span>

@@ -81,7 +81,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VKBase%2B.h.html">Ch5-0 VKBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
@@ -89,6 +89,7 @@
 <p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch6-1 无图像帧缓冲</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -149,7 +150,7 @@
 <p>
     <strong>什么是渲染通道？</strong>
     <br>
-    渲染通道（render pass）指定渲染过程中，所绑定帧缓冲的参数（格式、//TODO 内存布局）及各个渲染步骤之间的关系。
+    渲染通道（render pass）指定渲染过程中，所绑定帧缓冲的参数（格式、内存布局）及各个渲染步骤之间的关系。
     <br>
     举例而言，实现延迟渲染会涉及两个步骤，各为一个子通道（subpass），第一个通道中生成G-buffer，第二个通道中渲染到屏幕。
 </p>
@@ -176,10 +177,10 @@
 <p>
     创建<span class="path">EasyVulkan.hpp</span>，这个文件会用于书写本套教程中一些常用的渲染通道和帧缓冲的创建函数。
     <br>
-    然后在其中包含<span class="path">VkBase.h</span>，并加入以下代码：
+    然后在其中包含<span class="path">VKBase.h</span>，并加入以下代码：
 </p>
 <pre class="code">
-<span class="pragma">#include</span> <span class="str">&quot;VkBase.h&quot;</span>
+<span class="pragma">#include</span> <span class="str">&quot;VKBase.h&quot;</span>
 
 <span class="kw">using namespace</span> vulkan;
 <span class="kw">const</span> <span class="type">VkExtent2D</span>&amp; windowSize = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageExtent;
@@ -225,7 +226,7 @@
     };
     <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Screen</span>() {
         <span class="kw">static</span> <span class="type">renderPassWithFramebuffers</span> rpwf_screen;
-        <span class="kw">if</span> (rpwf_screen.renderPass)
+        <span class="kw">if</span> (rpwf_screen.renderPass) <span class="cmt">//防止重复调用</span>
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ easyVulkan ] WARNING\nDon't call CreateRpwf_Screen() twice!\n&quot;</span>);
         <span class="kw">else</span> {
             <span class="cmt">/*待后续填充*/</span>
@@ -296,7 +297,7 @@
     <br>
     因此上文所写的子通道依赖并非必要的，但它更精细。这里使用<span class="mcr">VK_SUBPASS_EXTERNAL</span>为srcSubpass，实质上是指代前一次使用同一图像附件的渲染，确保前一次的颜色附件输出（color attachment output）阶段在本次的同一阶段前完成，由于每次向交换链图像渲染时，先前的内容都可以被舍弃，srcAccessMask可以为0（srcAccessMask的用途是用来确保写入操作的结果可以被后续操作安全访问）。
     <br>
-    <strong>注：其实写不写都一样，就算这个子通道依赖比默认的更精细也不会有实质作用。由于（在这套教程的示例中）在每次循环中使用同个栅栏对同个命令缓冲区进行同步，执行当前渲染命令时，前一次渲染必定已经结束。</strong>
+    注：<strong>其实写不写都一样，由于（在这套教程的示例中）在每次循环中使用同个栅栏对同个命令缓冲区进行同步，执行当前渲染命令时，前一次渲染必定已经结束，因此就算这个子通道依赖比默认的更精细也不会有实质作用。</strong>写在这里更多是出于演示子通道依赖用法的目的。
 </p>
 <p>
     书写渲染通道的创建信息，以创建渲染通道：
@@ -466,9 +467,9 @@ rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graph
         <span class="cmt">/*操作过程，本章中不会有键鼠操作*/</span>
 
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
-        <span class="cmt">/*新增*/</span>renderPass.<span class="fn">CmdBegin</span>(commandBuffer, framebuffers[i], { {}, windowSize }, clearColor);
+        <span class="cmt">/*新增，开始渲染通道*/</span>renderPass.<span class="fn">CmdBegin</span>(commandBuffer, framebuffers[i], { {}, windowSize }, clearColor);
         <span class="cmt">/*渲染命令，待填充*/</span>
-        <span class="cmt">/*新增*/</span>renderPass.<span class="fn">CmdEnd</span>(commandBuffer);
+        <span class="cmt">/*新增，结束渲染通道*/</span>renderPass.<span class="fn">CmdEnd</span>(commandBuffer);
         commandBuffer.<span class="fn">End</span>();
 
         <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);

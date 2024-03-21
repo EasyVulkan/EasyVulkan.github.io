@@ -20,7 +20,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="Ch7-1 初识顶点缓冲区" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html" />
+    <link rel="next" title="Ch6-1 无图像帧缓冲" href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html" />
     <link rel="prev" title="Ch5-3 2D贴图数组" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html" /> 
 </head>
 
@@ -73,7 +73,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VKBase%2B.h.html">Ch5-0 VKBase+.h</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
@@ -86,6 +86,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#pnext">设置pNext</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch6-1 无图像帧缓冲</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -125,6 +126,8 @@
 <h1>Ch6-0 使用新版本特性<a class="headerlink" href="#ch6-0" title="Permalink to this heading"></a></h1>
 <p>
     本章的示例代码参见：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch6">EasyVulkan_Ch6</a>
+    <br>
+    本节的示例代码参见：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch6/VKBase.h">VKBase.h</a>
 </p>
 <p>
     先前（以及之后第七章）基本只使用了Vulkan1.0的版本特性，本章会对一些新版本特性进行介绍。
@@ -390,13 +393,13 @@
         <span class="sfn">SetPNext</span>(pNext_physicalDeviceMemoryProperties, &amp;next, allowDuplicate);
     }
     <span class="kw">void</span> <span class="fn">AddNextStructure_SwapchainCreateInfo</span>(<span class="kw">auto</span>&amp; next, <span class="kw">bool</span> allowDuplicate = <span class="kw">false</span>) {
-        <span class="sfn">SetPNext</span>(swapchainCreateInfo.pNext, &amp;next, allowDuplicate);
+        <span class="sfn">SetPNext</span>(<span class="kw">const_cast</span>&lt;<span class="kw">void</span>*&amp;&gt;(swapchainCreateInfo.pNext), &amp;next, allowDuplicate);
     }
 </pre>
 <ul>
     <li>
         <p>
-            各成员变量名已经顾名思义地说明了其用处。<span class="type">VkSwapchainCreateInfoKHR</span>则因需要重建交换链而保存为了成员变量，直接使用其中的pNext成员。
+            各成员变量名已经顾名思义地说明了其用处。<span class="type">VkSwapchainCreateInfoKHR</span>则因需要重建交换链而保存为了成员变量，直接使用其中的pNext成员（除非你不喜欢<span class="kw">const_cast</span>）。
         </p>
     </li>
     <li>
@@ -535,7 +538,7 @@
 </p>
 <pre class="code">
 <span class="type">VkResult</span> <span class="fn">CreateInstance</span>(<span class="type">VkInstanceCreateFlags</span> flags = 0) {
-    <span class="cmt">/.../</span>
+    <span class="cmt">/*...*/</span>
     <span class="type">VkInstanceCreateInfo</span> instanceCreateInfo = {
         .sType = <span class="enum">VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO</span>,
         .pNext = pNext_instanceCreateInfo,<span class="cmt">//新增</span>
@@ -546,7 +549,7 @@
         .enabledExtensionCount = <span class="type">uint32_t</span>(instanceExtensions.<span class="fn">size</span>()),
         .ppEnabledExtensionNames = instanceExtensions.<span class="fn">data</span>()
     };
-    <span class="cmt">/.../</span>
+    <span class="cmt">/*...*/</span>
 }
 </pre>
 <p>
@@ -737,10 +740,7 @@
     }
     <span class="cmt">/*...*/</span>
 }
-</pre>
-<p>
-    本节的示例代码可比照：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch6/VKBase.h">VKBase.h</a>
-</p></section>
+</pre></section>
 </section>
 
 
@@ -748,7 +748,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html" class="btn btn-neutral float-left" title="Ch5-3 2D贴图数组" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
-        <a href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-right" title="Ch7-1 初识顶点缓冲区" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html" class="btn btn-neutral float-right" title="Ch6-1 无图像帧缓冲" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

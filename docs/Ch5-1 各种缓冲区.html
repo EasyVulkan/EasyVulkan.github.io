@@ -21,7 +21,7 @@
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="Ch5-2 2D贴图及生成Mipmap" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html" />
-    <link rel="prev" title="Ch5-0 VkBase+.h" href="Ch5-0%20VkBase%2B.h.html" /> 
+    <link rel="prev" title="Ch5-0 VKBase+.h" href="Ch5-0%20VKBase%2B.h.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -73,7 +73,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VKBase%2B.h.html">Ch5-0 VKBase+.h</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Ch5-1 各种缓冲区</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#staging-buffer">Staging Buffer</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id1">专用于主线程的暂存缓冲区</a></li>
@@ -92,6 +92,7 @@
 <p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch6-1 无图像帧缓冲</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -130,9 +131,9 @@
   <section id="ch5-1">
 <h1>Ch5-1 各种缓冲区<a class="headerlink" href="#ch5-1" title="Permalink to this heading"></a></h1>
 <p>
-    阅读本节前请务必先阅读<a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VkBase+.h</a>。
+    阅读本节前请务必先阅读<a class="reference internal" href="Ch5-0%20VkBase%2B.h.html">Ch5-0 VKBase+.h</a>。
     <br>
-    请先参阅<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a>，我在该节中具体叙述了何为设备内存和缓冲区（缓冲区视图暂不用管），并对它们进行了简单封装，请先阅览该节并完成封装，并把<span class="path">VkFormat.h</span>包含在<span class="path">VkBase+.h</span>中。
+    请先参阅<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a>，我在该节中具体叙述了何为设备内存和缓冲区（缓冲区视图暂不用管），并对它们进行了简单封装，请先阅览该节并完成封装，并把<span class="path">VKFormat.h</span>包含在<span class="path">VKBase+.h</span>中。
 </p>
 <p>
     内存可以具有属性：
@@ -210,7 +211,7 @@
     }
     <span class="cmt">//该函数用于手动释放所有内存并销毁设备内存和缓冲区的handle</span>
     <span class="kw">void</span> <span class="fn">Release</span>() {
-        bufferMemory.~<span class="fn">bufferMemory</span>();
+        bufferMemory.<span class="fn">~bufferMemory</span>();
     }
     <span class="kw">void</span>* <span class="fn">MapMemory</span>(<span class="type">VkDeviceSize</span> size) {
         <span class="fn">Expand</span>(size);
@@ -384,7 +385,7 @@
     若混叠图像已存在，先析构它，然后再创建新图像：
 </p>
 <pre class="code">
-aliasedImage.~<span class="fn">image</span>();
+aliasedImage.<span class="fn">~image</span>();
 aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
 </pre>
 <p>
@@ -525,7 +526,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
         .usage = <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>,
         .initialLayout = <span class="enum">VK_IMAGE_LAYOUT_PREINITIALIZED</span>
     };
-    aliasedImage.~<span class="fn">image</span>();
+    aliasedImage.<span class="fn">~image</span>();
     aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
     <span class="type">VkImageSubresource</span> subResource = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 0 };
     <span class="type">VkSubresourceLayout</span> subresourceLayout = {};
@@ -558,7 +559,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
         <span class="type">stagingBuffer</span>* pointer = <span class="fn">Create</span>();
         <span class="type">stagingBuffer</span>* <span class="fn">Create</span>() {
             <span class="kw">static</span> <span class="type">stagingBuffer</span> stagingBuffer;
-            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroyDevice</span>([] { stagingBuffer.~<span class="fn">stagingBuffer</span>(); });
+            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroyDevice</span>([] { stagingBuffer.<span class="fn">~stagingBuffer</span>(); });
             <span class="kw">return</span> &amp;stagingBuffer;
         }
         <span class="kw">public</span>:
@@ -589,7 +590,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
         <span class="type">stagingBuffer</span>* <span class="fn">Create</span>() {
             <span class="kw">static</span> <span class="type">stagingBuffer</span> stagingBuffer;
             pointer = &amp;stagingBuffer;
-            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroyDevice</span>([] { stagingBuffer.~<span class="fn">stagingBuffer</span>(); });
+            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroyDevice</span>([] { stagingBuffer.<span class="fn">~stagingBuffer</span>(); });
         }
         <span class="kw">public</span>:
         <span class="type">stagingBuffer</span>&amp; <span class="fn">Get</span>() <span class="kw">const</span> { <span class="kw">return</span> *pointer; }
@@ -624,7 +625,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
         bufferMemory.<span class="fn">Create</span>(bufferCreateInfo, <span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>);
     }
     <span class="kw">void</span> <span class="fn">Release</span>() {
-        bufferMemory.~<span class="fn">bufferMemory</span>();
+        bufferMemory.<span class="fn">~bufferMemory</span>();
     }
     <span class="kw">void</span>* <span class="fn">MapMemory</span>(<span class="type">VkDeviceSize</span> size) {
         <span class="fn">Expand</span>(size);
@@ -666,7 +667,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
             .usage = <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>,
             .initialLayout = <span class="enum">VK_IMAGE_LAYOUT_PREINITIALIZED</span>
         };
-        aliasedImage.~<span class="fn">image</span>();
+        aliasedImage.<span class="fn">~image</span>();
         aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
         <span class="type">VkImageSubresource</span> subResource = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 0 };
         <span class="type">VkSubresourceLayout</span> subresourceLayout = {};
@@ -738,7 +739,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
     }
     <span class="kw">void</span> <span class="fn">Recreate</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> desiredUsages_Without_transfer_dst) {
         <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">WaitIdle</span>();
-        bufferMemory.~<span class="fn">bufferMemory</span>();
+        bufferMemory.<span class="fn">~bufferMemory</span>();
         <span class="fn">Create</span>(size, desiredUsages_Without_transfer_dst);
     }
 };
@@ -993,7 +994,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
     }
     <span class="kw">void</span> <span class="fn">Recreate</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> desiredUsages_Without_transfer_dst) {
         <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">WaitIdle</span>();
-        bufferMemory.~<span class="fn">bufferMemory</span>();
+        bufferMemory.<span class="fn">~bufferMemory</span>();
         <span class="fn">Create</span>(size, desiredUsages_Without_transfer_dst);
     }
 };
@@ -1107,7 +1108,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="Ch5-0%20VkBase%2B.h.html" class="btn btn-neutral float-left" title="Ch5-0 VkBase+.h" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch5-0%20VKBase%2B.h.html" class="btn btn-neutral float-left" title="Ch5-0 VKBase+.h" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
         <a href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html" class="btn btn-neutral float-right" title="Ch5-2 2D贴图及生成Mipmap" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

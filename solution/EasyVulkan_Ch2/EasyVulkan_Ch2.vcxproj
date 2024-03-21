@@ -25,7 +25,7 @@
     <ClInclude Include="EasyVKStart.h" />
     <ClInclude Include="EasyVulkan.hpp" />
     <ClInclude Include="GlfwGeneral.hpp" />
-    <ClInclude Include="VkBase+.h" />
+    <ClInclude Include="VKBase+.h" />
     <ClInclude Include="VKBase.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

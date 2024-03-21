@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch6-1 无图像帧缓冲 &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ch7-1 初识顶点缓冲区" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html" />
+    <link rel="prev" title="Ch6-0 使用新版本特性" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html">Ch3-7 采样器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VKBase%2B.h.html">Ch5-0 VKBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch6-1 无图像帧缓冲</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">开启无图像帧缓冲设备特性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">创建无图像帧缓冲</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">开始渲染通道</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%BB%98%E5%88%B6.html">Ch7-3 初识实例化绘制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-4 初识Push Constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-5 初识Uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch6-1 无图像帧缓冲</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch6-1">
+<h1>Ch6-1 无图像帧缓冲<a class="headerlink" href="#ch6-1" title="Permalink to this heading"></a></h1>
+<p>
+    无图像帧缓冲（imageless framebuffer），是不指定image view的帧缓冲，它仅指定对图像附件的要求，而具体的image view则在渲染通道开始时指定。
+</p>
+<p>
+    无图像帧缓冲的（些微）好处显而易见：
+    <br>
+    原先，有几个会被用作渲染目标的图像就得有几个帧缓冲，代码量和需要管理的对象数量都显得冗余。而无图像帧缓冲可以适配任何符合要求的图像附件，交换链中的多张图像只需要有一个帧缓冲即可，而且交换链之外的图像只要能创建出符合要求的image view就也能用同一个帧缓冲。
+</p>
+<p>
+    本节在之前Ch2中绘制三角形代码的基础上，使用无图像帧缓冲搭配交换链图像进行渲染，以简单演示使用方法。
+</p><section id="id1">
+<h2>开启无图像帧缓冲设备特性<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>
+    无图像帧缓冲在Vulkan1.2版本之前由设备级扩展<span class="str">&quot;VK_KHR_imageless_framebuffer&quot;</span>提供（且依赖于另外一个实例级扩展和两个设备级扩展），从1.2版本开始为Vulkan核心功能的一部分。
+</p>
+<p>
+    因为<span class="type">VkPhysicalDeviceFeatures</span>没可扩展性所以理论上Vulkan1.0中无法开启该功能，若Vulkan版本达到1.1但未到1.2，使用以下代码通过扩展开启：
+</p>
+<pre class="code">
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="cmt">//VK_KHR_imageless_framebuffer需要这几个扩展</span>
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(<span class="mcr">VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME</span>);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_MAINTENANCE2_EXTENSION_NAME</span>);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME</span>);
+    <span class="cmt">//VK_KHR_imageless_framebuffer</span>
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_IMAGELESS_FRAMEBUFFER_EXTENSION_NAME</span>);
+    <span class="type">VkPhysicalDeviceImagelessFramebufferFeatures</span> physicalDeviceImagelessFramebufferFeatures = {
+        <span class="enum">VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES</span>,
+    };
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddNextStructure_PhysicalDeviceFeatures</span>(physicalDeviceImagelessFramebufferFeatures);
+    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }) ||
+        !physicalDeviceImagelessFramebufferFeatures.imagelessFramebuffer)
+        <span class="kw">return</span> -1;
+    <span class="cmt">/*...*/</span>
+}
+</pre>
+<p>
+    Vulkan版本达到1.2的话，在前一节的代码里已经修改过<span class="type">graphicsBase</span>::<span class="fn">CreateDevice</span>(...)了，并且该函数的逻辑是“能开的特性都开了”，所以只要检查设备特性是否支持即可：
+</p>
+<pre class="code">
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }) ||
+        !<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceVulkan12Features</span>().imagelessFramebuffer)
+        <span class="kw">return</span> -1;
+    <span class="cmt">/*...*/</span>
+}
+</pre></section>
+<section id="id2">
+<h2>创建无图像帧缓冲<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<p>
+    原先是在easyVulkan::<span class="fn">CreateRpwf_Screen</span>(...)中创建的帧缓冲，我们就在其基础上进行修改。
+    <br>
+    先定义<span class="type">renderPassWithFramebuffer</span>结构体，将渲染通道与其对应的帧缓冲放在一起以便于管理：
+</p>
+<pre class="code">
+<span class="kw">using namespace</span> vulkan;
+<span class="kw">const</span> <span class="type">VkExtent2D</span>&amp; windowSize = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageExtent;
+
+<span class="kw">namespace</span> easyVulkan {
+    <span class="kw">struct</span> <span class="type">renderPassWithFramebuffer</span> {
+        <span class="type">renderPass</span> renderPass;
+        <span class="type">framebuffer</span> framebuffers;
+    };
+    <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Screen_ImagelessFramebuffer</span>() {
+        <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf_screen;
+        <span class="kw">if</span> (!rpwf_screen.renderPass) {
+            <span class="cmt">/*待后续填充*/</span>
+        }
+        <span class="kw">return</span> rpwf_screen;
+    }
+};
+</pre>
+<p>
+    这节不改渲染通道，照抄原先的即可：
+</p>
+<pre class="code">
+<span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Screen_ImagelessFramebuffer</span>() {
+    <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf_screen;
+    <span class="kw">if</span> (!rpwf_screen.renderPass) {
+        <span class="type">VkAttachmentDescription</span> attachmentDescription = {
+            .format = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat,
+            .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+            .loadOp = <span class="enum">VK_ATTACHMENT_LOAD_OP_CLEAR</span>,
+            .storeOp = <span class="enum">VK_ATTACHMENT_STORE_OP_STORE</span>,
+            .initialLayout = <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>,
+            .finalLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>
+        };
+        <span class="type">VkAttachmentReference</span> attachmentReference = { 0, <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span> };
+        <span class="type">VkSubpassDescription</span> subpassDescription = {
+            .pipelineBindPoint = <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>,
+            .colorAttachmentCount = 1,
+            .pColorAttachments = &amp;attachmentReference
+        };
+        <span class="type">VkSubpassDependency</span> subpassDependency = {
+            .srcSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
+            .dstSubpass = 0,
+            .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+            .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+            .srcAccessMask = 0,
+            .dstAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
+            .dependencyFlags = <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span>
+        };
+        <span class="type">VkRenderPassCreateInfo</span> renderPassCreateInfo = {
+            .attachmentCount = 1,
+            .pAttachments = &amp;attachmentDescription,
+            .subpassCount = 1,
+            .pSubpasses = &amp;subpassDescription,
+            .dependencyCount = 1,
+            .pDependencies = &amp;subpassDependency
+        };
+        rpwf_screen.renderPass.<span class="fn">Create</span>(renderPassCreateInfo);
+
+        <span class="cmt">/*待后续填充*/</span>
+    }
+    <span class="kw">return</span> rpwf_screen;
+}
+</pre>
+<p>
+    创建帧缓冲的部分还是要考虑重建交换链的情况，写lambda并设置为回调：
+</p>
+<pre class="code">
+<span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Screen_ImagelessFramebuffer</span>() {
+    <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf_screen;
+    <span class="kw">if</span> (!rpwf_screen.renderPass) {
+        <span class="type">VkAttachmentDescription</span> attachmentDescription = { <span class="cmt">/*...*/</span> };
+        <span class="type">VkAttachmentReference</span> attachmentReference = { 0, <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span> };
+        <span class="type">VkSubpassDescription</span> subpassDescription = { <span class="cmt">/*...*/</span> };
+        <span class="type">VkSubpassDependency</span> subpassDependency = { <span class="cmt">/*...*/</span> };
+        <span class="type">VkRenderPassCreateInfo</span> renderPassCreateInfo = { <span class="cmt">/*...*/</span> };
+        rpwf_screen.renderPass.<span class="fn">Create</span>(renderPassCreateInfo);
+
+        <span class="kw">auto</span> CreateFramebuffer = [] {
+            <span class="cmt">/*待后续填充*/</span>
+            <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
+                .pNext = <span class="cmt">/*待填充*/</span>,
+                .flags = <span class="cmt">/*待填充*/</span>,
+                .renderPass = rpwf_screen.renderPass,
+                .attachmentCount = 1,
+                .width = windowSize.width,
+                .height = windowSize.height,
+                .layers = 1
+            };
+            rpwf_screen.framebuffer.<span class="fn">Create</span>(framebufferCreateInfo);
+        };
+        <span class="kw">auto</span> DestroyFramebuffer = [] {
+            rpwf_screen.framebuffer.<span class="fn">~framebuffer</span>();
+        };
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>(CreateFramebuffer);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroySwapchain</span>(DestroyFramebuffer);
+        CreateFramebuffer();
+    }
+    <span class="kw">return</span> rpwf_screen;
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            虽然没有图像附件了，<span class="type">VkFramebufferCreateInfo</span>::pAttachments被无视（其值对创建帧缓冲无影响），但<span class="type">VkFramebufferCreateInfo</span>::attachmentCount仍旧需要与渲染通道的图像附件数量匹配。
+        </p>
+    </li>
+</ul>
+<p>
+    创建无图像帧缓冲时，<span class="type">VkFramebufferCreateInfo</span>的pNext链中要包含一个<span class="type">VkFramebufferAttachmentsCreateInfo</span>类型的结构体，并在<span class="type">VkFramebufferCreateInfo</span>::flags中指定<span class="enum">VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT</span>：
+</p>
+<pre class="code">
+<span class="kw">auto</span> CreateFramebuffer = [] {
+    <span class="cmt">/*待后续填充*/</span>
+    <span class="type">VkFramebufferAttachmentsCreateInfo</span> framebufferAttachmentsCreateInfo = {
+        .sType = <span class="enum">VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO</span>,
+        <span class="cmt">/*待填充*/</span>
+    };
+    <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
+        .pNext = &amp;framebufferAttachmentsCreateInfo,
+        .flags = <span class="enum">VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT</span>,
+        .renderPass = rpwf_screen.renderPass,
+        .attachmentCount = 1,
+        .width = windowSize.width,
+        .height = windowSize.height,
+        .layers = 1
+    };
+    rpwf_screen.framebuffer.<span class="fn">Create</span>(framebufferCreateInfo);
+};
+</pre>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkFramebufferAttachmentsCreateInfo">VkFramebufferAttachmentsCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> attachmentImageInfoCount</p></td>
+            <td><p>被描述的图像附件的数量，跟<span class="type">VkFramebufferCreateInfo</span>::attachmentCount一致</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkFramebufferAttachmentImageInfo</span>* pAttachmentImageInfos</p></td>
+            <td><p>指向<span class="type">VkFramebufferAttachmentImageInfo</span>的数组，用于描述对图像附件的要求</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            根据<a href="https://renderdoc.org/vkspec_chunked/chap8.html#VUID-VkFramebufferCreateInfo-flags-03191">VUID-VkFramebufferCreateInfo-flags-03191</a>，在attachmentImageInfoCount不等于<span class="type">VkFramebufferCreateInfo</span>::attachmentCount但是为0的情况下验证层不会报错，目前这一点似乎没有什么实际意义（谷歌一圈查不到任何解释）。
+        </p>
+    </li>
+    <li>
+        <p>
+            如果你疑惑pAttachmentImageInfos所指数组中各个元素该是什么顺序，前情提要：渲染通道中与图像附件相关的参数（格式、采样点数、存读选项、内存布局）大都是在<span class="type">VkRenderPassCreateInfo</span>::pAttachments中指定的，原先由<span class="type">VkFramebufferCreateInfo</span>::pAttachments指定与之一一对应的具体图像附件。对于无图像帧缓冲自然是以此类推。
+        </p>
+    </li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>
+    Q：为什么要让attachmentImageInfoCount跟<span class="type">VkFramebufferCreateInfo</span>::attachmentCount重复提供同一个数值？
+    <br>
+    A：我猜是因为API设计得考虑到这个结构今后可能在其他场合被单独使用（至少到撰写本文为止，<span class="type">VkFramebufferAttachmentsCreateInfo</span>只会被<span class="type">VkFramebufferCreateInfo</span>引用）。
+</p>
+</div>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkFramebufferAttachmentImageInfo">VkFramebufferAttachmentImageInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENT_IMAGE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkImageCreateFlags</span> flags</p></td>
+            <td><p>届时的图像附件，其对应的图像（<span class="type">VkImage</span>）在被创建时被指定的flags</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkImageUsageFlags</span> usage</p></td>
+            <td><p>届时的图像附件，其对应的图像（<span class="type">VkImage</span>）在被创建时被指定的用途</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> width</p></td>
+            <td><p>届时的图像附件的宽度</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> height</p></td>
+            <td><p>届时的图像附件的高度</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> layerCount</p></td>
+            <td><p>届时会被指定为图像附件的图像视图（<span class="type">VkImageView</span>）的图层数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> viewFormatCount</p></td>
+            <td><p>见后文</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkFormat</span>* pViewFormats</p></td>
+            <td><p>见后文</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            flags和usage与创建相应图像时指定的<span class="type">VkImageCreateInfo</span>::flags和<span class="type">VkImageCreateInfo</span>::usage匹配。
+        </p>
+    </li>
+    <li>
+        <p>
+            届时的图像附件，其对应的图像在被创建时，如果<span class="type">VkImageCreateInfo</span>的pNext链中包含了<a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkImageFormatListCreateInfo">VkImageFormatListCreateInfo</a>，那么这里的pViewFormats所指数组为与<a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkImageFormatListCreateInfo">VkImageFormatListCreateInfo</a>中相同的格式列表，否则指向届时会被指定为图像附件的image view的格式即可（等价于创建渲染通道过程中指定的图像格式）。
+        </p>
+    </li>
+</ul>
+<p>
+    <strong><a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkImageFormatListCreateInfo">VkImageFormatListCreateInfo</a>是干什么的？</strong>
+    <br>
+    要讲这个，先前情提要一下可变格式图像：创建图像时，若<span class="type">VkImageCreateInfo</span>::flags中注明<span class="enum">VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT</span>，则之后可以为图像创建不同格式的image view。
+    <br>
+    但是在一些平台上，可变格式图像的访问效率可能较差，因为驱动不清楚可能会以哪些格式的view来访问图像，就可能失去优化机会。
+    <br>
+    因此后来就有了<span class="type">VkImageFormatListCreateInfo</span>，该类型结构体用以注明之后会为图像创建的image view会是哪些格式。
+    <br>
+    至于如果你要问，创建帧缓冲的时候注明这个干啥？底层的事情我也不知道！
+</p>
+<p>
+    于是来创建能与交换链图像搭配的无图像帧缓冲。
+    <br>
+    flags和usage怎么填？我们不是保存了交换链的创建信息嘛：
+</p>
+<pre class="code">
+<span class="kw">auto</span> CreateFramebuffer = [] {
+    <span class="type">VkFramebufferAttachmentImageInfo</span> framebufferAttachmentImageInfo = {
+        .sType = <span class="enum">VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENT_IMAGE_INFO</span>,
+        .usage = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageUsage,
+        .width = <span class="cmt">/*待填充*/</span>,
+        .height = <span class="cmt">/*待填充*/</span>,
+        .layerCount = <span class="cmt">/*待填充*/</span>,
+        .viewFormatCount = <span class="cmt">/*待填充*/</span>,
+        .pViewFormats = <span class="cmt">/*待填充*/</span>
+    };
+    <span class="type">VkFramebufferAttachmentsCreateInfo</span> framebufferAttachmentsCreateInfo = {
+        .sType = <span class="enum">VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO</span>,
+        .attachmentImageInfoCount = 1,
+        .pAttachmentImageInfos = &amp;framebufferAttachmentImageInfo
+    };
+    <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
+        .pNext = &amp;framebufferAttachmentsCreateInfo,
+        .flags = <span class="enum">VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT</span>,
+        .renderPass = rpwf_screen.renderPass,
+        .attachmentCount = 1,
+        .width = windowSize.width,
+        .height = windowSize.height,
+        .layers = 1
+    };
+    rpwf_screen.framebuffer.Create(framebufferCreateInfo);
+};
+</pre>
+<p>
+    然而突然意识到，<span class="type">VkSwapchainCreateInfo</span>根本没有<span class="type">VkImageCreateFlags</span>类型的成员！
+    <br>
+    好在我们当初创建交换链的时候也没有注明什么flags，这里的flags留作0就行了。。。
+    <br>
+    哎呀这可治标不治本，给你个<a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkSwapchainCreateFlagBitsKHR">VkSwapchainCreateFlagBitsKHR</a>到<span class="type">VkImageCreateFlagBits</span>的转换列表吧：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr>
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkSwapchainCreateFlagBitsKHR">VkSwapchainCreateFlagBitsKHR</a> 的枚举值</p></th>
+            <th class="head"><p>对应的<a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkImageCreateFlagBits">VkImageCreateFlagBits</a></p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.1 + VK_KHR_swapchain</p></td>
+            <td><p><span class="enum">VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR</span></p></td>
+            <td><p><span class="enum">VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT</span></p></td>
+        </tr>
+        <tr>
+            <td><p>1.1 + VK_KHR_swapchain</p></td>
+            <td><p><span class="enum">VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR</span></p></td>
+            <td><p><span class="enum">VK_IMAGE_CREATE_PROTECTED_BIT</span></p></td>
+        </tr>
+        <tr>
+            <td><p>VK_KHR_swapchain_mutable_format</p></td>
+            <td><p><span class="enum">VK_SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR</span></p></td>
+            <td><p><span class="enum">VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT</span> | <span class="enum">VK_IMAGE_CREATE_EXTENDED_USAGE_BIT</span> （<a href="https://renderdoc.org/vkspec_chunked/chap56.html#_issues_32">出处</a>）</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    然后填写宽高和图层数。
+    <br>
+    图像附件是通过image view指定的，我们没有存交换链图像的image view的创建信息，但创建view时根本不会指定尺寸，view的尺寸等价于与其对应的图像。至于图层数，当然是1啦：
+</p>
+<pre class="code">
+<span class="type">VkFramebufferAttachmentImageInfo</span> framebufferAttachmentImageInfo = {
+    .sType = <span class="enum">VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENT_IMAGE_INFO</span>,
+    .usage = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageUsage,
+    <span class="cmt">//前情提要：windowSize即graphicsBase::Base().SwapchainCreateInfo().imageExtent</span>
+    .width = windowSize.width,
+    .height = windowSize.height,
+    .layerCount = 1,
+    .viewFormatCount = <span class="cmt">/*待填充*/</span>
+    .pViewFormats = <span class="cmt">/*待填充*/</span>
+};
+<span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().flags &amp; <span class="enum">VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR</span>)
+    framebufferAttachmentImageInfo.flags |= <span class="enum">VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT</span>;
+<span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().flags &amp; <span class="enum">VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR</span>)
+    framebufferAttachmentImageInfo.flags |= <span class="enum">VK_IMAGE_CREATE_PROTECTED_BIT</span>;
+<span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().flags &amp; <span class="enum">VK_SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR</span>)
+    framebufferAttachmentImageInfo.flags |= <span class="enum">VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT</span> | <span class="enum">VK_IMAGE_CREATE_EXTENDED_USAGE_BIT</span>;
+</pre>
+<p>
+    最后，既然我们没有把交换链图像指定为可变格式，更遑论写没写过<span class="type">VkImageFormatListCreateInfo</span>，只要让pViewFormats指向交换链创建信息中的imageFormat便好：
+</p>
+<pre class="code">
+<span class="type">VkFramebufferAttachmentImageInfo</span> framebufferAttachmentImageInfo = {
+    .sType = <span class="enum">VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENT_IMAGE_INFO</span>,
+    .usage = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageUsage,
+    .width = windowSize.width,
+    .height = windowSize.height,
+    .layerCount = 1,
+    .viewFormatCount = 1,
+    .pViewFormats = &amp;<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat
+};
+<span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().flags &amp; <span class="enum">VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR</span>)
+    framebufferAttachmentImageInfo.flags |= <span class="enum">VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT</span>;
+<span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().flags &amp; <span class="enum">VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR</span>)
+    framebufferAttachmentImageInfo.flags |= <span class="enum">VK_IMAGE_CREATE_PROTECTED_BIT</span>;
+<span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().flags &amp; <span class="enum">VK_SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR</span>)
+    framebufferAttachmentImageInfo.flags |= <span class="enum">VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT</span> | <span class="enum">VK_IMAGE_CREATE_EXTENDED_USAGE_BIT</span>;
+</pre></section>
+<section id="id3">
+<h2>开始渲染通道<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<p>
+    使用无图像帧缓冲的话，需要在开始渲染通道时，在<span class="type">VkRenderPassBeginInfo</span>的pNext链中用<a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkRenderPassAttachmentBeginInfo">VkRenderPassAttachmentBeginInfo</a>指定具体的图像附件（没有任何难点）：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkRenderPassAttachmentBeginInfo">VkRenderPassAttachmentBeginInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> attachmentCount</p></td>
+            <td><p>图像附件的数量</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkImageView</span> pAttachments</p></td>
+            <td><p>指向<span class="type">VkImageView</span>的数组，用于指定图像附件</p></td>
+        </tr>
+    </tbody>
+</table>
+<pre class="code">
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
+        <span class="kw">return</span> -1;
+
+    </span><span class="kw">const auto</span>&amp; [renderPass, framebuffer] = <span class="fn">RenderPassAndFramebuffers</span>();
+    </span><span class="fn">CreateLayout</span>();
+    </span><span class="fn">CreatePipeline</span>();
+
+    <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
+    <span class="type">semaphore</span> semaphore_imageIsAvailable;
+    <span class="type">semaphore</span> semaphore_renderingIsOver;
+
+    <span class="type">commandBuffer</span> commandBuffer;
+    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
+    commandPool.<span class="type">AllocateBuffers</span>(commandBuffer);
+
+    <span class="type">VkClearValue</span> clearColor = { .color = { 1.f, 0.f, 0.f, 1.f } };
+
+    <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
+        <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
+            <span class="fn">glfwWaitEvents</span>();
+        <span class="fn">TitleFps</span>();
+
+        fence.<span class="fn">WaitAndReset</span>();
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+        <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
+
+        commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
+        <span class="type">VkImageView</span> attachment = graphicsBase::Base().SwapchainImageView(i);
+        <span class="type">VkRenderPassAttachmentBeginInfo</span> renderPassAttachmentBeginInfo = {
+            .sType = <span class="enum">VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO</span>,
+            .attachmentCount = 1,
+            .pAttachments = &amp;attachment
+        };
+        <span class="type">VkRenderPassBeginInfo</span> renderPassBeginInfo = {
+            .pNext = &amp;renderPassAttachmentBeginInfo,
+            .framebuffer = framebuffer,
+            .renderArea = { {}, windowSize },
+            .clearValueCount = 1,
+            .pClearValues = &amp;clearColor
+        };
+        renderPass.<span class="fn">CmdBegin</span>(commandBuffer, renderPassBeginInfo);
+
+        <span class="fn">vkCmdBindPipeline</span>(commandBuffer, <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>, pipeline_triangle);
+        <span class="fn">vkCmdDraw</span>(commandBuffer, 3, 1, 0, 0);
+
+        renderPass.<span class="fn">CmdEnd</span>(commandBuffer);
+        commandBuffer.<span class="fn">End</span>();
+
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
+
+        <span class="fn">glfwPollEvents</span>();
+    }
+    <span class="fn">TerminateWindow</span>();
+    <span class="kw">return</span> 0;
+}
+</pre>
+<p>
+    运行程序，渲染的结果不是重点（依旧是那个红背景和蓝三角形），验证层没报错便对了。
+    <br>
+    本节的示例代码参见：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch6/EasyVulkan.hpp">EasyVulkan.hpp</a>和<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch6/Ch6-1.hpp">Ch6-1.hpp</a>
+</p></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html" class="btn btn-neutral float-left" title="Ch6-0 使用新版本特性" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-right" title="Ch7-1 初识顶点缓冲区" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -35,10 +35,10 @@
     <ClInclude Include="EasyVulkan.hpp">
       <Filter>EasyVK_HPP</Filter>
     </ClInclude>
-    <ClInclude Include="VkBase+.h">
+    <ClInclude Include="VKBase+.h">
       <Filter>EasyVK_Header</Filter>
     </ClInclude>
-    <ClInclude Include="VkFormat.h">
+    <ClInclude Include="VKFormat.h">
       <Filter>EasyVK_Header</Filter>
     </ClInclude>
     <ClInclude Include="Ch7-1.hpp">

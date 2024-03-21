@@ -9,6 +9,8 @@
 
 #ifndef NDEBUG
 #define ENABLE_DEBUG_MESSENGER true
+//Prevent binding an implicitly generated rvalue to a const reference.
+#define DefineHandleTypeOperator operator volatile decltype(handle)() const { return handle; }
 #else
 #define ENABLE_DEBUG_MESSENGER false
 #endif
@@ -711,7 +713,7 @@ namespace vulkan {
 		}
 		//                    Create Swapchain
 		void AddNextStructure_SwapchainCreateInfo(auto& next, bool allowDuplicate = false) {
-			SetPNext(swapchainCreateInfo.pNext, &next, allowDuplicate);
+			SetPNext(const_cast<void*&>(swapchainCreateInfo.pNext), &next, allowDuplicate);
 		}
 		result_t GetSurfaceFormats() {
 			uint32_t surfaceFormatCount;

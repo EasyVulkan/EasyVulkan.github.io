@@ -70,40 +70,6 @@ namespace vulkan {
 			vkDestroyInstance(instance, nullptr);
 		}
 		//Non-const Function
-		VkResult CreateSwapchain_Internal() {
-			if (VkResult result = vkCreateSwapchainKHR(device, &swapchainCreateInfo, nullptr, &swapchain)) {
-				std::cout << std::format("[ graphicsBase ] ERROR\nFailed to create a swapchain!\nError code: {}\n", int32_t(result));
-				return result;
-			}
-
-			uint32_t swapchainImageCount;
-			if (VkResult result = vkGetSwapchainImagesKHR(device, swapchain, &swapchainImageCount, nullptr)) {
-				std::cout << std::format("[ graphicsBase ] ERROR\nFailed to get the count of swapchain images!\nError code: {}\n", int32_t(result));
-				return result;
-			}
-			swapchainImages.resize(swapchainImageCount);
-			if (VkResult result = vkGetSwapchainImagesKHR(device, swapchain, &swapchainImageCount, swapchainImages.data())) {
-				std::cout << std::format("[ graphicsBase ] ERROR\nFailed to get swapchain images!\nError code: {}\n", int32_t(result));
-				return result;
-			}
-
-			swapchainImageViews.resize(swapchainImageCount);
-			VkImageViewCreateInfo imageViewCreateInfo = {
-				.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-				.viewType = VK_IMAGE_VIEW_TYPE_2D,
-				.format = swapchainCreateInfo.imageFormat,
-				//.components = {},
-				.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 }
-			};
-			for (size_t i = 0; i < swapchainImageCount; i++) {
-				imageViewCreateInfo.image = swapchainImages[i];
-				if (VkResult result = vkCreateImageView(device, &imageViewCreateInfo, nullptr, &swapchainImageViews[i])) {
-					std::cout << std::format("[ graphicsBase ] ERROR\nFailed to create a swapchain image view!\nError code: {}\n", int32_t(result));
-					return result;
-				}
-			}
-			return VK_SUCCESS;
-		}
 		VkResult GetQueueFamilyIndices(VkPhysicalDevice physicalDevice, bool enableGraphicsQueue, bool enableComputeQueue, uint32_t(&queueFamilyIndices)[3]) {
 			uint32_t queueFamilyCount = 0;
 			vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, nullptr);
@@ -151,6 +117,40 @@ namespace vulkan {
 			queueFamilyIndex_graphics = ig;
 			queueFamilyIndex_presentation = ip;
 			queueFamilyIndex_compute = ic;
+			return VK_SUCCESS;
+		}
+		VkResult CreateSwapchain_Internal() {
+			if (VkResult result = vkCreateSwapchainKHR(device, &swapchainCreateInfo, nullptr, &swapchain)) {
+				std::cout << std::format("[ graphicsBase ] ERROR\nFailed to create a swapchain!\nError code: {}\n", int32_t(result));
+				return result;
+			}
+
+			uint32_t swapchainImageCount;
+			if (VkResult result = vkGetSwapchainImagesKHR(device, swapchain, &swapchainImageCount, nullptr)) {
+				std::cout << std::format("[ graphicsBase ] ERROR\nFailed to get the count of swapchain images!\nError code: {}\n", int32_t(result));
+				return result;
+			}
+			swapchainImages.resize(swapchainImageCount);
+			if (VkResult result = vkGetSwapchainImagesKHR(device, swapchain, &swapchainImageCount, swapchainImages.data())) {
+				std::cout << std::format("[ graphicsBase ] ERROR\nFailed to get swapchain images!\nError code: {}\n", int32_t(result));
+				return result;
+			}
+
+			swapchainImageViews.resize(swapchainImageCount);
+			VkImageViewCreateInfo imageViewCreateInfo = {
+				.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+				.viewType = VK_IMAGE_VIEW_TYPE_2D,
+				.format = swapchainCreateInfo.imageFormat,
+				//.components = {},
+				.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 }
+			};
+			for (size_t i = 0; i < swapchainImageCount; i++) {
+				imageViewCreateInfo.image = swapchainImages[i];
+				if (VkResult result = vkCreateImageView(device, &imageViewCreateInfo, nullptr, &swapchainImageViews[i])) {
+					std::cout << std::format("[ graphicsBase ] ERROR\nFailed to create a swapchain image view!\nError code: {}\n", int32_t(result));
+					return result;
+				}
+			}
 			return VK_SUCCESS;
 		}
 		VkResult CreateDebugMessenger() {
@@ -285,23 +285,23 @@ namespace vulkan {
 		}
 
 		//Non-const Function
-		void PushCallback_CreateSwapchain(void(*function)()) {
+		void AddCallback_CreateSwapchain(void(*function)()) {
 			callbacks_createSwapchain.push_back(function);
 		}
-		void PushCallback_DestroySwapchain(void(*function)()) {
+		void AddCallback_DestroySwapchain(void(*function)()) {
 			callbacks_destroySwapchain.push_back(function);
 		}
-		void PushCallback_CreateDevice(void(*function)()) {
+		void AddCallback_CreateDevice(void(*function)()) {
 			callbacks_createDevice.push_back(function);
 		}
-		void PushCallback_DestroyDevice(void(*function)()) {
+		void AddCallback_DestroyDevice(void(*function)()) {
 			callbacks_destroyDevice.push_back(function);
 		}
 		//                    Create Instance
-		void PushInstanceLayer(const char* layerName) {
+		void AddInstanceLayer(const char* layerName) {
 			AddLayerOrExtension(instanceLayers, layerName);
 		}
-		void PushInstanceExtension(const char* extensionName) {
+		void AddInstanceExtension(const char* extensionName) {
 			AddLayerOrExtension(instanceExtensions, extensionName);
 		}
 		VkResult UseLatestApiVersion() {
@@ -309,10 +309,10 @@ namespace vulkan {
 				return vkEnumerateInstanceVersion(&apiVersion);
 			return VK_SUCCESS;
 		}
-		VkResult CreateInstance(const void* pNext = nullptr, VkInstanceCreateFlags flags = 0) {
+		VkResult CreateInstance(VkInstanceCreateFlags flags = 0) {
 #ifndef NDEBUG
-			PushInstanceLayer("VK_LAYER_KHRONOS_validation");
-			PushInstanceExtension(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+			AddInstanceLayer("VK_LAYER_KHRONOS_validation");
+			AddInstanceExtension(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 #endif
 			VkApplicationInfo applicatianInfo = {
 				.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
@@ -320,7 +320,6 @@ namespace vulkan {
 			};
 			VkInstanceCreateInfo instanceCreateInfo = {
 				.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-				.pNext = pNext,
 				.flags = flags,
 				.pApplicationInfo = &applicatianInfo,
 				.enabledLayerCount = uint32_t(instanceLayers.size()),
@@ -414,7 +413,7 @@ namespace vulkan {
 				this->surface = surface;
 		}
 		//                    Create Logical Device
-		void PushDeviceExtension(const char* extensionName) {
+		void AddDeviceExtension(const char* extensionName) {
 			AddLayerOrExtension(deviceExtensions, extensionName);
 		}
 		VkResult GetPhysicalDevices() {
@@ -470,7 +469,7 @@ namespace vulkan {
 			physicalDevice = availablePhysicalDevices[deviceIndex];
 			return VK_SUCCESS;
 		}
-		VkResult CreateDevice(const void* pNext = nullptr, VkDeviceCreateFlags flags = 0) {
+		VkResult CreateDevice(VkDeviceCreateFlags flags = 0) {
 			float queuePriority = 1.f;
 			VkDeviceQueueCreateInfo queueCreateInfos[3] = {
 				{
@@ -499,7 +498,6 @@ namespace vulkan {
 			vkGetPhysicalDeviceFeatures(physicalDevice, &physicalDeviceFeatures);
 			VkDeviceCreateInfo deviceCreateInfo = {
 				.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-				.pNext = pNext,
 				.flags = flags,
 				.queueCreateInfoCount = queueCreateInfoCount,
 				.pQueueCreateInfos = queueCreateInfos,
@@ -548,8 +546,8 @@ namespace vulkan {
 			if (!surfaceFormat.format) {
 				for (auto& i : availableSurfaceFormats)
 					if (i.colorSpace == surfaceFormat.colorSpace) {
-						swapchainCreateInfo.imageFormat = surfaceFormat.format;
-						swapchainCreateInfo.imageColorSpace = surfaceFormat.colorSpace;
+						swapchainCreateInfo.imageFormat = i.format;
+						swapchainCreateInfo.imageColorSpace = i.colorSpace;
 						formatIsAvailable = true;
 						break;
 					}
@@ -558,8 +556,8 @@ namespace vulkan {
 				for (auto& i : availableSurfaceFormats)
 					if (i.format == surfaceFormat.format &&
 						i.colorSpace == surfaceFormat.colorSpace) {
-						swapchainCreateInfo.imageFormat = surfaceFormat.format;
-						swapchainCreateInfo.imageColorSpace = surfaceFormat.colorSpace;
+						swapchainCreateInfo.imageFormat = i.format;
+						swapchainCreateInfo.imageColorSpace = i.colorSpace;
 						formatIsAvailable = true;
 						break;
 					}
@@ -569,7 +567,7 @@ namespace vulkan {
 				return RecreateSwapchain();
 			return VK_SUCCESS;
 		}
-		VkResult CreateSwapchain(bool limitFrameRate = true, const void* pNext = nullptr, VkSwapchainCreateFlagsKHR flags = 0) {
+		VkResult CreateSwapchain(bool limitFrameRate = true, VkSwapchainCreateFlagsKHR flags = 0) {
 			//Get surface capabilities
 			VkSurfaceCapabilitiesKHR surfaceCapabilities = {};
 			if (VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &surfaceCapabilities)) {
@@ -642,7 +640,6 @@ namespace vulkan {
 					}
 
 			swapchainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-			swapchainCreateInfo.pNext = pNext;
 			swapchainCreateInfo.flags = flags;
 			swapchainCreateInfo.surface = surface;
 			swapchainCreateInfo.imageArrayLayers = 1;
@@ -669,7 +666,7 @@ namespace vulkan {
 			swapchainCreateInfo = {};
 			debugUtilsMessenger = VK_NULL_HANDLE;
 		}
-		VkResult RecreateDevice(const void* pNext = nullptr, VkDeviceCreateFlags flags = 0) {
+		VkResult RecreateDevice(VkDeviceCreateFlags flags = 0) {
 			if (VkResult result = WaitIdle())
 				return result;
 			if (swapchain) {
@@ -688,7 +685,7 @@ namespace vulkan {
 			if (device)
 				vkDestroyDevice(device, nullptr),
 				device = VK_NULL_HANDLE;
-			return CreateDevice(pNext, flags);
+			return CreateDevice(flags);
 		}
 		VkResult RecreateSwapchain() {
 			VkSurfaceCapabilitiesKHR surfaceCapabilities = {};

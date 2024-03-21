@@ -9,6 +9,8 @@
 
 #ifndef NDEBUG
 #define ENABLE_DEBUG_MESSENGER true
+//Prevent binding an implicitly generated rvalue to a const reference.
+#define DefineHandleTypeOperator operator volatile decltype(handle)() const { return handle; }
 #else
 #define ENABLE_DEBUG_MESSENGER false
 #endif

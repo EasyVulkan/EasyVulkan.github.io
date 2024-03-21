@@ -35,7 +35,7 @@
     <ClInclude Include="EasyVulkan.hpp">
       <Filter>EasyVK_HPP</Filter>
     </ClInclude>
-    <ClInclude Include="VkBase+.h">
+    <ClInclude Include="VKBase+.h">
       <Filter>EasyVK_Header</Filter>
     </ClInclude>
   </ItemGroup>
