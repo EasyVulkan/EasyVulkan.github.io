@@ -98,6 +98,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch6-1 无图像帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html">Ch6-2 动态渲染</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -261,7 +262,7 @@
     <br>
     gl_SampleMaskIn中的每个bit对应相应索引的采样点，若没有在<a href="https://renderdoc.org/vkspec_chunked/chap27.html#VkPipelineMultisampleStateCreateInfo">VkPipelineMultisampleStateCreateInfo</a>中指定sample mask，以少于32xMSAA为例，一个采样点的gl_SampleMaskIn[0]的数值为<code>coverage mask & (1 << gl_SampleID)</code>。
     <br>
-    比如4xMSAA中，若四个采样点皆被图元覆盖且没有指定sample mask，那么各个采样点的gl_SampleMaskIn[0]的数值为<code>1 << gl_SampleID</code>。
+    比如4xMSAA中，若四个采样点皆被图元覆盖且没有指定sample mask，那么各个采样点的gl_SampleMaskIn[0]的数值为<code>0b1111 & (1 << gl_SampleID)</code>，等价于<code>1 << gl_SampleID</code>。
 </p></section>
 <section id="gl-helperinvocation">
 <h3>gl_HelperInvocation<a class="headerlink" href="#gl-helperinvocation" title="Permalink to this heading"></a></h3>
@@ -320,7 +321,7 @@
     <br>
     如果输出的gl_SampleMask[0]，对应从0开始的各个索引的采样点，0b1000、0b0100、0b0010、0b0001，则最后的解析得到的颜色为<code><span class="type">vec4</span>(0,0,0,0)</code>。
     <br>
-    如果输出的gl_SampleMask[0]，对应从0开始的各个索引的采样点，皆为0b0001，用<span class="var">colorSample0</span>指代索引为0的采样点，则最后的解析得到的颜色为<code><span class="type">vec4</span>(colorSample0.rgb, colorSample0.a/4)</code>，这个值相当于一个不透明的像素与三个完全透明的像素的平均。
+    如果输出的gl_SampleMask[0]，对应从0开始的各个索引的采样点，皆为0b0001，用<span class="var">colorSample0</span>指代索引为0的采样点，则最后的解析得到的颜色为<code><span class="type">vec4</span>(colorSample0.rgb, colorSample0.a / 4)</code>，这个值相当于一个不透明的像素与三个完全透明的像素的平均。
 </p></section>
 </section>
 <section id="early-fragment-test">
@@ -367,7 +368,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+    <p>&#169; 版权所有 2021-2024, Qiao YeCheng.</p>
   </div>
 
   利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 

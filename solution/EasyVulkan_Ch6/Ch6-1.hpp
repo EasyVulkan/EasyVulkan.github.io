@@ -42,9 +42,24 @@ void CreatePipeline() {
 }
 
 int main() {
-	if (!InitializeWindow({ 1280, 720 }) ||
-		!graphicsBase::Base().PhysicalDeviceVulkan12Features().imagelessFramebuffer)
-		return -1;
+	graphicsBase::Base().UseLatestApiVersion();
+	if (graphicsBase::Base().ApiVersion() < VK_API_VERSION_1_1)
+		return -1;//Too troublesome to enable this feature in Vulkan 1.0
+	if (graphicsBase::Base().ApiVersion() < VK_API_VERSION_1_2) {
+		graphicsBase::Base().AddDeviceExtension(VK_KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME);
+		graphicsBase::Base().AddDeviceExtension(VK_KHR_IMAGELESS_FRAMEBUFFER_EXTENSION_NAME);
+		VkPhysicalDeviceImagelessFramebufferFeatures physicalDeviceImagelessFramebufferFeatures = {
+			VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES,
+		};
+		graphicsBase::Base().AddNextStructure_PhysicalDeviceFeatures(physicalDeviceImagelessFramebufferFeatures);
+		if (!InitializeWindow({ 1280, 720 }) ||
+			!physicalDeviceImagelessFramebufferFeatures.imagelessFramebuffer)
+			return -1;
+	}
+	else
+		if (!InitializeWindow({ 1280, 720 }) ||
+			!graphicsBase::Base().PhysicalDeviceVulkan12Features().imagelessFramebuffer)
+			return -1;
 
 	const auto& [renderPass, framebuffer] = RenderPassAndFramebuffers();
 	CreateLayout();

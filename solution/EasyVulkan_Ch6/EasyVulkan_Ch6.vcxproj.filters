@@ -44,5 +44,8 @@
     <ClInclude Include="Ch6-1.hpp">
       <Filter>EasyVK_HPP</Filter>
     </ClInclude>
+    <ClInclude Include="Ch6-2.hpp">
+      <Filter>EasyVK_HPP</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

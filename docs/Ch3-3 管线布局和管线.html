@@ -108,6 +108,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch6-1 无图像帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html">Ch6-2 动态渲染</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -977,7 +978,7 @@
 <ul>
     <li>
         <p>
-            若没有开启硬件特性中的multiViewport（多视口），那么你只能且必须使用一组视口和剪裁范围。使用多视口时，每个视口与剪裁范围一一对应。渲染到哪个视口需在几何着色器中用gl_ViewportIndex指定。
+            若没有开启设备特性中的multiViewport（多视口），那么你只能且必须使用一组视口和剪裁范围。使用多视口时，每个视口与剪裁范围一一对应。渲染到哪个视口需在几何着色器中用gl_ViewportIndex指定。
         </p>
     </li>
     <li>
@@ -1067,7 +1068,7 @@
         </tr>
         <tr class="row-even">
             <td><p><span class="kw">float</span> lineWidth</p></td>
-            <td><p>指定绘制线段时的线宽，单位是像素，没有开启wideLines硬件特性的话必须为1</p></td>
+            <td><p>指定绘制线段时的线宽，单位是像素，没有开启wideLines设备特性的话必须为1</p></td>
         </tr>
     </tbody>
 </table>
@@ -1617,7 +1618,7 @@
 <p>
     逻辑运算只能用于整数类型（SIGNED/UNSIGNED/NORMALIZED）的颜色附件，不能应用于浮点或SRGB类型。
     <br>
-    要启用逻辑运算，除此之外还需事先在硬件特性中开启逻辑运算（将<span class="type">VkPhysicalDeviceFeatures</span>::logicOp设置为<span class="mcr">VK_TRUE</span>）。
+    要启用逻辑运算，除此之外还需事先在设备特性中开启逻辑运算（将<span class="type">VkPhysicalDeviceFeatures</span>::logicOp设置为<span class="mcr">VK_TRUE</span>）。
     <br>
     开启逻辑运算时，无论<span class="type">VkPipelineColorBlendAttachmentState</span>::blendEnable是否为<span class="mcr">VK_TRUE</span>，一律关闭混色。
 </p>
@@ -2225,7 +2226,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+    <p>&#169; 版权所有 2021-2024, Qiao YeCheng.</p>
   </div>
 
   利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 

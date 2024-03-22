@@ -106,6 +106,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch6-1 无图像帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html">Ch6-2 动态渲染</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -339,13 +340,15 @@
         </tr>
     </tbody>
 </table>
-<ul>
-    <li>
-        <p>
-            若pImmutableSamplers非<span class="kw">nullptr</span>，且描述符类型为<span class="enum">VK_DESCRIPTOR_TYPE_SAMPLER</span>或<span class="enum">VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER</span>，则用pImmutableSamplers指定descriptorCount个不可变更的采样器。
-        </p>
-    </li>
-</ul></section>
+<p>
+    若描述符类型为<span class="enum">VK_DESCRIPTOR_TYPE_SAMPLER</span>或<span class="enum">VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER</span>，则用pImmutableSamplers指定descriptorCount个不可变更的采样器，无需指定则pImmutableSamplers为<span class="kw">nullptr</span>。
+    <br>
+    不可变更的采样器的具体效果是：
+    <br>
+    pImmutableSamplers所指向的一系列采样器的handle被保存到描述符布局中，使得相应binding的采样器一直是所指定的采样器（之后无需也不可再更新），若描述符类型为<span class="enum">VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER</span>，更新描述符时无视<span class="type">VkDescriptorImageInfo</span>::sampler。
+    <br>
+    <strong>注意，须确保不可变更采样器的生存期不短于描述符布局。</strong>
+</p></section>
 <section id="descriptorsetlayout">
 <h3>封装为descriptorSetLayout类<a class="headerlink" href="#descriptorsetlayout" title="Permalink to this heading"></a></h3>
 <p>
@@ -980,7 +983,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+    <p>&#169; 版权所有 2021-2024, Qiao YeCheng.</p>
   </div>
 
   利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 

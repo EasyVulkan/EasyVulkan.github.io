@@ -20,7 +20,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="Ch7-1 初识顶点缓冲区" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html" />
+    <link rel="next" title="Ch6-2 动态渲染" href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html" />
     <link rel="prev" title="Ch6-0 使用新版本特性" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html" /> 
 </head>
 
@@ -87,6 +87,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#id3">开始渲染通道</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html">Ch6-2 动态渲染</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -131,43 +132,72 @@
     无图像帧缓冲的（些微）好处显而易见：
     <br>
     原先，有几个会被用作渲染目标的图像就得有几个帧缓冲，代码量和需要管理的对象数量都显得冗余。而无图像帧缓冲可以适配任何符合要求的图像附件，交换链中的多张图像只需要有一个帧缓冲即可，而且交换链之外的图像只要能创建出符合要求的image view就也能用同一个帧缓冲。
+    <br>
+    （注：其实这东西卵用不大，直接看下一节也无妨）
 </p>
 <p>
     本节在之前Ch2中绘制三角形代码的基础上，使用无图像帧缓冲搭配交换链图像进行渲染，以简单演示使用方法。
 </p><section id="id1">
 <h2>开启无图像帧缓冲设备特性<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
 <p>
-    无图像帧缓冲在Vulkan1.2版本之前由设备级扩展<span class="str">&quot;VK_KHR_imageless_framebuffer&quot;</span>提供（且依赖于另外一个实例级扩展和两个设备级扩展），从1.2版本开始为Vulkan核心功能的一部分。
+    无图像帧缓冲是在Vulkan1.1.114版本中出现的扩展，Vulkan1.2版本之前由设备级扩展<span class="str">&quot;VK_KHR_imageless_framebuffer&quot;</span>提供（且依赖于其他扩展），从1.2版本开始为Vulkan核心功能的一部分。
 </p>
 <p>
-    因为<span class="type">VkPhysicalDeviceFeatures</span>没可扩展性所以理论上Vulkan1.0中无法开启该功能，若Vulkan版本达到1.1但未到1.2，使用以下代码通过扩展开启：
-</p>
-<pre class="code">
-<span class="kw">int</span> <span class="fn">main</span>() {
-    <span class="cmt">//VK_KHR_imageless_framebuffer需要这几个扩展</span>
-    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(<span class="mcr">VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME</span>);
-    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_MAINTENANCE2_EXTENSION_NAME</span>);
-    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME</span>);
-    <span class="cmt">//VK_KHR_imageless_framebuffer</span>
-    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_IMAGELESS_FRAMEBUFFER_EXTENSION_NAME</span>);
-    <span class="type">VkPhysicalDeviceImagelessFramebufferFeatures</span> physicalDeviceImagelessFramebufferFeatures = {
-        <span class="enum">VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES</span>,
-    };
-    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddNextStructure_PhysicalDeviceFeatures</span>(physicalDeviceImagelessFramebufferFeatures);
-    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }) ||
-        !physicalDeviceImagelessFramebufferFeatures.imagelessFramebuffer)
-        <span class="kw">return</span> -1;
-    <span class="cmt">/*...*/</span>
-}
-</pre>
-<p>
+    取得Vulkan的最新版本，只有1.0的话直接返回。
+    <br>
     Vulkan版本达到1.2的话，在前一节的代码里已经修改过<span class="type">graphicsBase</span>::<span class="fn">CreateDevice</span>(...)了，并且该函数的逻辑是“能开的特性都开了”，所以只要检查设备特性是否支持即可：
 </p>
 <pre class="code">
 <span class="kw">int</span> <span class="fn">main</span>() {
-    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }) ||
-        !<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceVulkan12Features</span>().imagelessFramebuffer)
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">UseLatestApiVersion</span>();
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">ApiVersion</span>() &lt; <span class="mcr">VK_API_VERSION_1_1</span>)
+        <span class="cmt">//1.0.XXX的情况，在这里弹出信息窗口让用户升级显卡驱动吧！？</span>
         <span class="kw">return</span> -1;
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">ApiVersion</span>() &lt; <span class="mcr">VK_API_VERSION_1_2</span>) {
+        <span class="cmt">/*1.1.XXX的情况，待填充*/</span>
+    }
+    <span class="kw">else</span>
+        <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }) ||
+            !<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceVulkan12Features</span>().imagelessFramebuffer)
+            <span class="kw">return</span> -1;
+
+    <span class="cmt">/*...*/</span>
+}
+</pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>
+    <strong>Vulkan版本和硬件支持</strong>
+    <br>
+    通过<span class="fn">vkEnumerateInstanceVersion</span>(...)取得的是Vulkan运行时（runtime）的版本，而非显卡驱动支持到的版本（稍微想想就明白，毕竟物理设备列表都得是创建Vulkan实例之后才取得的）。
+    <br>
+    运行时可以单独更新，但显卡驱动的支持也得更上。而更新显卡驱动时往往也会一并更新Vulkan运行时，所以如果用户的Vulkan运行时版本古旧，那这家伙的显卡驱动多半是很久没更新过了！
+</p>
+</div>
+<p>
+    若Vulkan版本达到1.1但未到1.2，使用以下代码通过扩展开启：
+</p>
+<pre class="code">
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">UseLatestApiVersion</span>();
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">ApiVersion</span>() &lt; <span class="mcr">VK_API_VERSION_1_1</span>)
+        <span class="kw">return</span> -1;
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">ApiVersion</span>() &lt; <span class="mcr">VK_API_VERSION_1_2</span>) {
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME</span>);<span class="cmt">//Vulkan1.1.XXX时，需要这个扩展</span>
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_IMAGELESS_FRAMEBUFFER_EXTENSION_NAME</span>);
+        <span class="type">VkPhysicalDeviceImagelessFramebufferFeatures</span> physicalDeviceImagelessFramebufferFeatures = {
+            <span class="enum">VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES</span>,
+        };
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddNextStructure_PhysicalDeviceFeatures</span>(physicalDeviceImagelessFramebufferFeatures);
+        <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }) ||
+            !physicalDeviceImagelessFramebufferFeatures.imagelessFramebuffer)
+            <span class="kw">return</span> -1;
+    }
+    <span class="kw">else</span>
+        <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }) ||
+            !<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceVulkan12Features</span>().imagelessFramebuffer)
+            <span class="kw">return</span> -1;
+
     <span class="cmt">/*...*/</span>
 }
 </pre></section>
@@ -605,7 +635,7 @@
         <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
 
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
-        <span class="type">VkImageView</span> attachment = graphicsBase::Base().SwapchainImageView(i);
+        <span class="type">VkImageView</span> attachment = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapchainImageView</span>(i);
         <span class="type">VkRenderPassAttachmentBeginInfo</span> renderPassAttachmentBeginInfo = {
             .sType = <span class="enum">VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO</span>,
             .attachmentCount = 1,
@@ -647,13 +677,13 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html" class="btn btn-neutral float-left" title="Ch6-0 使用新版本特性" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
-        <a href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-right" title="Ch7-1 初识顶点缓冲区" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html" class="btn btn-neutral float-right" title="Ch6-2 动态渲染" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+    <p>&#169; 版权所有 2021-2024, Qiao YeCheng.</p>
   </div>
 
   利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 

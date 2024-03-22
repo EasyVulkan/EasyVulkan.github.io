@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="zh" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>索引 &mdash; EasyVulkan</title>
+  <title>Ch6-2 动态渲染（未完成） &mdash; EasyVulkan</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/theme.css" type="text/css" />
@@ -17,8 +18,10 @@
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
-    <link rel="index" title="索引" href="#" />
-    <link rel="search" title="搜索" href="search.html" /> 
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ch7-1 初识顶点缓冲区" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html" />
+    <link rel="prev" title="Ch6-1 无图像帧缓冲" href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -76,10 +79,16 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch6-1 无图像帧缓冲</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html">Ch6-2 动态渲染</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch6-2 动态渲染</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">开启动态渲染设备特性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">更改管线创建信息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">录制渲染前后的内存屏障</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">录制动态渲染命令</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -106,7 +115,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>索引</li>
+      <li>Ch6-2 动态渲染（未完成）</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -115,17 +124,108 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
+  <section id="ch6-2">
+<h1>Ch6-2 动态渲染（未完成）<a class="headerlink" href="#ch6-2" title="Permalink to this heading"></a></h1>
+<p>
+    动态渲染（dynamic rendering），简而言之是让渲染通道和帧缓冲一起滚蛋的渲染方式。
+    <br>
+    所谓动态，指渲染相关的参数大都在渲染开始时指定。
+</p>
+<p>
+    不需要渲染通道和帧缓冲，意味着省去了对它们进行管理的麻烦！尤其是，不再需要“因窗口大小改变而在重建交换链后重建渲染通道和帧缓冲”。
+    <br>
+    渲染通道的子通道，开始和结束时会执行子通道依赖，并进行图像内存布局转换。
+    <br>
+    而动态渲染的“开始”和“结束”只是开始和结束，其间就只是一次独立的渲染，子通道依赖的作用和图像内存布局转换得通过<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#pipeline-barrier">图像内存屏障</a>来实行。
+    <br>
+    往下阅读之前，请确保已经大致了解了图像内存屏障的用法。
+</p>
+<p>
+    本节在之前Ch2中绘制三角形代码的基础上，使用动态渲染的方法来进行绘制，步骤如下：
+    <br>
+    1.开启设备特性
+    <br>
+    2.更改管线创建信息
+    <br>
+    3.定义动态渲染前后的内存屏障
+    <br>
+    4.调用命令，开始/结束动态渲染
+</p><section id="id1">
+<h2>开启动态渲染设备特性<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>
+    无图像帧缓冲在Vulkan1.3版本之前由设备级扩展<span class="str">&quot;VK_KHR_dynamic_rendering&quot;</span>提供（且依赖于另其他扩展），从1.3版本开始为Vulkan的核心功能。
+</p>
+<p>
+    类似前一节的无图像帧缓冲，1.0下的开启方法太麻烦不谈。Vulkan版本达到1.3的话，设备特性已在<span class="type">graphicsBase</span>::<span class="fn">CreateDevice</span>(...)中“能开尽开”，主函数中只检查设备特性是否支持：
+</p>
+<pre class="code">
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">UseLatestApiVersion</span>();
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">ApiVersion</span>() &lt; <span class="mcr">VK_API_VERSION_1_1</span>)
+        <span class="kw">return</span> -1;
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">ApiVersion</span>() &lt; <span class="mcr">VK_API_VERSION_1_3</span>) {
+        <span class="cmt">/*待填充*/</span>
+    }
+    <span class="kw">else</span>
+        <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }) ||
+            !<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceVulkan13Features</span>().dynamicRendering)
+            <span class="kw">return</span> -1;
 
-<h1 id="index">索引</h1>
+    <span class="cmt">/*...*/</span>
+}
+</pre>
+<p>
+    若Vulkan版本达到1.1但未到1.3，使用以下代码通过扩展开启：
+</p>
+<pre class="code">
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">UseLatestApiVersion</span>();
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">ApiVersion</span>() &lt; <span class="mcr">VK_API_VERSION_1_1</span>)
+        <span class="kw">return</span> -1;
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">ApiVersion</span>() &lt; <span class="mcr">VK_API_VERSION_1_3</span>) {
+        <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">ApiVersion</span>() &lt; <span class="mcr">VK_API_VERSION_1_2</span>)
+            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME</span>),  <span class="cmt">//在1.2版本中进入了核心功能</span>
+            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME</span>);<span class="cmt">//在1.2版本中进入了核心功能</span>
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME</span>);
+        <span class="type">VkPhysicalDeviceDynamicRenderingFeatures</span> physicalDeviceDynamicRenderingFeatures = {
+            <span class="enum">VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES</span>,
+        };
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddNextStructure_PhysicalDeviceFeatures</span>(physicalDeviceDynamicRenderingFeatures);
+        <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }) ||
+            !physicalDeviceDynamicRenderingFeatures.dynamicRendering)
+            <span class="kw">return</span> -1;
+    }
+    <span class="kw">else</span>
+        <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }) ||
+            !<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceVulkan13Features</span>().dynamicRendering)
+            <span class="kw">return</span> -1;
 
-<div class="genindex-jumpbox">
- 
-</div>
+    <span class="cmt">/*...*/</span>
+}
+</pre></section>
+<section id="id2">
+<h2>更改管线创建信息<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<p>
+    为什么要改管线创建信息？先来看看原先的管线创建信息：
+</p></section>
+<section id="id3">
+<h2>录制渲染前后的内存屏障<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<p>
+</p></section>
+<section id="id4">
+<h2>录制动态渲染命令<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<p>
+    本节的示例代码参见：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch6/Ch6-2.hpp">Ch6-2.hpp</a>
+</p></section>
+</section>
 
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html" class="btn btn-neutral float-left" title="Ch6-1 无图像帧缓冲" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-right" title="Ch7-1 初识顶点缓冲区" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

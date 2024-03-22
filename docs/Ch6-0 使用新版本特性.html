@@ -87,6 +87,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch6-1 无图像帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html">Ch6-2 动态渲染</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
 <ul>
@@ -364,7 +365,7 @@
 <p>
     若要使用一些由扩展提供的功能特性，需要将涉及的结构体加入pNext链来查询并开启特性，比如若要开启光追的话，需要在<span class="type">VkPhysicalDeviceFeatures2</span>的后续pNext链中加入<span class="type">VkPhysicalDeviceAccelerationStructureFeaturesKHR</span>和<span class="type">VkPhysicalDeviceAccelerationStructureFeaturesKHR</span>。
     <br>
-    而在你设计程序时，可能会把不同功能的部分放在各自八竿子打不着的代码中，不同的功能可能需要开启相同的硬件特性。定义一个<span class="type">graphicsBase</span>的静态成员函数<span class="sfn">SetPNext</span>(...)来确保正确处理pNext链，旨在让结构体能以任何顺序被加入pNext链并查重，以及定义其他相关的成员变量和函数：
+    而在你设计程序时，可能会把不同功能的部分放在各自八竿子打不着的代码中，不同的功能可能需要开启相同的设备特性。定义一个<span class="type">graphicsBase</span>的静态成员函数<span class="sfn">SetPNext</span>(...)来确保正确处理pNext链，旨在让结构体能以任何顺序被加入pNext链并查重，以及定义其他相关的成员变量和函数：
 </p>
 <pre class="code">
     <span class="kw">void</span>* pNext_instanceCreateInfo;
@@ -658,7 +659,7 @@
 }
 </pre>
 <p>
-    事情还没完，标准中规定：如果开启的硬件特性由<span class="type">VkPhysicalDeviceFeatures2</span>而非<span class="type">VkPhysicalDeviceFeatures</span>指定，那么<span class="type">VkPhysicalDeviceFeatures2</span>被接在<span class="type">VkDeviceCreateInfo</span>的pNext链中，而<span class="type">VkDeviceCreateInfo</span>::pEnabledFeatures必须为空指针：
+    事情还没完，标准中规定：如果开启的设备特性由<span class="type">VkPhysicalDeviceFeatures2</span>而非<span class="type">VkPhysicalDeviceFeatures</span>指定，那么<span class="type">VkPhysicalDeviceFeatures2</span>被接在<span class="type">VkDeviceCreateInfo</span>的pNext链中，而<span class="type">VkDeviceCreateInfo</span>::pEnabledFeatures必须为空指针：
 </p>
 <pre class="code">
 <span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="type">VkDeviceCreateFlags</span> flags = 0) {
@@ -699,17 +700,17 @@
     <br>
     执行<code><span class="sfn">SetPNext</span>(pNext_deviceCreateInfo, &amp;physicalDeviceFeatures);</code>后，<span class="var">deviceCreateInfo</span>的pNext链变成了这么个顺序：
     <br>
-    <span class="var">deviceCreateInfo</span>本身 -&gt; 调用<span class="fn">CreateDevice</span>(...)前以pNext_deviceCreateInfo起始的pNext链 -&gt; 硬件特性结构体的链表
+    <span class="var">deviceCreateInfo</span>本身 -&gt; 调用<span class="fn">CreateDevice</span>(...)前以pNext_deviceCreateInfo起始的pNext链 -&gt; 设备特性结构体的链表
 </p>
 <p>
     考虑到重建逻辑设备的需要，<span class="fn">CreateDevice</span>(...)会被<span class="fn">RecreateDevice</span>(...)调用，然后再次执行<span class="fn">GetPhysicalDeviceFeatures</span>()。
     <br>
     可是，如果重建逻辑设备前在以pNext_deviceCreateInfo起始的pNext链最后接了新的结构体呢（基于开启某些显卡特定的功能等理由）？
     <br>
-    按上述代码的写法，新的结构体会被接在硬件特性结构体链表的最后，而<span class="fn">vkGetPhysicalDeviceFeatures2</span>(...)只接收与硬件特性有关的的结构体，于是很可能运行出错。
+    按上述代码的写法，新的结构体会被接在设备特性结构体链表的最后，而<span class="fn">vkGetPhysicalDeviceFeatures2</span>(...)只接收与设备特性有关的的结构体，于是很可能运行出错。
 </p>
 <p>
-    因此，有必要在创建逻辑设备后，再将硬件特性结构体链表，从以pNext_deviceCreateInfo起始的pNext链中分离出来（这就是让<span class="sfn">SetPNext</span>(...)返回一个<span class="kw">void</span>**类型指针的原因）：
+    因此，有必要在创建逻辑设备后，再将设备特性结构体链表，从以pNext_deviceCreateInfo起始的pNext链中分离出来（这就是让<span class="sfn">SetPNext</span>(...)返回一个<span class="kw">void</span>**类型指针的原因）：
 </p>
 <pre class="code">
 <span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="type">VkDeviceCreateFlags</span> flags = 0) {
@@ -754,7 +755,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; 版权所有 2021, Qiao YeCheng.</p>
+    <p>&#169; 版权所有 2021-2024, Qiao YeCheng.</p>
   </div>
 
   利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
