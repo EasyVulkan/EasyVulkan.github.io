@@ -1403,7 +1403,7 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
     不同于缓冲区的是，图像内存可以被惰性分配（见后文），但驱动未必支持惰性分配内存，因此相比缓冲区的情形，还得多做一步：
 </p>
 <pre class="code">
-    <span class="type">VkMemoryAllocateInfo</span> memoryAllocateInfo = {
+<span class="type">VkMemoryAllocateInfo</span> memoryAllocateInfo = {
     .sType = <span class="enum">VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO</span>
 };
 <span class="type">VkMemoryRequirements</span> memoryRequirements;
@@ -2049,8 +2049,9 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
     为了在从文件读取/存入文件时正确计算图像的大小，这里给出我的<span class="path">VKFormat.h</span>文件，其中记录了各种格式（仅包含Vulkan1.0且不算扩展提供的格式）对应的通道数、每个通道的大小、单个像素的大小，以及数据类型。
 </p>
 <p>
-    你也可以使用Vulkan官方提供的<span class="path">vulkan_format_traits.hpp</span>，你可以在以下安装目录找到它：<span class="path">VulkanSDK\版本号\Include\vulkan</span>。
-    <br>
+    24.03.23更新：你可以直接使用Vulkan官方提供的<span class="path">vk_format_utils.h</span>，你可以在以下安装目录找到它：<span class="path">VulkanSDK\版本号\Include\vulkan\utility</span>，较早期的SDK可能没有这个文件，相应地有<span class="path">VulkanSDK\版本号\Include\vulkan\vulkan_format_traits.hpp</span>。
+</p>
+<p>
     注意我的<span class="path">VKFormat.h</span>与<span class="path">vulkan_format_traits.hpp</span>有所不同，在<span class="path">vulkan_format_traits.hpp</span>中<span class="enum">VK_FORMAT_D32_SFLOAT_S8_UINT</span>格式的blockSize是5，在我的<span class="path">VKFormat.h</span>中<span class="enum">VK_FORMAT_D32_SFLOAT_S8_UINT</span>格式的单个像素大小是8（其实有些格式不应适用“单个像素”这个概念），这种差别是由于我的<span class="path">VKFormat.h</span>的用处是计算线性排列的数据大小。
 </p>
 <pre class="code">

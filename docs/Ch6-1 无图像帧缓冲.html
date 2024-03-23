@@ -140,10 +140,10 @@
 </p><section id="id1">
 <h2>开启无图像帧缓冲设备特性<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
 <p>
-    无图像帧缓冲是在Vulkan1.1.114版本中出现的扩展，Vulkan1.2版本之前由设备级扩展<span class="str">&quot;VK_KHR_imageless_framebuffer&quot;</span>提供（且依赖于其他扩展），从1.2版本开始为Vulkan核心功能的一部分。
+    无图像帧缓冲是在Vulkan1.1.114版本中引入的功能，Vulkan1.2版本之前由设备级扩展<span class="str">&quot;VK_KHR_imageless_framebuffer&quot;</span>提供（且依赖于其他扩展），从1.2版本开始为Vulkan核心功能的一部分。
 </p>
 <p>
-    取得Vulkan的最新版本，只有1.0的话直接返回。
+    取得Vulkan在本机上可用的最高版本，只有1.0.XXX的话直接返回。
     <br>
     Vulkan版本达到1.2的话，在前一节的代码里已经修改过<span class="type">graphicsBase</span>::<span class="fn">CreateDevice</span>(...)了，并且该函数的逻辑是“能开的特性都开了”，所以只要检查设备特性是否支持即可：
 </p>
@@ -183,7 +183,7 @@
     <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">ApiVersion</span>() &lt; <span class="mcr">VK_API_VERSION_1_1</span>)
         <span class="kw">return</span> -1;
     <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">ApiVersion</span>() &lt; <span class="mcr">VK_API_VERSION_1_2</span>) {
-        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME</span>);<span class="cmt">//Vulkan1.1.XXX时，需要这个扩展</span>
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME</span>);<span class="cmt">//Vulkan1.1.XXX需要这个扩展</span>
         <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_IMAGELESS_FRAMEBUFFER_EXTENSION_NAME</span>);
         <span class="type">VkPhysicalDeviceImagelessFramebufferFeatures</span> physicalDeviceImagelessFramebufferFeatures = {
             <span class="enum">VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES</span>,

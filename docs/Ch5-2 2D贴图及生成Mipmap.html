@@ -178,6 +178,7 @@
     <span class="kw">const</span> <span class="type">VkImageView</span>* <span class="fn">AddressOfImageView</span>() <span class="kw">const</span> { <span class="kw">return</span> imageView.<span class="fn">Address</span>(); }
     <span class="kw">const</span> <span class="type">VkImage</span>* <span class="fn">AddressOfImage</span>() <span class="kw">const</span> { <span class="kw">return</span> imageMemory.<span class="fn">AddressOfImage</span>(); }
     <span class="cmt">//Const Function</span>
+    <span class="cmt">//该函数返回写入描述符时需要的信息</span>
     <span class="type">VkDescriptorImageInfo</span> <span class="fn">DescriptorImageInfo</span>(<span class="type">VkSampler</span> sampler) <span class="kw">const</span> {
         <span class="kw">return</span> { sampler, imageView, <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span> };
     }

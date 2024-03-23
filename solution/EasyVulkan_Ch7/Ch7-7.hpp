@@ -92,12 +92,7 @@ int main() {
 	descriptorPool descriptorPool(1, descriptorPoolSizes);
 	descriptorSet descriptorSet_texture;
 	descriptorPool.AllocateSets(descriptorSet_texture, descriptorSetLayout_texture);
-	VkDescriptorImageInfo imageInfo = {
-		.sampler = sampler,
-		.imageView = texture.ImageView(),
-		.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	};
-	descriptorSet_texture.Write(imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
+	descriptorSet_texture.Write(texture.DescriptorImageInfo(sampler), VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
 
 	vertex vertices[] = {
 		{ { -.5f, -.5f }, { 0, 0 } },

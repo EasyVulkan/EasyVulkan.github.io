@@ -46,14 +46,10 @@ void CreatePipeline() {
 int main() {
 	PFN_vkCmdBeginRenderingKHR vkCmdBeginRendering = ::vkCmdBeginRendering;
 	PFN_vkCmdEndRenderingKHR vkCmdEndRendering = ::vkCmdEndRendering;
-
 	graphicsBase::Base().UseLatestApiVersion();
-	if (graphicsBase::Base().ApiVersion() < VK_API_VERSION_1_1)
-		return -1;//Too troublesome to enable this feature in Vulkan 1.0
+	if (graphicsBase::Base().ApiVersion() < VK_API_VERSION_1_2)
+		return -1;
 	if (graphicsBase::Base().ApiVersion() < VK_API_VERSION_1_3) {
-		if (graphicsBase::Base().ApiVersion() < VK_API_VERSION_1_2)
-			graphicsBase::Base().AddDeviceExtension(VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME),
-			graphicsBase::Base().AddDeviceExtension(VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME);
 		graphicsBase::Base().AddDeviceExtension(VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME);
 		VkPhysicalDeviceDynamicRenderingFeatures physicalDeviceDynamicRenderingFeatures = {
 			VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES,

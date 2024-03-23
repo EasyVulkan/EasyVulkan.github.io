@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ch6-2 动态渲染（未完成） &mdash; EasyVulkan</title>
+  <title>Ch6-2 动态渲染 &mdash; EasyVulkan</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/theme.css" type="text/css" />
@@ -115,7 +115,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Ch6-2 动态渲染（未完成）</li>
+      <li>Ch6-2 动态渲染</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -125,21 +125,30 @@
            <div itemprop="articleBody">
              
   <section id="ch6-2">
-<h1>Ch6-2 动态渲染（未完成）<a class="headerlink" href="#ch6-2" title="Permalink to this heading"></a></h1>
+<h1>Ch6-2 动态渲染<a class="headerlink" href="#ch6-2" title="Permalink to this heading"></a></h1>
 <p>
-    动态渲染（dynamic rendering），简而言之是让渲染通道和帧缓冲一起滚蛋的渲染方式。
+    动态渲染（dynamic rendering），简而言之是让渲染通道对象和帧缓冲一起滚蛋的渲染方式。
     <br>
     所谓动态，指渲染相关的参数大都在渲染开始时指定。
 </p>
 <p>
-    不需要渲染通道和帧缓冲，意味着省去了对它们进行管理的麻烦！尤其是，不再需要“因窗口大小改变而在重建交换链后重建渲染通道和帧缓冲”。
+    不需要渲染通道对象和帧缓冲，意味着省去了对它们进行管理的麻烦！尤其是，不再需要“因窗口大小改变而在重建交换链后重建渲染通道和帧缓冲”。
     <br>
-    渲染通道的子通道，开始和结束时会执行子通道依赖，并进行图像内存布局转换。
-    <br>
-    而动态渲染的“开始”和“结束”只是开始和结束，其间就只是一次独立的渲染，子通道依赖的作用和图像内存布局转换得通过<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#pipeline-barrier">图像内存屏障</a>来实行。
-    <br>
-    往下阅读之前，请确保已经大致了解了图像内存屏障的用法。
+    渲染通道对象在子通道开始和结束时会执行子通道依赖，并进行图像内存布局转换。而在动态渲染中，原先子通道依赖的作用和图像内存布局转换得通过<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#pipeline-barrier">图像内存屏障</a>来实行。
 </p>
+<p>
+    动态渲染相比渲染通道对象有一个显著劣势：不能使用输入附件。而输入附件的设备内存往往可以被指定为<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html#id18">惰性分配</a>以优化内存开销。
+</p>
+<div class="admonition note">
+    <p class="admonition-title">Note</p>
+    <p>
+        <strong>渲染通道的定义</strong>
+        <br>
+        留意到上文我使用了渲染通道对象（render pass object）这个词，而非直接说渲染通道。
+        <br>
+        Vulkan标准中将动态渲染也定义为一种渲染通道实例。
+    </p>
+</div>
 <p>
     本节在之前Ch2中绘制三角形代码的基础上，使用动态渲染的方法来进行绘制，步骤如下：
     <br>
@@ -153,15 +162,17 @@
 </p><section id="id1">
 <h2>开启动态渲染设备特性<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
 <p>
-    无图像帧缓冲在Vulkan1.3版本之前由设备级扩展<span class="str">&quot;VK_KHR_dynamic_rendering&quot;</span>提供（且依赖于另其他扩展），从1.3版本开始为Vulkan的核心功能。
+    动态渲染是在Vulkan1.2.203版本中引入的功能，Vulkan1.3版本之前由设备级扩展<span class="str">&quot;VK_KHR_dynamic_rendering&quot;</span>提供，从1.3版本开始为Vulkan的核心功能。
 </p>
 <p>
-    类似前一节的无图像帧缓冲，1.0下的开启方法太麻烦不谈。Vulkan版本达到1.3的话，设备特性已在<span class="type">graphicsBase</span>::<span class="fn">CreateDevice</span>(...)中“能开尽开”，主函数中只检查设备特性是否支持：
+    取得Vulkan在本机上可用的最高版本，只有1.0.XXX或1.1.XXX的话直接返回。
+    <br>
+    Vulkan版本达到1.3的话，设备特性已在<span class="type">graphicsBase</span>::<span class="fn">CreateDevice</span>(...)中“能开尽开”，主函数中只检查设备特性是否支持：
 </p>
 <pre class="code">
 <span class="kw">int</span> <span class="fn">main</span>() {
     <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">UseLatestApiVersion</span>();
-    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">ApiVersion</span>() &lt; <span class="mcr">VK_API_VERSION_1_1</span>)
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">ApiVersion</span>() &lt; <span class="mcr">VK_API_VERSION_1_2</span>)
         <span class="kw">return</span> -1;
     <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">ApiVersion</span>() &lt; <span class="mcr">VK_API_VERSION_1_3</span>) {
         <span class="cmt">/*待填充*/</span>
@@ -175,17 +186,14 @@
 }
 </pre>
 <p>
-    若Vulkan版本达到1.1但未到1.3，使用以下代码通过扩展开启：
+    若Vulkan版本达到1.2但未到1.3，使用以下代码通过扩展开启：
 </p>
 <pre class="code">
 <span class="kw">int</span> <span class="fn">main</span>() {
     <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">UseLatestApiVersion</span>();
-    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">ApiVersion</span>() &lt; <span class="mcr">VK_API_VERSION_1_1</span>)
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">ApiVersion</span>() &lt; <span class="mcr">VK_API_VERSION_1_2</span>)
         <span class="kw">return</span> -1;
     <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">ApiVersion</span>() &lt; <span class="mcr">VK_API_VERSION_1_3</span>) {
-        <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">ApiVersion</span>() &lt; <span class="mcr">VK_API_VERSION_1_2</span>)
-            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME</span>),  <span class="cmt">//在1.2版本中进入了核心功能</span>
-            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME</span>);<span class="cmt">//在1.2版本中进入了核心功能</span>
         <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME</span>);
         <span class="type">VkPhysicalDeviceDynamicRenderingFeatures</span> physicalDeviceDynamicRenderingFeatures = {
             <span class="enum">VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES</span>,
@@ -207,13 +215,503 @@
 <h2>更改管线创建信息<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
 <p>
     为什么要改管线创建信息？先来看看原先的管线创建信息：
-</p></section>
+</p>
+<pre class="code">
+<span class="type">graphicsPipelineCreateInfoPack</span> pipelineCiPack;
+pipelineCiPack.createInfo.layout = pipelineLayout_triangle;
+pipelineCiPack.createInfo.renderPass = <span class="fn">RenderPassAndFramebuffers</span>().renderPass;
+pipelineCiPack.inputAssemblyStateCi.topology = <span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST</span>;
+pipelineCiPack.viewports.<span class="fn">emplace_back</span>(0.f, 0.f, <span class="kw">float</span>(windowSize.width), <span class="kw">float</span>(windowSize.height), 0.f, 1.f);
+pipelineCiPack.scissors.<span class="fn">emplace_back</span>(<span class="type">VkOffset2D</span>{}, windowSize);
+pipelineCiPack.multisampleStateCi.rasterizationSamples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>;
+pipelineCiPack.colorBlendAttachmentStates.<span class="fn">push_back</span>({ .colorWriteMask = 0b1111 });
+pipelineCiPack.<span class="fn">UpdateAllArrays</span>();
+pipelineCiPack.createInfo.stageCount = 2;
+pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
+</pre>
+<p>
+    这里有个渲染通道对象在，而动态渲染中不用渲染通道对象，相应地在<span class="type">VkGraphicsPipelineCreateInfo</span>的pNext链中包含一个<span class="type">VkPipelineRenderingCreateInfoKHR</span>结构体：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap10.html#VkPipelineRenderingCreateInfo">VkPipelineRenderingCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> viewMask</p></td>
+            <td><p>若开启了多视口，指定在哪些视口对应的图层上进行渲染，各个bit对应多层帧缓冲相应索引的图层</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> colorAttachmentCount</p></td>
+            <td><p>颜色附件的数量</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkFormat</span>* pColorAttachmentFormats</p></td>
+            <td><p>指向<span class="type">VkFormat</span>的数组，用于描述届时各个颜色附件的格式</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkFormat</span> depthAttachmentFormat</p></td>
+            <td><p>深度附件的格式，若届时不使用深度附件，留作<span class="enum">VK_FORMAT_UNDEFINED</span>即可</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkFormat</span> stencilAttachmentFormat</p></td>
+            <td><p>模板附件的格式，若届时不使用模板附件，留作<span class="enum">VK_FORMAT_UNDEFINED</span>即可</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            这里允许使用两张不同的图像各自作为深度/模板附件。
+        </p>
+    </li>
+</ul>
+<p>
+    颜色附件的数量为1，格式可从交换链创建信息取得。
+    <br>
+    不使用深度或模板附件，<span class="enum">VK_FORMAT_UNDEFINED</span>即0，于是：
+</p>
+<pre class="code">
+<span class="type">VkPipelineRenderingCreateInfoKHR</span> pipelineRenderingCreateInfo = {
+    .sType = <span class="enum">VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO</span>,
+    .colorAttachmentCount = 1,
+    .pColorAttachmentFormats = &amp;<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat
+};
+<span class="type">graphicsPipelineCreateInfoPack</span> pipelineCiPack;
+pipelineCiPack.createInfo.pNext = &amp;pipelineRenderingCreateInfo;
+pipelineCiPack.createInfo.layout = pipelineLayout_triangle;
+<span class="cmt">//pipelineCiPack.createInfo.renderPass = RenderPassAndFramebuffers().renderPass;</span>
+pipelineCiPack.inputAssemblyStateCi.topology = <span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST</span>;
+pipelineCiPack.viewports.<span class="fn">emplace_back</span>(0.f, 0.f, <span class="kw">float</span>(windowSize.width), <span class="kw">float</span>(windowSize.height), 0.f, 1.f);
+pipelineCiPack.scissors.<span class="fn">emplace_back</span>(<span class="type">VkOffset2D</span>{}, windowSize);
+pipelineCiPack.multisampleStateCi.rasterizationSamples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>;
+pipelineCiPack.colorBlendAttachmentStates.<span class="fn">push_back</span>({ .colorWriteMask = 0b1111 });
+pipelineCiPack.<span class="fn">UpdateAllArrays</span>();
+pipelineCiPack.createInfo.stageCount = 2;
+pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
+</pre></section>
 <section id="id3">
 <h2>录制渲染前后的内存屏障<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
 <p>
-</p></section>
+    这一步要做的，就是把子通道依赖和渲染通道中图像内存布局的变化，改写成<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#pipeline-barrier">图像内存屏障</a>。往下阅读之前，请确保已经明白了内存屏障的使用方法和作用（如果真的明白了的话，下面的反倒全成了复习+废话）。
+</p>
+<p>
+   先看看图像内存屏障有哪些参数要填：
+</p>
+<pre class="code">
+commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
+<span class="cmt">//渲染开始前的内存屏障</span>
+<span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
+    .sType = <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
+    .pNext = <span class="kw">nullptr</span>,
+    .srcAccessMask = <span class="cmt">/*待填充*/</span>,
+    .dstAccessMask = <span class="cmt">/*待填充*/</span>,
+    .srcLayout = <span class="cmt">/*待填充*/</span>,
+    .newLayout = <span class="cmt">/*待填充*/</span>,
+    .srcQueueFamilyIndex = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>, <span class="cmt">//当然没队列族所有权转移</span>
+    .dstQueueFamilyIndex = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
+    .image = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImage</span>(i),<span class="cmt">//当前交换链图像</span>
+    .subresourceRange = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, 1 }
+};
+<span class="fn">vkCmdPipelineBarrier</span>(
+    commandBuffer,
+    <span class="cmt">/*srcStageMask*/</span>,
+    <span class="cmt">/*dstStageMask*/</span>,
+    <span class="cmt">/*dependencyFlags*/</span>,
+    0, <span class="kw">nullptr</span>,
+    0, <span class="kw">nullptr</span>,
+    1, &imageMemoryBarrier);
+
+<span class="cmt">/*渲染，待填充*/</span>
+
+<span class="cmt">//渲染结束后的内存屏障</span>
+imageMemoryBarrier.srcAccessMask = <span class="cmt">/*待填充*/</span>;
+imageMemoryBarrier.dstAccessMask = <span class="cmt">/*待填充*/</span>;
+imageMemoryBarrier.oldLayout = <span class="cmt">/*待填充*/</span>;
+imageMemoryBarrier.newLayout = <span class="cmt">/*待填充*/</span>;
+<span class="fn">vkCmdPipelineBarrier</span>(
+    commandBuffer,
+    <span class="cmt">/*srcStageMask*/</span>,
+    <span class="cmt">/*dstStageMask*/</span>,
+    <span class="cmt">/*dependencyFlags*/</span>,
+    0, <span class="kw">nullptr</span>,
+    0, <span class="kw">nullptr</span>,
+    1, &amp;imageMemoryBarrier);
+commandBuffer.<span class="fn">End</span>();
+</pre>
+<p>
+    先前创建渲染通道对象时，唯一的子通道开始时的依赖是这样的：
+</p>
+<pre class="code">
+<span class="type">VkSubpassDependency</span> subpassDependency = {
+    .srcSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
+    .dstSubpass = 0,
+    .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+    .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+    .srcAccessMask = 0,
+    .dstAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
+    .dependencyFlags = <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span>
+};
+</pre>
+<p>
+    前情回顾：这里这个<code>.srcStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span></code>只是当初出于演示而这么写的，因为有其他粒度更粗的同步手段加之前面没有任何要阻塞的其他命令，那么实际上srcStageMask是啥都行。
+    <br>
+    srcStageMask按常规做法指定为<span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>，其余各项对应的直接照抄。
+    <br>
+    图像内存布局从<span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>变为最适合渲染的<span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span>：
+</p>
+<pre class="code">
+<span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
+    .sType = <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
+    .pNext = <span class="kw">nullptr</span>,
+    .srcAccessMask = 0,
+    .dstAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
+    .srcLayout = <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>,
+    .newLayout = <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span>,
+    .srcQueueFamilyIndex = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
+    .dstQueueFamilyIndex = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
+    .image = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImage</span>(i),
+    .subresourceRange = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, 1 }
+};
+<span class="fn">vkCmdPipelineBarrier</span>(
+    commandBuffer,
+    <span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>,
+    <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+    <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span>,
+    0, <span class="kw">nullptr</span>,
+    0, <span class="kw">nullptr</span>,
+    1, &imageMemoryBarrier);
+</pre>
+<p>
+    渲染结束后没有其他命令，命令提交后到呈现为止使用的是信号量来同步，所以渲染后图像内存屏障的dstAccessMask是0，dstStageMask按常规做法指定为<span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span>。
+    <br>
+    图像内存布局转到最适合呈现的<span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>：
+</p>
+<pre class="code">
+<span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
+    .sType = <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
+    .pNext = <span class="kw">nullptr</span>,
+    .srcAccessMask = 0,
+    .dstAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
+    .srcLayout = <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>,
+    .newLayout = <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span>,
+    .srcQueueFamilyIndex = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
+    .dstQueueFamilyIndex = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
+    .image = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImage</span>(i),
+    .subresourceRange = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, 1 }
+};
+<span class="fn">vkCmdPipelineBarrier</span>(
+    commandBuffer,
+    <span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>,
+    <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+    <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span>,
+    0, <span class="kw">nullptr</span>,
+    0, <span class="kw">nullptr</span>,
+    1, &imageMemoryBarrier);
+
+<span class="cmt">/*渲染，待填充*/</span>
+
+imageMemoryBarrier.srcAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>;
+imageMemoryBarrier.dstAccessMask = 0;
+imageMemoryBarrier.oldLayout = <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span>;
+imageMemoryBarrier.newLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>;
+<span class="fn">vkCmdPipelineBarrier</span>(
+    commandBuffer,
+    <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+    <span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span>,
+    <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span>,
+    0, <span class="kw">nullptr</span>,
+    0, <span class="kw">nullptr</span>,
+    1, &amp;imageMemoryBarrier);
+commandBuffer.<span class="fn">End</span>();
+</pre></section>
 <section id="id4">
 <h2>录制动态渲染命令<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<p>
+    用<span class="fn">vkCmdBeginRendering</span>(...)开始渲染，用<span class="fn">vkCmdEndRendering</span>(...)结束渲染。
+    <br>
+    先等等，在这之前还有个问题（不关心Vulkan版本的话请直接下拉到函数说明）。
+</p>
+<p>
+    你用的Vulkan SDK肯定是1.3版本以上，所以必定定义了这两个符号，在Vulkan1.3中也不需要干任何额外的事。
+    <br>
+    但是，如果Vulkan的运行版本是1.2，这两个函数不是核心功能的一部分，那么程序是无法在运行期找到这两个函数的实现的，跟<span class="type">PFN_vkCreateDebugUtilsMessengerEXT</span>的情况类似，需要手动获取这两个函数的指针，因为他们从属于设备扩展功能，通过<a href="https://renderdoc.org/vkspec_chunked/chap4.html#vkGetDeviceProcAddr">vkGetDeviceProcAddr</a>(...)来取得：
+</p>
+<pre class="code">
+<span class="type">PFN_vkCmdBeginRenderingKHR</span> vkCmdBeginRendering =
+    <span class="kw">reinterpret_cast</span>&lt;<span class="type">PFN_vkCmdBeginRenderingKHR</span>&gt;(<span class="fn">vkGetDeviceProcAddr</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), <span class="str">&quot;vkCmdBeginRenderingKHR&quot;</span>));
+<span class="type">PFN_vkCmdEndRenderingKHR</span> vkCmdEndRendering =
+    <span class="kw">reinterpret_cast</span>&lt;<span class="type">PFN_vkCmdBeginRenderingKHR</span>&gt;(<span class="fn">vkGetDeviceProcAddr</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), <span class="str">&quot;vkCmdEndRenderingKHR&quot;</span>));
+</pre>
+<p>
+    考虑同时兼容Vulkan1.2和1.3的代码：
+</p>
+<pre class="code">
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="type">PFN_vkCmdBeginRenderingKHR</span> vkCmdBeginRendering = ::<span class="fn">vkCmdBeginRendering</span>;
+    <span class="type">PFN_vkCmdEndRenderingKHR</span> vkCmdEndRendering = ::<span class="fn">vkCmdEndRendering</span>;
+
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">UseLatestApiVersion</span>();
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">ApiVersion</span>() &lt; <span class="mcr">VK_API_VERSION_1_2</span>)
+        <span class="kw">return</span> -1;
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">ApiVersion</span>() &lt; <span class="mcr">VK_API_VERSION_1_3</span>) {
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME</span>);
+        <span class="type">VkPhysicalDeviceDynamicRenderingFeatures</span> physicalDeviceDynamicRenderingFeatures = {
+            <span class="enum">VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES</span>,
+        };
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddNextStructure_PhysicalDeviceFeatures</span>(physicalDeviceDynamicRenderingFeatures);
+        <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }) ||
+            !physicalDeviceDynamicRenderingFeatures.dynamicRendering)
+            <span class="kw">return</span> -1;
+        vkCmdBeginRendering = <span class="kw">reinterpret_cast</span>&lt;<span class="type">PFN_vkCmdBeginRenderingKHR</span>&gt;(<span class="fn">vkGetDeviceProcAddr</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), <span class="str">&quot;vkCmdBeginRenderingKHR&quot;</span>));
+        vkCmdEndRendering = <span class="kw">reinterpret_cast</span>&lt;<span class="type">PFN_vkCmdBeginRenderingKHR</span>&gt;(<span class="fn">vkGetDeviceProcAddr</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), <span class="str">&quot;vkCmdEndRenderingKHR&quot;</span>));
+    }
+    <span class="kw">else</span>
+        <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }) ||
+            !<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceVulkan13Features</span>().dynamicRendering)
+            <span class="kw">return</span> -1;
+
+    <span class="cmt">/*...*/</span>
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            ::前无名称表示全局命名空间，可用来消歧义。
+        </p>
+    </li>
+</ul>
+<p>
+    调用<span class="fn">vkCmdBeginRendering</span>(...)和<span class="fn">vkCmdEndRendering</span>(...)，俩函数本身的参数列表看以下代码应该一眼就能懂：
+</p>
+<pre class="code">
+<span class="type">VkRenderingInfoKHR</span> renderingInfo = {
+    .sType = <span class="enum">VK_STRUCTURE_TYPE_RENDERING_INFO</span>,
+    <span class="enum">/*待填充*/</span>
+};
+vkCmdBeginRendering(commandBuffer, &amp;renderingInfo);
+</span><span class="fn">vkCmdBindPipeline</span>(commandBuffer, <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>, pipeline_triangle);
+</span><span class="fn">vkCmdDraw</span>(commandBuffer, 3, 1, 0, 0);
+vkCmdEndRendering(commandBuffer);
+</pre>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkRenderingInfo">VkRenderingInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_RENDERING_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkRenderingFlags</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkRect2D</span> renderArea</p></td>
+            <td><p>渲染区域</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">uint32_t</span> layerCount</p></td>
+            <td><p>帧缓冲的图层数，若viewMask非0，该项被无视</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> viewMask</p></td>
+            <td><p>若开启了多视口，指定在哪些视口对应的图层上进行渲染，各个bit对应多层帧缓冲相应索引的图层</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> colorAttachmentCount</p></td>
+            <td><p>颜色附件的数量</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkRenderingAttachmentInfo</span>* pColorAttachments</p></td>
+            <td><p>指向<span class="type">VkRenderingAttachmentInfo</span>的数组，用于指定各个颜色附件及相关参数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkRenderingAttachmentInfo</span>* pDepthAttachment</p></td>
+            <td><p>指向<span class="type">VkRenderingAttachmentInfo</span>结构体，用于指定深度附件及相关参数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkRenderingAttachmentInfo</span>* pStencilAttachment</p></td>
+            <td><p>指向<span class="type">VkRenderingAttachmentInfo</span>结构体，用于指定模板附件及相关参数</p></td>
+        </tr>
+    </tbody>
+</table>
+    <table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkRenderingFlagBits">VkRenderingFlagBits</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_RENDERING_CONTENTS_SECONDARY_COMMAND_BUFFERS_BIT </span>表示<strong>可以</strong>调用<span class="fn">vkCmdExecuteCommands</span>(...)执行二级命令缓冲区</p></td>
+        </tr>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_RENDERING_SUSPENDING_BIT                         </span>表示下一次<span class="fn">vkCmdEndRendering</span>(...)会将当前渲染通道挂起</p></td>
+        </tr>
+        <tr>
+            <td><p>1.3</p></td>
+            <td><p><span class="enum">VK_RENDERING_RESUMING_BIT                           </span>表示本次<span class="fn">vkCmdBeginRendering</span>(...)恢复挂起的渲染通道</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            <span class="enum">VK_RENDERING_CONTENTS_SECONDARY_COMMAND_BUFFERS_BIT</span>跟<span class="enum">VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS</span>不同，后者使得子通道中<strong>只能</strong>执行二级缓冲区。
+        </p>
+    </li>
+    <li>
+        <p>
+            挂起和恢复可以分别录制在不同的命令缓冲区中，但这些命令缓冲区必须在同一批次中提交，提交顺序必须使得一个渲染通道首次开始时只挂起，最后一次时只恢复。
+            <br>
+            <strong>这意味着你可以无序录制命令（在不同CPU线程中录制，或先录制“恢复”，再录制“挂起”）！</strong>只要最后命令提交顺序使得命令执行顺序合乎逻辑即可。这在某种程度上可以取代“在其他线程中录制二级命令缓冲区，然后在主线程中让一级调用”（以节省命令录制时间）的做法。
+        </p>
+    </li>
+    <li>
+        <p>
+            恢复被挂起的渲染通道时，<span class="type">VkRenderingInfo</span>的各成员除flags外，以及图像附件的诸多参数，必须与按命令提交顺序，前一个注明<span class="enum">VK_RENDERING_SUSPENDING_BIT</span>的<span class="fn">vkCmdBeginRendering</span>(...)命令相同。
+        </p>
+    </li>
+    <li>
+        <p>
+            提示：恢复时当然可以同时注明<span class="enum">VK_RENDERING_SUSPENDING_BIT</span>和<span class="enum">VK_RENDERING_RESUMING_BIT</span>，表示之后还会挂起。
+        </p>
+    </li>
+    <li>
+        <p>
+            从挂起到恢复之间（指命令执行先后，而非录制先后），不能有绘制、传输等动作命令，不能有同步命令（这使得绑定管线等状态命令是唯一可行的命令），不能开始其他的渲染通道。
+            <br>
+            挂起时不会应用storeOp、内存布局转换等渲染结束时的选项或操作，恢复时同理。
+        </p>
+    </li>
+</ul>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkRenderingAttachmentInfo">VkRenderingAttachmentInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_RENDERING_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkImageView</span> imageView</p></td>
+            <td><p>被用于渲染的图像附件的图像视图</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkImageLayout</span> imageLayout</p></td>
+            <td><p>被用于渲染的图像附件的内存布局</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkResolveModeFlagBits</span> resolveMode</p></td>
+            <td><p>如果进行多重采样，在这里指定解析模式</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkImageView</span> resolveImageView</p></td>
+            <td><p>如果进行多重采样，在这里指定解析附件</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkImageLayout</span> resolveImageLayout</p></td>
+            <td><p>如果进行多重采样，在这里指定解析附件的内存布局</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkAttachmentLoadOp</span> loadOp</p></td>
+            <td><p>读取imageView对应的图像附件时进行的操作</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkAttachmentStoreOp</span> storeOp</p></td>
+            <td><p>存储值到imageView对应的图像附件时的操作，或指定不在乎存储</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkClearValue</span> clearValue</p></td>
+            <td><p>清屏值，用于loadOp为<span class="enum">VK_ATTACHMENT_LOAD_OP_CLEAR</span>的情况</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            resolveMode是个创建通常的渲染通道对象时没有的参数，但因为本节的重点不是多重渲染，在此不对<span class="type">VkResolveModeFlagBits</span>进行解说。
+        </p>
+    </li>
+    <li>
+        <p>
+            如果resolveMode和resolveImageView都非0，imageView的底层图像被解析到resolveImageView的底层图像。storeOp不影响解析。
+        </p>
+    </li>
+</ul>
+<p>
+    对于仅仅是画个三角形这种情况，应该是没有什么难点需要解说的：
+</p>
+<pre class="code">
+<span class="type">VkRenderingAttachmentInfoKHR colorAttachmentInfo</span> = {
+    .sType = <span class="enum">VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO</span>,
+    .imageView = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageView</span>(i),
+    .imageLayout = <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span>,
+    .loadOp = <span class="enum">VK_ATTACHMENT_LOAD_OP_CLEAR</span>,
+    .storeOp = <span class="enum">VK_ATTACHMENT_STORE_OP_STORE</span>,
+    .clearValue = { .color = { 1.f, 0.f, 0.f, 1.f } }
+};
+<span class="type">VkRenderingInfoKHR</span> renderingInfo = {
+    .sType = <span class="enum">VK_STRUCTURE_TYPE_RENDERING_INFO</span>,
+    .renderArea = { {}, windowSize },
+    .layerCount = 1,
+    .colorAttachmentCount = 1,
+    .pColorAttachments = &amp;colorAttachmentInfo
+};
+vkCmdBeginRendering(commandBuffer, &amp;renderingInfo);
+<span class="fn">vkCmdBindPipeline</span>(commandBuffer, <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>, pipeline_triangle);
+<span class="fn">vkCmdDraw</span>(commandBuffer, 3, 1, 0, 0);
+vkCmdEndRendering(commandBuffer);
+</pre>
+<p>
+    运行程序，验证层没报错便对了。
+    <br>
+    本节中没有详细讲解的一些参数，今后可能在第八章的用例中进行讲解。
+</p>
 <p>
     本节的示例代码参见：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch6/Ch6-2.hpp">Ch6-2.hpp</a>
 </p></section>

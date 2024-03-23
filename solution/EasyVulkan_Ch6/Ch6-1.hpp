@@ -44,7 +44,7 @@ void CreatePipeline() {
 int main() {
 	graphicsBase::Base().UseLatestApiVersion();
 	if (graphicsBase::Base().ApiVersion() < VK_API_VERSION_1_1)
-		return -1;//Too troublesome to enable this feature in Vulkan 1.0
+		return -1;
 	if (graphicsBase::Base().ApiVersion() < VK_API_VERSION_1_2) {
 		graphicsBase::Base().AddDeviceExtension(VK_KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME);
 		graphicsBase::Base().AddDeviceExtension(VK_KHR_IMAGELESS_FRAMEBUFFER_EXTENSION_NAME);

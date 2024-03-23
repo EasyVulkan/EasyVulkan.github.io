@@ -651,8 +651,8 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
     Vulkan中，扩展相关的函数，若非设备特定，大都通过<a href="https://renderdoc.org/vkspec_chunked/chap4.html#vkGetInstanceProcAddr">vkGetInstanceProcAddr</a>(...)来获取（虽然在<span class="path">vulkan_core.h</span>里有定义，但<span class="path">vulkan-1.lib</span>里没有其binary code），创建debug messenger也不例外：
 </p>
 <pre class="code">
-<span class="type">PFN_vkCreateDebugUtilsMessengerEXT</span> CreateDebugUtilsMessenger =
-        <span class="kw">reinterpret_cast</span>&lt;<span class="type">PFN_vkCreateDebugUtilsMessengerEXT</span>&gt;(<span class="fn">vkCreateDebugUtilsMessengerEXT</span>(instance, <span class="str">&quot;vkCreateDebugUtilsMessengerEXT&quot;</span>));
+<span class="type">PFN_vkCreateDebugUtilsMessengerEXT</span> vkCreateDebugUtilsMessenger =
+        <span class="kw">reinterpret_cast</span>&lt;<span class="type">PFN_vkCreateDebugUtilsMessengerEXT</span>&gt;(<span class="fn">vkGetInstanceProcAddr</span>(instance, <span class="str">&quot;vkCreateDebugUtilsMessengerEXT&quot;</span>));
 </pre>
 <table class="docutils align-default">
     <colgroup>
@@ -844,10 +844,10 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
             <span class="enum">VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT</span>,
         .pfnUserCallback = DebugUtilsMessengerCallback
     };
-    <span class="type">PFN_vkCreateDebugUtilsMessengerEXT</span> CreateDebugUtilsMessenger =
+    <span class="type">PFN_vkCreateDebugUtilsMessengerEXT</span> vkCreateDebugUtilsMessenger =
         <span class="kw">reinterpret_cast</span>&lt;<span class="type">PFN_vkCreateDebugUtilsMessengerEXT</span>&gt;(<span class="fn">vkGetInstanceProcAddr</span>(instance, <span class="str">&quot;vkCreateDebugUtilsMessengerEXT&quot;</span>));
-    <span class="kw">if</span> (CreateDebugUtilsMessenger) {
-        <span class="type">VkResult</span> result = <span class="type">CreateDebugUtilsMessenger</span>(instance, &amp;debugUtilsMessengerCreateInfo, <span class="kw">nullptr</span>, &amp;debugUtilsMessenger);
+    <span class="kw">if</span> (vkCreateDebugUtilsMessenger) {
+        <span class="type">VkResult</span> result = vkCreateDebugUtilsMessenger(instance, &amp;debugUtilsMessengerCreateInfo, <span class="kw">nullptr</span>, &amp;debugUtilsMessenger);
         <span class="kw">if</span> (result)
             std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a debug messenger!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
