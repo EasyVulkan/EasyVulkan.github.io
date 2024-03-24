@@ -47,5 +47,11 @@
     <ClInclude Include="Ch6-2.hpp">
       <Filter>EasyVK_HPP</Filter>
     </ClInclude>
+    <ClInclude Include="QueueThread.h">
+      <Filter>EasyVK_Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch6-2_MT.hpp">
+      <Filter>EasyVK_HPP</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

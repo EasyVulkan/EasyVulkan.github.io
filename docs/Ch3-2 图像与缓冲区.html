@@ -1364,6 +1364,13 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
         </tr>
     </tbody>
 </table>
+<ul>
+    <li>
+        <p>
+            <span class="enum">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</span>不得与<span class="enum">VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT</span>、<span class="enum">VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT</span>、<span class="enum">VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT</span>以外的bit一同使用。
+        </p>
+    </li>
+</ul>
 <p>
     关于图像的内存布局，参见<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#id13">图像内存屏障</a>。
 </p></section>

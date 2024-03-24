@@ -1,5 +1,6 @@
 #include "GlfwGeneral.hpp"
 #include "EasyVulkan.hpp"
+#include "QueueThread.h"
 using namespace vulkan;
 
 pipelineLayout pipelineLayout_triangle;
@@ -24,7 +25,6 @@ void CreatePipeline() {
 		graphicsPipelineCreateInfoPack pipelineCiPack;
 		pipelineCiPack.createInfo.pNext = &pipelineRenderingCreateInfo;
 		pipelineCiPack.createInfo.layout = pipelineLayout_triangle;
-		//pipelineCiPack.createInfo.renderPass = RenderPassAndFramebuffers().renderPass;
 		pipelineCiPack.inputAssemblyStateCi.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 		pipelineCiPack.viewports.emplace_back(0.f, 0.f, float(windowSize.width), float(windowSize.height), 0.f, 1.f);
 		pipelineCiPack.scissors.emplace_back(VkOffset2D{}, windowSize);
@@ -66,6 +66,8 @@ int main() {
 			!graphicsBase::Base().PhysicalDeviceVulkan13Features().dynamicRendering)
 			return -1;
 
+	queueThread queueThread;
+
 	CreateLayout();
 	CreatePipeline();
 
@@ -73,9 +75,77 @@ int main() {
 	semaphore semaphore_imageIsAvailable;
 	semaphore semaphore_renderingIsOver;
 
-	commandBuffer commandBuffer;
-	commandPool commandPool(graphicsBase::Base().QueueFamilyIndex_Graphics(), VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT);
-	commandPool.AllocateBuffers(commandBuffer);
+	commandBuffer commandBuffers[2];
+	commandPool commandPool0(graphicsBase::Base().QueueFamilyIndex_Graphics(), VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT);
+	commandPool commandPool1(graphicsBase::Base().QueueFamilyIndex_Graphics(), VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT);
+	commandPool0.AllocateBuffers(commandBuffers[0]);
+	commandPool1.AllocateBuffers(commandBuffers[1]);
+
+	VkImageMemoryBarrier imageMemoryBarrier = {
+		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+		.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+		.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+		.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 }
+	};
+	VkRenderingAttachmentInfo colorAttachmentInfo = {
+		.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
+		.imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+		.clearValue = { .color = { 1.f, 0.f, 0.f, 1.f } }
+	};
+	VkRenderingInfo renderingInfo = {
+		.sType = VK_STRUCTURE_TYPE_RENDERING_INFO,
+		.layerCount = 1,
+		.colorAttachmentCount = 1,
+		.pColorAttachments = &colorAttachmentInfo
+	};
+	auto BeforeSuspending = [&, imageMemoryBarrier, renderingInfo]() mutable {
+		commandBuffers[0].Begin(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
+
+		imageMemoryBarrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		imageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		imageMemoryBarrier.image = graphicsBase::Base().SwapchainImage(graphicsBase::Base().CurrentImageIndex());
+		vkCmdPipelineBarrier(commandBuffers[0],
+			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+			VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+			VK_DEPENDENCY_BY_REGION_BIT,
+			0, nullptr,
+			0, nullptr,
+			1, &imageMemoryBarrier);
+
+		renderingInfo.flags = VK_RENDERING_SUSPENDING_BIT;
+		renderingInfo.renderArea = { {}, windowSize };
+		vkCmdBeginRendering(commandBuffers[0], &renderingInfo);
+		vkCmdEndRendering(commandBuffers[0]);
+
+		commandBuffers[0].End();
+	};
+	auto AfterResuming = [&, imageMemoryBarrier, renderingInfo]() mutable {
+		commandBuffers[1].Begin(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
+
+		renderingInfo.flags = VK_RENDERING_RESUMING_BIT;
+		renderingInfo.renderArea = { {}, windowSize };
+		vkCmdBeginRendering(commandBuffers[1], &renderingInfo);
+		vkCmdBindPipeline(commandBuffers[1], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_triangle);
+		vkCmdDraw(commandBuffers[1], 3, 1, 0, 0);
+		vkCmdEndRendering(commandBuffers[1]);
+
+		imageMemoryBarrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		imageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		imageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+		imageMemoryBarrier.image = graphicsBase::Base().SwapchainImage(graphicsBase::Base().CurrentImageIndex());
+		vkCmdPipelineBarrier(
+			commandBuffers[1],
+			VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+			VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+			VK_DEPENDENCY_BY_REGION_BIT,
+			0, nullptr,
+			0, nullptr,
+			1, &imageMemoryBarrier);
+
+		commandBuffers[1].End();
+	};
 
 	while (!glfwWindowShouldClose(pWindow)) {
 		while (glfwGetWindowAttrib(pWindow, GLFW_ICONIFIED))
@@ -84,65 +154,23 @@ int main() {
 
 		fence.WaitAndReset();
 		graphicsBase::Base().SwapImage(semaphore_imageIsAvailable);
-		auto i = graphicsBase::Base().CurrentImageIndex();
+		colorAttachmentInfo.imageView = graphicsBase::Base().SwapchainImageView(graphicsBase::Base().CurrentImageIndex());
 
-		commandBuffer.Begin(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
-		//Transition image layout before rendering
-		VkImageMemoryBarrier imageMemoryBarrier = {
-			.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-			.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-			.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-			.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-			.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-			.image = graphicsBase::Base().SwapchainImage(i),
-			.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 }
+		queueThread.PushWork(AfterResuming);
+		BeforeSuspending();
+		queueThread.Wait();
+
+		static constexpr VkPipelineStageFlags waitDstStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		VkSubmitInfo submitInfo = {
+			.waitSemaphoreCount = 1,
+			.pWaitSemaphores = semaphore_imageIsAvailable.Address(),
+			.pWaitDstStageMask = &waitDstStage,
+			.commandBufferCount = 2,
+			.pCommandBuffers = commandBuffers[0].Address(),
+			.signalSemaphoreCount = 1,
+			.pSignalSemaphores = semaphore_renderingIsOver.Address(),
 		};
-		vkCmdPipelineBarrier(
-			commandBuffer,
-			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-			VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-			VK_DEPENDENCY_BY_REGION_BIT,
-			0, nullptr,
-			0, nullptr,
-			1, &imageMemoryBarrier);
-
-		//Render
-		VkRenderingAttachmentInfo colorAttachmentInfo = {
-			.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
-			.imageView = graphicsBase::Base().SwapchainImageView(i),
-			.imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-			.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
-			.clearValue = { .color = { 1.f, 0.f, 0.f, 1.f } }
-		};
-		VkRenderingInfo renderingInfo = {
-			.sType = VK_STRUCTURE_TYPE_RENDERING_INFO,
-			.renderArea = { {}, windowSize },
-			.layerCount = 1,
-			.colorAttachmentCount = 1,
-			.pColorAttachments = &colorAttachmentInfo
-		};
-		vkCmdBeginRendering(commandBuffer, &renderingInfo);
-		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_triangle);
-		vkCmdDraw(commandBuffer, 3, 1, 0, 0);
-		vkCmdEndRendering(commandBuffer);
-
-		//Transition image layout after rendering
-		imageMemoryBarrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-		imageMemoryBarrier.dstAccessMask = 0;
-		imageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-		imageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-		vkCmdPipelineBarrier(
-			commandBuffer,
-			VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-			VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-			VK_DEPENDENCY_BY_REGION_BIT,
-			0, nullptr,
-			0, nullptr,
-			1, &imageMemoryBarrier);
-		commandBuffer.End();
-
-		graphicsBase::Base().SubmitCommandBuffer_Graphics(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
+		graphicsBase::Base().SubmitCommandBuffer_Graphics(submitInfo, fence);
 		graphicsBase::Base().PresentImage(semaphore_renderingIsOver);
 
 		glfwPollEvents();

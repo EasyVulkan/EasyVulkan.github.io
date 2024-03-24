@@ -87,6 +87,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#id2">更改管线创建信息</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id3">录制渲染前后的内存屏障</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id4">录制动态渲染命令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">多线程动态渲染</a></li>
 </ul>
 </li>
 </ul>
@@ -320,7 +321,7 @@ commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER
     .pNext = <span class="kw">nullptr</span>,
     .srcAccessMask = <span class="cmt">/*待填充*/</span>,
     .dstAccessMask = <span class="cmt">/*待填充*/</span>,
-    .srcLayout = <span class="cmt">/*待填充*/</span>,
+    .oldLayout = <span class="cmt">/*待填充*/</span>,
     .newLayout = <span class="cmt">/*待填充*/</span>,
     .srcQueueFamilyIndex = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>, <span class="cmt">//当然没队列族所有权转移</span>
     .dstQueueFamilyIndex = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
@@ -334,7 +335,7 @@ commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER
     <span class="cmt">/*dependencyFlags*/</span>,
     0, <span class="kw">nullptr</span>,
     0, <span class="kw">nullptr</span>,
-    1, &imageMemoryBarrier);
+    1, &amp;imageMemoryBarrier);
 
 <span class="cmt">/*渲染，待填充*/</span>
 
@@ -377,10 +378,9 @@ commandBuffer.<span class="fn">End</span>();
 <pre class="code">
 <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
     .sType = <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
-    .pNext = <span class="kw">nullptr</span>,
     .srcAccessMask = 0,
     .dstAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
-    .srcLayout = <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>,
+    .oldLayout = <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>,
     .newLayout = <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span>,
     .srcQueueFamilyIndex = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
     .dstQueueFamilyIndex = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
@@ -394,7 +394,7 @@ commandBuffer.<span class="fn">End</span>();
     <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span>,
     0, <span class="kw">nullptr</span>,
     0, <span class="kw">nullptr</span>,
-    1, &imageMemoryBarrier);
+    1, &amp;imageMemoryBarrier);
 </pre>
 <p>
     渲染结束后没有其他命令，命令提交后到呈现为止使用的是信号量来同步，所以渲染后图像内存屏障的dstAccessMask是0，dstStageMask按常规做法指定为<span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span>。
@@ -404,10 +404,9 @@ commandBuffer.<span class="fn">End</span>();
 <pre class="code">
 <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
     .sType = <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
-    .pNext = <span class="kw">nullptr</span>,
     .srcAccessMask = 0,
     .dstAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
-    .srcLayout = <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>,
+    .oldLayout = <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>,
     .newLayout = <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span>,
     .srcQueueFamilyIndex = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
     .dstQueueFamilyIndex = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
@@ -421,7 +420,7 @@ commandBuffer.<span class="fn">End</span>();
     <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span>,
     0, <span class="kw">nullptr</span>,
     0, <span class="kw">nullptr</span>,
-    1, &imageMemoryBarrier);
+    1, &amp;imageMemoryBarrier);
 
 <span class="cmt">/*渲染，待填充*/</span>
 
@@ -499,7 +498,7 @@ commandBuffer.<span class="fn">End</span>();
     调用<span class="fn">vkCmdBeginRendering</span>(...)和<span class="fn">vkCmdEndRendering</span>(...)，俩函数本身的参数列表看以下代码应该一眼就能懂：
 </p>
 <pre class="code">
-<span class="type">VkRenderingInfoKHR</span> renderingInfo = {
+<span class="type">VkRenderingInfo</span> renderingInfo = {
     .sType = <span class="enum">VK_STRUCTURE_TYPE_RENDERING_INFO</span>,
     <span class="enum">/*待填充*/</span>
 };
@@ -687,7 +686,7 @@ vkCmdEndRendering(commandBuffer);
     对于仅仅是画个三角形这种情况，应该是没有什么难点需要解说的：
 </p>
 <pre class="code">
-<span class="type">VkRenderingAttachmentInfoKHR colorAttachmentInfo</span> = {
+<span class="type">VkRenderingAttachmentInfo colorAttachmentInfo</span> = {
     .sType = <span class="enum">VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO</span>,
     .imageView = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageView</span>(i),
     .imageLayout = <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span>,
@@ -695,7 +694,7 @@ vkCmdEndRendering(commandBuffer);
     .storeOp = <span class="enum">VK_ATTACHMENT_STORE_OP_STORE</span>,
     .clearValue = { .color = { 1.f, 0.f, 0.f, 1.f } }
 };
-<span class="type">VkRenderingInfoKHR</span> renderingInfo = {
+<span class="type">VkRenderingInfo</span> renderingInfo = {
     .sType = <span class="enum">VK_STRUCTURE_TYPE_RENDERING_INFO</span>,
     .renderArea = { {}, windowSize },
     .layerCount = 1,
@@ -714,6 +713,396 @@ vkCmdEndRendering(commandBuffer);
 </p>
 <p>
     本节的示例代码参见：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch6/Ch6-2.hpp">Ch6-2.hpp</a>
+</p></section>
+<section id="id5">
+<h2>多线程动态渲染<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<p>
+    因为先前讲到了可以在多线程中挂起/恢复动态渲染，这里就简单扼要地给个示例。
+    <br>
+    对C++线程的简单、易用、基础的封装：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch6/QueueThread.h">QueueThread.h</a>
+</p>
+<pre class="code">
+<span class="pragma">#pragma once</span>
+<span class="pragma">#include</span> <span class="str">&lt;vector&gt;</span>
+<span class="pragma">#include</span> <span class="str">&lt;thread&gt;</span>
+<span class="pragma">#include</span> <span class="str">&lt;queue&gt;</span>
+<span class="pragma">#include</span> <span class="str">&lt;mutex&gt;</span>
+<span class="pragma">#include</span> <span class="str">&lt;condition_variable&gt;</span>
+<span class="pragma">#include</span> <span class="str">&lt;functional&gt;</span>
+
+<span class="kw">class</span> <span class="type">queueThread</span> {
+    <span class="kw">using</span> <span class="type">work_t</span> = std::<span class="type">function</span>&lt;<span class="kw">void</span>()&gt;;
+    std::<span class="type">thread</span> thread;
+    <span class="kw">bool</span> joinable = <span class="kw">true</span>;
+    std::<span class="type">queue</span>&lt;<span class="type">work_t</span>&gt; works;
+    std::<span class="type">mutex</span> mutex;
+    std::<span class="type">condition_variable</span> condition;
+    <span class="cmt">//--------------------</span>
+    <span class="kw">void</span> <span class="fn">DoWorks</span>() {
+        <span class="kw">while</span> (<span class="kw">true</span>) {
+            std::<span class="type">unique_lock lock</span>(mutex);
+            condition.<span class="fn">wait</span>(lock, [this] { <span class="kw">return</span> !(works.<span class="fn">empty</span>() &amp;&amp; joinable); });
+            <span class="kw">if</span> (!joinable)
+                <span class="kw">return</span>;
+            works.<span class="fn">front</span>()();
+            works.<span class="fn">pop</span>();
+            condition.<span class="fn">notify_one</span>();
+        }
+    }
+<span class="kw">public</span>:
+    <span class="fn">queueThread</span>() {
+        thread = std::<span class="type">thread</span>(&amp;queueThread::<span class="fn">DoWorks</span>, <span class="kw">this</span>);
+    }
+    <span class="fn">queueThread</span>(<span class="type">queueThread</span>&amp;&amp;) = <span class="kw">delete</span>;
+    <span class="fn">~queueThread</span>() {
+        std::<span class="type">unique_lock lock</span>(mutex);
+        condition.<span class="fn">wait</span>(lock, [this] { <span class="kw">return</span> works.<span class="fn">empty</span>(); });
+        joinable = <span class="kw">false</span>;
+        lock.<span class="type">unlock</span>();
+        condition.<span class="type">notify_one</span>();
+        thread.<span class="type">join</span>();
+    }
+    <span class="cmt">//Non-const Function</span>
+    <span class="kw">void</span> <span class="fn">PushWork</span>(<span class="type">work_t</span> work) {
+        mutex.<span class="fn">lock</span>();
+        works.<span class="fn">push</span>(work);
+        mutex.<span class="fn">unlock</span>();
+        condition.<span class="fn">notify_one</span>();
+    }
+    <span class="kw">void</span> <span class="fn">Wait</span>() {
+        std::<span class="type">unique_lock lock</span>(mutex);
+        condition.<span class="fn">wait</span>(lock, [this] { <span class="kw">return</span> works.<span class="fn">empty</span>(); });
+    }
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            默认初始化后，用<span class="fn">PushWork</span>(...)将函数对象加入执行队列，用<span class="fn">Wait</span>()等待队列中所有函数对象执行结束。
+        </p>
+    </li>
+</ul>
+<p>
+    上述代码就不做详细解释了，有兴趣的话请自己啃C++线程库。
+    <br>
+    包含该头文件后，在适当的位置默认初始化一个<span class="fn">queueThread</span>：
+</p>
+<pre class="code">
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="type">PFN_vkCmdBeginRenderingKHR</span> vkCmdBeginRendering = ::<span class="fn">vkCmdBeginRendering</span>;
+    <span class="type">PFN_vkCmdEndRenderingKHR</span> vkCmdEndRendering = ::<span class="fn">vkCmdEndRendering</span>;
+
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">UseLatestApiVersion</span>();
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">ApiVersion</span>() &lt; <span class="mcr">VK_API_VERSION_1_2</span>)
+        <span class="kw">return</span> -1;
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">ApiVersion</span>() &lt; <span class="mcr">VK_API_VERSION_1_3</span>) { <span class="cmt">/*...*/</span> }
+    <span class="kw">else</span>
+        <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }) ||
+            !<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceVulkan13Features</span>().dynamicRendering)
+            <span class="kw">return</span> -1;
+
+    <span class="fn">queueThread</span> queueThread;
+
+    <span class="cmt">/*...*/</span>
+}
+</pre>
+<p>
+    多线程录制命令缓冲区时，各个线程的命令缓冲区需要分配自各自不同的命令池，即每个线程要有专用的命令池（命令池的创建和命令缓冲区的分配在当前线程即可）：
+</p>
+<pre class="code">
+<span class="type">commandBuffer</span> commandBuffers[2];
+<span class="type">commandPool</span> commandPool0(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
+<span class="type">commandPool</span> commandPool1(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
+commandPool0.<span class="fn">AllocateBuffers</span>(commandBuffers[0]);
+commandPool1.<span class="fn">AllocateBuffers</span>(commandBuffers[1]);
+</pre>
+<p>
+    然后把渲染流程拆开成能在主线程和另一线程里分别录制的部分。
+    <br>
+    就清个屏画个三角形的这堆代码，也没啥好拆的，就拆成“在挂起前清屏”和“在恢复后画三角形”好了，在渲染循环前定义分别的lambda：
+</p>
+<pre class="code">
+<span class="kw">auto</span> BeforeSuspending = [&amp;] {
+    commandBuffers[0].<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
+
+    <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
+        .sType = <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
+        .dstAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
+        .oldLayout = <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>,
+        .newLayout = <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span>,
+        .srcQueueFamilyIndex = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
+        .dstQueueFamilyIndex = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
+        .image = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImage</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CurrentImageIndex</span>()),
+        .subresourceRange = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, 1 }
+    };
+    <span class="fn">vkCmdPipelineBarrier</span>(
+        commandBuffer,
+        <span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>,
+        <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+        <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span>,
+        0, <span class="kw">nullptr</span>,
+        0, <span class="kw">nullptr</span>,
+        1, &amp;imageMemoryBarrier);
+
+    <span class="type">VkRenderingAttachmentInfo</span> colorAttachmentInfo = {
+        .sType = <span class="enum">VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO</span>,
+        .imageView = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageView</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CurrentImageIndex</span>()),
+        .imageLayout = <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span>,
+        .loadOp = <span class="enum">VK_ATTACHMENT_LOAD_OP_CLEAR</span>,
+        .storeOp = <span class="enum">VK_ATTACHMENT_STORE_OP_STORE</span>,
+        .clearValue = { .color = { 1.f, 0.f, 0.f, 1.f } }
+    };
+    <span class="type">VkRenderingInfo</span> renderingInfo = {
+        .sType = <span class="enum">VK_STRUCTURE_TYPE_RENDERING_INFO</span>,
+        .flags = <span class="enum">VK_RENDERING_SUSPENDING_BIT</span>,
+        .renderArea = { {}, windowSize },
+        .layerCount = 1,
+        .colorAttachmentCount = 1,
+        .pColorAttachments = &amp;colorAttachmentInfo
+    };
+    vkCmdBeginRendering(commandBuffers[0], &amp;renderingInfo);
+    vkCmdEndRendering(commandBuffers[0]);
+
+    commandBuffers[0].<span class="fn">End</span>();
+};
+<span class="kw">auto</span> AfterResuming = [&amp;] {
+    commandBuffers[1].<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
+
+    <span class="type">VkRenderingAttachmentInfo</span> colorAttachmentInfo = {
+        .sType = <span class="enum">VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO</span>,
+        .imageView = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageView</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CurrentImageIndex</span>()),
+        .imageLayout = <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span>,
+        .loadOp = <span class="enum">VK_ATTACHMENT_LOAD_OP_CLEAR</span>,
+        .storeOp = <span class="enum">VK_ATTACHMENT_STORE_OP_STORE</span>,
+        .clearValue = { .color = { 1.f, 0.f, 0.f, 1.f } }
+    };
+    <span class="type">VkRenderingInfo</span> renderingInfo = {
+        .sType = <span class="enum">VK_STRUCTURE_TYPE_RENDERING_INFO</span>,
+        .flags = <span class="enum">VK_RENDERING_RESUMING_BIT</span>,
+        .renderArea = { {}, windowSize },
+        .layerCount = 1,
+        .colorAttachmentCount = 1,
+        .pColorAttachments = &amp;colorAttachmentInfo
+    };
+    vkCmdBeginRendering(commandBuffers[1], &amp;renderingInfo);
+    <span class="fn">vkCmdBindPipeline</span>(commandBuffers[1], <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>, pipeline_triangle);
+    <span class="fn">vkCmdDraw</span>(commandBuffers[1], 3, 1, 0, 0);
+    vkCmdEndRendering(commandBuffers[1]);
+
+    <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
+        .sType = <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
+        .srcAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
+        .oldLayout = <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span>,
+        .newLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>,
+        .srcQueueFamilyIndex = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
+        .dstQueueFamilyIndex = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
+        .image = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImage</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CurrentImageIndex</span>()),
+        .subresourceRange = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, 1 }
+    };
+    <span class="fn">vkCmdPipelineBarrier</span>(
+        commandBuffer,
+        <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+        <span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span>,
+        <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span>,
+        0, <span class="kw">nullptr</span>,
+        0, <span class="kw">nullptr</span>,
+        1, &amp;imageMemoryBarrier);
+
+    commandBuffers[1].<span class="fn">End</span>();
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            <code>[&amp;]</code>的意思是指定默认捕获为引用捕获（这里只捕获了<span class="var">commandBuffers</span>），实质上是存储了一个指针常量。
+        </p>
+    </il>
+    <li>
+        <p>
+            妈的，早知道当初就写个<span class="type">graphicsBase</span>::<span class="fn">CurrentImageView</span>()和<span class="type">graphicsBase</span>::<span class="fn">CurrentImage</span>()了！
+        </p>
+    </li>
+</ul>
+<p>
+    以防你对并发编程的问题不敏感，注意不能用下面的写法，多线程中对同一变量的并行读写没有明确顺序可言，让两个lambda共用这些信息结构体会导致错误：
+</p>
+<pre class="code">
+<span class="type">VkRenderingAttachmentInfo</span> colorAttachmentInfo = { <span class="cmt">/*...*/</span> };
+<span class="type">VkRenderingInfo</span> renderingInfo = { <span class="cmt">/*...*/</span> };
+<span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = { <span class="cmt">/*...*/</span> };
+
+<span class="kw">auto</span> BeforeSuspending = [&amp;] {
+    <span class="cmt">/*...*/</span>
+
+    imageMemoryBarrier.srcAccessMask = 0;
+    imageMemoryBarrier.dstAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>;
+    imageMemoryBarrier.oldLayout = <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>;
+    imageMemoryBarrier.newLayout = <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span>;
+
+    <span class="cmt">/*...*/</span>
+
+    colorAttachmentInfo.imageView = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageView</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CurrentImageIndex</span>());
+    renderingInfo.flags = <span class="enum">VK_RENDERING_SUSPENDING_BIT</span>;
+    renderingInfo.renderArea = { {}, windowSize };
+
+    <span class="cmt">/*...*/</span>
+};
+<span class="kw">auto</span> AfterResuming = [&amp;] {
+    <span class="cmt">/*...*/</span>
+
+    colorAttachmentInfo.imageView = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageView</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CurrentImageIndex</span>());
+    renderingInfo.flags = <span class="enum">VK_RENDERING_RESUMING_BIT</span>,
+    renderingInfo.renderArea = { {}, windowSize };
+
+    <span class="cmt">/*...*/</span>
+
+    imageMemoryBarrier.srcAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>;
+    imageMemoryBarrier.dstAccessMask = 0;
+    imageMemoryBarrier.oldLayout = <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span>;
+    imageMemoryBarrier.newLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>;
+
+    <span class="cmt">/*...*/</span>
+};
+</pre>
+<p>
+    如果你觉得代码太冗余，或者日后改起来不方便的话，可以这么写，在每个lambda里复制一份lambda外的结构体，然后再修改这些结构体：
+</p>
+<pre class="code">
+<span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
+    .sType = <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
+    .srcQueueFamilyIndex = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
+    .dstQueueFamilyIndex = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
+    .subresourceRange = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, 1 }
+};
+<span class="type">VkRenderingAttachmentInfo</span> colorAttachmentInfo = {
+    .sType = <span class="enum">VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO</span>,
+    <span class="cmt">//imageView将在渲染循环中赋值</span>
+    .imageLayout = <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span>,
+    .loadOp = <span class="enum">VK_ATTACHMENT_LOAD_OP_CLEAR</span>,
+    .storeOp = <span class="enum">VK_ATTACHMENT_STORE_OP_STORE</span>,
+    .clearValue = { .color = { 1.f, 0.f, 0.f, 1.f } }
+};
+<span class="type">VkRenderingInfo</span> renderingInfo = {
+    .sType = <span class="enum">VK_STRUCTURE_TYPE_RENDERING_INFO</span>,
+    .layerCount = 1,
+    .colorAttachmentCount = 1,
+    .pColorAttachments = &amp;colorAttachmentInfo
+};
+
+<span class="kw">auto</span> BeforeSuspending = [&amp;, imageMemoryBarrier, renderingInfo]() <span class="kw">mutable</span> {
+    commandBuffers[0].<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
+
+    imageMemoryBarrier.dstAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>;
+    imageMemoryBarrier.newLayout = <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span>;
+    imageMemoryBarrier.image = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImage</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CurrentImageIndex</span>());
+    <span class="fn">vkCmdPipelineBarrier</span>(
+        commandBuffer,
+        <span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>,
+        <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+        <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span>,
+        0, <span class="kw">nullptr</span>,
+        0, <span class="kw">nullptr</span>,
+        1, &amp;imageMemoryBarrier);
+
+    renderingInfo.flags = <span class="enum">VK_RENDERING_SUSPENDING_BIT</span>;
+    renderingInfo.renderArea = { {}, windowSize };
+    vkCmdBeginRendering(commandBuffers[0], &amp;renderingInfo);
+    vkCmdEndRendering(commandBuffers[0]);
+
+    commandBuffers[0].<span class="fn">End</span>();
+};
+<span class="kw">auto</span> AfterResuming = [&amp;, imageMemoryBarrier, renderingInfo]() <span class="kw">mutable</span> {
+    commandBuffers[1].<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
+
+    renderingInfo.flags = <span class="enum">VK_RENDERING_RESUMING_BIT</span>;
+    renderingInfo.renderArea = { {}, windowSize };
+    vkCmdBeginRendering(commandBuffers[1], &amp;renderingInfo);
+    <span class="fn">vkCmdBindPipeline</span>(commandBuffers[1], <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>, pipeline_triangle);
+    <span class="fn">vkCmdDraw</span>(commandBuffers[1], 3, 1, 0, 0);
+    vkCmdEndRendering(commandBuffers[1]);
+
+    imageMemoryBarrier.srcAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>;
+    imageMemoryBarrier.oldLayout = <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span>;
+    imageMemoryBarrier.newLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>;
+    imageMemoryBarrier.image = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImage</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CurrentImageIndex</span>());
+    <span class="fn">vkCmdPipelineBarrier</span>(
+        commandBuffer,
+        <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+        <span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span>,
+        <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span>,
+        0, <span class="kw">nullptr</span>,
+        0, <span class="kw">nullptr</span>,
+        1, &amp;imageMemoryBarrier);
+
+    commandBuffers[1].<span class="fn">End</span>();
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            <code>[&amp;, imageMemoryBarrier, renderingInfo]</code>的意思是指定默认捕获为引用捕获，然后复制捕获<span class="var">imageMemoryBarrier</span>和<span class="var">renderingInfo</span>，<span class="kw">mutable</span>使得复制捕获的变量可修改。
+        </p>
+    </il>
+</ul>
+<p>
+    复制捕获的变量被存储为函数对象的成员变量。每次执行函数对象时，复制捕获的变量不会被重置到捕获时的原值，所以这里诸如<code>renderingInfo.flags = <span class="enum">VK_RENDERING_RESUMING_BIT</span>;</code>等，等号右边是常量的语句其实是在每次执行该lambda的过程中进行着重复赋值。
+    <br>
+    （笔者并不太喜欢有捕获的lambda，不过要去掉捕获，还得对代码做一些我懒得说明的修改，就这样了！）
+</p>
+<p>
+    顺着上述代码继续往下写，两个lambda里所需的图像附件的信息是一致的，所以就不做复制捕获了。两个lambda中的<span class="var">renderingInfo.pColorAttachments</span>指向了同一个<span class="type">VkRenderingAttachmentInfo</span>，只需在渲染循环中更新<span class="var">colorAttachmentInfo.imageView</span>即可：
+</p>
+<pre class="code">
+<span class="cmt">/*...前面略*/</span>
+
+fence.<span class="fn">WaitAndReset</span>();
+<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+colorAttachmentInfo.imageView = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageView</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CurrentImageIndex</span>());
+
+<span class="cmt">/*...后面略*/</span>
+</pre>
+<p>
+    把<span class="var">AfterResuming</span>先扔进另一个线程开始执行，然后在主线程中执行<span class="var">BeforeSuspending</span>试试。
+    <br>
+    再在<span class="var">BeforeSuspending</span>后等待另一个线程中的<span class="var">AfterResuming</span>执行结束：
+</p>
+<pre class="code">
+queueThread.<span class="fn">PushWork</span>(AfterResuming);
+BeforeSuspending();
+queueThread.<span class="fn">Wait</span>();
+</pre>
+<p>
+    然后一次性提交两个缓冲区即可，<span class="var">commandBuffers[0]</span>对应的是到挂起为止，<span class="var">commandBuffers[1]</span>对应的是恢复之后，提交顺序上没有问题：
+</p>
+<pre class="code">
+fence.<span class="fn">WaitAndReset</span>();
+<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+colorAttachmentInfo.imageView = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageView</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CurrentImageIndex</span>());
+
+queueThread.<span class="fn">PushWork</span>(AfterResuming);
+BeforeSuspending();
+queueThread.<span class="fn">Wait</span>();
+
+<span class="kw">static constexpr</span> <span class="type">VkPipelineStageFlags</span> waitDstStage = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>;
+<span class="type">VkSubmitInfo</span> submitInfo = {
+    .waitSemaphoreCount = 1,
+    .pWaitSemaphores = semaphore_imageIsAvailable.<span class="fn">Address</span>(),
+    .pWaitDstStageMask = &amp;waitDstStage,
+    .commandBufferCount = 2,
+    .pCommandBuffers = commandBuffers[0].<span class="fn">Address</span>(),
+    .signalSemaphoreCount = 1,
+    .pSignalSemaphores = semaphore_renderingIsOver.<span class="fn">Address</span>(),
+};
+<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(submitInfo, fence);
+<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
+</pre>
+<p>
+    运行程序，还是一样的红背景和蓝三角形，如果蓝三角形没了，那说明某些地方顺序出问题了（可能先画三角形再清了屏）。
+    <br>
+    就清屏+画三角形这种程度的事，多线程录制命令对程序执行效率完全不会有提升。。。
+</p>
+<p>
+    示例代码参见：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch6/Ch6-2_MT.hpp">Ch6-2_MT.hpp</a>
 </p></section>
 </section>
 

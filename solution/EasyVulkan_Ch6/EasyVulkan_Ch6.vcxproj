@@ -24,9 +24,11 @@
   <ItemGroup>
     <ClInclude Include="Ch6-1.hpp" />
     <ClInclude Include="Ch6-2.hpp" />
+    <ClInclude Include="Ch6-2_MT.hpp" />
     <ClInclude Include="EasyVKStart.h" />
     <ClInclude Include="EasyVulkan.hpp" />
     <ClInclude Include="GlfwGeneral.hpp" />
+    <ClInclude Include="QueueThread.h" />
     <ClInclude Include="VKBase+.h" />
     <ClInclude Include="VKBase.h" />
     <ClInclude Include="VKFormat.h" />

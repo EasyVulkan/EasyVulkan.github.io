@@ -335,7 +335,7 @@
 <p>
     <span class="type">VkPipelineCache</span>类型的handle提供管线的缓存信息，其内容是实现特定的，换言之，<span class="type">VkPipelineCache</span>类型是为显卡驱动创建管线所可能用到的自定义信息提供的接口。
     <br>
-    利用上一次执行程序时的管线缓存信息可能可以加快对管线的创建，这么做可以加快程序的启动速度，尽管程序初始化的时间大都不是花在创建管线上。也可以在本次运行中，利用首次创建某条管线时的信息来加快重建管线，就这种情况而言，我更推荐你从旧管线衍生出新管线。
+    利用上一次执行程序时的管线缓存信息可能可以加快对管线的创建，这么做可以加快程序的启动速度，尽管程序初始化的时间大都不是花在创建管线上。也可以在本次运行中，利用首次创建某条管线时的信息来加快重建管线，就这种情况而言，你也可以从旧管线衍生出新管线。
     <br>
     我个人认为<span class="type">VkPipelineCache</span>的作用比较鸡肋，本套教程中不作具体讲解，如果你有兴趣使用，请自行阅读官方标准，这里我简单提要：
 </p>
@@ -355,10 +355,7 @@
             缓存信息的头部信息（前32位）用于验证管线缓存是否满足显卡驱动的要求，以应对多显卡PC。
         </p>
     </li>
-</ul>
-<p>
-    作为参考，在Release Bulid（关闭C++和Vulkan的Debug工具）下，我的英伟达1060MQ在启动时用缓存信息创建单个管线，加快了0.005秒，而在运行过程中重建管线时，耗时没有差别。
-</p></section>
+</ul></section>
 <section id="vkgraphicspipelinecreateinfo">
 <h3>VkGraphicsPipelineCreateInfo<a class="headerlink" href="#vkgraphicspipelinecreateinfo" title="Permalink to this heading"></a></h3>
 <p>
@@ -520,7 +517,7 @@
     </li>
     <li>
         <p>
-            若创建管线时使用了着色器模组标识符（shader module identifier，需要用到VK_EXT_shader_module_identifier扩展，用于使用显卡驱动可能会提供的默认着色器阶段实现），并且在flags中指定了<span class="enum">VK_PIPELINE_CREATE_FAIL_ON_PIPELINE_COMPILE_REQUIRED_BIT</span>，那么管线创建将会失败，并返回<span class="enum">VK_PIPELINE_COMPILE_REQUIRED</span>（注意，这个<span class="type">VkResult</span>枚举项是大于0的，不被算作是个错误代码）。
+            若创建管线时使用了着色器模组标识符（shader module identifier，需要用到VK_EXT_shader_module_identifier扩展），并在flags中指定了<span class="enum">VK_PIPELINE_CREATE_FAIL_ON_PIPELINE_COMPILE_REQUIRED_BIT</span>，但结果无法根据标识符找到管线缓存，那么管线创建将会失败，并返回<span class="enum">VK_PIPELINE_COMPILE_REQUIRED</span>（注意，这个<span class="type">VkResult</span>枚举项是大于0的，不被算作是个错误代码）。
         </p>
     </li>
     <li>
