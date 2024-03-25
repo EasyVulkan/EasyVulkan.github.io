@@ -93,6 +93,10 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">第八章 简单示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
+</ul>
 
         </div>
       </div>
@@ -150,7 +154,7 @@
     <br>
     <strong>用Vulkan能做游戏吗？</strong>
     <br>
-    能！只不过你要造一整套渲染引擎的轮子，啃一堆微积分和线性代数式子，做一系列其他纷繁复杂的编程。去他妈的UE、Unity！老子要自己造游戏引擎！人无梦想，与咸鱼何异！
+    能！只不过你要造一整套渲染引擎的轮子，啃一堆微积分和线性代数式子，做一系列其他纷繁复杂的编程。
 </p></section>
 <section id="id3" style="width:480px; float:left;">
     <h2>目录<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
@@ -236,6 +240,22 @@
 <section id="id4" style="width:616px; float:left;">
 <h2>更新履历<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
 <ul>
+    <li>
+        <p>
+            24.03.26 <a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Push%20Constant.html#id3">Ch7-4 初识Push Constant</a>中对<span class="type">vkCmdPushConstants</span>(...)的参数略加了些说明。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.03.26 修正笔误：贴图坐标的第三个分量是叫做s分量，先前没多想写了w（位置坐标xyz后的第四个分量被记为w，因而贴图坐标的uv后面就不能叫w了）。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.03.26 在<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id4">Ch4-1</a>中，修正对NDC坐标系的说明（原先写了“投影变换后得到NDC坐标”，投影变换后的是剪裁空间坐标）+简述了NDC坐标系与剪裁空间和屏幕空间的关系。
+        </p>
+    </li>
+<br>
     <li>
         <p>
             24.03.24 <a class="reference internal" href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html">Ch6-2 动态渲染</a>中增加了多线程录制命令的简单示例。

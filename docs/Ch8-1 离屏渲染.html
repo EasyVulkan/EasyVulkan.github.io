@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch8-1 离屏渲染（未完成） &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="prev" title="Ch7-7 使用贴图" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html">Ch3-7 采样器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VKBase%2B.h.html">Ch5-0 VKBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch6-1 无图像帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html">Ch6-2 动态渲染</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%BB%98%E5%88%B6.html">Ch7-3 初识实例化绘制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-4 初识Push Constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-5 初识Uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第八章 简单示例</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch8-1 离屏渲染</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">离屏渲染的流程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">图像附件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#createrpwf-canvas">CreateRpwf_Canvas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">来画线吧！</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">创建管线</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">录制渲染命令</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch8-1 离屏渲染（未完成）</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch8-1">
+<h1>Ch8-1 离屏渲染（未完成）<a class="headerlink" href="#ch8-1" title="Permalink to this heading"></a></h1>
+<p>
+    我们先前是始终是将内容直接渲染到屏幕，即交换链图像的。
+    <br>
+    离屏渲染（offscreen rendering）指将图片渲染到交换链图像之外的图像上，意义在于：
+    <br>
+    1.可以之后通过采样（需要后处理或旋转图像等情况）或blit（只是显示画中画的情况）进行一定的处理之后再呈现到交换链图像
+    <br>
+    2.可以将渲染结果用作程序运行过程中长期使用的贴图
+    <br>
+    3.程序可能没有交换链（比如只用来生成图像并保存到文件的控制台程序）
+</p><section id="id1">
+<h2>离屏渲染的流程<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>
+    进行离屏渲染并将结果采样到屏幕的步骤如下：
+    <br>
+    1.创建图像附件
+    <br>
+    2.创建离屏渲染的渲染通道和帧缓冲
+    <br>
+    3.为离屏渲染书写着色器并创建管线（可以接着沿用画三角形的，不过干脆换个别的吧！）
+    <br>
+    4.为屏幕渲染书写着色器并创建管线（可以接着沿用...但换个别的！）
+    <br>
+    5.分配描述符集（描述符布局在上一步中创建），将图像附件的view写入描述符
+    <br>
+    6.渲染到离屏缓冲
+    <br>
+    7.采样贴图，渲染到交换链
+</p>
+<p>
+    我打算让上述的最后两步“离屏渲染”和“渲染到屏幕”发生在一个命令缓冲区中，中间不使用信号量或栅栏等同步对象。
+</p></section>
+<section id="id2">
+<h2>图像附件<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<p>
+    先前我们都是使用交换链图像的image view作为图像附件。从头创建图像附件，必然要先创建图像，然后再为其创建view。
+    <br>
+    在<span class="path">VKBase+.h</span>中，vulkan命名空间中定义类<span class="type">attachment</span>：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">attachment</span> {
+<span class="kw">protected</span>:
+    <span class="type">imageView</span> imageView;
+    <span class="type">imageMemory</span> imageMemory;
+    <span class="cmt">//--------------------</span>
+    <span class="fn">attachment</span>() = <span class="kw">default</span>;
+<span class="kw">public</span>:
+    <span class="cmt">//Getter</span>
+    <span class="type">VkImageView</span> <span class="fn">ImageView</span>() <span class="kw">const</span> { <span class="kw">return</span> imageView; }
+    <span class="type">VkImage</span> <span class="fn">Image</span>() <span class="kw">const</span> { <span class="kw">return</span> imageMemory.<span class="fn">Image</span>(); }
+    <span class="kw">const</span> <span class="type">VkImageView</span>* AddressOfImageView</span>() <span class="kw">const</span> { <span class="kw">return</span> imageView.<span class="fn">Address</span>(); }
+    <span class="kw">const</span> <span class="type">VkImage</span>* AddressOfImage</span>() <span class="kw">const</span> { <span class="kw">return</span> imageMemory.<span class="fn">AddressOfImage</span>(); }
+    <span class="cmt">//Const Function</span>
+    <span class="cmt">//该函数返回写入描述符时需要的信息</span>
+    <span class="type">VkDescriptorImageInfo</span> <span class="fn">DescriptorImageInfo</span>(<span class="type">VkSampler</span> sampler) <span class="kw">const</span> {
+        <span class="kw">return</span> { sampler, imageView, <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span> };
+    }
+};
+</pre>
+<p>
+    然后派生出两个子类：颜色附件<span class="type">colorAttachment</span>、深度模板附件<span class="type">depthStencilAttachment</span>（这一节还用不着深度模板附件，算是为之后做准备）。
+    <br>
+    输入附件不需要封装，输入附件是被后续子通道读取的图像附件，在创建颜色/深度模板附件时注明<span class="enum">VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT</span>即可。至于解析附件只不过是采样点数为1的颜色/模板附件罢了。
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">colorAttachment</span> :<span class="kw">public</span> <span class="type">attachment</span> {
+<span class="kw">public</span>:
+    <span class="fn">colorAttachment</span>() = <span class="kw">default</span>;
+    <span class="fn">colorAttachment</span>(<span class="type">VkFormat</span> format, <span class="type">VkExtent2D</span> extent, <span class="type">uint32_t</span> layerCount = 1,
+        <span class="type">VkSampleCountFlagBits</span> sampleCount = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>, <span class="type">VkImageUsageFlags</span> otherUsages = 0) {
+        <span class="fn">Create</span>(format, extent, layerCount, sampleCount, otherUsages);
+    }
+    <span class="cmt">//Non-const Function</span>
+    <span class="kw">void</span> <span class="fn">Create</span>(<span class="type">VkFormat</span> format, <span class="type">VkExtent2D</span> extent, <span class="type">uint32_t</span> layerCount = 1,
+        <span class="type">VkSampleCountFlagBits</span> sampleCount = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>, <span class="type">VkImageUsageFlags</span> otherUsages = 0) {
+        <span class="cmt">/*待填充*/</span>
+    }
+    <span class="cmt">//Static Function</span>
+    <span class="cmt">//该函数用于检查某一格式的图像可否被用作颜色附件</span>
+    <span class="kw">static bool</span> <span class="sfn">FormatAvailability</span>(<span class="type">VkFormat</span> format, <span class="kw">bool</span> supportBlending = true) {
+        <span class="cmt">/*待填充*/</span>
+    }
+};
+<span class="kw">class</span> <span class="type">depthStencilAttachment</span> :<span class="kw">public</span> <span class="type">attachment</span> {
+<span class="kw">public</span>:
+    <span class="enum">depthStencilAttachment</span>() = <span class="kw">default</span>;
+    <span class="enum">depthStencilAttachment</span>(<span class="type">VkFormat</span> format, <span class="type">VkExtent2D</span> extent, <span class="type">uint32_t</span> layerCount = 1,
+        <span class="type">VkSampleCountFlagBits</span> sampleCount = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>, <span class="type">VkImageUsageFlags</span> otherUsages = 0, <span class="kw">bool</span> stencilOnly = <span class="kw">false</span>) {
+        <span class="fn">Create</span>(format, extent, layerCount, sampleCount, otherUsages, stencilOnly);
+    }
+    <span class="cmt">//Non-const Function</span>
+    <span class="kw">void</span> <span class="fn">Create</span>(<span class="type">VkFormat</span> format, <span class="type">VkExtent2D</span> extent, <span class="type">uint32_t</span> layerCount = 1,
+        <span class="type">VkSampleCountFlagBits</span> sampleCount = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>, <span class="type">VkImageUsageFlags</span> otherUsages = 0, <span class="kw">bool</span> stencilOnly = <span class="kw">false</span>) {
+        <span class="cmt">/*待填充*/</span>
+    }
+    <span class="cmt">//Static Function</span>
+    <span class="cmt">//该函数用于检查某一格式的图像可否被用作深度模板附件</span>
+    <span class="kw">static bool</span> <span class="sfn">FormatAvailability</span>(<span class="type">VkFormat</span> format) {
+        <span class="cmt">/*待填充*/</span>
+    }
+};
+</pre>
+<p>
+    于是先来填充两个<span class="sfn">FormatAvailability</span>(...)。<a href="https://renderdoc.org/vkspec_chunked/chap49.html#VkFormatProperties">VkFormatProperties</a>的成员optimalTilingFeatures和linearTilingFeatures分别代表图像数据的排列方式（<span class="type">VkImageCreateInfo</span>::tiling）为最优排列和线性排列时，某种格式的图像具有的特性。
+    <br>
+    出于以下理由，不关心线性排列时的格式特性：
+    <br>
+    1.独显对线性数据排列的渲染目标支持较差，可能完全不支持。
+    <br>
+    2.总是倾向于使用最优数据排列以获得最佳性能。
+</p>
+<p>
+    先前在<a class="reference internal" href="Ch5-0%20VKBase%2B.h.html">Ch5-0 VKBase+.h</a>中获取了所有格式的<span class="type">VkFormatProperties</span>，现在用先前准备好的函数<span class="fn">FormatProperties</span>(...)获取格式属性，让其optimalTilingFeatures成员与相应的<span class="type">VkImageUsageFlagBits</span>枚举值做位与，即可知某种格式的图像能否用作颜色/深度模板附件：
+</p>
+<pre class="code">
+<span class="kw">static</span> <span class="type">colorAttachment</span>::<span class="sfn">FormatAvailability</span>(<spanclass="type">VkFormat</span> format, <span class="kw">bool</span> supportBlending = true) {
+    <span class="kw">return</span> <span class="fn">FormatProperties</span>(format).optimalTilingFeatures &amp; <span class="enum">VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT</span> &lt;&lt; <span class="type">uint32_t</span>(supportBlending);
+}
+<span class="kw">bool</span> <span class="type">depthStencilAttachment</span>::<span class="sfn">FormatAvailability</span>(<spanclass="type">VkFormat</span> format) {
+    <span class="kw">return</span> <span class="fn">FormatProperties</span>(format).optimalTilingFeatures &amp; <span class="enum">VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT</span>;
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            <span class="enum">VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT</span>左移1位得到<span class="enum">VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BLEND_BIT</span>，表示支持作为图像附件且支持混色。
+        </p>
+    </li>
+</ul>
+<p>
+    然后填充<span class="type">colorAttachment</span>::<span class="fn">Create</span>(...)：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="type">colorAttachment</span>::<span class="fn">Create</span>(<span class="type">VkFormat</span> format, <span class="type">VkExtent2D</span> extent, <span class="type">uint32_t</span> layerCount = 1,
+    <span class="type">VkSampleCountFlagBits</span> sampleCount = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>, <span class="type">VkImageUsageFlags</span> otherUsages = 0) {
+    <span class="type">VkImageCreateInfo</span> imageCreateInfo = {
+        .imageType = <span class="enum">VK_IMAGE_TYPE_2D</span>,
+        .format = format,
+        .extent = { extent.width, extent.height, 1 },
+        .mipLevels = 1,
+        .arrayLayers = layerCount,
+        .samples = sampleCount,
+        .usage = <span class="enum">VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT</span> | otherUsages
+    };
+    imageMemory.<span class="fn">Create</span>(
+        imageCreateInfo,
+        <span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span> | <span class="kw">bool</span>(otherUsages &amp; <span class="enum">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</span>) * <span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>);
+    imageView.<span class="fn">Create</span>(
+        imageMemory.<span class="fn">Image</span>(),
+        layerCount > 1 ? <span class="enum">VK_IMAGE_VIEW_TYPE_2D_ARRAY</span> : <span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>,
+        format,
+        { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, layerCount });
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            内存属性当然得有<span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>以获得最佳性能，除此之外根据<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html#id18">惰性分配</a>的规定，如果图像用途包含<span class="enum">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</span>，内存属性必须具有<span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>。
+        </p>
+    </li>
+    <li>
+        <p>
+            图像视图的类型根据图层数进行了分支，但如果你之后打算把渲染好的图像作为单层2D贴图数组（而非普通2D贴图）采样，在图层数为1时将类型指定为<span class="enum">VK_IMAGE_VIEW_TYPE_2D_ARRAY</span>也没什么问题。
+        </p>
+    </li>
+</ul>
+<p>
+    相比之下，<span class="type">depthStencilAttachment</span>::<span class="fn">Create</span>(...)多出一段根据图像格式判断<span class="type">VkImageSubresourceRange</span>::aspectMask的逻辑：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="type">depthStencilAttachment</span>::<span class="fn">Create</span>(<span class="type">VkFormat</span> format, <span class="type">VkExtent2D</span> extent, <span class="type">uint32_t</span> layerCount = 1,
+    <span class="type">VkSampleCountFlagBits</span> sampleCount = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>, <span class="type">VkImageUsageFlags</span> otherUsages = 0, <span class="kw">bool</span> stencilOnly = <span class="kw">false</span>) {
+    <span class="type">VkImageCreateInfo</span> imageCreateInfo = {
+        .imageType = <span class="enum">VK_IMAGE_TYPE_2D</span>,
+        .format = format,
+        .extent = { extent.width, extent.height, 1 },
+        .mipLevels = 1,
+        .arrayLayers = layerCount,
+        .samples = sampleCount,
+        .usage = <span class="enum">VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT</span> | otherUsages
+    };
+    imageMemory.<span class="fn">Create</span>(
+        imageCreateInfo,
+        <span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span> | <span class="kw">bool</span>(otherUsages &amp; <span class="enum">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</span>) * <span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>);
+    <span class="cmt">//</span>
+    <span class="type">VkImageAspectFlags</span> aspectMask = (!stencilOnly) * <span class="enum">VK_IMAGE_ASPECT_DEPTH_BIT</span>;
+    <span class="kw">if</span> (format &gt; <span class="enum">VK_FORMAT_S8_UINT</span>)
+        aspectMask |= <span class="enum">VK_IMAGE_ASPECT_STENCIL_BIT</span>;
+    <span class="kw">else if</span> (format == <span class="enum">VK_FORMAT_S8_UINT</span>)
+        aspectMask = <span class="enum">VK_IMAGE_ASPECT_STENCIL_BIT</span>;
+    <span class="cmt">//</span>
+    imageView.<span class="fn">Create</span>(
+        imageMemory.<span class="fn">Image</span>(),
+        layerCount > 1 ? <span class="enum">VK_IMAGE_VIEW_TYPE_2D_ARRAY</span> : <span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>,
+        format,
+        { aspectMask, 0, 1, 0, layerCount });
+}
+</pre>
+</pre>
+<ul>
+    <li>
+        <p>
+            这里<span class ="kw">if</span>-<span class="kw">else</span>分支的逻辑是：在仅有的几种深度模板格式当中，只有<span class="enum">VK_FORMAT_S8_UINT</span>是只存储模板值的，而大于<span class="enum">VK_FORMAT_S8_UINT</span>的深度模板格式同时具有深度和模板值。
+        </p>
+    </li>
+    <li>
+        <p>
+            格式中同时包含深度和模板分量，之后用作图像附件使用时只使用深度测试/模板测试之一的话，aspectMask中只指定其中之一也是没问题的。
+            <br>
+            但是用作输入附件或贴图时，必须只指定深度或模板。
+        </p>
+    </li>
+</ul>
+<p>
+    <span class="var">stencilOnly</span>参数的解释：
+    <br>
+    你只打算使用深度测试的话，使用只有深度的格式即可，Vulkan标准规定实现必须支持<span class="enum">VK_FORMAT_D16_UNORM</span>格式的深度模板附件，然后<span class="enum">VK_FORMAT_X8_D24_UNORM_PACK32</span>（X8是填充字节）和<span class="enum">VK_FORMAT_D32_SFLOAT</span>之中至少有一个受支持。
+    <br>
+    但是，只打算使用模板测试时，实现不一定支持<span class="enum">VK_FORMAT_S8_UINT</span>格式的深度模板附件，可能不得不使用带深度值的格式，这里<span class="var">stencilOnly</span>意在让格式中带深度分量时使aspectMask中不标明深度（这样一来，要将图像用于采样时，就不必再另外创建image view）。
+</p></section>
+<section id="createrpwf-canvas">
+<h2>CreateRpwf_Canvas<a class="headerlink" href="#createrpwf-canvas" title="Permalink to this heading"></a></h2>
+<p>
+    于是，向<span class="path">EasyVulkan.hpp</span>，easyVulkan命名空间中，定义<span class="type">renderPassWithFramebuffer</span>结构体和函数<span class="fn">CreateRpwf_Canvas</span>(...)，函数之前写过类似的，用处不言自明。至于所谓canvas，顾名思义，我打算将这次创建的图像附件用作画布，实现一个超简陋的画画功能，画布大小从<span class="fn">CreateRpwf_Canvas</span>(...)的参数传入：
+</p>
+<pre class="code">
+<span class="kw">namespace</span> easyVulkan {
+    <span class="kw">struct</span> <span class="type">renderPassWithFramebuffer</span> {
+        <span class="type">renderPass</span> renderPass;
+        <span class="type">framebuffer</span> framebuffer;
+    };
+    <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> canvasSize = windowSize) {
+        <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf_canvas;
+        <span class="mcr">ExecuteOnce</span>(rpwf_canvas);<span class="cmt">//防止重复执行</span>
+
+        <span class="cmt">/*待后续填充*/</span>
+
+        <span class="kw">return</span> rpwf_canvas;
+    }
+}
+</pre>
+<p>
+    在easyVulkan命名空间中定义一个<span class="type">colorAttachment</span>对象，然后在函数中创建图像附件，格式就跟交换链一样吧（毕竟肯定支持，都不用检查）：
+</p>
+<pre class="code">
+<span class="kw">namespace</span> easyVulkan {
+    <span class="kw">struct</span> <span class="type">renderPassWithFramebuffer</span> {
+        <span class="type">renderPass</span> renderPass;
+        <span class="type">framebuffer</span> framebuffer;
+    };
+    <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> canvasSize = windowSize) {
+        <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf_canvas;
+        <span class="mcr">ExecuteOnce</span>(rpwf_canvas);<span class="cmt">//防止重复执行</span>
+
+        <span class="type">colorAttachment</span> attachment(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat, canvasSize, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+            <span class="enum">VK_IMAGE_USAGE_SAMPLED_BIT</span> | <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>);
+
+        <span class="cmt">/*待后续填充*/</span>
+
+        <span class="kw">return</span> rpwf_canvas;
+    }
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            将离屏渲染的图像附件用作画布的话，渲染通道开始时当然不会清屏，那么图像用途中应包含<span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>，以使用<a href="https://renderdoc.org/vkspec_chunked/chap19.html#vkCmdClearColorImage">vkCmdClearColorImage</a>(...)清屏。
+        </p>
+    </li>
+</ul></section>
+<section id="id3">
+<h2>创建渲染通道和帧缓冲<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<p>
+    先填写附件描述。
+    <br>
+    因为是画布，每次读取时不清屏，且要保留先前的内容，所以loadOp为<span class="enum">VK_ATTACHMENT_LOAD_OP_LOAD</span>，storeOp为<span class="type">VK_ATTACHMENT_STORE_OP_STORE</span>。
+    <br>
+    在我们这次的应用场景中，图像附件是“渲染→被采样→渲染→被采样”如此循环，所以前后内存布局都用<span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>即可。
+</p>
+<pre class="code">
+<span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> canvasSize = windowSize) {
+    <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf_canvas;
+    <span class="mcr">ExecuteOnce</span>(rpwf_canvas);<span class="cmt">//防止重复执行</span>
+
+    <span class="type">colorAttachment</span> attachment(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat, canvasSize, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+        <span class="enum">VK_IMAGE_USAGE_SAMPLED_BIT</span> | <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>);
+
+    <span class="type">VkAttachmentDescription</span> attachmentDescription = {
+        .format = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat,
+        .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+        .loadOp = <span class="enum">VK_ATTACHMENT_LOAD_OP_LOAD</span>,
+        .storeOp = <span class="type">VK_ATTACHMENT_STORE_OP_STORE</span>,
+        .stencilLoadOp = <span class="type">VK_ATTACHMENT_LOAD_OP_DONT_CARE</span>,
+        .stencilStoreOp = <span class="type">VK_ATTACHMENT_LOAD_OP_DONT_CARE</span>,
+        .initialLayout = <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>,
+        .finalLayout = <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>
+    };
+    <span class="cmt">/*待后续填充*/</span>
+
+    <span class="kw">return</span> rpwf_canvas;
+}
+</pre>
+<p>
+    毫无难度地填写掉子通道描述，并把渲染通道创建信息先填了：
+</p>
+<pre class="code">
+<span class="type">VkAttachmentReference</span> attachmentReference = { 0, <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span> };
+<span class="type">VkSubpassDescription</span> subpassDescription = {
+    .pipelineBindPoint = <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>,
+    .colorAttachmentCount = 1,
+    .pColorAttachments = &amp;attachmentReference
+};
+<span class="type">VkRenderPassCreateInfo</span> renderPassCreateInfo = {
+    .attachmentCount = 1,
+    .pAttachments = &amp;attachmentDescription,
+    .subpassCount = 1,
+    .pSubpasses = &amp;subpassDescription,
+    .dependencyCount = 2,
+    .pDependencies = subpassDependencies,
+};
+</pre>
+<p>
+    子通道依赖是子通道开始和结束时各一个，先看代码：
+</p>
+<pre class="code">
+    <span class="type">VkSubpassDependency</span> subpassDependencies[2] = {
+        {
+            .srcSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
+            .dstSubpass = 0,
+            .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>,
+            .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+            .srcAccessMask = 0,
+            .dstAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
+            .dependencyFlags = <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span> },
+        {
+            .srcSubpass = 0,
+            .dstSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
+            .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+            .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>,
+            .srcAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
+            .dstAccessMask = <span class="enum">VK_ACCESS_SHADER_READ_BIT</span>,
+            .dependencyFlags = <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span> }
+    };
+</pre>
+<p>
+    先来解说结束时的情况，结束时的子通道依赖可以说是每个参数都有恰如其分的作用。
+    <br>
+    通道结束时的dstSubpass为<span class="mcr">VK_SUBPASS_EXTERNAL</span>，这里实质上指代之后“渲染到屏幕”。
+    <br>
+    srcStageMask和srcAccessMask应该不需要解释，采样属于<span class="enum">VK_ACCESS_SHADER_READ_BIT</span>，发生在片段着色器阶段所以dstStageMask是<span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>。
+</p>
+<p>
+    渲染通道开始时的情况则与结束时相反即可。
+    <br>
+    srcAccessMask指定<span class="enum">VK_ACCESS_SHADER_READ_BIT</span>这种读操作无意义所以为0，而srcStageMask指定为<span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>是多余的，因为有信号量来同步，填写<span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>即可（你问我为什么每次都不这么写？为了特地反复强调这件事！）。
+</p>
+<pre class="code">
+    <span class="type">VkSubpassDependency</span> subpassDependencies[2] = {
+        {
+            .srcSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
+            .dstSubpass = 0,
+            .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>,
+            .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+            .srcAccessMask = 0,
+            .dstAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
+            .dependencyFlags = <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span> },
+        {
+            .srcSubpass = 0,
+            .dstSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
+            .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+            .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>,
+            .srcAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
+            .dstAccessMask = <span class="enum">VK_ACCESS_SHADER_READ_BIT</span>,
+            .dependencyFlags = <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span> }
+    };
+</pre>
+<p>
+    最后非常简单无脑地创建帧缓冲，整个<span class="fn">CreateRpwf_Canvas</span>(...)如下：
+</p>
+<pre class="code">
+<span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> canvasSize = windowSize) {
+    <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf_canvas;
+    <span class="mcr">ExecuteOnce</span>(rpwf_canvas);<span class="cmt">//防止重复执行</span>
+
+    <span class="type">colorAttachment</span> attachment(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat, canvasSize, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+        <span class="enum">VK_IMAGE_USAGE_SAMPLED_BIT</span> | <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>);
+
+    <span class="type">VkAttachmentDescription</span> attachmentDescription = {
+        .format = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat,
+        .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+        .loadOp = <span class="enum">VK_ATTACHMENT_LOAD_OP_LOAD</span>,
+        .storeOp = <span class="type">VK_ATTACHMENT_STORE_OP_STORE</span>,
+        .stencilLoadOp = <span class="type">VK_ATTACHMENT_LOAD_OP_DONT_CARE</span>,
+        .stencilStoreOp = <span class="type">VK_ATTACHMENT_LOAD_OP_DONT_CARE</span>,
+        .initialLayout = <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>,
+        .finalLayout = <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>
+    };
+    <span class="type">VkSubpassDependency</span> subpassDependencies[2] = {
+        {
+            .srcSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
+            .dstSubpass = 0,
+            .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>,
+            .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+            .srcAccessMask = 0,
+            .dstAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
+            .dependencyFlags = <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span> },
+        {
+            .srcSubpass = 0,
+            .dstSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
+            .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+            .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>,
+            .srcAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
+            .dstAccessMask = <span class="enum">VK_ACCESS_SHADER_READ_BIT</span>,
+            .dependencyFlags = <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span> }
+    };
+    <span class="type">VkAttachmentReference</span> attachmentReference = { 0, <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span> };
+    <span class="type">VkSubpassDescription</span> subpassDescription = {
+        .pipelineBindPoint = <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>,
+        .colorAttachmentCount = 1,
+        .pColorAttachments = &amp;attachmentReference
+    };
+    <span class="type">VkRenderPassCreateInfo</span> renderPassCreateInfo = {
+        .attachmentCount = 1,
+        .pAttachments = &amp;attachmentDescription,
+        .subpassCount = 1,
+        .pSubpasses = &amp;subpassDescription,
+        .dependencyCount = 2,
+        .pDependencies = subpassDependencies,
+    };
+
+            <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
+                    .renderPass = rpwf_canvas.renderPass,
+                    .attachmentCount = 1,
+                    .pAttachments = ca_canvas.<span class="fn">AddressOfImageView</span>(),
+                    .width = canvasSize.width,
+                    .height = canvasSize.height,
+                    .layers = 1
+            };
+            rpwf_canvas.framebuffer.<span class="fn">Create</span>(framebufferCreateInfo);
+
+    <span class="kw">return</span> rpwf_canvas;
+}
+</pre>
+<p>
+    这里顺便把图像附件的view写入描述符，在主函数中：
+</p>
+<pre class="code">
+    <span class="type">VkDescriptorPoolSize</span> descriptorPoolSizes[] = {
+            { <span class="enum">VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER</span>, 1 }
+    };
+    <span class="type">descriptorPool</span> descriptorPool(1, descriptorPoolSizes);
+    <span class="type">descriptorSet</span> descriptorSet_texture;
+    descriptorPool.<span class="fn">AllocateSets</span>(descriptorSet_texture, descriptorSetLayout_texture);
+    descriptorSet_texture.<span class="fn">Write</span>(easyVulkan::ca_canvas.<span class="fn">DescriptorImageInfo</span>(sampler), <span class="enum">VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER</span>);
+</pre></section>
+<section id="id4">
+<h2>来画线吧！<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<p>
+    我打算实现一个非常简单的绘画功能：追纵鼠标的位置，将鼠标在当前帧和上一帧的位置用线连起来。
+</p></section>
+<section id="id5">
+<h2>创建管线<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<p>
+
+</p></section>
+<section id="id6">
+<h2>录制渲染命令<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
+<p>
+
+</p></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html" class="btn btn-neutral float-left" title="Ch7-7 使用贴图" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021-2024, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

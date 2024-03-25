@@ -99,6 +99,10 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">第八章 简单示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
+</ul>
 
         </div>
       </div>
@@ -215,13 +219,14 @@
 <span class="kw">namespace</span> easyVulkan {
     <span class="kw">struct</span> <span class="type">renderPassWithFramebuffer</span> {
         <span class="type">renderPass</span> renderPass;
-        <span class="type">framebuffer</span> framebuffers;
+        <span class="type">framebuffer</span> framebuffer;
     };
     <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Screen_ImagelessFramebuffer</span>() {
         <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf_screen;
-        <span class="kw">if</span> (!rpwf_screen.renderPass) {
-            <span class="cmt">/*待后续填充*/</span>
-        }
+        <span class="mcr">ExecuteOnce</span>(rpwf_screen);<span class="cmt">//防止重复执行</span>
+
+        <span class="cmt">/*待后续填充*/</span>
+
         <span class="kw">return</span> rpwf_screen;
     }
 };
@@ -232,42 +237,43 @@
 <pre class="code">
 <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Screen_ImagelessFramebuffer</span>() {
     <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf_screen;
-    <span class="kw">if</span> (!rpwf_screen.renderPass) {
-        <span class="type">VkAttachmentDescription</span> attachmentDescription = {
-            .format = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat,
-            .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
-            .loadOp = <span class="enum">VK_ATTACHMENT_LOAD_OP_CLEAR</span>,
-            .storeOp = <span class="enum">VK_ATTACHMENT_STORE_OP_STORE</span>,
-            .initialLayout = <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>,
-            .finalLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>
-        };
-        <span class="type">VkAttachmentReference</span> attachmentReference = { 0, <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span> };
-        <span class="type">VkSubpassDescription</span> subpassDescription = {
-            .pipelineBindPoint = <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>,
-            .colorAttachmentCount = 1,
-            .pColorAttachments = &amp;attachmentReference
-        };
-        <span class="type">VkSubpassDependency</span> subpassDependency = {
-            .srcSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
-            .dstSubpass = 0,
-            .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
-            .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
-            .srcAccessMask = 0,
-            .dstAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
-            .dependencyFlags = <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span>
-        };
-        <span class="type">VkRenderPassCreateInfo</span> renderPassCreateInfo = {
-            .attachmentCount = 1,
-            .pAttachments = &amp;attachmentDescription,
-            .subpassCount = 1,
-            .pSubpasses = &amp;subpassDescription,
-            .dependencyCount = 1,
-            .pDependencies = &amp;subpassDependency
-        };
-        rpwf_screen.renderPass.<span class="fn">Create</span>(renderPassCreateInfo);
+    <span class="mcr">ExecuteOnce</span>(rpwf_screen);
 
-        <span class="cmt">/*待后续填充*/</span>
-    }
+    <span class="type">VkAttachmentDescription</span> attachmentDescription = {
+        .format = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat,
+        .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+        .loadOp = <span class="enum">VK_ATTACHMENT_LOAD_OP_CLEAR</span>,
+        .storeOp = <span class="enum">VK_ATTACHMENT_STORE_OP_STORE</span>,
+        .initialLayout = <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>,
+        .finalLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>
+    };
+    <span class="type">VkAttachmentReference</span> attachmentReference = { 0, <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span> };
+    <span class="type">VkSubpassDescription</span> subpassDescription = {
+        .pipelineBindPoint = <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>,
+        .colorAttachmentCount = 1,
+        .pColorAttachments = &amp;attachmentReference
+    };
+    <span class="type">VkSubpassDependency</span> subpassDependency = {
+        .srcSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
+        .dstSubpass = 0,
+        .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+        .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+        .srcAccessMask = 0,
+        .dstAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
+        .dependencyFlags = <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span>
+    };
+    <span class="type">VkRenderPassCreateInfo</span> renderPassCreateInfo = {
+        .attachmentCount = 1,
+        .pAttachments = &amp;attachmentDescription,
+        .subpassCount = 1,
+        .pSubpasses = &amp;subpassDescription,
+        .dependencyCount = 1,
+        .pDependencies = &amp;subpassDependency
+    };
+    rpwf_screen.renderPass.<span class="fn">Create</span>(renderPassCreateInfo);
+
+    <span class="cmt">/*待后续填充*/</span>
+
     <span class="kw">return</span> rpwf_screen;
 }
 </pre>
@@ -277,34 +283,35 @@
 <pre class="code">
 <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Screen_ImagelessFramebuffer</span>() {
     <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf_screen;
-    <span class="kw">if</span> (!rpwf_screen.renderPass) {
-        <span class="type">VkAttachmentDescription</span> attachmentDescription = { <span class="cmt">/*...*/</span> };
-        <span class="type">VkAttachmentReference</span> attachmentReference = { 0, <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span> };
-        <span class="type">VkSubpassDescription</span> subpassDescription = { <span class="cmt">/*...*/</span> };
-        <span class="type">VkSubpassDependency</span> subpassDependency = { <span class="cmt">/*...*/</span> };
-        <span class="type">VkRenderPassCreateInfo</span> renderPassCreateInfo = { <span class="cmt">/*...*/</span> };
-        rpwf_screen.renderPass.<span class="fn">Create</span>(renderPassCreateInfo);
+    <span class="mcr">ExecuteOnce</span>(rpwf_screen);
 
-        <span class="kw">auto</span> CreateFramebuffer = [] {
-            <span class="cmt">/*待后续填充*/</span>
-            <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
-                .pNext = <span class="cmt">/*待填充*/</span>,
-                .flags = <span class="cmt">/*待填充*/</span>,
-                .renderPass = rpwf_screen.renderPass,
-                .attachmentCount = 1,
-                .width = windowSize.width,
-                .height = windowSize.height,
-                .layers = 1
-            };
-            rpwf_screen.framebuffer.<span class="fn">Create</span>(framebufferCreateInfo);
+    <span class="type">VkAttachmentDescription</span> attachmentDescription = { <span class="cmt">/*...*/</span> };
+    <span class="type">VkAttachmentReference</span> attachmentReference = { 0, <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span> };
+    <span class="type">VkSubpassDescription</span> subpassDescription = { <span class="cmt">/*...*/</span> };
+    <span class="type">VkSubpassDependency</span> subpassDependency = { <span class="cmt">/*...*/</span> };
+    <span class="type">VkRenderPassCreateInfo</span> renderPassCreateInfo = { <span class="cmt">/*...*/</span> };
+    rpwf_screen.renderPass.<span class="fn">Create</span>(renderPassCreateInfo);
+
+    <span class="kw">auto</span> CreateFramebuffer = [] {
+        <span class="cmt">/*待后续填充*/</span>
+        <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
+            .pNext = <span class="cmt">/*待填充*/</span>,
+            .flags = <span class="cmt">/*待填充*/</span>,
+            .renderPass = rpwf_screen.renderPass,
+            .attachmentCount = 1,
+            .width = windowSize.width,
+            .height = windowSize.height,
+            .layers = 1
         };
-        <span class="kw">auto</span> DestroyFramebuffer = [] {
-            rpwf_screen.framebuffer.<span class="fn">~framebuffer</span>();
-        };
-        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>(CreateFramebuffer);
-        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroySwapchain</span>(DestroyFramebuffer);
-        CreateFramebuffer();
-    }
+        rpwf_screen.framebuffer.<span class="fn">Create</span>(framebufferCreateInfo);
+    };
+    <span class="kw">auto</span> DestroyFramebuffer = [] {
+        rpwf_screen.framebuffer.<span class="fn">~framebuffer</span>();
+    };
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>(CreateFramebuffer);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroySwapchain</span>(DestroyFramebuffer);
+    CreateFramebuffer();
+
     <span class="kw">return</span> rpwf_screen;
 }
 </pre>

@@ -102,6 +102,10 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">第八章 简单示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
+</ul>
 
         </div>
       </div>
@@ -171,9 +175,10 @@
     </tbody>
 </table>
 <p>
-    对于非索引绘制命令，比如<a href="https://renderdoc.org/vkspec_chunked/chap21.html#vkCmdDraw">vkCmdDraw</a>(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance)，gl_BaseVertex值为firstVertex，gl_VertexIndex必然不小于该值，类似地，gl_BaseInstance值为firstInstance，gl_InstanceIndex必然不小于该值。
-    <br>
-    对于索引绘制命令，比如<a href="https://renderdoc.org/vkspec_chunked/chap21.html#vkCmdDrawIndexed">vkCmdDrawIndexed</a>(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance)，gl_BaseVertex值为vertexOffset，gl_VertexIndex为命令缓冲区中的与firstIndex相应的索引加上vertexOffset。
+    对于非索引绘制命令，比如<code><a href="https://renderdoc.org/vkspec_chunked/chap21.html#vkCmdDraw">vkCmdDraw</a>(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance)</code>，gl_BaseVertex值为firstVertex，gl_VertexIndex必然不小于该值，类似地，gl_BaseInstance值为firstInstance，gl_InstanceIndex必然不小于该值。
+<p>
+</p>
+    对于索引绘制命令，比如<code><a href="https://renderdoc.org/vkspec_chunked/chap21.html#vkCmdDrawIndexed">vkCmdDrawIndexed</a>(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance)</code>，gl_BaseVertex值为vertexOffset，gl_VertexIndex为命令缓冲区中的与firstIndex相应的索引值加上vertexOffset。
 </p>
 <p>
     从OpenGL转来的程序员注意gl_InstanceIndex语义同gl_InstanceID不同（gl_InstanceID从0开始，不计算gl_BaseInstance）。
@@ -228,7 +233,7 @@
 </ul><section id="gl-position">
 <h3>gl_Position<a class="headerlink" href="#gl-position" title="Permalink to this heading"></a></h3>
 <p>
-    gl_Position的数值是被标准化的，即<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id4">NDC坐标</a>。
+    gl_Position与片段渲染在屏幕上的位置及深度值的关系参见<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id4">NDC坐标</a>。
     <br>
     如果顶点着色器之后只有一个片段着色器或没有任何着色器（因为不输出颜色，可以只输出深度值到片段所在位置），应当输出gl_Position（考虑到连gl_Position都不必输出的情形应当是纯粹的计算和数据存储，应当用计算着色器）。
     <br>

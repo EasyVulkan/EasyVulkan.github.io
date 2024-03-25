@@ -1,7 +1,7 @@
 #pragma once
 #include "EasyVKStart.h"
 
-//Vulkan SDK's vulkan_format_traits.hpp offers more detailed information.
+//Vulkan SDK's vk_format_utils.h offers more detailed information.
 struct formatInfo {
     enum rawDataType :uint8_t {
         other,

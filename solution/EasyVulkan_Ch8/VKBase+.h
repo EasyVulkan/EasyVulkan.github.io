@@ -539,6 +539,93 @@ namespace vulkan {
 		}
 	};
 
+	//Attachment
+	class attachment {
+	protected:
+		imageView imageView;
+		imageMemory imageMemory;
+		//--------------------
+		attachment() = default;
+	public:
+		//Getter
+		VkImageView ImageView() const { return imageView; }
+		VkImage Image() const { return imageMemory.Image(); }
+		const VkImageView* AddressOfImageView() const { return imageView.Address(); }
+		const VkImage* AddressOfImage() const { return imageMemory.AddressOfImage(); }
+		//Const Function
+		VkDescriptorImageInfo DescriptorImageInfo(VkSampler sampler) const {
+			return { sampler, imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+		}
+	};
+
+	class colorAttachment :public attachment {
+	public:
+		colorAttachment() = default;
+		colorAttachment(VkFormat format, VkExtent2D extent, uint32_t layerCount = 1, VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT, VkImageUsageFlags otherUsages = 0) {
+			Create(format, extent, layerCount, sampleCount, otherUsages);
+		}
+		//Non-const Function
+		void Create(VkFormat format, VkExtent2D extent, uint32_t layerCount = 1, VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT, VkImageUsageFlags otherUsages = 0) {
+			VkImageCreateInfo imageCreateInfo = {
+				.imageType = VK_IMAGE_TYPE_2D,
+				.format = format,
+				.extent = { extent.width, extent.height, 1 },
+				.mipLevels = 1,
+				.arrayLayers = layerCount,
+				.samples = sampleCount,
+				.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | otherUsages
+			};
+			imageMemory.Create(
+				imageCreateInfo,
+				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | bool(otherUsages & VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT) * VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT);
+			imageView.Create(
+				imageMemory.Image(),
+				layerCount > 1 ? VK_IMAGE_VIEW_TYPE_2D_ARRAY : VK_IMAGE_VIEW_TYPE_2D,
+				format,
+				{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, layerCount });
+		}
+		//Static Function
+		static bool FormatAvailability(VkFormat format, bool supportBlending = true) {
+			return FormatProperties(format).optimalTilingFeatures & VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT << uint32_t(supportBlending);
+		}
+	};
+	class depthStencilAttachment :public attachment {
+	public:
+		depthStencilAttachment() = default;
+		depthStencilAttachment(VkFormat format, VkExtent2D extent, uint32_t layerCount = 1, VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT, VkImageUsageFlags otherUsages = 0, bool stencilOnly = false) {
+			Create(format, extent, layerCount, sampleCount, otherUsages, stencilOnly);
+		}
+		//Non-const Function
+		void Create(VkFormat format, VkExtent2D extent, uint32_t layerCount = 1, VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT, VkImageUsageFlags otherUsages = 0, bool stencilOnly = false) {
+			VkImageCreateInfo imageCreateInfo = {
+				.imageType = VK_IMAGE_TYPE_2D,
+				.format = format,
+				.extent = { extent.width, extent.height, 1 },
+				.mipLevels = 1,
+				.arrayLayers = layerCount,
+				.samples = sampleCount,
+				.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | otherUsages
+			};
+			imageMemory.Create(
+				imageCreateInfo,
+				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | bool(otherUsages & VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT) * VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT);
+			VkImageAspectFlags aspectMask = (!stencilOnly) * VK_IMAGE_ASPECT_DEPTH_BIT;
+			if (format > VK_FORMAT_S8_UINT)
+				aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
+			else if (format == VK_FORMAT_S8_UINT)
+				aspectMask = VK_IMAGE_ASPECT_STENCIL_BIT;
+			imageView.Create(
+				imageMemory.Image(),
+				layerCount > 1 ? VK_IMAGE_VIEW_TYPE_2D_ARRAY : VK_IMAGE_VIEW_TYPE_2D,
+				format,
+				{ aspectMask, 0, 1, 0, layerCount });
+		}
+		//Static Function
+		static bool FormatAvailability(VkFormat format) {
+			return FormatProperties(format).optimalTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT;
+		}
+	};
+
 	//Texture
 	struct imageOperation {
 		struct imageMemoryBarrierParameterPack {

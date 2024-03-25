@@ -1,5 +1,4 @@
 #include "VKBase.h"
-#include "Input.h"
 #include <windows.h>
 #include <vulkan/vulkan_win32.h>
 #pragma comment(lib, "vulkan-1.lib")
@@ -107,51 +106,10 @@ public:
 //Defalut Variable
 window mainWindow;
 DWORD style_windowed;
-/*Input Related*/
-namespace {
-	input::mouseButton lastButton;
-	bool buttonStates[input::_mouseButtonCount];
-	int16_t scroll = 0;
-}
-input::mouseManager mouse([](input::mouseButton button) { return buttonStates[button - 1]; });
-input::keyManager keys([](uint16_t keyCode) { return bool(GetAsyncKeyState(keyCode)); });
 /*Changeable*/
-const wchar_t* windowTitle = L"Chime";
+const wchar_t* windowTitle = L"EasyVK";
 
 //Function
-LRESULT HandleMessage(HWND hWindow, UINT message, WPARAM wParam, LPARAM lParam) {
-	auto ButtonIsClicked = [](HWND hWindow, input::mouseButton button) {
-		buttonStates[button - 1] = true;
-		lastButton = button;
-		SetCapture(hWindow);
-	};
-	auto ButtonIsReleased = [](input::mouseButton button) {
-		buttonStates[button - 1] = false;
-		lastButton = input::none;
-		if (!std::accumulate(buttonStates, buttonStates + input::_mouseButtonCount, 0))
-			ReleaseCapture();
-	};
-	switch (message) {
-	case WM_ACTIVATE:
-		if (wParam != WA_INACTIVE) break;
-		std::fill(buttonStates, buttonStates + input::_mouseButtonCount, 0);
-		lastButton = input::none;
-		ReleaseCapture();
-		break;
-	case WM_LBUTTONDOWN: ButtonIsClicked(hWindow, input::lButton); break;
-	case WM_RBUTTONDOWN: ButtonIsClicked(hWindow, input::rButton); break;
-	case WM_MBUTTONDOWN: ButtonIsClicked(hWindow, input::mButton); break;
-	case WM_LBUTTONUP: ButtonIsReleased(input::lButton); break;
-	case WM_RBUTTONUP: ButtonIsReleased(input::rButton); break;
-	case WM_MBUTTONUP: ButtonIsReleased(input::mButton); break;
-	case WM_MOUSEWHEEL: scroll = short(HIWORD(wParam)) / WHEEL_DELTA; break;
-	case WM_KEYUP:
-		if (wParam != VK_ESCAPE) break;
-		PostMessage(hWindow, WM_CLOSE, 0, 0);
-		return 0;
-	}
-	return DefWindowProc(hWindow, message, wParam, lParam);
-}
 auto PreInitialization_EnableSrgb() {
 	static bool enableSrgb;//Static object will be zero-initialized at launch
 	enableSrgb = true;
@@ -180,7 +138,6 @@ bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable
 		outStream << std::format("[ InitializeWindow ] ERROR\nFailed to create a win32 window!\n");
 		return false;
 	}
-	mainWindow.FHandleMessage(HandleMessage);
 	//Add extensions
 	graphicsBase::Base().AddInstanceExtension(VK_KHR_SURFACE_EXTENSION_NAME);
 	graphicsBase::Base().AddInstanceExtension(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
@@ -272,21 +229,4 @@ void TitleFps() {
 		time0 = time1;
 		dframe = 0;
 	}
-}
-/*Call this function manually in every rendering loop*/
-void UpdateInputs() {
-	//Cursor position
-	//HandleMessage(...) receives WM_MOUSEMOVE conditionally if the mouse is out of window.
-	//Following code retrieves cursor position no matter if the window captures the mouse or not.
-	POINT cursorPosition;
-	GetCursorPos(&cursorPosition);
-	ScreenToClient(mainWindow.HWindow(), &cursorPosition);
-	mouse.Position(int16_t(cursorPosition.x), int16_t(cursorPosition.y));
-	//Button states
-	mouse.UpdateAllButtonStates();
-	//Scroll delta
-	mouse.ScrollY(scroll);
-	scroll = 0;
-	//Key states
-	keys.UpdateAllKeyStates();
 }

@@ -126,6 +126,10 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">第八章 简单示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
+</ul>
 
         </div>
       </div>
@@ -471,8 +475,12 @@ file.<span class="fn">close</span>();
 <h2>标准化设备坐标系<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
 <p>
     编写Vulkan用的GLSL着色器时，首先需要注意的是其NDC（标准化设备坐标系，normalized device coordinates）。
-    <br>
-    场景中的顶点数据，经过投影矩阵变换后，被转换到NDC坐标系内，NDC坐标落在屏幕范围及容许的深度范围内的顶点会被显示。
+</p>
+<p>
+    相机参考系中的三维坐标加上齐次坐标w，经投影矩阵变换后，三维坐标被转换到剪裁空间（clip space）内的坐标，w分量也一并变化。将该四维矢量输出到gl_Position后，在栅格化阶段，该四维矢量的xyz三个分量被除以w分量，由此得到的三维矢量即是NDC坐标（二维渲染中gl_Position.w应总是指定为1，那么gl_Position.xyz的数值就等同于NDC坐标）。
+</p>
+<p>
+    最终片段在图像中的具体坐标及深度值，是根据创建管线时指定的视口（viewport），将NDC坐标映射到屏幕空间（screen space）后得到的。
 </p>
 <p>
     对比Vulkan与OpenGL的NDC：
@@ -492,7 +500,7 @@ file.<span class="fn">close</span>();
     </thead>
     <tbody>
         <tr class="row-even">
-            <td><p>会被显示的x坐标的范围</p></td>
+            <td><p>可被渲染的x坐标的范围</p></td>
             <td><p>[-1, 1]</p></td>
             <td><p>[-1, 1]</p></td>
         </tr>
@@ -502,7 +510,7 @@ file.<span class="fn">close</span>();
             <td><p>向右</p></td>
         </tr>
         <tr class="row-even">
-            <td><p>会被显示的y坐标的范围</p></td>
+            <td><p>可被渲染的y坐标的范围</p></td>
             <td><p>[-1, 1]</p></td>
             <td><p>[-1, 1]</p></td>
         </tr>
@@ -512,7 +520,7 @@ file.<span class="fn">close</span>();
             <td><p>向上</p></td>
         </tr>
         <tr class="row-even">
-            <td><p>会被显示的z坐标的范围</p></td>
+            <td><p>可被渲染的z坐标的范围</p></td>
             <td><p>[ 0, 1]</p></td>
             <td><p>[-1, 1]</p></td>
         </tr>
@@ -526,17 +534,12 @@ file.<span class="fn">close</span>();
 <ul>
     <li>
         <p>
-            xy平面的原点在屏幕中间，可以显示的xy平面的范围对应整个显示区域。
-        </p>
-    </li>
-    <li>
-        <p>
             +z方向无关紧要，远近的定义取决于如何进行深度测试。
         </p>
     </li>
 </ul>
 <p>
-    之前在<a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html#id1">Ch1-1 创建GLFW窗口</a>中已经定义了<span class="mcr">GLM_FORCE_DEPTH_ZERO_TO_ONE</span>来指定深度范围为[ 0, 1]。由于GLM生成的投影矩阵适用于OpenGL，对于Vulkan程序还需要解决+y方向问题，通过以下函数对投影矩阵略作修改即可：
+    之前在<a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html#id1">Ch1-1 创建GLFW窗口</a>中已经定义了<span class="mcr">GLM_FORCE_DEPTH_ZERO_TO_ONE</span>来指定深度范围为[ 0, 1]。GLM生成的投影矩阵适用于OpenGL，但对于Vulkan程序还需要解决+y方向问题，通过以下函数对投影矩阵略作修改即可：
 </p>
 <pre class="code">
 <span class="kw">inline</span> <span class="type">mat4</span> <span class="fn">FlipVertical</span>(<span class="kw">const</span> <span class="type">mat4</span>&amp; projection) {
@@ -936,8 +939,11 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
     <br>
     3.<span class="kw">noperspective</span>进行简单粗暴的线性插值，不考虑透视的影响。
     <br>
-    关于激发顶点，请自行参阅<a href="https://renderdoc.org/vkspec_chunked/chap21.html#drawing-line-lists">Vulkan官方标准中的图示</a>。
+    如果输出的gl_Position.w总是为1（通常为渲染平面图形时），<span class="kw">smooth</span>和<span class="kw">noperspective</span>的效果没有差别。
     <br>
+    关于激发顶点，请自行参阅<a href="https://renderdoc.org/vkspec_chunked/chap21.html#drawing-line-lists">Vulkan官方标准中的图示</a>。
+</p>
+<p>
     下图左侧为通过<span class="kw">noperspective</span>插值的uv坐标绘制的正方体的两个面，右侧则是通过<span class="kw">smooth</span>插值的uv坐标绘制：
 </p>
 <img alt="_images/ch4-1-1.png" src="_images/ch4-1-1.png"></section>
