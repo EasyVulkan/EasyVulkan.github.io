@@ -150,6 +150,11 @@
     3.书写着色器
     <br>
     4.在命令缓冲区中更新push constant并绘制
+</p>
+<p>
+    通过录制命令来更新push constant，更新的常量会被直接记录在命令缓冲区中。这也意味着，每次重新录制命令缓冲区时，都得包含相应的命令。
+    <br>
+    管线能使用的push constant常量的大小为128个字节。
 </p></section>
 <section id="id1">
 <h2>书写Push Constant所需数据<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
@@ -273,11 +278,23 @@ glm::<span class="type">vec2</span> pushConstants[] = {
 <ul>
     <li>
         <p>
-            如果各个<span class="type">VkPushConstantRange</span>有所重叠，更新重叠的部分时必须在stageFlags注明涉及到的所有阶段。
+            对于这样的流程：绑定管线A → 更新push_constant → 绘制 → 绑定管线B → 绘制
             <br>
-            个人实践发现，有阶段没注明的时候，验证层未必报错。而验证层是否报错跟渲染是否正确也没必然关系！英特尔的驱动对push constant的支持存在问题，TODO Ch8-1中有个例子。
+            若其中管线A和B的管线布局不同，只要创建管线布局时<span class="type">VkPipelineLayoutCreateInfo</span>::pPushConstantRanges中指定的各个范围相同，即两个管线布局具有完全相同的push constant范围，那么就可以不必在绑定管线B后更新同样的数据（<a href="https://renderdoc.org/vkspec_chunked/chap14.html#descriptorsets-compatibility">官方文档中关于管线布局兼容性的说明</a>）。
         </p>
     </li>
+    <li>
+        <p>
+            若各个阶段的push constant范围有所重叠，更新重叠的部分时必须在stageFlags注明涉及到的所有阶段。
+            <br>
+            （个人实践发现，即使没有这么做，验证层也未必报错。）
+        </p>
+    </li>
+    <li>
+        <p>
+            是否正确遵循上述两条，跟是否正确渲染没有必然联系！各厂家的驱动会有不同表现，<a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html#id8">Ch8-1 离屏渲染</a>中有个例子。
+        </p>
+    </i>
 </ul>
 <p>
     在<span class="fn">vkCmdDraw</span>(...)前加入以下代码：

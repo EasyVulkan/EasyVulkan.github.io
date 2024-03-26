@@ -161,7 +161,7 @@
     <p>
         前两章是Step By Step入门教程，很长，初学者请耐心看完。
         <br>
-        然后直接阅读第六、七章（建议先七后六），按要求阅读三四五章。
+        然后直接阅读Ch6和Ch7（建议先七后六），按要求阅读Ch3~5。
     </p>
     <div class="toctree-wrapper compound">
         <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
@@ -226,33 +226,60 @@
         </ul>
         <p class="caption" role="heading"><span class="caption-text">第八章 简单示例</span></p>
         <ul>
-            <li class="toctree-l1">Ch8-1 离屏渲染</li>
-            <li class="toctree-l1">Ch8-2 多重采样与超采样</li>
-            <li class="toctree-l1">Ch8-3 深度与模板测试</li>
-            <li class="toctree-l1">Ch8-4 延迟渲染</li>
-            <li class="toctree-l1">Ch8-5 HDR与sRGB色彩空间</li>
-            <li class="toctree-l1">Ch8-6 预乘透明度</li>
+            <li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染（未完成）</a></li>
+            <li class="toctree-l1">Ch8-2 深度测试和深度可视化</li>
+            <li class="toctree-l1">Ch8-3 输入附件示例：延迟渲染</li>
+            <li class="toctree-l1">Ch8-4 多重采样与超采样</li>
+            <li class="toctree-l1">Ch8-5 sRGB色彩校正与HDR</li>
+            <li class="toctree-l1">Ch8-6 混色和预乘透明度</li>
             <li class="toctree-l1">Ch8-7 立方体贴图应用实例</li>
             <li class="toctree-l1">Ch8-8 曲面细分与置换贴图</li>
+            <li class="toctree-l1">Ch8-9 2D粒子效果</li>
         </ul>
     </div>
 </section>
 <section id="id4" style="width:616px; float:left;">
-<h2>更新履历<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<h2>关于转载和联系方式<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<p>
+    暂请不要转载原文，在写完前述各章节前可能会不断修改细节。
+    <br>
+    也不要fork成公有仓库。
+</p>
+<p>
+    联系请直接发issue，捉虫或答疑可<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/issues/7">至此</a>，不定期上Github。
+</p>
+<p>
+    欢迎以下形式的捉虫：
+    <br>
+    1.解释错误或代码逻辑错误
+    <br>
+    2.前言不搭后语
+    <br>
+    3.已完成页面上的内容缺失（突然冒出毫无解释的代码，那就是我漏写了）
+    <br>
+    4.妨碍理解的错别字、多字漏字
+</ol></section>
+<section id="id" style="width:616px; float:left;">
+<h2>更新履历<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
 <ul>
     <li>
         <p>
-            24.03.26 <a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Push%20Constant.html#id3">Ch7-4 初识Push Constant</a>中对<span class="type">vkCmdPushConstants</span>(...)的参数略加了些说明。
+            24.03.26 <a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a>写了一半。
         </p>
     </li>
     <li>
         <p>
-            24.03.26 修正笔误：贴图坐标的第三个分量是叫做s分量，先前没多想写了w（位置坐标xyz后的第四个分量被记为w，因而贴图坐标的uv后面就不能叫w了）。
+            24.03.26 <a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Push%20Constant.html#id3">Ch7-4 初识Push Constant</a>中对<span class="type">vkCmdPushConstants</span>(...)的参数增加了些说明。
         </p>
     </li>
     <li>
         <p>
-            24.03.26 在<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id4">Ch4-1</a>中，修正对NDC坐标系的说明（原先写了“投影变换后得到NDC坐标”，投影变换后的是剪裁空间坐标）+简述了NDC坐标系与剪裁空间和屏幕空间的关系。
+            24.03.26 修正笔误：贴图坐标的第三个分量是叫做s分量，先前没多想写了w。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.03.26 在<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id4">Ch4-1</a>中，修正对NDC坐标系的说明（原先写了“投影变换后得到NDC坐标”，三维渲染中投影变换后的是剪裁空间坐标）+简述了NDC坐标系与剪裁空间和屏幕空间的关系。
         </p>
     </li>
 <br>
@@ -425,48 +452,6 @@
         </p>
     </li>
 </ul></section>
-<section id="id5" style="width:616px; float:left;">
-<h2>关于转载和联系方式<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
-<p>
-    暂请不要转载原文，在写完前述各章节前可能会不断修改细节。
-    <br>
-    也不要fork成公有仓库。
-</p>
-<p>
-    联系方式：
-<p>
-<ul>
-    <li>
-        <p>
-            直接发Issue：捉虫或答疑可<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/issues/7">至此</a>，不定期上Github。
-        </p>
-    </li>
-</ul>
-<p>
-    欢迎以下形式的捉虫：
-</p>
-<ol>
-    <li>
-        <p>
-            解释错误或代码逻辑错误
-        </p>
-    </li>
-    <li>
-        <p>
-            前言不搭后语
-        </p>
-    </li>
-    <li>
-        <p>
-            已完成页面上的内容缺失（突然冒出毫无解释的代码，那就是我漏写了）
-        </p>
-    </li>
-    <li>
-        <p>
-            妨碍理解的错别字、多字漏字
-        </p>
-    </li>
-</ol></section>
 </section>
 
 

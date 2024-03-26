@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ch8-1 离屏渲染（未完成） &mdash; EasyVulkan</title>
+  <title>Ch8-1 离屏渲染 &mdash; EasyVulkan</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/theme.css" type="text/css" />
@@ -102,7 +102,11 @@
 <li class="toctree-l2"><a class="reference internal" href="#id3">创建渲染通道和帧缓冲</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id4">来画线吧！</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id5">创建管线</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id6">录制渲染命令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">清空画布</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">录制渲染命令</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id8">关于硬件差异的提醒</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -121,7 +125,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Ch8-1 离屏渲染（未完成）</li>
+      <li>Ch8-1 离屏渲染</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -131,7 +135,10 @@
            <div itemprop="articleBody">
              
   <section id="ch8-1">
-<h1>Ch8-1 离屏渲染（未完成）<a class="headerlink" href="#ch8-1" title="Permalink to this heading"></a></h1>
+<h1>Ch8-1 离屏渲染<a class="headerlink" href="#ch8-1" title="Permalink to this heading"></a></h1>
+<p>
+    本节的<span class="path">main.cpp</span>对应示例代码中的：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch8/Ch8-1.hpp">Ch8-1.hpp</a>
+</p>
 <p>
     我们先前是始终是将内容直接渲染到屏幕，即交换链图像的。
     <br>
@@ -142,6 +149,8 @@
     2.可以将渲染结果用作程序运行过程中长期使用的贴图
     <br>
     3.程序可能没有交换链（比如只用来生成图像并保存到文件的控制台程序）
+    <br>
+    4.需要绘制的内容被保留到后续（当前帧交换链图像的内容当然也可以保留到下一帧，但是因为交换链图像有复数张，处理起来比较麻烦）
 </p><section id="id1">
 <h2>离屏渲染的流程<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
 <p>
@@ -407,7 +416,7 @@
 <p>
     先填写附件描述。
     <br>
-    因为是画布，每次读取时不清屏，且要保留先前的内容，所以loadOp为<span class="enum">VK_ATTACHMENT_LOAD_OP_LOAD</span>，storeOp为<span class="type">VK_ATTACHMENT_STORE_OP_STORE</span>。
+    因为是画布，每次读取时不清屏，且要保留先前的内容，所以loadOp为<span class="enum">VK_ATTACHMENT_LOAD_OP_LOAD</span>，storeOp为<span class="enum">VK_ATTACHMENT_STORE_OP_STORE</span>。
     <br>
     在我们这次的应用场景中，图像附件是“渲染→被采样→渲染→被采样”如此循环，所以前后内存布局都用<span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>即可。
 </p>
@@ -457,24 +466,24 @@
     子通道依赖是子通道开始和结束时各一个，先看代码：
 </p>
 <pre class="code">
-    <span class="type">VkSubpassDependency</span> subpassDependencies[2] = {
-        {
-            .srcSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
-            .dstSubpass = 0,
-            .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>,
-            .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
-            .srcAccessMask = 0,
-            .dstAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
-            .dependencyFlags = <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span> },
-        {
-            .srcSubpass = 0,
-            .dstSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
-            .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
-            .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>,
-            .srcAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
-            .dstAccessMask = <span class="enum">VK_ACCESS_SHADER_READ_BIT</span>,
-            .dependencyFlags = <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span> }
-    };
+<span class="type">VkSubpassDependency</span> subpassDependencies[2] = {
+    {
+        .srcSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
+        .dstSubpass = 0,
+        .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>,
+        .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+        .srcAccessMask = 0,
+        .dstAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
+        .dependencyFlags = <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span> },
+    {
+        .srcSubpass = 0,
+        .dstSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
+        .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+        .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>,
+        .srcAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
+        .dstAccessMask = <span class="enum">VK_ACCESS_SHADER_READ_BIT</span>,
+        .dependencyFlags = <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span> }
+};
 </pre>
 <p>
     先来解说结束时的情况，结束时的子通道依赖可以说是每个参数都有恰如其分的作用。
@@ -486,7 +495,7 @@
 <p>
     渲染通道开始时的情况则与结束时相反即可。
     <br>
-    srcAccessMask指定<span class="enum">VK_ACCESS_SHADER_READ_BIT</span>这种读操作无意义所以为0，而srcStageMask指定为<span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>是多余的，因为有信号量来同步，填写<span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>即可（你问我为什么每次都不这么写？为了特地反复强调这件事！）。
+    srcAccessMask为0（指定<span class="enum">VK_ACCESS_SHADER_READ_BIT</span>这种读操作无意义），而srcStageMask指定为<span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>是多余的，因为有信号量来同步，填写<span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>即可（你问我为什么每次都不这么写？为了特地反复强调这件事！）。
 </p>
 <pre class="code">
     <span class="type">VkSubpassDependency</span> subpassDependencies[2] = {
@@ -562,15 +571,15 @@
         .pDependencies = subpassDependencies,
     };
 
-            <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
-                    .renderPass = rpwf_canvas.renderPass,
-                    .attachmentCount = 1,
-                    .pAttachments = ca_canvas.<span class="fn">AddressOfImageView</span>(),
-                    .width = canvasSize.width,
-                    .height = canvasSize.height,
-                    .layers = 1
-            };
-            rpwf_canvas.framebuffer.<span class="fn">Create</span>(framebufferCreateInfo);
+    <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
+        .renderPass = rpwf_canvas.renderPass,
+        .attachmentCount = 1,
+        .pAttachments = ca_canvas.<span class="fn">AddressOfImageView</span>(),
+        .width = canvasSize.width,
+        .height = canvasSize.height,
+        .layers = 1
+    };
+    rpwf_canvas.framebuffer.<span class="fn">Create</span>(framebufferCreateInfo);
 
     <span class="kw">return</span> rpwf_canvas;
 }
@@ -579,18 +588,20 @@
     这里顺便把图像附件的view写入描述符，在主函数中：
 </p>
 <pre class="code">
-    <span class="type">VkDescriptorPoolSize</span> descriptorPoolSizes[] = {
-            { <span class="enum">VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER</span>, 1 }
-    };
-    <span class="type">descriptorPool</span> descriptorPool(1, descriptorPoolSizes);
-    <span class="type">descriptorSet</span> descriptorSet_texture;
-    descriptorPool.<span class="fn">AllocateSets</span>(descriptorSet_texture, descriptorSetLayout_texture);
-    descriptorSet_texture.<span class="fn">Write</span>(easyVulkan::ca_canvas.<span class="fn">DescriptorImageInfo</span>(sampler), <span class="enum">VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER</span>);
+<span class="type">VkDescriptorPoolSize</span> descriptorPoolSizes[] = {
+    { <span class="enum">VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER</span>, 1 }
+};
+<span class="type">descriptorPool</span> descriptorPool(1, descriptorPoolSizes);
+<span class="type">descriptorSet</span> descriptorSet_texture;
+descriptorPool.<span class="fn">AllocateSets</span>(descriptorSet_texture, descriptorSetLayout_texture);
+descriptorSet_texture.<span class="fn">Write</span>(easyVulkan::ca_canvas.<span class="fn">DescriptorImageInfo</span>(sampler), <span class="enum">VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER</span>);
 </pre></section>
 <section id="id4">
 <h2>来画线吧！<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
 <p>
     我打算实现一个非常简单的绘画功能：追纵鼠标的位置，将鼠标在当前帧和上一帧的位置用线连起来。
+    <br>
+
 </p></section>
 <section id="id5">
 <h2>创建管线<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
@@ -598,10 +609,18 @@
 
 </p></section>
 <section id="id6">
-<h2>录制渲染命令<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
+<h2>清空画布<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
 <p>
 
 </p></section>
+<section id="id7">
+<h2>录制渲染命令<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h2>
+<p>
+</p><section id="id8">
+<h3>关于硬件差异的提醒<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<p>
+</p></section>
+</section>
 </section>
 
 
