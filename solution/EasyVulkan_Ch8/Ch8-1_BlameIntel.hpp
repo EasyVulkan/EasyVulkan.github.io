@@ -166,9 +166,24 @@ int main() {
 		//Screen
 		renderPass_screen.CmdBegin(commandBuffer, framebuffers_screen[i], { {}, windowSize }, VkClearValue{ .color = { 1.f, 1.f, 1.f, 1.f } });
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_screen);
-		glm::vec2 windowSize = { ::windowSize.width, ::windowSize.height };
-		vkCmdPushConstants(commandBuffer, pipelineLayout_screen, VK_SHADER_STAGE_VERTEX_BIT, 0, 8, &windowSize);
-		vkCmdPushConstants(commandBuffer, pipelineLayout_screen, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 8, 8, &pushConstants_offscreen.viewportSize);
+		//Explanation (in Chinese) of following if-else statement: https://easyvulkan.github.io/Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html#id8
+		if (graphicsBase::Base().PhysicalDeviceProperties().vendorID == 0x8086 &&//Blame Intel
+			graphicsBase::Base().PhysicalDeviceProperties().deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU) {
+			struct {
+				glm::vec2 viewportSize;
+				glm::vec2 canvasSize;
+			} pushConstants = {
+				{ windowSize.width, windowSize.height },
+				{ canvasSize.width, canvasSize.height }
+			};
+			vkCmdPushConstants(commandBuffer, pipelineLayout_screen, VK_SHADER_STAGE_VERTEX_BIT, 0, 16, &pushConstants);
+			vkCmdPushConstants(commandBuffer, pipelineLayout_screen, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 8, 8, &pushConstants.canvasSize);
+		}
+		else {
+			glm::vec2 windowSize = { ::windowSize.width, ::windowSize.height };
+			vkCmdPushConstants(commandBuffer, pipelineLayout_screen, VK_SHADER_STAGE_VERTEX_BIT, 0, 8, &windowSize);
+			vkCmdPushConstants(commandBuffer, pipelineLayout_screen, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 8, 8, &pushConstants_offscreen.viewportSize);
+		}
 		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout_screen, 0, 1, descriptorSet_texture.Address(), 0, nullptr);
 		vkCmdDraw(commandBuffer, 4, 1, 0, 0);
 		renderPass_screen.CmdEnd(commandBuffer);

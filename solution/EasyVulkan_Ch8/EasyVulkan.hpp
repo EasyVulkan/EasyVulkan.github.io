@@ -246,16 +246,13 @@ namespace easyVulkan {
 		//Call this function before rpwf_canvas.renderPass begins.
 		VkImageSubresourceRange imageSubresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
 		VkImageMemoryBarrier imageMemoryBarrier = {
-			VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-			nullptr,
-			0,
-			VK_ACCESS_TRANSFER_WRITE_BIT,
-			VK_IMAGE_LAYOUT_UNDEFINED,
-			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-			VK_QUEUE_FAMILY_IGNORED,
-			VK_QUEUE_FAMILY_IGNORED,
-			ca_canvas.Image(),
-			imageSubresourceRange
+			.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+			.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT,
+			.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+			.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+			.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+			.image = ca_canvas.Image(),
+			.subresourceRange = imageSubresourceRange
 		};
 		vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0,
 			0, nullptr, 0, nullptr, 1, &imageMemoryBarrier);
@@ -264,7 +261,7 @@ namespace easyVulkan {
 		imageMemoryBarrier.dstAccessMask = 0;
 		imageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
 		imageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0,
+		vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 0,
 			0, nullptr, 0, nullptr, 1, &imageMemoryBarrier);
 	}
 }

@@ -23,6 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ch8-1.hpp" />
+    <ClInclude Include="Ch8-1_BlameIntel.hpp" />
     <ClInclude Include="EasyVKStart.h" />
     <ClInclude Include="EasyVulkan.hpp" />
     <ClInclude Include="GlfwGeneral.hpp" />

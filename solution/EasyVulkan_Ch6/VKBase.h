@@ -661,10 +661,6 @@ namespace vulkan {
 				outStream << std::format("[ graphicsBase ] ERROR\nFailed to create a logical device!\nError code: {}\n", int32_t(result));
 				return result;
 			}
-			if (VkResult result = vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &device)) {
-				outStream << std::format("[ graphicsBase ] ERROR\nFailed to create a vulkan logical device!\nError code: {}\n", int32_t(result));
-				return result;
-			}
 			if (queueFamilyIndex_graphics != VK_QUEUE_FAMILY_IGNORED)
 				vkGetDeviceQueue(device, queueFamilyIndex_graphics, 0, &queue_graphics);
 			if (queueFamilyIndex_presentation != VK_QUEUE_FAMILY_IGNORED)

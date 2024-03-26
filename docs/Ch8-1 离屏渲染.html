@@ -99,14 +99,15 @@
 <li class="toctree-l2"><a class="reference internal" href="#id1">离屏渲染的流程</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id2">图像附件</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#createrpwf-canvas">CreateRpwf_Canvas</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">创建渲染通道和帧缓冲</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">来画线吧！</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">创建管线</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id6">清空画布</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id7">录制渲染命令</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id8">关于硬件差异的提醒</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">来画线吧！</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">画线的着色器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">采样画布的着色器</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">创建管线</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">清空画布</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">录制渲染命令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">写这节时遭遇的硬件差异问题</a></li>
 </ul>
 </li>
 </ul>
@@ -154,7 +155,7 @@
 </p><section id="id1">
 <h2>离屏渲染的流程<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
 <p>
-    进行离屏渲染并将结果采样到屏幕的步骤如下：
+    在你已经写过了Ch7代码的基础上，进行离屏渲染并将结果采样到屏幕的步骤如下：
     <br>
     1.创建图像附件
     <br>
@@ -168,7 +169,7 @@
     <br>
     6.渲染到离屏缓冲
     <br>
-    7.采样贴图，渲染到交换链
+    7.采样贴图，渲染到交换链图像
 </p>
 <p>
     我打算让上述的最后两步“离屏渲染”和“渲染到屏幕”发生在一个命令缓冲区中，中间不使用信号量或栅栏等同步对象。
@@ -364,7 +365,7 @@
 <section id="createrpwf-canvas">
 <h2>CreateRpwf_Canvas<a class="headerlink" href="#createrpwf-canvas" title="Permalink to this heading"></a></h2>
 <p>
-    于是，向<span class="path">EasyVulkan.hpp</span>，easyVulkan命名空间中，定义<span class="type">renderPassWithFramebuffer</span>结构体和函数<span class="fn">CreateRpwf_Canvas</span>(...)，函数之前写过类似的，用处不言自明。至于所谓canvas，顾名思义，我打算将这次创建的图像附件用作画布，实现一个超简陋的画画功能，画布大小从<span class="fn">CreateRpwf_Canvas</span>(...)的参数传入：
+    于是，向<span class="path">EasyVulkan.hpp</span>，easyVulkan命名空间中，定义<span class="type">renderPassWithFramebuffer</span>结构体，及用来创建渲染通道和帧缓冲的函数<span class="fn">CreateRpwf_Canvas</span>(...)：
 </p>
 <pre class="code">
 <span class="kw">namespace</span> easyVulkan {
@@ -372,7 +373,7 @@
         <span class="type">renderPass</span> renderPass;
         <span class="type">framebuffer</span> framebuffer;
     };
-    <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> canvasSize = windowSize) {
+    <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> canvasSize) {
         <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf_canvas;
         <span class="mcr">ExecuteOnce</span>(rpwf_canvas);<span class="cmt">//防止重复执行</span>
 
@@ -383,7 +384,10 @@
 }
 </pre>
 <p>
-    在easyVulkan命名空间中定义一个<span class="type">colorAttachment</span>对象，然后在函数中创建图像附件，格式就跟交换链一样吧（毕竟肯定支持，都不用检查）：
+    所谓canvas，顾名思义，我打算将这次创建的图像附件用作画布，实现一个超简陋的画画功能，画布大小从<span class="fn">CreateRpwf_Canvas</span>(...)的参数传入。
+</p>
+<p>
+    在easyVulkan命名空间中定义一个<span class="type">colorAttachment</span>对象，然后在<span class="fn">CreateRpwf_Canvas</span>(...)中创建图像附件，格式就跟交换链一样吧：
 </p>
 <pre class="code">
 <span class="kw">namespace</span> easyVulkan {
@@ -391,11 +395,14 @@
         <span class="type">renderPass</span> renderPass;
         <span class="type">framebuffer</span> framebuffer;
     };
-    <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> canvasSize = windowSize) {
-        <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf_canvas;
-        <span class="mcr">ExecuteOnce</span>(rpwf_canvas);<span class="cmt">//防止重复执行</span>
 
-        <span class="type">colorAttachment</span> attachment(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat, canvasSize, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+    <span class="type">colorAttachment</span> ca_canvas;
+
+    <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> canvasSize) {
+        <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf_canvas;
+        <span class="mcr">ExecuteOnce</span>(rpwf_canvas);
+
+        ca_canvas.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat, canvasSize, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
             <span class="enum">VK_IMAGE_USAGE_SAMPLED_BIT</span> | <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>);
 
         <span class="cmt">/*待后续填充*/</span>
@@ -410,22 +417,20 @@
             将离屏渲染的图像附件用作画布的话，渲染通道开始时当然不会清屏，那么图像用途中应包含<span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>，以使用<a href="https://renderdoc.org/vkspec_chunked/chap19.html#vkCmdClearColorImage">vkCmdClearColorImage</a>(...)清屏。
         </p>
     </li>
-</ul></section>
-<section id="id3">
-<h2>创建渲染通道和帧缓冲<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+</ul>
 <p>
-    先填写附件描述。
+    来创建渲染通道，先填写附件描述。
     <br>
     因为是画布，每次读取时不清屏，且要保留先前的内容，所以loadOp为<span class="enum">VK_ATTACHMENT_LOAD_OP_LOAD</span>，storeOp为<span class="enum">VK_ATTACHMENT_STORE_OP_STORE</span>。
     <br>
-    在我们这次的应用场景中，图像附件是“渲染→被采样→渲染→被采样”如此循环，所以前后内存布局都用<span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>即可。
+    这次的应用场景中，图像附件是“渲染→被采样→渲染→被采样”如此循环，所以前后内存布局都用<span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>即可。
 </p>
 <pre class="code">
-<span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> canvasSize = windowSize) {
+<span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> canvasSize) {
     <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf_canvas;
-    <span class="mcr">ExecuteOnce</span>(rpwf_canvas);<span class="cmt">//防止重复执行</span>
+    <span class="mcr">ExecuteOnce</span>(rpwf_canvas);
 
-    <span class="type">colorAttachment</span> attachment(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat, canvasSize, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+    ca_canvas.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat, canvasSize, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
         <span class="enum">VK_IMAGE_USAGE_SAMPLED_BIT</span> | <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>);
 
     <span class="type">VkAttachmentDescription</span> attachmentDescription = {
@@ -523,9 +528,9 @@
 <pre class="code">
 <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> canvasSize = windowSize) {
     <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf_canvas;
-    <span class="mcr">ExecuteOnce</span>(rpwf_canvas);<span class="cmt">//防止重复执行</span>
+    <span class="mcr">ExecuteOnce</span>(rpwf_canvas);
 
-    <span class="type">colorAttachment</span> attachment(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat, canvasSize, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+    ca_canvas.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat, canvasSize, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
         <span class="enum">VK_IMAGE_USAGE_SAMPLED_BIT</span> | <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>);
 
     <span class="type">VkAttachmentDescription</span> attachmentDescription = {
@@ -583,44 +588,855 @@
 
     <span class="kw">return</span> rpwf_canvas;
 }
-</pre>
+</pre></section>
+<section id="id3">
+<h2>来画线吧！<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
 <p>
-    这里顺便把图像附件的view写入描述符，在主函数中：
+    我打算实现一个非常简单的绘画功能：追纵鼠标指针的位置，将鼠标指针在当前帧和上一帧的位置用红线连起来。
+    <br>
+    然后在“渲染到屏幕时”使用两两间隔相同的三个uv坐标，采用三次，使其显示为红绿蓝三色的线，并让颜色叠加在一起，效果如下：
+</p>
+<img alt="_images/ch8-1-1.png" src="_images/ch8-1-1.png">
+<p>
+    （我知道不怎么有趣，不过我不想写一些数学上解释起来很麻烦的）
+</p>
+<p>
+    为简化叙事，这节会全部使用push constant来向着色器提供数据，免去顶点/uniform等缓冲区。
+</p><section id="id4">
+<h3>画线的着色器<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<p>
+    用来画线的顶点着色器<span class="path">Line.vert.shader</span>：
+</p>
+<pre class="code"><span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(vertex)
+
+<span class="kw">layout</span>(push_constant) <span class="kw">uniform</span> pushConstants {
+    <span class="type">vec2</span> viewportSize;
+    <span class="type">vec2</span> offsets[2];
+};
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    gl_Position = <span class="type">vec4</span>(2 * offsets[gl_VertexIndex] / viewportSize - 1, 0, 1);
+}
+</pre>
+<ul>
+    这里<span class="var">viewportSize</span>是视口大小，将是等于画布大小。
+    <br>
+    <span class="var">offsets</span>是两个点相对于视口左上角的位置。
+</p>
+<p>
+    视口对应整个NDC坐标[-1, 1]的区间，对于屏幕上任意点的整数坐标pos（单位：像素），到其在视口中的NDC坐标的转换为：
+    <br>
+    <code>(pos - viewportSize的一半) / viewportSize的一半</code>， 即<code>2 * pos / viewportSize - 1</code>
+</p>
+<p>
+    片段着色器<span class="path">Line.frag.shader</span>（真是省事啊！）：
 </p>
 <pre class="code">
-<span class="type">VkDescriptorPoolSize</span> descriptorPoolSizes[] = {
-    { <span class="enum">VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER</span>, 1 }
-};
-<span class="type">descriptorPool</span> descriptorPool(1, descriptorPoolSizes);
-<span class="type">descriptorSet</span> descriptorSet_texture;
-descriptorPool.<span class="fn">AllocateSets</span>(descriptorSet_texture, descriptorSetLayout_texture);
-descriptorSet_texture.<span class="fn">Write</span>(easyVulkan::ca_canvas.<span class="fn">DescriptorImageInfo</span>(sampler), <span class="enum">VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER</span>);
+<span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(fragment)
+
+<span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec4</span> o_Color;
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    o_Color = <span class="type">vec4</span>(1, 0, 0, 1);
+}
+</pre>
+<p>
+    之后创建管线时的<span class="type">VkPushConstantRange</span>：
+</p>
+<pre class="code">
+<span class="type">VkPushConstantRange</span> pushConstantRange = { <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>, 0, 24 };
 </pre></section>
-<section id="id4">
-<h2>来画线吧！<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
-<p>
-    我打算实现一个非常简单的绘画功能：追纵鼠标的位置，将鼠标在当前帧和上一帧的位置用线连起来。
-    <br>
-
-</p></section>
 <section id="id5">
-<h2>创建管线<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<h3>采样画布的着色器<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
 <p>
+    <span class="path">CanvasToScreen.vert.shader</span>：
+</p>
+<pre class="code">
+<span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(vertex)
 
-</p></section>
-<section id="id6">
-<h2>清空画布<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
-<p>
+<span class="type">vec2</span> positions[4] = {
+    { 0, 0 },
+    { 0, 1 },
+    { 1, 0 },
+    { 1, 1 }
+};
 
-</p></section>
-<section id="id7">
-<h2>录制渲染命令<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h2>
+<span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec2</span> o_TexCoord;
+
+<span class="kw">layout</span>(push_constant) <span class="kw">uniform</span> pushConstants {
+    <span class="type">vec2</span> viewportSize;
+    <span class="type">vec2</span> canvasSize;
+};
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    o_TexCoord = positions[gl_VertexIndex];
+    gl_Position = <span class="type">vec4</span>(2 * positions[gl_VertexIndex] * canvasSize / viewportSize - 1, 0, 1);
+}
+</pre>
 <p>
-</p><section id="id8">
-<h3>关于硬件差异的提醒<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+    <span class="var">positions</span>是着色器里的变量，我没有用<span class="kw">const</span>修饰它，所以它是可修改的，修改只到影响本次（处理当前顶点的）着色器调用中的数值。
+    <br>
+    这里<span class="var">viewportSize</span>是视口大小，之后代码里“渲染到屏幕”的视口一如既往是交换链图像大小。
+    <br>
+    <span class="var">canvasSize</span>是画布大小，数值跟前面<span class="path">Line.vert.shader</span>中的<span class="var">viewportSize</span>一致。
+</p>
 <p>
-</p></section>
+    这个着色器的效果是贴着屏幕左上角渲染整张画布，因此四个顶点以像素为单位的位置是<code>positions[gl_VertexIndex] * canvasSize</code>，而贴图坐标非0即1。
+</p>
+<p>
+    <span class="path">CanvasToScreen.frag.shader</span>：
+</p>
+<pre class="code">
+<span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(fragment)
+
+<span class="kw">layout</span>(location = 0) <span class="kw">in</span> <span class="type">vec2</span> i_TexCoord;
+<span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec4</span> o_Color;
+<span class="kw">layout</span>(binding = 0) <span class="kw">uniform</span> <span class="type">sampler2D</span> u_Texture;
+
+<span class="kw">layout</span>(push_constant) <span class="kw">uniform</span> pushConstants {
+    <span class="kw">layout</span>(offset = 8)
+    <span class="type">vec2</span> canvasSize;
+};
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    o_Color = <span class="fn">texture</span>(u_Texture, i_TexCoord);
+    o_Color.g = <span class="fn">texture</span>(u_Texture, i_TexCoord + 8 / canvasSize).r;
+    o_Color.b = <span class="fn">texture</span>(u_Texture, i_TexCoord - 8 / canvasSize).r;
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            因为整张贴图大小是<span class="var">canvasSize</span>，<code>i_TexCoord + 8 / canvasSize</code>即从<span class="var">i_TexCoord</span>纵向横向都偏离8个像素的采样位置。
+        </p>
+    </li>
+    <li>
+        <p>
+            这是除了对语法进行说明的<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#push-constant">Ch4-1 着色器模组</a>外，本教程中第一次出现<code><span class="kw">layout</span>(offset = 距起始位置的字节数)</code>这个语法。
+            <br>
+            这个着色器不需要位于push constant开头8个字节的数据，如果你想把<span class="var">viewportSize</span>声明上去，那也没什么关系（注：下面的<span class="type">VkPushConstantRange</span>要相应变更）。
+        </p>
+    </li>
+</ul>
+<p>
+    之后创建管线时的<span class="type">VkPushConstantRange</span>：
+</p>
+<pre class="code">
+<span class="type">VkPushConstantRange</span> pushConstantRanges[2] = {
+    { <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>, 0, 16 },
+    { <span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>, 8, 8 }
+};
+</pre></section>
 </section>
+<section id="id6">
+<h2>创建管线<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
+<p>
+    跟管线相关的对象一共5个：
+</p>
+<pre class="code">
+<span class="pragma">#include</span> <span class="str">&quot;GlfwGeneral.hpp&quot;</span>
+<span class="pragma">#include</span> <span class="str">&quot;EasyVulkan.hpp&quot;</span>
+<span class="kw">using namespace</span> vulkan;
+
+<span class="cmt">//离屏，画线</span>
+<span class="type">pipelineLayout</span> pipelineLayout_line;
+<span class="type">pipeline</span> pipeline_line;
+<span class="cmt">//屏幕，采样贴图</span>
+<span class="type">descriptorSetLayout</span> descriptorSetLayout_texture;
+<span class="type">pipelineLayout</span> pipelineLayout_screen;
+<span class="type">pipeline</span> pipeline_screen;
+
+<span class="kw">const auto</span>&amp; <span class="fn">RenderPassAndFramebuffers_Screen</span>() {
+    <span class="kw">static const auto</span>&amp; rpwf = easyVulkan::<span class="fn">CreateRpwf_Screen</span>();
+    <span class="kw">return</span> rpwf;
+}
+<span class="kw">const auto</span>&amp; <span class="fn">RenderPassAndFramebuffer_Offscreen</span>(<span class="type">VkExtent2D</span> canvasSize) {
+    <span class="kw">static const auto</span>&amp; rpwf = easyVulkan::<span class="fn">CreateRpwf_Canvas</span>(canvasSize);
+    <span class="kw">return</span> rpwf;
+}
+<span class="kw">void</span> <span class="fn">CreateLayout</span>() {
+    <span class="cmt">/*待填充*/</span>
+}
+<span class="kw">void</span> <span class="fn">CreatePipeline</span>(<span class="type">VkExtent2D</span> canvasSize) {
+    <span class="cmt">/*待填充*/</span>
+}
+</pre>
+<p>
+    先创建“离屏”的管线布局，只有push constant范围：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">CreateLayout</span>() {
+    <span class="type">VkPushConstantRange</span> pushConstantRange_offscreen = { <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>, 0, 24 };
+    <span class="type">VkPipelineLayoutCreateInfo</span> pipelineLayoutCreateInfo = {
+        .pushConstantRangeCount = 1,
+        .pPushConstantRanges = &amp;pushConstantRange_offscreen,
+    };
+    pipelineLayout_line.<span class="fn">Create</span>(pipelineLayoutCreateInfo);
+    <span class="cmt">/*待填充*/</span>
+}
+</pre>
+<p>
+    创建<span class="var">descriptorSetLayout_texture</span>，同Ch7-7完全一样：
+</p>
+<pre class="code">
+<span class="type">VkDescriptorSetLayoutBinding</span> descriptorSetLayoutBinding_texture = {
+    .binding = 0,
+    .descriptorType = <span class="enum">VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER</span>,
+    .descriptorCount = 1,
+    .stageFlags = <span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>
+};
+<span class="type">VkDescriptorSetLayoutCreateInfo</span> descriptorSetLayoutCreateInfo_texture = {
+    .bindingCount = 1,
+    .pBindings = &amp;descriptorSetLayoutBinding_texturePosition
+};
+descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCreateInfo_texture);
+</pre>
+<p>
+    剩下也没什么好说的，完事：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">CreateLayout</span>() {
+    <span class="cmt">//离屏</span>
+    <span class="type">VkPushConstantRange</span> pushConstantRange_offscreen = { <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>, 0, 24 };
+    <span class="type">VkPipelineLayoutCreateInfo</span> pipelineLayoutCreateInfo = {
+        .pushConstantRangeCount = 1,
+        .pPushConstantRanges = &amp;pushConstantRange_offscreen,
+    };
+    pipelineLayout_line.<span class="fn">Create</span>(pipelineLayoutCreateInfo);
+    <span class="cmt">//屏幕</span>
+    <span class="type">VkDescriptorSetLayoutBinding</span> descriptorSetLayoutBinding_texture = { 0, <span class="enum">VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER</span>, 1, <span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span> };
+    <span class="type">VkDescriptorSetLayoutCreateInfo</span> descriptorSetLayoutCreateInfo_texture = {
+        .bindingCount = 1,
+        .pBindings = &amp;descriptorSetLayoutBinding_texturePosition
+    };
+    descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCreateInfo_texture);
+    <span class="type">VkPushConstantRange</span> pushConstantRanges_screen[] = {
+        { <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>, 0, 16 },
+        { <span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>, 8, 8 }
+    };
+    pipelineLayoutCreateInfo.pushConstantRangeCount = 2;
+    pipelineLayoutCreateInfo.pPushConstantRanges = pushConstantRanges_screen;
+    pipelineLayoutCreateInfo.setLayoutCount = 1;
+    pipelineLayoutCreateInfo.pSetLayouts = descriptorSetLayout_texture.<span class="fn">Address</span>();
+    pipelineLayout_screen.<span class="fn">Create</span>(pipelineLayoutCreateInfo);
+}
+</pre>
+<p>
+    创建画线的管线，代码不需要放进lambda，因为窗口大小改变时，画布大小不必跟着变。
+    <br>
+    相比先前画三角形时的不同在于绘制模式和指定了线宽：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">CreateLayout</span>() {
+    <span class="kw">static</span> <span class="type">shaderModule</span> vert_offscreen(<span class="str">"shader/Line.vert.spv"</span>);
+    <span class="kw">static</span> <span class="type">shaderModule</span> frag_offscreen(<span class="str">"shader/Line.frag.spv"</span>);
+    <span class="type">VkPipelineShaderStageCreateInfo</span> shaderStageCreateInfos_line[2] = {
+        vert_offscreen.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>),
+        frag_offscreen.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>)
+    };
+    <span class="type">graphicsPipelineCreateInfoPack</span> pipelineCiPack;
+    pipelineCiPack.createInfo.layout = pipelineLayout_line;
+    pipelineCiPack.createInfo.renderPass = <span class="fn">RenderPassAndFramebuffer_Offscreen</span>(canvasSize).renderPass;
+    pipelineCiPack.inputAssemblyStateCi.topology = <span class="enum">VK_PRIMITIVE_TOPOLOGY_LINE_LIST</span>;<span class="cmt">//绘制线</span>
+    pipelineCiPack.viewports.<span class="fn">emplace_back</span>(0.f, 0.f, <span class="kw">float</span>(canvasSize.width), <span class="kw">float</span>(canvasSize.height), 0.f, 1.f);
+    pipelineCiPack.scissors.<span class="fn">emplace_back</span>(<span class="type">VkOffset2D</span>{}, canvasSize);
+    pipelineCiPack.rasterizationStateCi.lineWidth = 1;                             <span class="cmt">//线宽</span>
+    pipelineCiPack.multisampleStateCi.rasterizationSamples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>;
+    pipelineCiPack.colorBlendAttachmentStates.<span class="fn">push_back</span>({ .colorWriteMask = 0b1111 });
+    pipelineCiPack.<span class="fn">UpdateAllArrays</span>();
+    pipelineCiPack.createInfo.stageCount = 2;
+    pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_line;
+    pipeline_line.<span class="fn">Create</span>(pipelineCiPack);
+    <span class="cmt">/*待填充*/</span>
+}
+</pre>
+<p>
+    渲染到屏幕的管线，跟Ch2中创建画三角形管线的代码之差别只有绘制模式（不算文件路劲和变量名的不同的话）：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">CreateLayout</span>() {
+    <span class="cmt">//离屏</span>
+    <span class="kw">static</span> <span class="type">shaderModule</span> vert_offscreen(<span class="str">"shader/Line.vert.spv"</span>);
+    <span class="kw">static</span> <span class="type">shaderModule</span> frag_offscreen(<span class="str">"shader/Line.frag.spv"</span>);
+    <span class="type">VkPipelineShaderStageCreateInfo</span> shaderStageCreateInfos_line[2] = {
+        vert_offscreen.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>),
+        frag_offscreen.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>)
+    };
+    <span class="type">graphicsPipelineCreateInfoPack</span> pipelineCiPack;
+    pipelineCiPack.createInfo.layout = pipelineLayout_line;
+    pipelineCiPack.createInfo.renderPass = <span class="fn">RenderPassAndFramebuffers_Screen</span>(canvasSize).renderPass;
+    pipelineCiPack.inputAssemblyStateCi.topology = <span class="enum">VK_PRIMITIVE_TOPOLOGY_LINE_LIST</span>;<span class="cmt">//绘制线</span>
+    pipelineCiPack.viewports.<span class="fn">emplace_back</span>(0.f, 0.f, <span class="kw">float</span>(canvasSize.width), <span class="kw">float</span>(canvasSize.height), 0.f, 1.f);
+    pipelineCiPack.scissors.<span class="fn">emplace_back</span>(<span class="type">VkOffset2D</span>{}, canvasSize);
+    pipelineCiPack.rasterizationStateCi.lineWidth = 1;                             <span class="cmt">//线宽</span>
+    pipelineCiPack.multisampleStateCi.rasterizationSamples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>;
+    pipelineCiPack.colorBlendAttachmentStates.<span class="fn">push_back</span>({ .colorWriteMask = 0b1111 });
+    pipelineCiPack.<span class="fn">UpdateAllArrays</span>();
+    pipelineCiPack.createInfo.stageCount = 2;
+    pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_line;
+    pipeline_line.<span class="fn">Create</span>(pipelineCiPack);
+    <span class="cmt">//屏幕</span>
+    <span class="kw">static</span> <span class="type">shaderModule</span> vert(<span class="str">&quot;shader/CanvasToScreen.vert.spv&quot;</span>);
+    <span class="kw">static</span> <span class="type">shaderModule</span> frag(<span class="str">&quot;shader/CanvasToScreen.frag.spv&quot;</span>);
+    <span class="kw">static</span> <span class="type">VkPipelineShaderStageCreateInfo</span> shaderStageCreateInfos_screen[2] = {
+        vert.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>),
+        frag.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>)
+    };
+    <span class="kw">auto</span> Create = [] {
+        <span class="type">graphicsPipelineCreateInfoPack</span> pipelineCiPack;
+        pipelineCiPack.createInfo.layout = pipelineLayout_screen;
+        pipelineCiPack.createInfo.renderPass = <span class="fn">RenderPassAndFramebuffers_Screen</span>().renderPass;
+        pipelineCiPack.inputAssemblyStateCi.topology = <span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP</span>;<span class="cmt">//绘制模式跟Ch7-7一样</span>
+        pipelineCiPack.viewports.<span class="fn">emplace_back</span>(0.f, 0.f, <span class="kw">float</span>(windowSize.width), <span class="kw">float</span>(windowSize.height), 0.f, 1.f);
+        pipelineCiPack.scissors.<span class="fn">emplace_back</span>(<span class="type">VkOffset2D</span>{}, windowSize);
+        pipelineCiPack.multisampleStateCi.rasterizationSamples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>;
+        pipelineCiPack.colorBlendAttachmentStates.<span class="fn">push_back</span>({ .colorWriteMask = 0b1111 });
+        pipelineCiPack.<span class="fn">UpdateAllArrays</span>();
+        pipelineCiPack.createInfo.stageCount = 2;
+        pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_screen;
+        pipeline_screen.<span class="fn">Create</span>(pipelineCiPack);
+    };
+    <span class="kw">auto</span> Destroy = [] {
+        pipeline_screen.<span class="fn">~pipeline</span>();
+    };
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>(Create);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroySwapchain</span>(Destroy);
+    Create();
+}
+</pre></section>
+<section id="id7">
+<h2>清空画布<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h2>
+<p>
+    在书写主函数前还有一步，需要写一个清空画布的函数。
+    <br>
+    不光是为了实现这个功能本身，刚才创建渲染通道时，图像附件的初始图像布局为<span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>，可是刚创建好的图像附件的布局为<span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>，内容也可能是一堆内存垃圾。
+</p>
+<p>
+    向<span class="path">EasyVulkan.hpp</span>，easyVulkan命名空间中，定义函数<span class="fn">CmdClearCanvas</span>(...)，用于清屏并转换图像布局：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">CmdClearCanvas</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkClearColorValue</span> clearColor) {
+    <span class="cmt">/*待填充*/</span>
+}
+</pre>
+<p>
+    要干的事情一共三件：清屏前的内存屏障、调用<span class="fn">vkCmdClearColorImage</span>(...)清屏、清屏后的内存屏障。
+</p>
+<p>
+    <span class="fn">vkCmdClearColorImage</span>(...)属于数据转移命令，清屏前的内存屏障要将图像内存布局从<span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>转到<span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span>待写：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">CmdClearCanvas</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkClearColorValue</span> clearColor) {
+    <span class="type">VkImageSubresourceRange</span> imageSubresourceRange = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, 1 };
+    <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
+        <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
+        <span class="kw">nullptr</span>,
+        0,
+        <span class="enum">VK_ACCESS_TRANSFER_WRITE_BIT</span>,
+        <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>,
+        <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span>,
+        <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
+        <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
+        ca_canvas.<span class="fn">Image</span>(),
+        imageSubresourceRange
+    };
+    <span class="fn">vkCmdPipelineBarrier</span>(commandBuffer, <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>, <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, 0,
+        0, <span class="kw">nullptr</span>, 0, <span class="kw">nullptr</span>, 1, &amp;imageMemoryBarrier);
+
+    <span class="cmt">/*待填充*/</span>
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            在渲染循环中第二次执行本函数时，图像的内存布局已经是<span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>了，但因为是清屏（不关心原有内容），清屏前的内存屏障中oldLayout永远都是<span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>即可。
+        </p>
+    </li>
+</ul>
+<p>
+    书写清屏后的内存屏障。
+    <br>
+    先前创建渲染通道时，指定了渲染通道开始时的图像内存布局为<span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>，清屏后内存布局就转到这个，不要转到<span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span>。
+    <br>
+    因为之后有子通道依赖，dstStageMask就算填写成晚于<span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>的阶段也没关系，内存布局转换具有隐式同步保证，这个屏障引发的转换一定先于渲染通道开始时的依赖：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">CmdClearCanvas</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkClearColorValue</span> clearColor) {
+    <span class="type">VkImageSubresourceRange</span> imageSubresourceRange = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, 1 };
+    <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
+        <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
+        <span class="kw">nullptr</span>,
+        0,
+        <span class="enum">VK_ACCESS_TRANSFER_WRITE_BIT</span>,
+        <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>,
+        <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span>,
+        <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
+        <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
+        ca_canvas.<span class="fn">Image</span>(),
+        imageSubresourceRange
+    };
+    <span class="fn">vkCmdPipelineBarrier</span>(commandBuffer, <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>, <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, 0,
+        0, <span class="kw">nullptr</span>, 0, <span class="kw">nullptr</span>, 1, &amp;imageMemoryBarrier);
+
+    <span class="cmt">/*调用命令清屏，待填充*/</span>
+
+    imageMemoryBarrier.srcAccessMask = <span class="enum">VK_ACCESS_TRANSFER_WRITE_BIT</span>;
+    imageMemoryBarrier.dstAccessMask = 0;
+    imageMemoryBarrier.oldLayout = <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span>;
+    imageMemoryBarrier.newLayout = <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>;
+    <span class="fn">vkCmdPipelineBarrier</span>(commandBuffer, <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>, 0,
+        0, <span class="kw">nullptr</span>, 0, <span class="kw">nullptr</span>, 1, &amp;imageMemoryBarrier);
+}
+</pre>
+<p>
+    正题：
+</p>
+</pre>
+    <table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap19.html#vkCmdClearColorImage">vkCmdClearColorImage</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandBuffer</span> commandBuffer</p></td>
+            <td><p>命令缓冲区的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkImage</span> image</p></td>
+            <td><p>图像的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkImageLayout</span> imageLayout</p></td>
+            <td><p>图像的内存布局</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkClearColorValue</span>* pColor</p></td>
+            <td><p>指向用于清屏的填充色</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> rangeCount</p></td>
+            <td><p>清空范围的个数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkImageSubresourceRange</span>* pRanges</td>
+            <td><p>指向<span class="type">VkImageSubresourceRange</span>的数组，用于指定清空范围</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            该函数只清空颜色图像，若要清空深度模板图像，使用<a href="https://renderdoc.org/vkspec_chunked/chap19.html#vkCmdClearDepthStencilImage">vkCmdClearDepthStencilImage</a>(...)。
+        </p>
+    </li>
+</ul>
+<p>
+    清空整张图，毫无难度地写完：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">CmdClearCanvas</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkClearColorValue</span> clearColor) {
+    <span class="type">VkImageSubresourceRange</span> imageSubresourceRange = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, 1 };
+    <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
+        <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
+        <span class="kw">nullptr</span>,
+        0,
+        <span class="enum">VK_ACCESS_TRANSFER_WRITE_BIT</span>,
+        <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>,
+        <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span>,
+        <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
+        <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>,
+        ca_canvas.<span class="fn">Image</span>(),
+        imageSubresourceRange
+    };
+
+    <span class="fn">vkCmdPipelineBarrier</span>(commandBuffer, <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>, <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, 0,
+        0, <span class="kw">nullptr</span>, 0, <span class="kw">nullptr</span>, 1, &amp;imageMemoryBarrier);
+
+    <span class="fn">vkCmdClearColorImage</span>(commandBuffer, ca_canvas.<span class="fn">Image</span>(), <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span>, &amp;clearColor, 1, &amp;imageSubresourceRange);
+    imageMemoryBarrier.srcAccessMask = <span class="enum">VK_ACCESS_TRANSFER_WRITE_BIT</span>;
+    imageMemoryBarrier.dstAccessMask = 0;
+    imageMemoryBarrier.oldLayout = <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span>;
+    imageMemoryBarrier.newLayout = <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>;
+    <span class="fn">vkCmdPipelineBarrier</span>(commandBuffer, <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>, 0,
+        0, <span class="kw">nullptr</span>, 0, <span class="kw">nullptr</span>, 1, &amp;imageMemoryBarrier);
+}
+</pre></section>
+<section id="id8">
+<h2>录制渲染命令<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h2>
+<p>
+    主函数框架如下，都是你见过的东西。
+    <br>
+    在里面定义画布大小<span class="var">canvas</span>，将图像附件的view写入描述符：
+</p>
+<pre class="code">
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
+        <span class="kw">return</span> -1;
+
+    <span class="cmt">//画布大小</span>;
+    <span class="type">VkExtent2D</span> canvasSize = windowSize;
+
+    <span class="kw">const auto</span>&amp; [renderPass_screen, framebuffers_screen] = <span class="fn">RenderPassAndFramebuffers_Screen</span>();
+    <span class="kw">const auto</span>&amp; [renderPass_offscreen, framebuffer_offscreen] = <span class="fn">RenderPassAndFramebuffer_Offscreen</span>();
+    <span class="fn">CreateLayout</span>();
+    <span class="fn">CreatePipeline</span>();
+
+    <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
+    <span class="type">semaphore</span> semaphore_imageIsAvailable;
+    <span class="type">semaphore</span> semaphore_renderingIsOver;
+
+    <span class="type">commandBuffer</span> commandBuffer;
+    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
+    commandPool.<span class="type">AllocateBuffers</span>(commandBuffer);
+
+    <span class="type">VkSamplerCreateInfo</span> samplerCreateInfo = <span class="type">texture</span>::<span class="sfn">SamplerCreateInfo</span>();
+    <span class="type">sampler</span> sampler(samplerCreateInfo);
+    <span class="type">VkDescriptorPoolSize</span> descriptorPoolSizes[] = {
+        { <span class="enum">VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER</span>, 1 }
+    };
+    <span class="type">descriptorPool descriptorPool</span> descriptorPool(1, descriptorPoolSizes);
+    <span class="type">descriptorSet</span> descriptorSet_texture;
+    descriptorPool.<span class="fn">AllocateSets</span>(descriptorSet_texture, descriptorSetLayout_texture);
+    <span class="cmt">//写入描述符</span>;
+    descriptorSet_texture.<span class="fn">Write</span>(easyVulkan::ca_canvas.<span class="fn">DescriptorImageInfo</span>(sampler), <span class="enum">VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER</span>);
+
+    <span class="cmt">/*待填充*/</span>
+
+    <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
+        <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
+            <span class="fn">glfwWaitEvents</span>();
+        <span class="fn">TitleFps</span>();
+
+        fence.<span class="fn">WaitAndReset</span>();
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+        <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
+        commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
+
+        <span class="cmt">/*待填充*/</span>
+
+        commandBuffer.<span class="fn">End</span>();
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
+
+        <span class="fn">glfwPollEvents</span>();
+
+        <span class="cmt">/*操作逻辑，待填充*/</span>
+    }
+    <span class="fn">TerminateWindow</span>();
+    <span class="kw">return</span> 0;
+}
+</pre>
+<p>
+    这里操作逻辑被我放到了<span class="fn">glfwPollEvents</span>()之后，嘛在循环里的话其实放哪儿都差不多，不过这里是有点讲究的。
+    <br>
+    我们首先将画布清空为全透明，因为不会每次都清屏，所以用一个初值为<span class="kw">true</span>的布尔值来指示是否清空：
+</p>
+<pre class="code">
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="cmt">/*...前略*/</span>
+
+    <span class="cmt">/*待填充*/</span>
+
+    <span class="cmt">/*新增*/</span><span class="kw">bool</span> clearCanvas = <span class="kw">true</span>;
+
+    <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
+        <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
+            <span class="fn">glfwWaitEvents</span>();
+        <span class="fn">TitleFps</span>();
+
+        fence.<span class="fn">WaitAndReset</span>();
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+        <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
+        commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
+
+        <span class="cmt">/*新增*/</span><span class="kw">if</span> (clearCanvas)
+        <span class="cmt">/*新增*/</span>    easyVulkan::<span class="fn">CmdClearCanvas</span>(commandBuffer, <span class="type">VkClearColorValue</span>{}),
+        <span class="cmt">/*新增*/</span>    clearCanvas = <span class="kw">false</span>;
+
+        <span class="cmt">/*待填充*/</span>
+
+        commandBuffer.<span class="fn">End</span>();
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
+
+        <span class="fn">glfwPollEvents</span>();
+
+        <span class="cmt">/*操作逻辑，待填充*/</span>
+    }
+    <span class="fn">TerminateWindow</span>();
+    <span class="kw">return</span> 0;
+}
+</pre>
+<p>
+    操作逻辑就简单点，按下左键就清空吧。
+    <br>
+    用<a href="https://www.glfw.org/docs/latest/group__input.html#gac1473feacb5996c01a7a5a33b5066704">glfwGetMouseButton</a>(...)获取鼠标按键状态，参数不言自明，到GLFW3.4为止只返回<span class="mcr">GLFW_PRESS</span>（按下，值为1）或<span class="mcr">GLFW_RELEASE</span>（没按下，值为0）两种：
+</p>
+<pre class="code">
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="cmt">/*...前略*/</span>
+
+    <span class="cmt">/*待填充*/</span>
+
+    <span class="kw">bool</span> clearCanvas = <span class="kw">true</span>;
+
+    <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
+        <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
+            <span class="fn">glfwWaitEvents</span>();
+        <span class="fn">TitleFps</span>();
+
+        fence.<span class="fn">WaitAndReset</span>();
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+        <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
+        commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
+
+        <span class="kw">if</span> (clearCanvas)
+            easyVulkan::<span class="fn">CmdClearCanvas</span>(commandBuffer, <span class="type">VkClearColorValue</span>{}),
+            clearCanvas = <span class="kw">false</span>;
+
+        <span class="cmt">/*待填充*/</span>
+
+        commandBuffer.<span class="fn">End</span>();
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
+
+        <span class="fn">glfwPollEvents</span>();
+
+        <span class="cmt">/*待后续填充*/</span>
+        <span class="cmt">/*新增*/</span>clearCanvas = <span class="fn">glfwGetMouseButton</a>(pWindow, <span class="mcr">GLFW_MOUSE_BUTTON_LEFT</span>)
+    }
+    <span class="fn">TerminateWindow</span>();
+    <span class="kw">return</span> 0;
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            所以操作逻辑放这个位置的原因也一目了然：防止<span class="var">clearCanvas</span>在首次清空画布前变成<span class="kw">false</span>。
+        </p>
+    </li>
+</ul>
+<p>
+    接着在渲染循环前准备“离屏渲染”用到的push constant数据。
+    <br>
+    用<a href="https://www.glfw.org/docs/latest/group__input.html#ga01d37b6c40133676b9cea60ca1d7c0cc">glfwGetCursorPos</a>(...)获取鼠标指针位置，参数不言自明，得到的是相对于屏幕左上角的坐标，将其结果用作传入着色器的两个点坐标的初始值：
+</p>
+<pre class="code">
+<span class="kw">double</span> mouseX, mouseY;
+<span class="fn">glfwGetCursorPos</span>(pWindow, &amp;mouseX, &amp;mouseY);
+<span class="kw">struct</span> {
+    glm::<span class="type">vec2</span> viewportSize;
+    glm::<span class="type">vec2</span> offsets[2];
+} pushConstants_offscreen = {
+    { canvasSize.width, canvasSize.height },
+    { { mouseX, mouseY }, { mouseX, mouseY } }
+};
+</pre>
+<p>
+    之后也要不断获取鼠标指针位置，考虑到我们只有两个点，用布尔值作为索引，交替赋值就行了：
+</p>
+<pre class="code">
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="cmt">/*...前略*/</span>
+
+    <span class="kw">double</span> mouseX, mouseY;
+    <span class="fn">glfwGetCursorPos</span>(pWindow, &amp;mouseX, &amp;mouseY);
+    <span class="kw">struct</span> {
+        glm::<span class="type">vec2</span> viewportSize;
+        glm::<span class="type">vec2</span> offsets[2];
+    } pushConstants_offscreen = {
+        { canvasSize.width, canvasSize.height },
+        { { mouseX, mouseY }, { mouseX, mouseY } }
+    };
+
+    <span class="kw">bool</span> clearCanvas = <span class="kw">true</span>;
+    <span class="cmt">/*新增*/</span><span class="kw">bool</span> index = 0;
+
+    <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
+        <span class="cmt">/*...前略*/</span>
+
+        <span class="fn">glfwPollEvents</span>();
+
+        <span class="cmt">/*新增*/</span><span class="fn">glfwGetCursorPos</span>(pWindow, &amp;mouseX, &amp;mouseY);
+        <span class="cmt">/*新增*/</span>pushConstants_offscreen.offsets[index = !index] = { mouseX, mouseY };
+        clearCanvas = <span class="fn">glfwGetMouseButton</a>(pWindow, <span class="mcr">GLFW_MOUSE_BUTTON_LEFT</span>)
+    }
+    <span class="fn">TerminateWindow</span>();
+    <span class="kw">return</span> 0;
+}
+</pre>
+<p>
+    操作逻辑到此写完，该写离屏部分的渲染代码了，一如既往：开始渲染通道、绑定管线、更新常量、绘制、结束渲染通道
+</p>
+<pre class="code">
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="cmt">/*...前略*/</span>
+
+    <span class="kw">double</span> mouseX, mouseY;
+    <span class="fn">glfwGetCursorPos</span>(pWindow, &amp;mouseX, &amp;mouseY);
+    <span class="kw">struct</span> {
+        glm::<span class="type">vec2</span> viewportSize;
+        glm::<span class="type">vec2</span> offsets[2];
+    } pushConstants_offscreen = {
+        { canvasSize.width, canvasSize.height },
+        { { mouseX, mouseY }, { mouseX, mouseY } }
+    };
+
+    <span class="kw">bool</span> clearCanvas = <span class="kw">true</span>;
+    <span class="kw">bool</span> index = 0;
+
+    <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
+        <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
+            <span class="fn">glfwWaitEvents</span>();
+        <span class="fn">TitleFps</span>();
+
+        fence.<span class="fn">WaitAndReset</span>();
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+        <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
+        commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
+
+        <span class="kw">if</span> (clearCanvas)
+            easyVulkan::<span class="fn">CmdClearCanvas</span>(commandBuffer, <span class="type">VkClearColorValue</span>{}),
+            clearCanvas = <span class="kw">false</span>;
+
+        <span class="cmt">//离屏</span>
+        renderPass_offscreen.<span class="fn">CmdBegin</span>(commandBuffer, framebuffer_offscreen, { {}, canvasSize });
+        <span class="fn">vkCmdBindPipeline</span>(commandBuffer, <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>, pipeline_line);
+        <span class="fn">vkCmdPushConstants</span>(commandBuffer, pipelineLayout_line, <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>, 0, 24, &amp;pushConstants_offscreen);
+        <span class="fn">vkCmdDraw</span>(commandBuffer, 2, 1, 0, 0);
+        renderPass_offscreen.<span class="fn">CmdEnd</span>(commandBuffer);
+
+        <span class="cmt">/*采样到屏幕，待填充*/</span>
+
+        commandBuffer.<span class="fn">End</span>();
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
+        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
+
+        <span class="fn">glfwPollEvents</span>();
+
+        <span class="fn">glfwGetCursorPos</span>(pWindow, &amp;mouseX, &amp;mouseY);
+        pushConstants_offscreen.offsets[index = !index] = { mouseX, mouseY };
+        clearCanvas = <span class="fn">glfwGetMouseButton</a>(pWindow, <span class="mcr">GLFW_MOUSE_BUTTON_LEFT</span>)
+    }
+    <span class="fn">TerminateWindow</span>();
+    <span class="kw">return</span> 0;
+}
+</pre>
+<p>
+    采样到屏幕：开始渲染通道、绑定管线、绑定描述符、更新常量、绘制、结束渲染通道
+</p>
+<pre class="code">
+renderPass_screen.<span class="fn">CmdBegin</span>(commandBuffer, framebuffers_screen[i], { {}, windowSize }, <span class="type">VkClearValue</span>{ .color = { 1.f, 1.f, 1.f, 1.f } });
+<span class="fn">vkCmdBindPipeline</span>(commandBuffer, <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>, pipeline_screen);
+
+<span class="cmt">//VkExtent2D底层是两个uint32_t，得转为float</span>
+glm::<span class="type">vec2</span> windowSize</span> = { ::windowSize.width, ::windowSize.height };
+<span class="fn">vkCmdPushConstants</span>(commandBuffer, pipelineLayout_screen, <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>, 0, 8, &amp;windowSize);
+<span class="cmt">//pushConstants_offscreen.viewportSize就是canvasSize转到vec2类型</span>
+<span class="fn">vkCmdPushConstants</span>(commandBuffer, pipelineLayout_screen, <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span> | <span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>, 8, 8, &amp;pushConstants_offscreen.viewportSize);
+
+<span class="fn">vkCmdBindDescriptorSets</span>(commandBuffer, <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>, pipelineLayout_screen, 0, 1, descriptorSet_texture.<span class="enum">Address</span>(), 0, <span class="enum">nullptr</span>);
+<span class="fn">vkCmdDraw</span>(commandBuffer, 4, 1, 0, 0);
+renderPass_screen.<span class="fn">CmdEnd</span>(commandBuffer);
+</pre>
+<p>
+    这里需要注意的是，不同着色器阶段使用的push constant范围重叠时：
+    <br>
+    更新重叠的部分时要注明涉及的全部着色器阶段，而如果某个范围不会被某个阶段使用，更新该范围时不能注明无关的阶段（将只有某个阶段使用的范围，和重叠的范围分开更新即可）。
+</p>
+<p>
+    下面这种写法不符合规范（验证层会报错，虽然运行未必出错）：
+</p>
+<pre class="code">
+<span class="kw">struct</span> {
+    glm::<span class="type">vec2</span> viewportSize;
+    glm::<span class="type">vec2</span> canvasSize;
+} pushConstants = {
+    { windowSize.width, windowSize.height },
+    { canvasSize.width, canvasSize.height }
+};
+<span class="fn">vkCmdPushConstants</span>(commandBuffer, pipelineLayout_screen, <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span> | <span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>, 0, 16, &amp;pushConstants);
+</pre>
+<p>
+    运行程序，效果已经在前面书写着色器处展示过了。
+</p>
+<p>
+    。。。你以为事情这么一来就结束了吗？（似曾相识的台词）
+</p></section>
+<section id="id9">
+<h2>写这节时遭遇的硬件差异问题<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h2>
+<p>
+    书写这节的示例代码的过程中我遇到了一个预料之外的问题。
+    <br>
+    上面这些代码，一点不改（你可以直接拿示例代码<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch8/Ch8-1.hpp">Ch8-1.hpp</a>跑跑看），如果你用Intel核显来跑（我的显卡型号在下图中），可能会有这种事：
+</p>
+<img alt="_images/ch8-1-2.png" src="_images/ch8-1-2.png">
+<ul>
+    <li>
+        <p>
+            这是个1280x720的窗口，周围白的也是窗口图像的一部分。
+        </p>
+    </li>
+</ul>
+<p>
+    简而言之：在“渲染到屏幕”时，没有正确更新push constant中的<span class="var">canvasSize</span>，在其位置上的数据似乎保留为了鼠标指针位置（<span class="path">Line.vert.shader</span>中的<span class="var">offset[0]</span>）。至于为什么连蓝色和绿色的线都消失了？。。。我也不知道！
+</p>
+<p>
+    这个情况只在上述代码中<span class="var">canvasSize</span>和交换链图像的大小<span class="var">windowSize</span>一样时发生。
+    <br>
+    笔者的怀疑是：英特尔驱动可能有某种方式判断更新的数据是否跟先前的一致，然后决定要不要将更新记录在命令缓冲区，但代码实现有错误。
+    <br>
+    （我这个解释很可能不对，我以往用Intel核显跑代码时还遇到过一些push constant相关的类似问题，似乎无法以此来简单解释）
+</p>
+<p>
+    仅仅就当前这个情况，在完全符合规范的范畴内的改法，最省事的是这样子的：
+</p>
+<pre class="code">
+<span class="kw">struct</span> {
+    glm::<span class="fn">vec2</span> viewportSize;
+    glm::<span class="fn">vec2</span> canvasSize;
+} pushConstants = {
+    { windowSize.width, windowSize.height },
+    { canvasSize.width, canvasSize.height }
+};
+<span class="fn">vkCmdPushConstants</span>(commandBuffer, pipelineLayout_screen, <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>, 0, 16, &amp;pushConstants);
+<span class="cmt">//对于我的两款显卡，有没有下面这行跑出来结果似都一样，但根据规范需要有</span>
+<span class="fn">vkCmdPushConstants</span>(commandBuffer, pipelineLayout_screen, <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span> | <span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>, 8, 8, &amp;pushConstants.canvasSize);
+</pre>
+<ul>
+    <li>
+        <p>
+            你问为什么这么改就好了？因为实验结果告诉我能行！。。。
+            <br>
+            这样本该理应是发生了重复更新的，而且这只是这个情况下的做法，我不知道管线阶段更多或者push constant重叠范围更复杂时会怎么样及该怎么办。
+        </p>
+    </li>
+</ul>
+<p>
+    也能这么解决：因为push constant的常量是记录在命令缓冲区中的，只要把“离屏渲染”和“渲染到屏幕”分别录制在不同的命令缓冲区中，前者的push constant就不可能影响到后者。
+    <br>
+    也能这么解决：不管某个值在某个阶段用不用得到，在所有着色器阶段中声明全部的push constant范围，然后总是一次性更新整个范围（做法是很保险，不过迄今为止我没这么解决过问题）。
+    <br>
+    还能这么解决：抛弃Vulkan，去用OpenGL！。。。
+</p>
+<p>
+    如果你遇到了类似的情况并且搞清楚了怎么回事的话，可以到<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/issues/7">Github issue</a>里告诉我。
+</p>
+<p>
+    类似的问题在18年有人向英特尔反应过：<a href="https://community.intel.com/t5/Graphics/Vulkan-Push-Constants-doesn-t-work-correctly-on-Windows-Intel/td-p/1176934">Vulkan Push Constants doesn't work correctly on Windows Intel GPU drivers</a>
+    <br>
+    （显然没有引起官方的重视）
+</p></section>
 </section>
 
 

@@ -2,7 +2,9 @@
 面向懒人的Vulkan中文教程<br>
 主页：https://easyvulkan.github.io/
 
-2024.03.23 完成[Ch6-2 动态渲染](https://easyvulkan.github.io/Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html)。
+留言请至:[Issue #7](https://github.com/EasyVulkan/EasyVulkan.github.io/issues/7)
+
+2024.03.27 完成[Ch8-1 离屏渲染](https://easyvulkan.github.io/Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html)。
 
 ##入门<br>
 [Ch1-0 准备工作](https://easyvulkan.github.io/Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html)<br>
@@ -23,3 +25,6 @@
 [Ch7-5 初识Uniform缓冲区](https://easyvulkan.github.io/Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html)<br>
 [Ch7-6 拷贝图像到屏幕](https://easyvulkan.github.io/Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html)<br>
 [Ch7-7 使用贴图](https://easyvulkan.github.io/Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html)
+
+##简单示例<br>
+[Ch8-1 离屏渲染](https://easyvulkan.github.io/Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html)

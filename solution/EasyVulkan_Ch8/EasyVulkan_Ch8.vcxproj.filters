@@ -25,6 +25,9 @@
     <ClInclude Include="Ch8-1.hpp">
       <Filter>EasyVK_HPP</Filter>
     </ClInclude>
+    <ClInclude Include="Ch8-1_BlameIntel.hpp">
+      <Filter>EasyVK_HPP</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="EasyVK_CPP">
