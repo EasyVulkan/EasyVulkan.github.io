@@ -6063,6 +6063,10 @@ span[id*=MathJax-Span] {
     font-weight: bold;
 }
 
+.par {
+    color: #808080;
+}
+
 .fn {
     color: #008080;
 }

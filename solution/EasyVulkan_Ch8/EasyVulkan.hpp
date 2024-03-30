@@ -206,7 +206,7 @@ namespace easyVulkan {
 			{
 				.srcSubpass = VK_SUBPASS_EXTERNAL,
 				.dstSubpass = 0,
-				//You may use VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT if synchronization is done by semaphore.
+				//You may use VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT if synchronization is done by fence.
 				.srcStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
 				.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
 				.srcAccessMask = 0,

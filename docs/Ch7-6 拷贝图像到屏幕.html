@@ -186,7 +186,7 @@
 <p>
     为了省去重复的代码，我打算将两种情形统一到同一个模板函数中，然后根据参数类型应用运行期分支。
     <br>
-    在<span class="path">VKBase+.h</span>中，vulkan命名空间中加入类<span class="type">texture</span>，并定义受保护静态成员函数<span class="sfn">LoadFile_Internal</span>：
+    在<span class="path">VKBase+.h</span>中，vulkan命名空间中加入类<span class="type">texture</span>，并定义受保护静态成员函数<span class="sfn">LoadFile_Internal</span>(...)：
 </p>
 <pre class="code">
 <span class="kw">class</span> <span class="type">texture</span> {

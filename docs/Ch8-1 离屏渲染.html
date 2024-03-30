@@ -344,7 +344,7 @@
 <ul>
     <li>
         <p>
-            这里<span class ="kw">if</span>-<span class="kw">else</span>分支的逻辑是：在仅有的几种深度模板格式当中，只有<span class="enum">VK_FORMAT_S8_UINT</span>是只存储模板值的，而大于<span class="enum">VK_FORMAT_S8_UINT</span>的深度模板格式同时具有深度和模板值。
+            这里<span class ="kw">if</span>-<span class="kw">else</span>分支的逻辑是：在仅有的几种<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html#id17">深度模板格式</a>当中，只有<span class="enum">VK_FORMAT_S8_UINT</span>是只存储模板值的，而大于<span class="enum">VK_FORMAT_S8_UINT</span>的深度模板格式同时具有深度和模板值。
         </p>
     </li>
     <li>
@@ -500,7 +500,7 @@
 <p>
     渲染通道开始时的情况则与结束时相反即可。
     <br>
-    srcAccessMask为0（指定<span class="enum">VK_ACCESS_SHADER_READ_BIT</span>这种读操作无意义），而srcStageMask指定为<span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>是多余的，因为有信号量来同步，填写<span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>即可（你问我为什么每次都不这么写？为了特地反复强调这件事！）。
+    srcAccessMask为0（指定<span class="enum">VK_ACCESS_SHADER_READ_BIT</span>这种读操作无意义），而srcStageMask指定为<span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>是多余的，因为有栅栏来同步，填写<span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>即可（你问我为什么每次都不这么写？为了特地反复强调这件事！）。
 </p>
 <pre class="code">
     <span class="type">VkSubpassDependency</span> subpassDependencies[2] = {
@@ -625,9 +625,7 @@
     <span class="var">offsets</span>是两个点相对于视口左上角的位置。
 </p>
 <p>
-    视口对应整个NDC坐标[-1, 1]的区间，对于屏幕上任意点的整数坐标pos（单位：像素），到其在视口中的NDC坐标的转换为：
-    <br>
-    <code>(pos - viewportSize的一半) / viewportSize的一半</code>， 即<code>2 * pos / viewportSize - 1</code>
+    视口对应整个NDC坐标[-1, 1]的区间，对于屏幕上任意点的像素单位坐标pos，到其在视口中NDC坐标范围[-1, 1]的转换为<code>(pos - viewportSize的一半) / viewportSize的一半</code>， 即<code>2 * pos / viewportSize - 1</code>
 </p>
 <p>
     片段着色器<span class="path">Line.frag.shader</span>（真是省事啊！）：
@@ -1147,7 +1145,7 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
 
     <span class="cmt">/*待填充*/</span>
 
-    <span class="cmt">/*新增*/</span><span class="kw">bool</span> clearCanvas = <span class="kw">true</span>;
+    <span class="kw">bool</span> clearCanvas = <span class="kw">true</span>;
 
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
@@ -1159,9 +1157,9 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
         <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
 
-        <span class="cmt">/*新增*/</span><span class="kw">if</span> (clearCanvas)
-        <span class="cmt">/*新增*/</span>    easyVulkan::<span class="fn">CmdClearCanvas</span>(commandBuffer, <span class="type">VkClearColorValue</span>{}),
-        <span class="cmt">/*新增*/</span>    clearCanvas = <span class="kw">false</span>;
+        <span class="kw">if</span> (clearCanvas)
+            easyVulkan::<span class="fn">CmdClearCanvas</span>(commandBuffer, <span class="type">VkClearColorValue</span>{}),
+            clearCanvas = <span class="kw">false</span>;
 
         <span class="cmt">/*待填充*/</span>
 
@@ -1213,7 +1211,7 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
         <span class="fn">glfwPollEvents</span>();
 
         <span class="cmt">/*待后续填充*/</span>
-        <span class="cmt">/*新增*/</span>clearCanvas = <span class="fn">glfwGetMouseButton</a>(pWindow, <span class="mcr">GLFW_MOUSE_BUTTON_LEFT</span>)
+        clearCanvas = <span class="fn">glfwGetMouseButton</a>(pWindow, <span class="mcr">GLFW_MOUSE_BUTTON_LEFT</span>)
     }
     <span class="fn">TerminateWindow</span>();
     <span class="kw">return</span> 0;
@@ -1410,7 +1408,7 @@ renderPass_screen.<span class="fn">CmdEnd</span>(commandBuffer);
     { canvasSize.width, canvasSize.height }
 };
 <span class="fn">vkCmdPushConstants</span>(commandBuffer, pipelineLayout_screen, <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>, 0, 16, &amp;pushConstants);
-<span class="cmt">//对于我的两款显卡，有没有下面这行跑出来结果似都一样，但根据规范需要有</span>
+<span class="cmt">//对于我的两款显卡，有没有下面这行跑出来结果似乎都一样，但根据规范需要有</span>
 <span class="fn">vkCmdPushConstants</span>(commandBuffer, pipelineLayout_screen, <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span> | <span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>, 8, 8, &amp;pushConstants.canvasSize);
 </pre>
 <ul>

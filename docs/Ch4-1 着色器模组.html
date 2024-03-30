@@ -477,7 +477,7 @@ file.<span class="fn">close</span>();
     编写Vulkan用的GLSL着色器时，首先需要注意的是其NDC（标准化设备坐标系，normalized device coordinates）。
 </p>
 <p>
-    相机参考系中的三维坐标加上齐次坐标w，经投影矩阵变换后，三维坐标被转换到剪裁空间（clip space）内的坐标，w分量也一并变化。将该四维矢量输出到gl_Position后，在栅格化阶段，该四维矢量的xyz三个分量被除以w分量，由此得到的三维矢量即是NDC坐标（二维渲染中gl_Position.w应总是指定为1，那么gl_Position.xyz的数值就等同于NDC坐标）。
+    相机参考系中的三维坐标加上齐次坐标w，经投影矩阵变换后，被转换到齐次剪裁空间（homogeneous clip space）坐标。将该四维矢量输出到gl_Position后，在栅格化阶段，该四维矢量的xyz三个分量被除以w分量，由此得到的三维矢量即是NDC坐标（二维渲染中gl_Position.w应总是指定为1，那么gl_Position.xyz的数值就等同于NDC坐标）。
 </p>
 <p>
     最终片段在图像中的具体坐标及深度值，是根据创建管线时指定的视口（viewport），将NDC坐标映射到屏幕空间（screen space）后得到的。
@@ -542,8 +542,8 @@ file.<span class="fn">close</span>();
     之前在<a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html#id1">Ch1-1 创建GLFW窗口</a>中已经定义了<span class="mcr">GLM_FORCE_DEPTH_ZERO_TO_ONE</span>来指定深度范围为[ 0, 1]。GLM生成的投影矩阵适用于OpenGL，但对于Vulkan程序还需要解决+y方向问题，通过以下函数对投影矩阵略作修改即可：
 </p>
 <pre class="code">
-<span class="kw">inline</span> <span class="type">mat4</span> <span class="fn">FlipVertical</span>(<span class="kw">const</span> <span class="type">mat4</span>&amp; projection) {
-    <span class="type">mat4</span> _projection = projection;
+<span class="kw">inline</span> glm::<span class="type">mat4</span> <span class="fn">FlipVertical</span>(<span class="kw">const</span> glm::<span class="type">mat4</span>&amp; projection) {
+    glm::<span class="type">mat4</span> _projection = projection;
     <span class="kw">for</span> (<span class="type">uint32_t</span> i = 0; i &lt; 4; i++)
         _projection[i][1] *= -1;
     <span class="kw">return</span> _projection;

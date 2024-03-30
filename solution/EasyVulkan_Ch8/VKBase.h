@@ -929,8 +929,8 @@ namespace vulkan {
 			return result;
 		}
 		result_t SubmitCommandBuffer_Graphics(VkCommandBuffer commandBuffer,
-			VkSemaphore semaphore_imageIsAvailable = VK_NULL_HANDLE, VkSemaphore semaphore_renderingIsOver = VK_NULL_HANDLE, VkFence fence = VK_NULL_HANDLE) const {
-			static constexpr VkPipelineStageFlags waitDstStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+			VkSemaphore semaphore_imageIsAvailable = VK_NULL_HANDLE, VkSemaphore semaphore_renderingIsOver = VK_NULL_HANDLE, VkFence fence = VK_NULL_HANDLE,
+			VkPipelineStageFlags waitDstStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT) const {
 			VkSubmitInfo submitInfo = {
 				.commandBufferCount = 1,
 				.pCommandBuffers = &commandBuffer

@@ -71,18 +71,10 @@ template<std::signed_integral T>
 constexpr bool Between_Closed(T min, T num, T max) {
     return ((num - min) | (max - num)) >= 0;
 }
-/*Convert*/
-constexpr float d2rCoefficient = float(std::numbers::pi / 180);
-constexpr float r2dCoefficient = float(180 / std::numbers::pi);
-constexpr float operator""_d2r(long double degree) {
-    return float(degree * d2rCoefficient);
-}
-constexpr float operator""_r2d(long double rad) {
-    return float(rad * r2dCoefficient);
-}
-constexpr float d2r(float degree) {
-    return degree * d2rCoefficient;
-}
-constexpr float r2d(float rad) {
-    return rad * r2dCoefficient;
+/*Matrix*/
+inline glm::mat4 FlipVertical(const glm::mat4& projection) {
+    glm::mat4 _projection = projection;
+    for (uint32_t i = 0; i < 4; i++)
+        _projection[i][1] *= -1;
+    return _projection;
 }

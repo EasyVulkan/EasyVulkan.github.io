@@ -228,10 +228,10 @@ namespace vulkan {
 				VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT,
 				.pfnUserCallback = DebugUtilsMessengerCallback
 			};
-			PFN_vkCreateDebugUtilsMessengerEXT CreateDebugUtilsMessenger =
+			PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessenger =
 				reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT"));
-			if (CreateDebugUtilsMessenger) {
-				VkResult result = CreateDebugUtilsMessenger(instance, &debugUtilsMessengerCreateInfo, nullptr, &debugUtilsMessenger);
+			if (vkCreateDebugUtilsMessenger) {
+				VkResult result = vkCreateDebugUtilsMessenger(instance, &debugUtilsMessengerCreateInfo, nullptr, &debugUtilsMessenger);
 				if (result)
 					outStream << std::format("[ graphicsBase ] ERROR\nFailed to create a debug messenger!\nError code: {}\n", int32_t(result));
 				return result;
@@ -831,8 +831,8 @@ namespace vulkan {
 			return result;
 		}
 		result_t SubmitCommandBuffer_Graphics(VkCommandBuffer commandBuffer,
-			VkSemaphore semaphore_imageIsAvailable = VK_NULL_HANDLE, VkSemaphore semaphore_renderingIsOver = VK_NULL_HANDLE, VkFence fence = VK_NULL_HANDLE) const {
-			static constexpr VkPipelineStageFlags waitDstStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+			VkSemaphore semaphore_imageIsAvailable = VK_NULL_HANDLE, VkSemaphore semaphore_renderingIsOver = VK_NULL_HANDLE, VkFence fence = VK_NULL_HANDLE,
+			VkPipelineStageFlags waitDstStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT) const {
 			VkSubmitInfo submitInfo = {
 				.commandBufferCount = 1,
 				.pCommandBuffers = &commandBuffer

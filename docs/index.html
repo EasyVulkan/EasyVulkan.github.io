@@ -206,7 +206,6 @@
             <li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
             <li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
             <li class="toctree-l1">Ch5-4 立方体贴图</li>
-            <li class="toctree-l1">Ch5-5 图像附件</li>
         </ul>
         <p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
         <ul>
@@ -238,9 +237,27 @@
         </ul>
     </div>
 </section>
-<section id="id5" style="width:616px; float:left;">
-<h2>更新履历<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<section id="id4" style="width:616px; float:left;">
+<h2>更新履历<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
 <ul>
+    <li>
+        <p>
+            24.03.30 用于在渲染循环中提交命令缓冲区的函数<span class="fn">SubmitCommandBuffer_Graphics</span>(...)，原先提交信息中的waitDstStage由常量指定，现改为由参数指定以增加函数的灵活性。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.03.30 <a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html#createrpwf-canvas">Ch8-1 离屏渲染</a>中：
+            <br>
+            “srcStageMask指定为<span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>是多余的，因为有信号量来同步”，改为“因为有栅栏来同步”。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.03.30 <a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html#id3">Ch2-2 创建渲染通道和帧缓冲</a>中增加对子通道依赖的dstStageMask的说明（代码里写了“<span class="cmt">//不早于提交命令缓冲区时等待semaphore对应的waitDstStageMask</span>”结果被自己无视了-_-||），并相应修正前后文。
+        </p>
+    </li>
+<br>
     <li>
         <p>
             24.03.27 <a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a>完成。
@@ -433,7 +450,7 @@
     </li>
 </ul></section>
 <section id="id5" style="width:616px; float:left;">
-<h2>关于转载和联系方式<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<h2>关于转载和联系方式<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
 <p>
     暂请不要转载原文，在写完前述各章节前可能会不断修改细节。
     <br>
@@ -452,6 +469,8 @@
     3.已完成页面上的内容缺失（突然冒出毫无解释的代码，那就是我漏写了）
     <br>
     4.妨碍理解的错别字、多字漏字
+    <br>
+    一些文本着色错误我会在日后闲得没事时慢慢改正。
 </ol></section>
 </section>
 
