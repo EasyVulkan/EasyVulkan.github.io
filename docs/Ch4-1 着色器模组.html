@@ -464,7 +464,7 @@ file.<span class="fn">close</span>();
     <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">size_t</span> codeSize, <span class="kw">const</span> <span class="type">uint32_t</span>* pCode <span class="cmt">/*VkShaderModuleCreateFlags flags*/</span>) {
         <span class="type">VkShaderModuleCreateInfo</span> createInfo = {
             .codeSize = codeSize,
-            .pCode = binaries.<span class="fn">data</span>()
+            .pCode = pCode
         };
         <span class="kw">return</span> <span class="fn">Create</span>(createInfo);
     }
@@ -526,8 +526,8 @@ file.<span class="fn">close</span>();
         </tr>
         <tr class="row-odd">
             <td><p>+z方向</p></td>
-            <td><p>通常认为朝屏幕向内</p></td>
-            <td><p>通常认为朝屏幕向内</p></td>
+            <td><p>因人而异</p></td>
+            <td><p>因人而异</p></td>
         </tr>
     </tbody>
 </table>

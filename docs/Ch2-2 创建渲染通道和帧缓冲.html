@@ -230,20 +230,20 @@
         std::<span class="type">vector</span>&lt;<span class="type">framebuffer</span>&gt; framebuffers;
     };
     <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Screen</span>() {
-        <span class="kw">static</span> <span class="type">renderPassWithFramebuffers</span> rpwf_screen;
-        <span class="kw">if</span> (rpwf_screen.renderPass) <span class="cmt">//防止重复调用</span>
+        <span class="kw">static</span> <span class="type">renderPassWithFramebuffers</span> rpwf;
+        <span class="kw">if</span> (rpwf.renderPass) <span class="cmt">//防止重复调用</span>
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ easyVulkan ] WARNING\nDon't call CreateRpwf_Screen() twice!\n&quot;</span>);
         <span class="kw">else</span> {
             <span class="cmt">/*待后续填充*/</span>
         }
-        <span class="kw">return</span> rpwf_screen;
+        <span class="kw">return</span> rpwf;
     }
 }
 </pre>
 <ul>
     <li>
         <p>
-            <span class="type">renderPassWithFramebuffers</span>类型的对象<span class="var">rpwf_screen</span>（rpwf当然是<span class="type">renderPassWithFramebuffers</span>的缩写）被定义为函数内的静态变量，并且函数返回其常引用。
+            <span class="type">renderPassWithFramebuffers</span>类型的对象<span class="var">rpwf</span>（rpwf当然是<span class="type">renderPassWithFramebuffers</span>的缩写）被定义为函数内的静态变量，并且函数返回其常引用。
         </p>
     </li>
 </ul>
@@ -303,7 +303,7 @@
     注：由于（在这套教程的示例中）在每次渲染循环中使用同个栅栏对同个命令缓冲区进行同步，执行当前渲染命令时，前一次渲染必定已经结束，因此这里的srcStageMask其实没有实质作用。填写为<span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>更多是出于演示子通道依赖用法的目的。
 </p>
 <p>
-    子通道依赖有转换图像内存布局的作用，而这件事当然得发生在获取到下一张交换链图像之后，因此这里的dstStageMask不得早于提交命令缓冲区时等待（<span class="fn">vkAcquireNextImageKHR</span>(...)所置位的）信号量对应的waitDstStageMask。
+    图像内存布局的转换最迟可以在这里dstStageMask指定的阶段发生，而这件事当然得发生在获取到交换链图像之后，那么dstStageMask便不得早于提交命令缓冲区时等待（<span class="fn">vkAcquireNextImageKHR</span>(...)所置位的）信号量对应的waitDstStageMask。
 </p>
 <p>
     书写渲染通道的创建信息，以创建渲染通道：
@@ -317,22 +317,22 @@
     .dependencyCount = 1,
     .pDependencies = &amp;subpassDependency
 };
-rpwf_screen.renderPass.<span class="fn">Create</span>(renderPassCreateInfo);
+rpwf.renderPass.<span class="fn">Create</span>(renderPassCreateInfo);
 </pre></section>
 <section id="id4">
 <h2>创建一组最简单的帧缓冲<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
 <p>
-    为每张交换链图像创建帧缓冲，首先将<span class="var">rpwf_screen.framebuffers</span>的元素数量<span class="fn">resize</span>(...)到与交换链图像一样多：
+    为每张交换链图像创建帧缓冲，首先将<span class="var">rpwf.framebuffers</span>的元素数量<span class="fn">resize</span>(...)到与交换链图像一样多：
 </p>
 <pre class="code">
-rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
+rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
 </pre>
 <p>
     填写帧缓冲的创建信息，为每张交换链图像创建对应的帧缓冲：
 </p>
 <pre class="code">
 <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
-    .renderPass = rpwf_screen.renderPass,
+    .renderPass = rpwf.renderPass,
     .attachmentCount = 1,
     .width = windowSize.width,
     .height = windowSize.height,
@@ -341,7 +341,7 @@ rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graph
 <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>(); i++) {
     <span class="type">VkImageView</span> attachment = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageView</span>(i);
     framebufferCreateInfo.pAttachments = &amp;attachment;
-    rpwf_screen.framebuffers[i].<span class="fn">Create</span>(framebufferCreateInfo);
+    rpwf.framebuffers[i].<span class="fn">Create</span>(framebufferCreateInfo);
 }
 </pre>
 <p>
@@ -349,9 +349,9 @@ rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graph
 </p>
 <pre class="code">
 <span class="kw">auto</span> CreateFramebuffers = [] {
-    rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
+    rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
     <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
-        .renderPass = rpwf_screen.renderPass,
+        .renderPass = rpwf.renderPass,
         .attachmentCount = 1,
         .width = windowSize.width,
         .height = windowSize.height,
@@ -360,11 +360,11 @@ rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graph
     <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span        class="fn">SwapchainImageCount</span>(); i++) {
         <span class="type">VkImageView</span> attachment = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageView</span>(i);
         framebufferCreateInfo.pAttachments = &amp;attachment;
-        rpwf_screen.framebuffers[i].<span class="fn">Create</span>(framebufferCreateInfo);
+        rpwf.framebuffers[i].<span class="fn">Create</span>(framebufferCreateInfo);
     }
 };
 <span class="kw">auto</span> DestroyFramebuffers = [] {
-    rpwf_screen.framebuffers.<span class="fn">clear</span>();<span class="cmt">//清空vector中的元素时会逐一执行析构函数</span>
+    rpwf.framebuffers.<span class="fn">clear</span>();<span class="cmt">//清空vector中的元素时会逐一执行析构函数</span>
 };
 <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>(CreateFramebuffers);
 <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroySwapchain</span>(DestroyFramebuffers);
@@ -374,8 +374,8 @@ rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graph
 </p>
 <pre class="code">
 <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Screen</span>() {
-    <span class="kw">static</span> <span class="type">renderPassWithFramebuffers</span> rpwf_screen;
-    <span class="kw">if</span> (rpwf_screen.renderPass)
+    <span class="kw">static</span> <span class="type">renderPassWithFramebuffers</span> rpwf;
+    <span class="kw">if</span> (rpwf.renderPass)
         outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ easyVulkan ] WARNING\nDon't call CreateRpwf_Screen() twice!\n&quot;</span>);
     <span class="kw">else</span> {
         <span class="type">VkAttachmentDescription</span> attachmentDescription = {
@@ -409,11 +409,11 @@ rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graph
             .dependencyCount = 1,
             .pDependencies = &amp;subpassDependency
         };
-        rpwf_screen.renderPass.<span class="fn">Create</span>(renderPassCreateInfo);
+        rpwf.renderPass.<span class="fn">Create</span>(renderPassCreateInfo);
         <span class="kw">auto</span> CreateFramebuffers = [] {
-            rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
+            rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
             <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
-                .renderPass = rpwf_screen.renderPass,
+                .renderPass = rpwf.renderPass,
                 .attachmentCount = 1,
                 .width = windowSize.width,
                 .height = windowSize.height,
@@ -422,17 +422,17 @@ rpwf_screen.framebuffers.<span class="fn">resize</span>(<span class="type">graph
             <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span        class="fn">SwapchainImageCount</span>(); i++) {
                 <span class="type">VkImageView</span> attachment = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageView</span>(i);
                 framebufferCreateInfo.pAttachments = &amp;attachment;
-                rpwf_screen.framebuffers[i].<span class="fn">Create</span>(framebufferCreateInfo);
+                rpwf.framebuffers[i].<span class="fn">Create</span>(framebufferCreateInfo);
             }
         };
         <span class="kw">auto</span> DestroyFramebuffers = [] {
-            rpwf_screen.framebuffers.<span class="fn">clear</span>();<span class="cmt">//清空vector中的元素时会逐一执行析构函数</span>
+            rpwf.framebuffers.<span class="fn">clear</span>();<span class="cmt">//清空vector中的元素时会逐一执行析构函数</span>
         };
         <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>(CreateFramebuffers);
         <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroySwapchain</span>(DestroyFramebuffers);
         CreateFramebuffers();
     }
-    <span class="kw">return</span> rpwf_screen;
+    <span class="kw">return</span> rpwf;
 }
 </pre></section>
 <section id="id5">

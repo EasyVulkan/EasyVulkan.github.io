@@ -149,8 +149,8 @@
 <span class="type">pipeline</span> pipeline_triangle;<span class="cmt">//管线</span>
 <span class="cmt">//该函数调用easyVulkan::CreateRpwf_Screen()并存储返回的引用到静态变量，避免重复调用easyVulkan::CreateRpwf_Screen()</span>
 <span class="kw">const auto</span>&amp; <span class="fn">RenderPassAndFramebuffers</span>() {
-    <span class="kw">static const auto</span>&amp; rpwf_screen = easyVulkan::<span class="fn">CreateRpwf_Screen</span>();
-    <span class="kw">return</span> rpwf_screen;
+    <span class="kw">static const auto</span>&amp; rpwf = easyVulkan::<span class="fn">CreateRpwf_Screen</span>();
+    <span class="kw">return</span> rpwf;
 }
 <span class="cmt">//该函数用于创建管线布局</span>
 <span class="kw">void</span> <span class="fn">CreateLayout</span>() {

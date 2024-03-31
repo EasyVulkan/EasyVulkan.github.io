@@ -832,7 +832,7 @@ namespace vulkan {
 		}
 		result_t SubmitCommandBuffer_Graphics(VkCommandBuffer commandBuffer,
 			VkSemaphore semaphore_imageIsAvailable = VK_NULL_HANDLE, VkSemaphore semaphore_renderingIsOver = VK_NULL_HANDLE, VkFence fence = VK_NULL_HANDLE,
-			VkPipelineStageFlags waitDstStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT) const {
+			VkPipelineStageFlags waitDstStage_imageIsAvailable = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT) const {
 			VkSubmitInfo submitInfo = {
 				.commandBufferCount = 1,
 				.pCommandBuffers = &commandBuffer
@@ -840,7 +840,7 @@ namespace vulkan {
 			if (semaphore_imageIsAvailable)
 				submitInfo.waitSemaphoreCount = 1,
 				submitInfo.pWaitSemaphores = &semaphore_imageIsAvailable,
-				submitInfo.pWaitDstStageMask = &waitDstStage;
+				submitInfo.pWaitDstStageMask = &waitDstStage_imageIsAvailable;
 			if (semaphore_renderingIsOver)
 				submitInfo.signalSemaphoreCount = 1,
 				submitInfo.pSignalSemaphores = &semaphore_renderingIsOver;

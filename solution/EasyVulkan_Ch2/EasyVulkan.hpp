@@ -9,8 +9,8 @@ namespace easyVulkan {
         std::vector<framebuffer> framebuffers;
     };
     const auto& CreateRpwf_Screen() {
-        static renderPassWithFramebuffers rpwf_screen;
-        if (rpwf_screen.renderPass)
+        static renderPassWithFramebuffers rpwf;
+        if (rpwf.renderPass)
             outStream << std::format("[ easyVulkan ] WARNING\nDon't call CreateRpwf_Screen() twice!\n");
         else {
             VkAttachmentDescription attachmentDescription = {
@@ -45,12 +45,12 @@ namespace easyVulkan {
                 .dependencyCount = 1,
                 .pDependencies = &subpassDependency
             };
-            rpwf_screen.renderPass.Create(renderPassCreateInfo);
+            rpwf.renderPass.Create(renderPassCreateInfo);
 
             auto CreateFramebuffers = [] {
-                rpwf_screen.framebuffers.resize(graphicsBase::Base().SwapchainImageCount());
+                rpwf.framebuffers.resize(graphicsBase::Base().SwapchainImageCount());
                 VkFramebufferCreateInfo framebufferCreateInfo = {
-                    .renderPass = rpwf_screen.renderPass,
+                    .renderPass = rpwf.renderPass,
                     .attachmentCount = 1,
                     .width = windowSize.width,
                     .height = windowSize.height,
@@ -59,16 +59,16 @@ namespace easyVulkan {
                 for (size_t i = 0; i < graphicsBase::Base().SwapchainImageCount(); i++) {
                     VkImageView attachment = graphicsBase::Base().SwapchainImageView(i);
                     framebufferCreateInfo.pAttachments = &attachment;
-                    rpwf_screen.framebuffers[i].Create(framebufferCreateInfo);
+                    rpwf.framebuffers[i].Create(framebufferCreateInfo);
                 }
             };
             auto DestroyFramebuffers = [] {
-                rpwf_screen.framebuffers.clear();
+                rpwf.framebuffers.clear();
             };
             graphicsBase::Base().AddCallback_CreateSwapchain(CreateFramebuffers);
             graphicsBase::Base().AddCallback_DestroySwapchain(DestroyFramebuffers);
             CreateFramebuffers();
         }
-        return rpwf_screen;
+        return rpwf;
     }
 }

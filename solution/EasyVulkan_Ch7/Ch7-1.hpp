@@ -10,8 +10,8 @@ struct vertex {
 pipelineLayout pipelineLayout_triangle;
 pipeline pipeline_triangle;
 const auto& RenderPassAndFramebuffers() {
-	static const auto& rpwf_screen = easyVulkan::CreateRpwf_Screen();
-	return rpwf_screen;
+	static const auto& rpwf = easyVulkan::CreateRpwf_Screen();
+	return rpwf;
 }
 void CreateLayout() {
 	VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo{};

@@ -520,7 +520,7 @@
 <span class="cmt">//该函数用于在渲染循环中将命令缓冲区提交到图形队列的常见情形</span>
 <span class="type">result_t</span> <span class="fn">SubmitCommandBuffer_Graphics</span>(<span class="type">VkCommandBuffer</span> commandBuffer,
     <span class="type">VkSemaphore</span> semaphore_imageIsAvailable = <span class="mcr">VK_NULL_HANDLE</span>, <span class="type">VkSemaphore</span> semaphore_renderingIsOver = <span class="mcr">VK_NULL_HANDLE</span>, <span class="type">VkFence</span> fence = <span class="mcr">VK_NULL_HANDLE</span>,
-    <span class="type">VkPipelineStageFlags</span> waitDstStage = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>) <span class="kw">const</span> {
+    <span class="type">VkPipelineStageFlags</span> waitDstStage_imageIsAvailable = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>) <span class="kw">const</span> {
     <span class="type">VkSubmitInfo</span> submitInfo = {
         .commandBufferCount = 1,
         .pCommandBuffers = &amp;commandBuffer
@@ -528,7 +528,7 @@
     <span class="kw">if</span> (semaphore_imageIsAvailable)
         submitInfo.waitSemaphoreCount = 1,
         submitInfo.pWaitSemaphores = &amp;semaphore_imageIsAvailable,
-        submitInfo.pWaitDstStageMask = &amp;waitDstStage;
+        submitInfo.pWaitDstStageMask = &amp;waitDstStage_imageIsAvailable;
     <span class="kw">if</span> (semaphore_renderingIsOver)
         submitInfo.signalSemaphoreCount = 1,
         submitInfo.pSignalSemaphores = &amp;semaphore_renderingIsOver;

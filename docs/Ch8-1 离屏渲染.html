@@ -304,7 +304,7 @@
     </li>
     <li>
         <p>
-            图像视图的类型根据图层数进行了分支，但如果你之后打算把渲染好的图像作为单层2D贴图数组（而非普通2D贴图）采样，在图层数为1时将类型指定为<span class="enum">VK_IMAGE_VIEW_TYPE_2D_ARRAY</span>也没什么问题。
+            图像视图的类型根据图层数进行了分支，但如果你之后打算把渲染好的图像作为单层2D贴图数组（而非普通2D贴图）采样，在图层数为1时将类型指定为<span class="enum">VK_IMAGE_VIEW_TYPE_2D_ARRAY</span>也没什么问题（前提是设备得支持多层帧缓冲）。
         </p>
     </li>
 </ul>
@@ -374,12 +374,12 @@
         <span class="type">framebuffer</span> framebuffer;
     };
     <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> canvasSize) {
-        <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf_canvas;
-        <span class="mcr">ExecuteOnce</span>(rpwf_canvas);<span class="cmt">//防止重复执行</span>
+        <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf;
+        <span class="mcr">ExecuteOnce</span>(rpwf);<span class="cmt">//防止重复执行</span>
 
         <span class="cmt">/*待后续填充*/</span>
 
-        <span class="kw">return</span> rpwf_canvas;
+        <span class="kw">return</span> rpwf;
     }
 }
 </pre>
@@ -399,15 +399,15 @@
     <span class="type">colorAttachment</span> ca_canvas;
 
     <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> canvasSize) {
-        <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf_canvas;
-        <span class="mcr">ExecuteOnce</span>(rpwf_canvas);
+        <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf;
+        <span class="mcr">ExecuteOnce</span>(rpwf);
 
         ca_canvas.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat, canvasSize, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
             <span class="enum">VK_IMAGE_USAGE_SAMPLED_BIT</span> | <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>);
 
         <span class="cmt">/*待后续填充*/</span>
 
-        <span class="kw">return</span> rpwf_canvas;
+        <span class="kw">return</span> rpwf;
     }
 }
 </pre>
@@ -427,8 +427,8 @@
 </p>
 <pre class="code">
 <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> canvasSize) {
-    <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf_canvas;
-    <span class="mcr">ExecuteOnce</span>(rpwf_canvas);
+    <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf;
+    <span class="mcr">ExecuteOnce</span>(rpwf);
 
     ca_canvas.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat, canvasSize, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
         <span class="enum">VK_IMAGE_USAGE_SAMPLED_BIT</span> | <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>);
@@ -445,7 +445,7 @@
     };
     <span class="cmt">/*待后续填充*/</span>
 
-    <span class="kw">return</span> rpwf_canvas;
+    <span class="kw">return</span> rpwf;
 }
 </pre>
 <p>
@@ -527,8 +527,8 @@
 </p>
 <pre class="code">
 <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> canvasSize = windowSize) {
-    <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf_canvas;
-    <span class="mcr">ExecuteOnce</span>(rpwf_canvas);
+    <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf;
+    <span class="mcr">ExecuteOnce</span>(rpwf);
 
     ca_canvas.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat, canvasSize, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
         <span class="enum">VK_IMAGE_USAGE_SAMPLED_BIT</span> | <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>);
@@ -577,16 +577,16 @@
     };
 
     <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
-        .renderPass = rpwf_canvas.renderPass,
+        .renderPass = rpwf.renderPass,
         .attachmentCount = 1,
         .pAttachments = ca_canvas.<span class="fn">AddressOfImageView</span>(),
         .width = canvasSize.width,
         .height = canvasSize.height,
         .layers = 1
     };
-    rpwf_canvas.framebuffer.<span class="fn">Create</span>(framebufferCreateInfo);
+    rpwf.framebuffer.<span class="fn">Create</span>(framebufferCreateInfo);
 
-    <span class="kw">return</span> rpwf_canvas;
+    <span class="kw">return</span> rpwf;
 }
 </pre></section>
 <section id="id3">
@@ -607,7 +607,8 @@
 <p>
     用来画线的顶点着色器<span class="path">Line.vert.shader</span>：
 </p>
-<pre class="code"><span class="pragma">#version</span> 460
+<pre class="code">
+<span class="pragma">#version</span> 460
 <span class="pragma">#pragma shader_stage</span>(vertex)
 
 <span class="kw">layout</span>(push_constant) <span class="kw">uniform</span> pushConstants {

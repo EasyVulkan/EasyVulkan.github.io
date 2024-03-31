@@ -281,7 +281,7 @@ namespace vulkan {
 			};
 			VkResult result = vkWaitSemaphores(graphicsBase::Base().Device(), &waitInfo, UINT64_MAX);
 			if (result)
-				outStream <<std::format("[ timelineSemaphore ] ERROR\nFailed to wait for semaphores!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ timelineSemaphore ] ERROR\nFailed to wait for semaphores!\nError code: {}\n", int32_t(result));
 			return result;
 		}
 	};

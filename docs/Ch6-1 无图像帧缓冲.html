@@ -222,12 +222,12 @@
         <span class="type">framebuffer</span> framebuffer;
     };
     <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Screen_ImagelessFramebuffer</span>() {
-        <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf_screen;
-        <span class="mcr">ExecuteOnce</span>(rpwf_screen);<span class="cmt">//防止重复执行</span>
+        <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf;
+        <span class="mcr">ExecuteOnce</span>(rpwf);<span class="cmt">//防止重复执行</span>
 
         <span class="cmt">/*待后续填充*/</span>
 
-        <span class="kw">return</span> rpwf_screen;
+        <span class="kw">return</span> rpwf;
     }
 };
 </pre>
@@ -236,8 +236,8 @@
 </p>
 <pre class="code">
 <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Screen_ImagelessFramebuffer</span>() {
-    <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf_screen;
-    <span class="mcr">ExecuteOnce</span>(rpwf_screen);
+    <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf;
+    <span class="mcr">ExecuteOnce</span>(rpwf);
 
     <span class="type">VkAttachmentDescription</span> attachmentDescription = {
         .format = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat,
@@ -270,11 +270,11 @@
         .dependencyCount = 1,
         .pDependencies = &amp;subpassDependency
     };
-    rpwf_screen.renderPass.<span class="fn">Create</span>(renderPassCreateInfo);
+    rpwf.renderPass.<span class="fn">Create</span>(renderPassCreateInfo);
 
     <span class="cmt">/*待后续填充*/</span>
 
-    <span class="kw">return</span> rpwf_screen;
+    <span class="kw">return</span> rpwf;
 }
 </pre>
 <p>
@@ -282,37 +282,37 @@
 </p>
 <pre class="code">
 <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Screen_ImagelessFramebuffer</span>() {
-    <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf_screen;
-    <span class="mcr">ExecuteOnce</span>(rpwf_screen);
+    <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf;
+    <span class="mcr">ExecuteOnce</span>(rpwf);
 
     <span class="type">VkAttachmentDescription</span> attachmentDescription = { <span class="cmt">/*...*/</span> };
     <span class="type">VkAttachmentReference</span> attachmentReference = { 0, <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span> };
     <span class="type">VkSubpassDescription</span> subpassDescription = { <span class="cmt">/*...*/</span> };
     <span class="type">VkSubpassDependency</span> subpassDependency = { <span class="cmt">/*...*/</span> };
     <span class="type">VkRenderPassCreateInfo</span> renderPassCreateInfo = { <span class="cmt">/*...*/</span> };
-    rpwf_screen.renderPass.<span class="fn">Create</span>(renderPassCreateInfo);
+    rpwf.renderPass.<span class="fn">Create</span>(renderPassCreateInfo);
 
     <span class="kw">auto</span> CreateFramebuffer = [] {
         <span class="cmt">/*待后续填充*/</span>
         <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
             .pNext = <span class="cmt">/*待填充*/</span>,
             .flags = <span class="cmt">/*待填充*/</span>,
-            .renderPass = rpwf_screen.renderPass,
+            .renderPass = rpwf.renderPass,
             .attachmentCount = 1,
             .width = windowSize.width,
             .height = windowSize.height,
             .layers = 1
         };
-        rpwf_screen.framebuffer.<span class="fn">Create</span>(framebufferCreateInfo);
+        rpwf.framebuffer.<span class="fn">Create</span>(framebufferCreateInfo);
     };
     <span class="kw">auto</span> DestroyFramebuffer = [] {
-        rpwf_screen.framebuffer.<span class="fn">~framebuffer</span>();
+        rpwf.framebuffer.<span class="fn">~framebuffer</span>();
     };
     <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>(CreateFramebuffer);
     <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroySwapchain</span>(DestroyFramebuffer);
     CreateFramebuffer();
 
-    <span class="kw">return</span> rpwf_screen;
+    <span class="kw">return</span> rpwf;
 }
 </pre>
 <ul>
@@ -335,13 +335,13 @@
     <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
         .pNext = &amp;framebufferAttachmentsCreateInfo,
         .flags = <span class="enum">VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT</span>,
-        .renderPass = rpwf_screen.renderPass,
+        .renderPass = rpwf.renderPass,
         .attachmentCount = 1,
         .width = windowSize.width,
         .height = windowSize.height,
         .layers = 1
     };
-    rpwf_screen.framebuffer.<span class="fn">Create</span>(framebufferCreateInfo);
+    rpwf.framebuffer.<span class="fn">Create</span>(framebufferCreateInfo);
 };
 </pre>
 <table class="docutils align-default">
@@ -489,13 +489,13 @@
     <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
         .pNext = &amp;framebufferAttachmentsCreateInfo,
         .flags = <span class="enum">VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT</span>,
-        .renderPass = rpwf_screen.renderPass,
+        .renderPass = rpwf.renderPass,
         .attachmentCount = 1,
         .width = windowSize.width,
         .height = windowSize.height,
         .layers = 1
     };
-    rpwf_screen.framebuffer.Create(framebufferCreateInfo);
+    rpwf.framebuffer.Create(framebufferCreateInfo);
 };
 </pre>
 <p>

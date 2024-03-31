@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch8-2 深度测试和深度可视化 &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html">Ch3-7 采样器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VKBase%2B.h.html">Ch5-0 VKBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch6-1 无图像帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html">Ch6-2 动态渲染</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%BB%98%E5%88%B6.html">Ch7-3 初识实例化绘制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-4 初识Push Constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-5 初识Uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第八章 简单示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch8-2 深度测试和深度可视化</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch8-2">
+<h1>Ch8-2 深度测试和深度可视化<a class="headerlink" href="#ch8-2" title="Permalink to this heading"></a></h1>
+<p>
+    本节分成两件事情：
+    <br>
+    1.进行3D渲染，绘制多个远近不同的立方体，使用深度测试呈现出正确的遮挡关系。示例代码：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch8/Ch8-2.hpp">Ch8-2.hpp</a>
+    <br>
+    2.离屏渲染深度贴图，然后将其采样到屏幕。示例代码： TODO
+    <br>
+    通过采样深度贴图，使深度可视化，以更直观地理解一些深度相关的功能。
+</p><section id="id1">
+<h2>投影变换<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>
+    在进入正题之前，首先要非常简要地讲述下渲染3D物体相关的基本知识。
+</p>
+<p>
+    3D渲染往往会用到MVP矩阵，MVP分别指模型（model）、观察（view）、投影（projection）三个矩阵。
+</p>
+<ul>
+    <li>
+        <p>
+            模型矩阵：模型矩阵是描述物体在场景中的位置、旋转、放缩的矩阵。
+        </p>
+    </li>
+    <li>
+        <p>
+            观察矩阵：观察矩阵将用场景中物体的坐标，从世界坐标系变换到以相机/观察者的位置为原点的参考系（称相机坐标系，或观察坐标系）。
+        </p>
+    </li>
+    <li>
+        <p>
+            投影矩阵：投影矩阵将相对于观察者的坐标变换到<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id4">NDC坐标</a>（2D/正交投影），或离NDC坐标只有一步之遥的剪裁空间坐标（透视投影）。
+        </p>
+    </li>
+</ul>
+<p>
+    为简化叙事，这一节不会使用模型矩阵和观察矩阵。我预先准备了经透视投影变换后，能出现在屏幕中的3D模型顶点数据。
+</p><section id="glm">
+<h3>GLM中的透视投影矩阵<a class="headerlink" href="#glm" title="Permalink to this heading"></a></h3>
+<p>
+    这节我们会使用透视投影矩阵，GLM中的生成透视投影矩阵的函数可以分为两类：名字中带perspective的和<span class="fn">frustum</span>(...)。
+</p>
+<p>
+    首先注意，下文的<span class="fn">infinitePerspective</span>(...)函数从GLM1.0.0（24年1月24日release）开始，才有对应Vulkan的NDC深度范围的版本。
+</p>
+<p>
+    通常情况下，你只要会用以下这两个函数即可：
+</p>
+<pre class="code">
+<span class="kw">template</span>&lt;<span class="kw">template</span> <span class="type">T</span>&gt;
+<span class="type">mat4</span> <span class="fn">infinitePerspective</span>(<span class="type">T</span> <span class="par">fovy</span>, <span class="type">T</span> <span class="par">aspect</span>, <span class="type">T</span> <span class="par">zNear</span>);
+<span class="kw">template</span>&lt;<span class="kw">template</span> <span class="type">T</span>&gt;
+<span class="type">mat4</span> <span class="fn">perspective</span>(
+    <span class="type">T</span> <span class="par">fovy</span>,  <span class="cmt">//垂直视场角，弧度制</span>
+    <span class="type">T</span> <span class="par">aspect</span>,<span class="cmt">//宽高比</span>
+    <span class="type">T</span> <span class="par">zNear</span>, <span class="cmt">//近平面的位置</span>
+    <span class="type">T</span> <span class="par">zFar</span>   <span class="cmt">//远平面的位置</span>
+);
+</pre>
+<ul>
+    <li>
+        <p>
+            视场角即从观察者出发，上下左右的观察范围边界之间的夹角。 视场角越大，近大远小的效果越显著。
+        </p>
+    </li>
+</ul>
+<p>
+    3D渲染中，需要指定相机坐标系中的近平面和远平面，两平面之间即是能被渲染的范围。
+    <br>
+    远平面可以是无穷远，但你在<span class="fn">perspective</span>(...)中指定远平面为inf的话，运算会出错，<span class="fn">infinitePerspective</span>(...)是专用于指定无穷远的远平面的函数。
+</p>
+<pre class="code">
+<span class="kw">template</span>&lt;<span class="kw">template</span> <span class="type">T</span>&gt;
+<span class="type">mat4</span> <span class="fn">perspectiveFov</span>(
+    <span class="type">T</span> <span class="par">fov</span>,   <span class="cmt">//垂直视场角，弧度制</span>
+    <span class="type">T</span> <span class="par">width</span>, <span class="cmt">//宽</span>
+    <span class="type">T</span> <span class="par">height</span>,<span class="cmt">//高</span>
+    <span class="type">T</span> <span class="par">near</span>,  <span class="cmt">//近平面的位置</span>
+    <span class="type">T</span> <span class="par">far</span>    <span class="cmt">//远平面的位置</span>
+);
+</pre>
+<ul>
+    <li>
+        <p>
+            虽然<span class="par">fov</span>没有后缀y，但确实是垂直视场角，不是水平视场角。
+        </p>
+    </li>
+    <li>
+        <p>
+            <span class="par">width</span>和<span class="par">height</span>不用是任何具体对象的宽和高，只要成一定比例，算出的矩阵就是一样的。
+        </p>
+    </li>
+</ul>
+<p>
+    <span class="fn">perspectiveFov</span>(...)和<span class="fn">perspective</span>(...)虽然变量名和底层实现不同（估计不是同一个人写的），
+    <br>
+    <code><span class="fn">perspectiveFov</span>(fov, w, h, n, f)</code>几乎等价于<code><span class="fn">perspective</span>(fov, w / h, n, f)</code>，两者的运算逻辑本质上是相同的，运算结果的差值在小数点后7位数。
+</p>
+<pre class="code">
+<span class="kw">template</span>&lt;<span class="kw">template</span> <span class="type">T</span>&gt;
+<span class="type">mat4</span> <span class="fn">tweakedInfinitePerspective</span>(<span class="type">T</span> <span class="par">fov</span>, <span class="type">T</span> <span class="par">aspect</span>, <span class="type">T</span> <span class="par">zNear</span>, <span class="type">T</span> <span class="par">ep</span>);
+</pre>
+<p>
+    <span class="fn">tweakedInfinitePerspective</span>(...)是给OpenGL用的，在Vulkan里用不着。
+    <br>
+    Vulkan和OpenGL中，默认的视口深度范围是[0, 1]，亦是不开启扩展的情况下所容许的深度界限。
+    <br>
+    上述函数处理这种情况：GL中，NDC深度范围为[-1, 1]，映射到视口深度范围[0, 1]时可能发生精度损失，使得视口深度本该接近或等于的1的片段，视口深度略大于1，导致片段被丢弃。
+    <br>
+    Vulkan中NDC深度的范围本就是[0, 1]，因此不需要这个函数。
+</p>
+<pre class="code">
+<span class="kw">template</span>&lt;<span class="kw">template</span> <span class="type">T</span>&gt;
+<span class="type">mat4</span> <span class="fn">frustum</span>(<span class="type">T</span> <span class="par">left</span>, <span class="type">T</span> <span class="par">right</span>, <span class="type">T</span> <span class="par">bottom</span>, <span class="type">T</span> <span class="par">top</span>, <span class="type">T</span> <span class="par">nearVal</span>, <span class="type">T</span> <span class="par">farVal</span>);
+</pre>
+<p>
+    <span class="fn">frustum</span>(...)让你填写上下左右的边界，看着似乎比要你填视场角的情况直观。
+    <br>
+    然而，当你傻乎乎地往参数里填入交换链图像大小的一半之后，程序一跑可能会发觉什么都没有，或者物体小得惊人（除非你的顶点坐标都大得惊人）。总之参数不易指定。
+    <br>
+    该函数相比<span class="fn">perspective</span>(...)的优势在于，后者生成的矩阵只会把相机参考系下的原点映射到视口中心，而通过向<span class="fn">frustum</span>(...)传入不对称的<span class="par">left</span>和<span class="par">right</span>（或<span class="par">bottom</span>和<span class="par">top</span>），就能把相机参考系的原点映射到偏离视口中心的位置（大概写VR程序用得到）。
+</p></section>
+<section id="id2">
+<h3>有关投影变换的数学<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<p>
+    <a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id4">Ch4-1 着色器模组</a>中简单地讲了相机参考系坐标到NDC坐标的转换流程，这里来具体说一下投影矩阵底层的数学运算（你可以跳过不读这部分）。
+</p>
+<p>
+    投影矩阵本质上只是将4个一次函数写成了矩阵的形式，因此完全可以在初中数学的范畴内进行解释：
+</p>
+<img alt="_images/ch8-2-1.png" src="_images/ch8-2-1.png" style="width:1080px">
+<ul>
+    <li>
+        <p>
+            上图中的语境是左手系和NDC深度[0,1]，GLM中与上图推导结果对应的函数为<span class="fn">perspectiveLH_ZO</span>(...)和<span class="fn">infinitePerspectiveLH_ZO</span>(...)。
+        </p>
+    </li>
+</ul></section>
+</section>
+<section id="id3">
+<h2>绘制多个立方体的流程<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<p>
+    在你已经写过了Ch7代码的基础上，进行3D渲染，绘制多个立方体的步骤如下：
+    <br>
+    1.创建深度附件、渲染通道和帧缓冲
+    <br>
+    2.创建顶点和索引缓冲区
+    <br>
+    3.书写着色器并创建管线
+    <br>
+    4.生成投影矩阵
+    <br>
+    5.绑定管线和各种缓冲区，更新常量，绘制
+</p></section>
+<section id="id4">
+<h2>创建渲染通道和帧缓冲<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<p>
+    在前一节里已经将深度模板附件封装为了<span class="type">depthStencilAttachment</span>类型。于是向<span class="path">EasyVulkan.hpp</span>，easyVulkan命名空间中，定义一个<span class="type">vector</span>用来存放与交换链图像相应数量的深度模板附件，及用来创建深度模板附件、渲染通道、帧缓冲的函数<span class="fn">CreateRpwf_Canvas</span>(...)：
+</p>
+<pre class="code">
+std::<span class="type">vector</span>&lt;<span class="type">depthStencilAttachment</span>&gt; dsas_screenWithDS;
+<span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkFormat</span> <span class="par">depthStencilFormat</span> = <span class="enum">VK_FORMAT_D24_UNORM_S8_UINT</span>) {
+    <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf;
+    <span class="mcr">ExecuteOnce</span>(rpwf);<span class="cmt">//防止重复执行</span>
+    <span class="kw">static</span> <span class="type">VkFormat</span> dsFormat = <span class="par">depthStencilFormat</span>;<span class="cmt">//因为一会儿需要用lambda定义重建交换链时的回调函数，把格式存到静态变量</span>
+
+    <span class="cmt">/*待后续填充*/</span>
+
+    <span class="kw">return</span> rpwf;
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            在向此函数传入参数前，应调用<span class="type">depthStencilAttachment</span>::<span class="sfn">FormatAvailability</span>(...)验证向此函数提供的格式是否收支持。
+        </p>
+    </li>
+</ul>
+<p>
+    开始创建渲染通道，首先书写子通道描述：
+</p>
+<pre class="code">
+<span class="type">VkAttachmentDescription</span> attachmentDescriptions[2] = {
+    {<span class="cmt">//颜色附件</span>
+        .format = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat,
+        .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+        .loadOp = <span class="enum">VK_ATTACHMENT_LOAD_OP_CLEAR</span>,
+        .storeOp = <span class="enum">VK_ATTACHMENT_STORE_OP_STORE</span>,
+        .stencilLoadOp = <span class="enum">VK_ATTACHMENT_LOAD_OP_DONT_CARE</span>,
+        .stencilStoreOp = <span class="enum">VK_ATTACHMENT_STORE_OP_DONT_CARE</span>,
+        .finalLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span> },
+    {<span class="cmt">//深度模板附件</span>
+        .format = dsFormat,
+        .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+        .loadOp = dsFormat != <span class="enum">VK_FORMAT_S8_UINT</span> ? <span class="enum">VK_ATTACHMENT_LOAD_OP_CLEAR</span> : <span class="enum">VK_ATTACHMENT_LOAD_OP_DONT_CARE</span>,
+        .storeOp = <span class="enum">VK_ATTACHMENT_STORE_OP_DONT_CARE</span>,
+        .stencilLoadOp = dsFormat &gt;= <span class="enum">VK_FORMAT_S8_UINT</span> ? <span class="enum">VK_ATTACHMENT_LOAD_OP_CLEAR</span> : <span class="enum">VK_ATTACHMENT_LOAD_OP_DONT_CARE</span>,
+        .stencilStoreOp = <span class="enum">VK_ATTACHMENT_STORE_OP_DONT_CARE</span>,
+        .finalLayout = <span class="enum">VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL</span> }
+};
+<span class="type">VkAttachmentReference</span> attachmentReferences[2] = {
+    { 0, <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span> },
+    { 1, <span class="enum">VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL</span> }
+};
+<span class="type">VkSubpassDescription</span> subpassDescription = {
+    .pipelineBindPoint = <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>,
+    .colorAttachmentCount = 1,
+    .pColorAttachments = attachmentReferences,
+    .pDepthStencilAttachment = attachmentReferences + 1
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            由于我们这次只有一个渲染通道，到循环中再次在该通道中绘制前不会再有深度或模板测试，因此渲染通道结束时无需保留深度和模板值，深度模板附件的storeOp和stencilStoreOp为<span class="enum">VK_ATTACHMENT_STORE_OP_DONT_CARE</span>。
+        </p>
+    </li>
+    <li>
+        <p>
+            这里根据格式是否有深度/模板值的分量，来确定深度模板附件的loadOp和stencilLoadOp是否为清空（虽然本节中不会使用模板测试）。
+            <br>
+            而即便使用的是仅深度或仅模板的格式，只要没开启separateDepthStencilLayouts硬件特性，深度模板附件在渲染通道中的内存布局就只能是<span class="enum">VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL</span>。
+        </p>
+    </li>
+</ul>
+<p>
+    填写子通道依赖，创建渲染通道：
+</p>
+<pre class="code">
+<span class="type">VkSubpassDependency</span> subpassDependency = {
+    .srcSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
+    .dstSubpass = 0,
+    .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+    .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT</span>,
+    .srcAccessMask = 0,
+    .dstAccessMask = <span class="enum">VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT</span>,
+    .dependencyFlags = <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span>
+};
+<span class="type">VkRenderPassCreateInfo</span> renderPassCreateInfo = {
+    .attachmentCount = 2,
+    .pAttachments = attachmentDescriptions,
+    .subpassCount = 1,
+    .pSubpasses = &amp;subpassDescription,
+    .dependencyCount = 1,
+    .pDependencies = &amp;subpassDependency
+};
+rpwf.renderPass.<span class="fn">Create</span>(renderPassCreateInfo);
+</pre>
+<ul>
+    <li>
+        <p>
+            对深度模板附件的清空操作发生在早期片段测试（early fragment test）阶段，最迟可以在该阶段进行内存布局转换，因该阶段早于颜色附件输出阶段，dstStageMask填写为对应该阶段的bit。清空深度模板附件对应的操作类型是<span class="enum">VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT</span>。
+        </p>
+    </li>
+</ul>
+<p>
+    惯例，把创建和销毁帧缓冲的部分放入lambda：
+</p>
+<pre class="code">
+<span class="kw">auto</span> CreateFramebuffers = [] {
+    dsas_screenWithDS.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
+    rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
+    <span class="cmt">/*待后续填充*/</span>;
+};
+<span class="kw">auto</span> DestroyFramebuffers = [] {
+    dsas_screenWithDS.<span class="fn">clear</span>();
+    rpwf.framebuffers.<span class="fn">clear</span>();
+};
+<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>(CreateFramebuffers);
+<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroySwapchain</span>(DestroyFramebuffers);
+CreateFramebuffers();
+<span class="kw">return</span> rpwf;
+</pre>
+<p>
+    因为这次的深度模板附件的大小与交换链图像一致，所以其创建和销毁当然也放在相应lambda中。
+    <br>
+    创建与交换链图像相应个数的深度模板附件：
+</p>
+<pre class="code">
+<span class="kw">auto</span> CreateFramebuffers = [] {
+    dsas_screenWithDS.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
+    rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : dsas_screenWithDS)
+        i.<span class="fn">Create</span>(dsFormat, windowSize, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>, <span class="enum">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</span>);
+    <span class="cmt">/*待后续填充*/</span>;
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            既然在本次的应用场景中，渲染通道之外用不着深度模板附件，那么在图像用途中指定<span class="enum">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</span>，使其可被<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html#id18">惰性分配</a>以优化内存开销。
+        </p>
+    </li>
+</ul>
+<p>
+    毫无难度地创建帧缓冲：
+</p>
+<pre class="code">
+<span class="kw">auto</span> CreateFramebuffers = [] {
+    dsas_screenWithDS.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
+    rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : dsas_screenWithDS)
+        i.<span class="fn">Create</span>(dsFormat, windowSize, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>, <span class="enum">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</span>);
+    <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
+        .renderPass = rpwf.renderPass,
+        .attachmentCount = 2,
+        .width = windowSize.width,
+        .height = windowSize.height,
+        .layers = 1
+    };
+    <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>(); i++) {
+        <span class="type">VkImageView</span> attachments[2] = {
+            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageView</span>(i),
+            dsas_screenWithDS[i].<span class="fn">ImageView</span>()
+        };
+        framebufferCreateInfo.pAttachments = attachments;
+        rpwf.framebuffers[i].<span class="fn">Create</span>(framebufferCreateInfo);
+    }
+};
+</pre></section>
+<section id="id5">
+<h2>顶点和索引数据<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<p>
+    首先在<span class="path">main.cpp</span>中定义顶点数据的结构体：
+</p>
+<pre class="code">
+<span class="kw">struct</span> <span class="type">vertex</span> {
+    glm::<span class="type">vec3</span> position;
+    glm::<span class="type">vec4</span> color;
+};
+</pre>
+<p>
+    立方体一共8个顶点，但我想要它每个面都是纯色，所以每个面以4个颜色相同的顶点来表达，一共要写24个顶点：
+</p>
+<pre class="code">
+<span class="type">vertex</span> vertices[] = {
+    <span class="cmt">//x+</span>
+    { {  1,  1, -1 }, { 1, 0, 0, 1 } },
+    { {  1, -1, -1 }, { 1, 0, 0, 1 } },
+    { {  1,  1,  1 }, { 1, 0, 0, 1 } },
+    { {  1, -1,  1 }, { 1, 0, 0, 1 } },
+    <span class="cmt">//x-</span>
+    { { -1,  1,  1 }, { 0, 1, 1, 0 } },
+    { { -1, -1,  1 }, { 0, 1, 1, 0 } },
+    { { -1,  1, -1 }, { 0, 1, 1, 0 } },
+    { { -1, -1, -1 }, { 0, 1, 1, 0 } },
+    <span class="cmt">//y+</span>
+    { {  1,  1, -1 }, { 0, 1, 0, 1 } },
+    { {  1,  1,  1 }, { 0, 1, 0, 1 } },
+    { { -1,  1, -1 }, { 0, 1, 0, 1 } },
+    { { -1,  1,  1 }, { 0, 1, 0, 1 } },
+    <span class="cmt">//y-</span>
+    { {  1, -1, -1 }, { 1, 0, 1, 1 } },
+    { { -1, -1, -1 }, { 1, 0, 1, 1 } },
+    { {  1, -1,  1 }, { 1, 0, 1, 1 } },
+    { { -1, -1,  1 }, { 1, 0, 1, 1 } },
+    <span class="cmt">//z+</span>
+    { {  1,  1,  1 }, { 0, 0, 1, 1 } },
+    { {  1, -1,  1 }, { 0, 0, 1, 1 } },
+    { { -1,  1,  1 }, { 0, 0, 1, 1 } },
+    { { -1, -1,  1 }, { 0, 0, 1, 1 } },
+    <span class="cmt">//z-</span>
+    { { -1,  1, -1 }, { 1, 1, 0, 1 } },
+    { { -1, -1, -1 }, { 1, 1, 0, 1 } },
+    { {  1,  1, -1 }, { 1, 1, 0, 1 } },
+    { {  1, -1, -1 }, { 1, 1, 0, 1 } }
+};
+<span class="type">vertexBuffer</span> vertexBuffer_perVertex(<span class="kw">sizeof</span> vertices);
+vertexBuffer_perVertex.<span class="type">TransferData</span>(vertices);
+</pre>
+<p>
+    上述顶点数据是围绕坐标原点的一个长宽高都为2的立方体。
+    <br>
+    因为这次不使用观察矩阵，观察位置便处于世界坐标系的原点，如果不给上述顶点数据加任何位置偏移，观察位置就会是在立方体内部。
+    <br>
+    创建逐实例输入的顶点缓冲区，指定多个立方体的位置：
+</p>
+<pre class="code">
+glm::<span class="type">vec3</span> offsets[] = {
+    { -4, -4,  6 },
+    { -4,  4, 10 },
+    { -4, -4, 14 },
+    { -4,  4, 18 },
+    { -4, -4, 22 },
+    { -4,  4, 26 },
+    {  4, -4,  6 },
+    {  4,  4, 10 },
+    {  4, -4, 14 },
+    {  4,  4, 18 },
+    {  4, -4, 22 },
+    {  4,  4, 26 }
+};
+<span class="type">vertexBuffer</span> vertexBuffer_perInstance(<span class="kw">sizeof</span> offsets);
+vertexBuffer_perInstance.<span class="type">TransferData</span>(offsets);
+</pre>
+<ul>
+    <li>
+        <p>
+            还是因为不使用观察矩阵，观察方向默认为+z方向，位置坐标的z分量为正值使立方体在观察范围内。
+        </p>
+    </li>
+</ul>
+<p>
+    这次将会使用<span class="cmt">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST</span>为图元拓扑类型绘制立方体，那么便需要36个索引：
+</p>
+<pre class="code">
+<span class="type">uint16_t</span> indices[36] = { 0, 1, 2, 2, 1, 3 };
+<span class="type">kw</span> (<span class="type">size_t</span> i = 1; i &lt; 6; i++)
+    <span class="type">kw</span> (<span class="type">size_t</span> j = 0; j &lt; 6; j++)
+        indices[i * 6 + j] = indices[j] + i * 4;
+<span class="type">indexBuffer</span> indexBuffer(<span class="kw">sizeof</span> indices);
+indexBuffer.<span class="type">TransferData</span>(indices);
+</pre>
+<ul>
+    <li>
+        <p>
+            这里<code>{ 0, 1, 2, 2, 1, 3 }</code>的顶点顺序有讲究，详见之后创建管线时有关背面剔除的说明。
+        </p>
+    </li>
+</ul></section>
+<section id="id6">
+<h2>书写着色器并创建管线<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
+<section id="into3d-vert-shader">
+<h3>Into3D.vert.shader<a class="headerlink" href="#into3d-vert-shader" title="Permalink to this heading"></a></h3>
+<pre class="code">
+<span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(vertex)
+
+<span class="kw">layout</span>(location = 0) <span class="kw">in</span> <span class="type">vec3</span> i_Position;        <span class="cmt">//逐顶点</span>
+<span class="kw">layout</span>(location = 1) <span class="kw">in</span> <span class="type">vec4</span> i_Color;           <span class="cmt">//逐顶点</span>
+<span class="kw">layout</span>(location = 2) <span class="kw">in</span> <span class="type">vec3</span> i_InstancePosition;<span class="cmt">//逐实例</span>
+<span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec4</span> o_Color;
+<span class="kw">layout</span>(push_constant) <span class="kw">uniform</span> pushConstants {
+    <span class="type">mat4</span> proj;<span class="cmt">//投影矩阵</span>
+};
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    gl_Position = proj * <span class="type">vec4</span>(i_Position + i_InstancePosition, 1);
+    o_Color = i_Color;
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            通过将矢量右乘到投影矩阵，将相机坐标系（这次没相机所以等价于世界坐标系了）下的坐标转换到齐次剪裁空间坐标。
+        </p>
+    </li>
+</ul></section>
+<section id="into3d-frag-shader">
+<h3>Into3D.frag.shader<a class="headerlink" href="#into3d-frag-shader" title="Permalink to this heading"></a></h3>
+<pre class="code">
+<span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(fragment)
+
+<span class="kw">layout</span>(location = 0) <span class="kw">in</span> <span class="type">vec4</span> i_Color;
+<span class="kw">layout</span>(location = 1) <span class="kw">out</span> <span class="type">vec4</span> o_Color;
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    o_Color = i_Color;
+}
+</pre></section>
+<section id="id7">
+<h3>创建管线<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<p>
+    定义相关对象，创建管线布局：
+</p>
+<pre class="code">
+<span class="type">pipelineLayout</span> pipelineLayout_into3d;
+<span class="type">pipeline</span> pipeline_into3d;
+<span class="kw">const auto</span>&amp; <span class="fn">RenderPassAndFramebuffers_Screen</span>() {
+    <span class="kw">static const auto</span>&amp; rpwf = easyVulkan::<span class="fn">CreateRpwf_ScreenWithDS</span>();
+    <span class="kw">return</span> rpwf;
+}
+<span class="kw">void</span> <span class="fn">CreateLayout</span>() {
+    <span class="type">VkPushConstantRange</span> pushConstantRange = { <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>, 0, 64 };
+    <span class="type">VkPipelineLayoutCreateInfo</span> pipelineLayoutCreateInfo{
+        .pushConstantRangeCount = 1,
+        .pPushConstantRanges = &amp;pushConstantRange
+    };
+    pipelineLayout_into3d.<span class="fn">Create</span>(pipelineLayoutCreateInfo);
+}
+</pre>
+<p>
+    创建管线：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">CreateLayout</span>() {
+    <span class="kw">static</span> <span class="type">shaderModule</span> vert(<span class="str">"shader/Into3d.vert.spv"</span>);
+    <span class="kw">static</span> <span class="type">shaderModule</span> frag(<span class="str">"shader/Into3d.frag.spv"</span>);
+    <span class="type">VkPipelineShaderStageCreateInfo</span> shaderStageCreateInfos[2] = {
+        vert.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>),
+        frag.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>)
+    };
+    <span class="kw">auto</span> Create = [] {
+        <span class="type">graphicsPipelineCreateInfoPack</span> pipelineCiPack;
+        pipelineCiPack.createInfo.layout = pipelineLayout_into3d;
+        pipelineCiPack.createInfo.renderPass = <span class="fn">RenderPassAndFramebuffers</span>().renderPass;
+        pipelineCiPack.vertexInputBindings.<span class="fn">emplace_back</span>(0, <span class="kw">sizeof</span>(vertex), <span class="enum">VK_VERTEX_INPUT_RATE_VERTEX</span>);
+        pipelineCiPack.vertexInputBindings.<span class="fn">emplace_back</span>(0, <span class="kw">sizeof</span>(glm::<span class="type">vec3</span>), <span class="enum">VK_VERTEX_INPUT_RATE_INSTANCE</span>);
+        pipelineCiPack.vertexInputAttributes.<span class="fn">emplace_back</span>(0, 0, <span class="enum">VK_FORMAT_R32G32B32_SFLOAT</span>, <span class="mcr">offsetof</span>(<span class="type">vertex</span>, position));
+        pipelineCiPack.vertexInputAttributes.<span class="fn">emplace_back</span>(1, 0, <span class="enum">VK_FORMAT_R32G32B32A32_SFLOAT</span>, <span class="mcr">offsetof</span>(<span class="type">vertex</span>, color));
+        pipelineCiPack.vertexInputAttributes.<span class="fn">emplace_back</span>(2, 1, <span class="enum">VK_FORMAT_R32G32B32_SFLOAT</span>, 0);
+        pipelineCiPack.inputAssemblyStateCi.topology = <span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST</span>;
+        pipelineCiPack.viewports.<span class="fn">emplace_back</span>(0.f, 0.f, <span class="kw">float</span>(windowSize.width), <span class="kw">float</span>(windowSize.height), 0.f, 1.f);
+        pipelineCiPack.scissors.<span class="fn">emplace_back</span>(<span class="type">VkOffset2D</span>{}, windowSize);
+
+        <span class="cmt">//开启背面剔除</span>
+        pipelineCiPack.rasterizationStateCi.cullMode = <span class="enum">VK_CULL_MODE_BACK_BIT</span>;
+        pipelineCiPack.rasterizationStateCi.frontFace = <span class="enum">VK_FRONT_FACE_COUNTER_CLOCKWISE</span>;<span class="cmt">//默认值，为0</span>
+
+        pipelineCiPack.multisampleStateCi.rasterizationSamples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>;
+
+        <span class="cmt">//开启深度测试</span>
+        pipelineCiPack.depthStencilStateCi.depthTestEnable = <span class="mcr">VK_TRUE</span>;
+        pipelineCiPack.depthStencilStateCi.depthWriteEnable = <span class="mcr">VK_TRUE</span>;
+        pipelineCiPack.depthStencilStateCi.depthCompareOp = <span class="enum">VK_COMPARE_OP_LESS</span>;
+
+        pipelineCiPack.colorBlendAttachmentStates.<span class="fn">push_back</span>({ .colorWriteMask = 0b1111 });
+        pipelineCiPack.<span class="fn">UpdateAllArrays</span>();
+        pipelineCiPack.createInfo.stageCount = 2;
+        pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_into3d;
+        pipeline_Into3d.<span class="fn">Create</span>(pipelineCiPack);
+    };
+    <span class="kw">auto</span> Destroy = [] {
+        pipeline_into3d.<span class="fn">~pipeline</span>();
+    };
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>(Create);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroySwapchain</span>(Destroy);
+    Create();
+}
+</pre>
+<p>
+    3D渲染中，对于有内外之分的封闭物体（且一般不透明），在栅格化阶段直接剔除其看不见的面以节省运算性能，这叫面剔除。
+    <br>
+    这里将cullMode指定为<span class="enum">VK_CULL_MODE_BACK_BIT</span>以开启背面剔除，然后所谓正背面是由顶点顺序决定的，<span class="enum">VK_FRONT_FACE_COUNTER_CLOCKWISE</span>意味着，如果一个三角形中三个顶点的坐标，依被着色器读取的顺序呈现逆时针，那么就是正面。
+    <br>
+    这里所谓的坐标为输出到gl_Position的坐标，或NDC坐标（x和y都除以负的w时，相当于双重镜像，或说旋转180°，于是顺/逆时针不变）。
+</p>
+<p>
+    解释先前<code>{ 0, 1, 2, 2, 1, 3 }</code>的顶点顺序：对于我给出的立方体顶点数据中任意面的四个顶点中，0和3号顶点、1和2号顶点各构成对角线，即0和3在1和2构成的线不同侧。那么若<code>{ 0, 1, 2 }</code>的三角形为逆时针，则<code>{ 1, 2, 3 }</code>的三角形必然为顺时针。因此这里第二个三角形的顶点顺序得是<code>{ 2, 1, 3 }</code>。
+</p>
+<p>
+    如果你没有在片段着色器中书写涉及判定gl_FrontFacing的逻辑的话，<span class="enum">VK_CULL_MODE_BACK_BIT</span>和<span class="enum">VK_FRONT_FACE_COUNTER_CLOCKWISE</span>的组合，跟<span class="enum">VK_CULL_MODE_FRONT_BIT</span>和<span class="enum">VK_FRONT_FACE_CLOCKWISE</span>的组合效果是一样的。
+</p>
+</p>
+    TODO 因事中断写作，施工中
+</p></section>
+</section>
+<section id="id8">
+<h2>绘制<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h2>
+<p>
+    施工中
+</p></section>
+<section id="id9">
+<h2>采样深度贴图<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h2>
+<p>
+
+</p></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021-2024, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

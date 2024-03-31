@@ -11,8 +11,8 @@ descriptorSetLayout descriptorSetLayout_texture;
 pipelineLayout pipelineLayout_texture;
 pipeline pipeline_texture;
 const auto& RenderPassAndFramebuffers() {
-	static const auto& rpwf_screen = easyVulkan::CreateRpwf_Screen();
-	return rpwf_screen;
+	static const auto& rpwf = easyVulkan::CreateRpwf_Screen();
+	return rpwf;
 }
 void CreateLayout() {
 	VkDescriptorSetLayoutBinding descriptorSetLayoutBinding_texture = {

@@ -2,11 +2,14 @@
 面向懒人的Vulkan中文教程<br>
 主页：https://easyvulkan.github.io/
 
-留言请至:[Issue #7](https://github.com/EasyVulkan/EasyVulkan.github.io/issues/7)
+联系请至:[【长期】 反馈/交流集中贴](https://github.com/EasyVulkan/EasyVulkan.github.io/issues/7)
 
 2024.03.27 完成[Ch8-1 离屏渲染](https://easyvulkan.github.io/Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html)。
 
-##入门<br>
+## 章节目录
+
+### 到画出三角形为止（请依序阅读）
+
 [Ch1-0 准备工作](https://easyvulkan.github.io/Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html)<br>
 [Ch1-1 创建GLFW窗口](https://easyvulkan.github.io/Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html)<br>
 [Ch1-2 初始化流程](https://easyvulkan.github.io/Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html)<br>
@@ -17,14 +20,45 @@
 [Ch2-2 创建渲染通道和帧缓冲](https://easyvulkan.github.io/Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html)<br>
 [Ch2-3 创建管线并绘制三角形](https://easyvulkan.github.io/Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html)
 
-##基础部分<br>
+### 各种示例（建议依序阅读）
+
 [Ch7-1 初识顶点缓冲区](https://easyvulkan.github.io/Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html)<br>
 [Ch7-2 初识索引缓冲区](https://easyvulkan.github.io/Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html)<br>
 [Ch7-3 初识实例化绘制](https://easyvulkan.github.io/Ch7-3%20%E5%88%9D%E8%AF%86%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%BB%98%E5%88%B6.html)<br>
 [Ch7-4 初识Push Constant](https://easyvulkan.github.io/Ch7-4%20%E5%88%9D%E8%AF%86Push%20Constant.html)<br>
 [Ch7-5 初识Uniform缓冲区](https://easyvulkan.github.io/Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html)<br>
 [Ch7-6 拷贝图像到屏幕](https://easyvulkan.github.io/Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html)<br>
-[Ch7-7 使用贴图](https://easyvulkan.github.io/Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html)
+[Ch7-7 使用贴图](https://easyvulkan.github.io/Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html)<br>
+[Ch8-1 离屏渲染](https://easyvulkan.github.io/Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html)<br>
 
-##简单示例<br>
-[Ch8-1 离屏渲染](https://easyvulkan.github.io/Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html)
+若要生成mipmap，请阅读Ch7-6和Ch7-7。
+
+###  Vulkan1.0开始的核心功能（按需阅读）
+
+[Ch3-1 同步原语（有部分未写完）](https://easyvulkan.github.io/Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html)<br>
+[Ch3-2 图像与缓冲区](https://easyvulkan.github.io/Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html)<br>
+[Ch3-3 管线布局和管线](https://easyvulkan.github.io/Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html)<br>
+[Ch3-4 渲染通道和帧缓冲](https://easyvulkan.github.io/Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html)<br>
+[Ch3-5 命令缓冲区（有部分未写完）](https://easyvulkan.github.io/Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html)<br>
+[Ch3-6 描述符](https://easyvulkan.github.io/Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html)<br>
+[Ch3-7 采样器](https://easyvulkan.github.io/Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html)<br>
+[Ch4-1 着色器模组（有部分未写完）](https://easyvulkan.github.io/Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html)<br>
+
+### Vulkan1.1后的新增核心功能（按需阅读）
+
+[Ch6-0 使用新版本功能](https://easyvulkan.github.io/Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html)<br>
+[Ch6-1 无图像帧缓冲](https://easyvulkan.github.io/Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html)<br>
+[Ch6-2 动态渲染](https://easyvulkan.github.io/Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html)
+
+## 更新计划（6月底前）
+
+Ch8-2 深度测试和深度可视化<br>
+Ch8-3 输入附件示例：延迟渲染<br>
+Ch8-4 多重采样与超采样<br>
+Ch8-5 sRGB色彩校正与HDR<br>
+Ch5-4 立方体贴图<br>
+Ch8-7 立方体贴图应用实例<br>
+Ch4-4 几何着色器<br>
+Ch9-1 将ERP图像转到立方体贴图（暂定）<br>
+
+撰写顺序可能变卦。

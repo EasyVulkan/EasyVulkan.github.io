@@ -9,8 +9,8 @@ namespace easyVulkan {
 		framebuffer framebuffer;
 	};
 	const auto& CreateRpwf_Screen_ImagelessFramebuffer() {
-		static renderPassWithFramebuffer rpwf_screen;
-		ExecuteOnce(rpwf_screen);
+		static renderPassWithFramebuffer rpwf;
+		ExecuteOnce(rpwf);
 
 		VkAttachmentDescription attachmentDescription = {
 			.format = graphicsBase::Base().SwapchainCreateInfo().imageFormat,
@@ -44,7 +44,7 @@ namespace easyVulkan {
 			.dependencyCount = 1,
 			.pDependencies = &subpassDependency
 		};
-		rpwf_screen.renderPass.Create(renderPassCreateInfo);
+		rpwf.renderPass.Create(renderPassCreateInfo);
 
 		auto CreateFramebuffer = [] {
 			VkFramebufferAttachmentImageInfo framebufferAttachmentImageInfo = {
@@ -70,21 +70,21 @@ namespace easyVulkan {
 			VkFramebufferCreateInfo framebufferCreateInfo = {
 				.pNext = &framebufferAttachmentsCreateInfo,
 				.flags = VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT,
-				.renderPass = rpwf_screen.renderPass,
+				.renderPass = rpwf.renderPass,
 				.attachmentCount = 1,
 				.width = windowSize.width,
 				.height = windowSize.height,
 				.layers = 1
 			};
-			rpwf_screen.framebuffer.Create(framebufferCreateInfo);
+			rpwf.framebuffer.Create(framebufferCreateInfo);
 		};
 		auto DestroyFramebuffer = [] {
-			rpwf_screen.framebuffer.~framebuffer();
+			rpwf.framebuffer.~framebuffer();
 		};
 		graphicsBase::Base().AddCallback_CreateSwapchain(CreateFramebuffer);
 		graphicsBase::Base().AddCallback_DestroySwapchain(DestroyFramebuffer);
 		CreateFramebuffer();
 
-		return rpwf_screen;
+		return rpwf;
 	}
 }

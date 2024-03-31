@@ -14,8 +14,8 @@ namespace easyVulkan {
 	};
 
 	const auto& CreateRpwf_Screen() {
-		static renderPassWithFramebuffers rpwf_screen;
-		if (rpwf_screen.renderPass)
+		static renderPassWithFramebuffers rpwf;
+		if (rpwf.renderPass)
 			outStream << std::format("[ easyVulkan ] WARNING\nDon't call CreateRpwf_Screen() twice!\n");
 		else {
 			VkAttachmentDescription attachmentDescription = {
@@ -49,12 +49,12 @@ namespace easyVulkan {
 				.dependencyCount = 1,
 				.pDependencies = &subpassDependency
 			};
-			rpwf_screen.renderPass.Create(renderPassCreateInfo);
+			rpwf.renderPass.Create(renderPassCreateInfo);
 
 			auto CreateFramebuffers = [] {
-				rpwf_screen.framebuffers.resize(graphicsBase::Base().SwapchainImageCount());
+				rpwf.framebuffers.resize(graphicsBase::Base().SwapchainImageCount());
 				VkFramebufferCreateInfo framebufferCreateInfo = {
-					.renderPass = rpwf_screen.renderPass,
+					.renderPass = rpwf.renderPass,
 					.attachmentCount = 1,
 					.width = windowSize.width,
 					.height = windowSize.height,
@@ -63,17 +63,17 @@ namespace easyVulkan {
 				for (size_t i = 0; i < graphicsBase::Base().SwapchainImageCount(); i++) {
 					VkImageView attachment = graphicsBase::Base().SwapchainImageView(i);
 					framebufferCreateInfo.pAttachments = &attachment;
-					rpwf_screen.framebuffers[i].Create(framebufferCreateInfo);
+					rpwf.framebuffers[i].Create(framebufferCreateInfo);
 				}
 			};
 			auto DestroyFramebuffers = [] {
-				rpwf_screen.framebuffers.clear();
+				rpwf.framebuffers.clear();
 			};
 			graphicsBase::Base().AddCallback_CreateSwapchain(CreateFramebuffers);
 			graphicsBase::Base().AddCallback_DestroySwapchain(DestroyFramebuffers);
 			CreateFramebuffers();
 		}
-		return rpwf_screen;
+		return rpwf;
 	}
 	void BootScreen(const char* imagePath, VkFormat imageFormat) {
 		VkExtent2D imageExtent;
@@ -181,9 +181,8 @@ namespace easyVulkan {
 
 	colorAttachment ca_canvas;
 	const auto& CreateRpwf_Canvas(VkExtent2D canvasSize) {
-		static renderPassWithFramebuffer rpwf_canvas;
-		ExecuteOnce(rpwf_canvas);
-		ca_canvas.Create(graphicsBase::Base().SwapchainCreateInfo().imageFormat, canvasSize, 1, VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
+		static renderPassWithFramebuffer rpwf;
+		ExecuteOnce(rpwf);
 
 		//When this render pass begins, the image keeps its contents.
 		VkAttachmentDescription attachmentDescription = {
@@ -229,21 +228,23 @@ namespace easyVulkan {
 			.dependencyCount = 2,
 			.pDependencies = subpassDependencies,
 		};
-		rpwf_canvas.renderPass.Create(renderPassCreateInfo);
+		rpwf.renderPass.Create(renderPassCreateInfo);
+
+		ca_canvas.Create(graphicsBase::Base().SwapchainCreateInfo().imageFormat, canvasSize, 1, VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
+		
 		VkFramebufferCreateInfo framebufferCreateInfo = {
-			.renderPass = rpwf_canvas.renderPass,
+			.renderPass = rpwf.renderPass,
 			.attachmentCount = 1,
 			.pAttachments = ca_canvas.AddressOfImageView(),
 			.width = canvasSize.width,
 			.height = canvasSize.height,
 			.layers = 1
 		};
-		rpwf_canvas.framebuffer.Create(framebufferCreateInfo);
-
-		return rpwf_canvas;
+		rpwf.framebuffer.Create(framebufferCreateInfo);
+		return rpwf;
 	}
 	void CmdClearCanvas(VkCommandBuffer commandBuffer, VkClearColorValue clearColor) {
-		//Call this function before rpwf_canvas.renderPass begins.
+		//Call this function before rpwf.renderPass begins.
 		VkImageSubresourceRange imageSubresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
 		VkImageMemoryBarrier imageMemoryBarrier = {
 			.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
@@ -263,5 +264,92 @@ namespace easyVulkan {
 		imageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 0,
 			0, nullptr, 0, nullptr, 1, &imageMemoryBarrier);
+	}
+
+	std::vector<depthStencilAttachment> dsas_screenWithDS;
+	const auto& CreateRpwf_ScreenWithDS(VkFormat depthStencilFormat = VK_FORMAT_D24_UNORM_S8_UINT) {
+		static renderPassWithFramebuffers rpwf;
+		ExecuteOnce(rpwf);
+		static VkFormat dsFormat = depthStencilFormat;
+
+		VkAttachmentDescription attachmentDescriptions[2] = {
+			{//Color attachment
+				.format = graphicsBase::Base().SwapchainCreateInfo().imageFormat,
+				.samples = VK_SAMPLE_COUNT_1_BIT,
+				.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+				.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+				.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+				.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+				.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR },
+			{//Depth stencil attachment
+				.format = dsFormat,
+				.samples = VK_SAMPLE_COUNT_1_BIT,
+				.loadOp = dsFormat != VK_FORMAT_S8_UINT ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+				.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+				.stencilLoadOp = dsFormat >= VK_FORMAT_S8_UINT ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+				.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+				//Unless the separateDepthStencilLayouts feature is enabled, even if dsFormat doesn't support stencil, finalLayout must be VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL.
+				.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL }
+		};
+		VkAttachmentReference attachmentReferences[2] = {
+			{ 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL },
+			{ 1, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL }
+		};
+		VkSubpassDescription subpassDescription = {
+			.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+			.colorAttachmentCount = 1,
+			.pColorAttachments = attachmentReferences,
+			.pDepthStencilAttachment = attachmentReferences + 1
+		};
+		//At EARLY_FRAGMENT_TESTS stage, the ds image'll be cleared (if performs) then readed, ds tests are performed for each fragment.
+		//At LATE_FRAGMENT_TESTS stage, ds tests are performed for each sample.
+		VkSubpassDependency subpassDependency = {
+			.srcSubpass = VK_SUBPASS_EXTERNAL,
+			.dstSubpass = 0,
+			.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+			.dstStageMask = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,
+			.srcAccessMask = 0,
+			.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,//Because of VK_ATTACHMENT_LOAD_OP_CLEAR
+			.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT
+		};
+		VkRenderPassCreateInfo renderPassCreateInfo = {
+			.attachmentCount = 2,
+			.pAttachments = attachmentDescriptions,
+			.subpassCount = 1,
+			.pSubpasses = &subpassDescription,
+			.dependencyCount = 1,
+			.pDependencies = &subpassDependency
+		};
+		rpwf.renderPass.Create(renderPassCreateInfo);
+
+		auto CreateFramebuffers = [] {
+			dsas_screenWithDS.resize(graphicsBase::Base().SwapchainImageCount());
+			rpwf.framebuffers.resize(graphicsBase::Base().SwapchainImageCount());
+			for (auto& i : dsas_screenWithDS)
+				i.Create(dsFormat, windowSize, 1, VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT);
+			VkFramebufferCreateInfo framebufferCreateInfo = {
+				.renderPass = rpwf.renderPass,
+				.attachmentCount = 2,
+				.width = windowSize.width,
+				.height = windowSize.height,
+				.layers = 1
+			};
+			for (size_t i = 0; i < graphicsBase::Base().SwapchainImageCount(); i++) {
+				VkImageView attachments[2] = {
+					graphicsBase::Base().SwapchainImageView(i),
+					dsas_screenWithDS[i].ImageView()
+				};
+				framebufferCreateInfo.pAttachments = attachments;
+				rpwf.framebuffers[i].Create(framebufferCreateInfo);
+			}
+		};
+		auto DestroyFramebuffers = [] {
+			dsas_screenWithDS.clear();
+			rpwf.framebuffers.clear();
+		};
+		graphicsBase::Base().AddCallback_CreateSwapchain(CreateFramebuffers);
+		graphicsBase::Base().AddCallback_DestroySwapchain(DestroyFramebuffers);
+		CreateFramebuffers();
+		return rpwf;
 	}
 }
