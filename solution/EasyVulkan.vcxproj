@@ -19,21 +19,58 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <ClInclude Include="EasyVulkan_Ch1\EasyVKStart.h" />
+    <ClInclude Include="EasyVulkan_Ch1\GlfwGeneral.hpp" />
+    <ClInclude Include="EasyVulkan_Ch1\VKBase.h" />
+    <ClInclude Include="EasyVulkan_Ch2\EasyVKStart.h" />
+    <ClInclude Include="EasyVulkan_Ch2\EasyVulkan.hpp" />
+    <ClInclude Include="EasyVulkan_Ch2\GlfwGeneral.hpp" />
+    <ClInclude Include="EasyVulkan_Ch2\VKBase+.h" />
+    <ClInclude Include="EasyVulkan_Ch2\VKBase.h" />
+    <ClInclude Include="EasyVulkan_Ch6\Ch6-1.hpp" />
+    <ClInclude Include="EasyVulkan_Ch6\Ch6-2.hpp" />
+    <ClInclude Include="EasyVulkan_Ch6\Ch6-2_MT.hpp" />
+    <ClInclude Include="EasyVulkan_Ch6\EasyVKStart.h" />
+    <ClInclude Include="EasyVulkan_Ch6\EasyVulkan.hpp" />
+    <ClInclude Include="EasyVulkan_Ch6\GlfwGeneral.hpp" />
+    <ClInclude Include="EasyVulkan_Ch6\QueueThread.h" />
+    <ClInclude Include="EasyVulkan_Ch6\VKBase+.h" />
+    <ClInclude Include="EasyVulkan_Ch6\VKBase.h" />
+    <ClInclude Include="EasyVulkan_Ch6\VKFormat.h" />
+    <ClInclude Include="EasyVulkan_Ch7\Ch7-1.hpp" />
+    <ClInclude Include="EasyVulkan_Ch7\Ch7-2.hpp" />
+    <ClInclude Include="EasyVulkan_Ch7\Ch7-3.hpp" />
+    <ClInclude Include="EasyVulkan_Ch7\Ch7-4.hpp" />
+    <ClInclude Include="EasyVulkan_Ch7\Ch7-5.hpp" />
+    <ClInclude Include="EasyVulkan_Ch7\Ch7-6.hpp" />
+    <ClInclude Include="EasyVulkan_Ch7\Ch7-7.hpp" />
+    <ClInclude Include="EasyVulkan_Ch7\EasyVKStart.h" />
+    <ClInclude Include="EasyVulkan_Ch7\EasyVulkan.hpp" />
+    <ClInclude Include="EasyVulkan_Ch7\GlfwGeneral.hpp" />
+    <ClInclude Include="EasyVulkan_Ch7\VKBase+.h" />
+    <ClInclude Include="EasyVulkan_Ch7\VKBase.h" />
+    <ClInclude Include="EasyVulkan_Ch7\VKFormat.h" />
+    <ClInclude Include="EasyVulkan_Ch8\Ch8-1.hpp" />
+    <ClInclude Include="EasyVulkan_Ch8\Ch8-1_BlameIntel.hpp" />
+    <ClInclude Include="EasyVulkan_Ch8\Ch8-2.hpp" />
+    <ClInclude Include="EasyVulkan_Ch8\EasyVKStart.h" />
+    <ClInclude Include="EasyVulkan_Ch8\EasyVulkan.hpp" />
+    <ClInclude Include="EasyVulkan_Ch8\GlfwGeneral.hpp" />
+    <ClInclude Include="EasyVulkan_Ch8\VKBase+.h" />
+    <ClInclude Include="EasyVulkan_Ch8\VKBase.h" />
+    <ClInclude Include="EasyVulkan_Ch8\VKFormat.h" />
+    <ClInclude Include="EasyVulkan_Ch8\WinGeneral.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="EasyVKStart.h" />
-    <ClInclude Include="EasyVulkan.hpp" />
-    <ClInclude Include="GlfwGeneral.hpp" />
-    <ClInclude Include="VKBase+.h" />
-    <ClInclude Include="VKBase.h" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{939A606E-D6B2-4584-8EE6-792A605FEC5A}</ProjectGuid>
-    <RootNamespace>EasyVulkanCh2</RootNamespace>
+    <ProjectGuid>{B043C97C-1770-4C9A-AC59-99F524861E6B}</ProjectGuid>
+    <RootNamespace>EasyVulkan</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>EasyVulkan</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

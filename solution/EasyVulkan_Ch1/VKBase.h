@@ -173,10 +173,10 @@ namespace vulkan {
 				VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT,
 				.pfnUserCallback = DebugUtilsMessengerCallback
 			};
-			PFN_vkCreateDebugUtilsMessengerEXT CreateDebugUtilsMessenger =
+			PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessenger =
 				reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT"));
-			if (CreateDebugUtilsMessenger) {
-				VkResult result = CreateDebugUtilsMessenger(instance, &debugUtilsMessengerCreateInfo, nullptr, &debugUtilsMessenger);
+			if (vkCreateDebugUtilsMessenger) {
+				VkResult result = vkCreateDebugUtilsMessenger(instance, &debugUtilsMessengerCreateInfo, nullptr, &debugUtilsMessenger);
 				if (result)
 					std::cout << std::format("[ graphicsBase ] ERROR\nFailed to create a debug messenger!\nError code: {}\n", int32_t(result));
 				return result;

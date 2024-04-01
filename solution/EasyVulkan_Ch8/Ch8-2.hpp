@@ -161,7 +161,7 @@ int main() {
 		renderPass.CmdEnd(commandBuffer);
 		commandBuffer.End();
 
-		graphicsBase::Base().SubmitCommandBuffer_Graphics(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
+		graphicsBase::Base().SubmitCommandBuffer_Graphics(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence, VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT);
 		graphicsBase::Base().PresentImage(semaphore_renderingIsOver);
 
 		glfwPollEvents();
