@@ -1008,6 +1008,76 @@ namespace vulkan {
 			return Create(createInfo);
 		}
 	};
+	class event {
+		VkEvent handle = VK_NULL_HANDLE;
+	public:
+		//event() = default;
+		event(VkEventCreateInfo& createInfo) {
+			Create(createInfo);
+		}
+		event(VkEventCreateFlags flags = 0) {
+			Create(flags);
+		}
+		event(event& other) noexcept { MoveHandle; }
+		~event() { DestroyHandleBy(vkDestroyEvent); }
+		//Getter
+		DefineHandleTypeOperator;
+		DefineAddressFunction;
+		//Const Function
+		void CmdSet(VkCommandBuffer commandBuffer, VkPipelineStageFlags stage_from) const {
+			vkCmdSetEvent(commandBuffer, handle, stage_from);
+		}
+		void CmdReset(VkCommandBuffer commandBuffer, VkPipelineStageFlags stage_from) const {
+			vkCmdResetEvent(commandBuffer, handle, stage_from);
+		}
+		void CmdWait(VkCommandBuffer commandBuffer, VkPipelineStageFlags stage_from, VkPipelineStageFlags stage_to,
+			arrayRef<VkMemoryBarrier> memoryBarriers,
+			arrayRef<VkBufferMemoryBarrier> bufferMemoryBarriers,
+			arrayRef<VkImageMemoryBarrier> imageMemoryBarriers) const {
+			for (auto& i : memoryBarriers)
+				i.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+			for (auto& i : bufferMemoryBarriers)
+				i.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+			for (auto& i : imageMemoryBarriers)
+				i.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+			vkCmdWaitEvents(commandBuffer, 1, &handle, stage_from, stage_to,
+				memoryBarriers.Count(), memoryBarriers.Pointer(),
+				bufferMemoryBarriers.Count(), bufferMemoryBarriers.Pointer(),
+				imageMemoryBarriers.Count(), imageMemoryBarriers.Pointer());
+		}
+		result_t Set() const {
+			VkResult result = vkSetEvent(graphicsBase::Base().Device(), handle);
+			if (result)
+				std::cout << std::format("[ event ] ERROR\nFailed to singal the event!\nError code: {}\n", int32_t(result));
+			return result;
+		}
+		result_t Reset() const {
+			VkResult result = vkResetEvent(graphicsBase::Base().Device(), handle);
+			if (result)
+				std::cout << std::format("[ event ] ERROR\nFailed to unsingal the event!\nError code: {}\n", int32_t(result));
+			return result;
+		}
+		result_t Status() const {
+			VkResult result = vkGetEventStatus(graphicsBase::Base().Device(), handle);
+			if (result < 0)
+				std::cout << std::format("[ event ] ERROR\nFailed to get the status of the event!\nError code: {}\n", int32_t(result));
+			return result;
+		}
+		//Non-const Function
+		result_t Create(VkEventCreateInfo& createInfo) {
+			createInfo.sType = VK_STRUCTURE_TYPE_EVENT_CREATE_INFO;
+			VkResult result = vkCreateEvent(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
+			if (result)
+				std::cout << std::format("[ event ] ERROR\nFailed to create a event!\nError code: {}\n", int32_t(result));
+			return result;
+		}
+		result_t Create(VkEventCreateFlags flags = 0) {
+			VkEventCreateInfo createInfo = {
+				.flags = flags
+			};
+			return Create(createInfo);
+		}
+	};
 
 	class shaderModule {
 		VkShaderModule handle = VK_NULL_HANDLE;

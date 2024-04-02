@@ -478,7 +478,7 @@ file.<span class="fn">close</span>();
     编写Vulkan用的GLSL着色器时，首先需要注意的是其NDC（标准化设备坐标系，normalized device coordinates）。
 </p>
 <p>
-    相机参考系中的三维坐标加上齐次坐标w，经投影矩阵变换后，被转换到齐次剪裁空间（homogeneous clip space）坐标。将该四维矢量输出到gl_Position后，在栅格化阶段，该四维矢量的xyz三个分量被除以w分量，由此得到的三维矢量即是NDC坐标（二维渲染中gl_Position.w应总是指定为1，那么gl_Position.xyz的数值就等同于NDC坐标）。
+    相机参考系中的三维坐标加上齐次坐标w，经投影矩阵变换后，被转换到齐次剪裁空间（homogeneous clip space）坐标。将该四维矢量输出到gl_Position后，在栅格化阶段前，该四维矢量的xyz三个分量被除以w分量，由此得到的三维矢量即是NDC坐标（二维渲染中gl_Position.w应总是指定为1，那么gl_Position.xyz的数值就等同于NDC坐标）。
 </p>
 <p>
     最终片段在图像中的具体坐标及深度值，是根据创建管线时指定的视口（viewport），将NDC坐标映射到屏幕空间（screen space）后得到的。

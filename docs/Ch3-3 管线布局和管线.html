@@ -1091,7 +1091,9 @@
     </li>
     <li>
         <p>
-            深度偏移为：depthBiasConstantFactor*r+depthBiasSlopeFactor*m，其中r是深度缓冲中的最小可表示正数，数值取决于深度缓冲的格式，m为片段NDC坐标的z值在x和y方向的偏导数的较大值。
+            深度偏移为：depthBiasConstantFactor*r+depthBiasSlopeFactor*m，其中r是深度缓冲中的最小可表示正数，数值取决于深度缓冲的格式，m为片段的视口深度在x和y方向的偏导数平方和的开方，或可能为x和y方向的偏导数绝对值的较大值。
+            <br>
+            注：视口变换发生在栅格化阶段前，所以被求导的是视口变换后的深度，不是NDC深度。
         </p>
     </li>
     <li>
@@ -1427,7 +1429,7 @@
     只有开启深度测试时即深度写入，且深度测试通过时，新片段的深度会被写入到深度缓冲。未通过深度测试的片段会被丢弃（对于多重采样的情况，Vulkan标准中的说法为使得采样点的coverage为0）。
 </p>
 <p>
-    Depth bounds test（深度边界测试）的测试方式是：若<strong>已在</strong>深度缓冲中的深度值在[minDepthBounds, maxDepthBounds]之内，执行对当前片段的模板和深度测试及片段着色。
+    深度边界测试（depth bounds test）的测试方式是：若<strong>已在</strong>深度缓冲中的深度值在[minDepthBounds, maxDepthBounds]之内，执行对当前片段的模板和深度测试及片段着色。
     <br>
     注意，用于比较的不是新片段的深度值。这似乎很反直觉，该测试意义在于减少一些后续处理，比如在延迟渲染中，可以用这一方式限定光照距离。
     <br>

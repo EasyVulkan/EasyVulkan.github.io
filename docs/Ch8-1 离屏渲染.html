@@ -175,6 +175,8 @@
 </p>
 <p>
     我打算让上述的最后两步“离屏渲染”和“渲染到屏幕”发生在一个命令缓冲区中，中间不使用信号量或栅栏等同步对象。
+    <br>
+    “离屏渲染”和“渲染到屏幕”的两个渲染通道可以变成同一个渲染通道的两个子通道，不过这一节姑且就不这么做了。
 </p></section>
 <section id="id2">
 <h2>图像附件<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
@@ -881,11 +883,11 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
     pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_line;
     pipeline_line.<span class="fn">Create</span>(pipelineCiPack);
     <span class="cmt">//屏幕</span>
-    <span class="kw">static</span> <span class="type">shaderModule</span> vert(<span class="str">&quot;shader/CanvasToScreen.vert.spv&quot;</span>);
-    <span class="kw">static</span> <span class="type">shaderModule</span> frag(<span class="str">&quot;shader/CanvasToScreen.frag.spv&quot;</span>);
+    <span class="kw">static</span> <span class="type">shaderModule</span> vert_screen(<span class="str">&quot;shader/CanvasToScreen.vert.spv&quot;</span>);
+    <span class="kw">static</span> <span class="type">shaderModule</span> frag_screen(<span class="str">&quot;shader/CanvasToScreen.frag.spv&quot;</span>);
     <span class="kw">static</span> <span class="type">VkPipelineShaderStageCreateInfo</span> shaderStageCreateInfos_screen[2] = {
-        vert.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>),
-        frag.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>)
+        vert_screen.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>),
+        frag_screen.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>)
     };
     <span class="kw">auto</span> Create = [] {
         <span class="type">graphicsPipelineCreateInfoPack</span> pipelineCiPack;

@@ -288,11 +288,11 @@ namespace easyVulkan {
 				.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
 				.stencilLoadOp = dsFormat >= VK_FORMAT_S8_UINT ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 				.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-				//Unless the separateDepthStencilLayouts feature is enabled, even if dsFormat doesn't support stencil, finalLayout must be VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL.
 				.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL }
 		};
 		VkAttachmentReference attachmentReferences[2] = {
 			{ 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL },
+			//Unless the separateDepthStencilLayouts feature is enabled, even if dsFormat doesn't support stencil, layout must be VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL.
 			{ 1, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL }
 		};
 		VkSubpassDescription subpassDescription = {

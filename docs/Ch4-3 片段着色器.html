@@ -240,7 +240,7 @@
     <br>
     多重采样时，gl_FragCoord.x和gl_FragCoord.y精确到片段内部采样点的坐标。
     <br>
-    gl_FragCoord.z是NDC中的深度值，也就是说范围为[0,1]。
+    gl_FragCoord.z是将NDC坐标的z分量进行视口变换后得到的深度值。
     <br>
     gl_FragCoord.w为对先前阶段中输出的gl_Position.w插值得到的数值的倒数。
 </p></section>

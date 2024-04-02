@@ -4,7 +4,8 @@
 
 联系请至:[【长期】 反馈/交流集中贴](https://github.com/EasyVulkan/EasyVulkan.github.io/issues/7)
 
-2024.03.27 完成[Ch8-1 离屏渲染](https://easyvulkan.github.io/Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html)。
+2024.04.02 完成[Ch8-2 深度测试和深度可视化](https://easyvulkan.github.io/Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html)。<br>
+2024.04.02 代码里加了CMakeLists.txt（我不确定Visual Studio之外是什么效果，谁愿意的话可以fork到私有仓库，帮我改一下然后pull上来）
 
 ## 章节目录
 
@@ -30,6 +31,7 @@
 [Ch7-6 拷贝图像到屏幕](https://easyvulkan.github.io/Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html)<br>
 [Ch7-7 使用贴图](https://easyvulkan.github.io/Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html)<br>
 [Ch8-1 离屏渲染](https://easyvulkan.github.io/Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html)<br>
+[Ch8-2 深度测试和深度可视化](https://easyvulkan.github.io/Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html)<br>
 
 若要生成mipmap，请阅读Ch7-6和Ch7-7。
 
@@ -52,7 +54,6 @@
 
 ## 更新计划（6月底前）
 
-Ch8-2 深度测试和深度可视化<br>
 Ch8-3 输入附件示例：延迟渲染<br>
 Ch8-4 多重采样与超采样<br>
 Ch8-5 sRGB色彩校正与HDR<br>

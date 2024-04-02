@@ -227,7 +227,7 @@
         <p class="caption" role="heading"><span class="caption-text">第八章 简单示例</span></p>
         <ul>
             <li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
-            <li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化（施工中）</a></li>
+            <li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
             <li class="toctree-l1">Ch8-3 输入附件示例：延迟渲染</li>
             <li class="toctree-l1">Ch8-4 多重采样与超采样</li>
             <li class="toctree-l1">Ch8-5 sRGB色彩校正与HDR</li>
@@ -243,13 +243,17 @@
 <ul>
     <li>
         <p>
-            24.04.02 修正对设备内存的说明，简单总结：根据要求的内存属性，设备内存的底层可能是计算机主存，可能是显存。
+            24.04.02 <a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a>完成。
         </p>
     </li>
-<br>
     <li>
         <p>
-            24.04.01 <a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a>第一部分完成。
+            24.04.02 修正对深度偏移的说明：<a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html#vkpipelinerasterizationstatecreateinfo">深度偏移</a>作用于经视口变换后的深度，非NDC深度。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.04.02 修正对设备内存的说明，简单总结：根据要求的内存属性，设备内存的底层可能是计算机主存，可能是显存。
         </p>
     </li>
 <br>
@@ -467,7 +471,7 @@
 <p>
     暂请不要转载原文，在写完前述各章节前可能会不断修改细节。
     <br>
-    也不要fork成公有仓库。
+    也不要fork成公有仓库（包括到Gitee/GitCode的情況）。
 </p>
 <p>
     联系请直接发issue，捉虫或答疑可<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/issues/7">至此</a>，不定期上Github。

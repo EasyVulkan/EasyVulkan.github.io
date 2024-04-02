@@ -112,7 +112,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#id8">绘制</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id9">采样深度贴图</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">将深度显示到屏幕</a></li>
 </ul>
 </li>
 </ul>
@@ -548,7 +548,7 @@ vertexBuffer_perInstance.<span class="type">TransferData</span>(offsets);
     </li>
 </ul>
 <p>
-    这次将会使用<span class="cmt">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST</span>为图元拓扑类型绘制立方体，那么便需要36个索引：
+    这次将会使用<span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST</span>为图元拓扑类型绘制立方体，那么便需要36个索引：
 </p>
 <pre class="code">
 <span class="type">uint16_t</span> indices[36] = { 0, 1, 2, 2, 1, 3 };
@@ -684,7 +684,7 @@ indexBuffer.<span class="type">TransferData</span>(indices);
     </li>
     <li>
         <p>
-            depthWriteEnable为<span class="mcr">VK_TRUE</span>使得深度测试通过后写入深度，这个写入指将当前深度值用作与后续片段的深度进行比较的新基准值，不影响渲染通道结束时对深度附件的读写。
+            depthWriteEnable为<span class="mcr">VK_TRUE</span>使得深度测试通过后写入深度，这个写入指将当前深度值用作与后续片段的深度进行比较的新基准值，仅影响通过该管线进行的绘制，不影响渲染通道结束时对深度附件的读写。
         </p>
     </li>
     <li>
@@ -795,11 +795,103 @@ glm::<span class="type">mat4</span> proj = <span class="fn">FlipVertical</span>(
 <p>
     运行程序，效果如下：
 </p>
-<img alt="_images/ch8-2-2.png" src="_images/ch8-2-2.png"></section>
-<section id="id9">
-<h2>采样深度贴图<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h2>
+<img alt="_images/ch8-2-2.png" src="_images/ch8-2-2.png">
 <p>
-    施工中
+    若反转视口的最大最小深度，即这么指定：
+</p>
+<pre class="code">
+pipelineCiPack.viewports.<span class="fn">emplace_back</span>(0.f, 0.f, <span class="kw">float</span>(windowSize.width), <span class="kw">float</span>(windowSize.height), 1.f, 0.f);
+</pre>
+<p>
+    则效果为：
+</p>
+<img alt="_images/ch8-2-3.png" src="_images/ch8-2-3.png">
+<ul>
+    <li>
+        <p>
+            因背面剔除，绘制出来的面跟前面是一样的。
+        </p>
+    </li>
+    <li>
+        <p>
+            深度变为<code>1-原先的值</code>，因而变成了近的物体被远的物体遮挡。
+        </p>
+    </li>
+</ul></section>
+<section id="id9">
+<h2>将深度显示到屏幕<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h2>
+<p>
+    将深度呈现到屏幕的最省事的办法是什么？
+    <br>
+    当然是修改片段着色器啦！
+</p>
+<p>
+    <span class="path">Into3d_visualizeDepth.frag.shader</span>：
+</p>
+<pre class="code">
+<span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(fragment)
+
+<span class="kw">layout</span>(location = 0) <span class="kw">in</span> <span class="type">vec4</span> i_Color;
+<span class="kw">layout</span>(location = 1) <span class="kw">out</span> <span class="type">vec4</span> o_Color;
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    o_Color = <span class="type">vec4</span>(gl_FragCoord.z, gl_FragCoord.z, gl_FragCoord.z, 1);
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            <span class="var">gl_FragCoord</span>是<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#gl-fragcoord">片段着色器的内置输入</a>。
+        </p>
+    </li>
+</ul>
+<p>
+    不过这样渲染出来的灰度图还不是深度附件该有的样子，清屏颜色得跟清屏的深度值统一（嘛，其实心里知道背景深度是1就行了）：
+</p>
+<pre class="code">
+<span class="type">VkClearValue</span> clearColors[2] = {
+    { .color = { 1.f, 1.f, 1.f, 1.f } },
+    { .depthStencil = { 1.f, 0 } }
+};
+</pre>
+<p>
+    于是话不多说，除了着色器路径，其余一字不改，跑出来的结果是：
+</p>
+<img alt="_images/ch8-2-4.png" src="_images/ch8-2-4.png">
+<p>
+    竟然！难道是我程序写错了吗！？不能慌，赶紧看看先前齐次剪裁空间下的深度公式：<code>Z_hcs = z - dn;</code>
+    <br>
+    该式除以z，即是使用无限远远平面透视投影矩阵时的NDC深度：<code>Z_p = 1 - dn / z;</code>
+    <br>
+    近平面位置<span class="var">dn</span>是0.1f，那只有在<span class="var">z</span>很小的时候，<span class="var">Z_p</span>才有可能是一个明显小于1的数值。
+    <br>
+    （这也说明了，透视投影具有近处的深度精度较高的特点）
+</p>
+<p>
+    那还不简单，让近平面远一点好了，设定近平面位置为5.f，效果便显著多了：
+</p>
+<img alt="_images/ch8-2-5.png" src="_images/ch8-2-5.png">
+<p>
+    关闭深度写入（深度模板状态创建信息中的depthWriteEnable为<span class="mcr">VK_FALSE</span>）的话会变成这样，原因是因为所有片段都在跟背景的1.f比较深度：
+</p>
+<img alt="_images/ch8-2-6.png" src="_images/ch8-2-6.png">
+<p>
+    开启深度偏移（<a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html#vkpipelinerasterizationstatecreateinfo">栅格化状态创建信息</a>中的depthBiasEnable为<span class="mcr">VK_TRUE</span>）后，将深度偏移坡度系数分别指定为100和-100的效果如下。
+    <br>
+    最下方一格的红绿两通道的数值，分别是x和y两个方向上视口深度的偏导数绝对值乘以100。
+</p>
+<img alt="_images/ch8-2-7.png" src="_images/ch8-2-7.png">
+<p>
+    这一节没有涉及到的深度边界测试，用例见TODO Ch8-3 延迟渲染。
+</p>
+<p>
+    其实笔者原想在这里创建个没有片段着色器的管线只渲染深度，然后采样深度到屏幕（但是这么一来代码量就得跟前一节几乎一样多），或者使用输入附件（这是下一节的内容），因不想这一节冗余的代码太多，索性作罢。
+    <br>
+    注：只渲染深度，然后把深度图像blit到交换链图像是不行的，验证层会<a href="https://renderdoc.org/vkspec_chunked/chap20.html#VUID-vkCmdBlitImage-srcImage-00231">报错</a>。
+</p>
+<p>
+    <strong>使用没有片段着色器的管线并没有什么难度，就请各位自己尝试吧！</strong>
 </p></section>
 </section>
 
