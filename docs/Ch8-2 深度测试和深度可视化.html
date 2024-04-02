@@ -19,8 +19,7 @@
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
-    <link rel="search" title="搜索" href="search.html" />
-    <link rel="prev" title="Ch8-1 离屏渲染" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html" /> 
+    <link rel="search" title="搜索" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -94,27 +93,8 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第八章 简单示例</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch8-2 深度测试和深度可视化</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id1">投影变换</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#glm">GLM中的透视投影矩阵</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id2">有关投影变换的数学</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">绘制多个立方体的流程</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">创建渲染通道和帧缓冲</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">顶点和索引数据</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id6">书写着色器并创建管线</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#into3d-vert-shader">Into3D.vert.shader</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#into3d-frag-shader">Into3D.frag.shader</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id7">创建管线</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#id8">绘制</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id9">采样深度贴图</a></li>
-</ul>
-</li>
 </ul>
 
         </div>
@@ -142,11 +122,6 @@
              
   <section id="ch8-2">
 <h1>Ch8-2 深度测试和深度可视化<a class="headerlink" href="#ch8-2" title="Permalink to this heading"></a></h1>
-<p>
-    深度值是表示片段远近程度的数值（如今才提是不是太晚了点？）。
-    <br>
-    深度测试（depth test），指通过比较片段的深度值，根据遮挡关系，确定是否要保留片段的一种图形管线功能。
-</p>
 <p>
     本节分成两件事情：
     <br>
@@ -302,7 +277,7 @@
 <section id="id4">
 <h2>创建渲染通道和帧缓冲<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
 <p>
-    在<a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html#id2">前一节</a>里已经将深度模板附件封装为了<span class="type">depthStencilAttachment</span>类型。于是向<span class="path">EasyVulkan.hpp</span>，easyVulkan命名空间中，定义一个<span class="type">vector</span>用来存放与交换链图像相应数量的深度模板附件，及用来创建深度模板附件、渲染通道、帧缓冲的函数<span class="fn">CreateRpwf_Canvas</span>(...)：
+    在前一节里已经将深度模板附件封装为了<span class="type">depthStencilAttachment</span>类型。于是向<span class="path">EasyVulkan.hpp</span>，easyVulkan命名空间中，定义一个<span class="type">vector</span>用来存放与交换链图像相应数量的深度模板附件，及用来创建深度模板附件、渲染通道、帧缓冲的函数<span class="fn">CreateRpwf_Canvas</span>(...)：
 </p>
 <pre class="code">
 std::<span class="type">vector</span>&lt;<span class="type">depthStencilAttachment</span>&gt; dsas_screenWithDS;
@@ -552,8 +527,8 @@ vertexBuffer_perInstance.<span class="type">TransferData</span>(offsets);
 </p>
 <pre class="code">
 <span class="type">uint16_t</span> indices[36] = { 0, 1, 2, 2, 1, 3 };
-<span class="kw">for</span> (<span class="type">size_t</span> i = 1; i &lt; 6; i++)
-    <span class="kw">for</span> (<span class="type">size_t</span> j = 0; j &lt; 6; j++)
+<span class="type">kw</span> (<span class="type">size_t</span> i = 1; i &lt; 6; i++)
+    <span class="type">kw</span> (<span class="type">size_t</span> j = 0; j &lt; 6; j++)
         indices[i * 6 + j] = indices[j] + i * 4;
 <span class="type">indexBuffer</span> indexBuffer(<span class="kw">sizeof</span> indices);
 indexBuffer.<span class="type">TransferData</span>(indices);
@@ -660,7 +635,7 @@ indexBuffer.<span class="type">TransferData</span>(indices);
         <span class="cmt">//开启深度测试</span>
         pipelineCiPack.depthStencilStateCi.depthTestEnable = <span class="mcr">VK_TRUE</span>;
         pipelineCiPack.depthStencilStateCi.depthWriteEnable = <span class="mcr">VK_TRUE</span>;
-        pipelineCiPack.depthStencilStateCi.depthCompareOp = <span class="enum">VK_COMPARE_OP_LESS</span>;<span class="cmt">//若新片元的深度更小，则通过测试</span>
+        pipelineCiPack.depthStencilStateCi.depthCompareOp = <span class="enum">VK_COMPARE_OP_LESS</span>;
 
         pipelineCiPack.colorBlendAttachmentStates.<span class="fn">push_back</span>({ .colorWriteMask = 0b1111 });
         pipelineCiPack.<span class="fn">UpdateAllArrays</span>();
@@ -676,139 +651,39 @@ indexBuffer.<span class="type">TransferData</span>(indices);
     Create();
 }
 </pre>
-<ul>
-    <li>
-        <p>
-            如果你没有在片段着色器中书写涉及判定gl_FrontFacing的逻辑的话，<span class="enum">VK_CULL_MODE_BACK_BIT</span>和<span class="enum">VK_FRONT_FACE_COUNTER_CLOCKWISE</span>的组合，跟<span class="enum">VK_CULL_MODE_FRONT_BIT</span>和<span class="enum">VK_FRONT_FACE_CLOCKWISE</span>的组合效果是一样的。
-        </p>
-    </li>
-    <li>
-        <p>
-            depthWriteEnable为<span class="mcr">VK_TRUE</span>使得深度测试通过后写入深度，这个写入指将当前深度值用作与后续片段的深度进行比较的新基准值，不影响渲染通道结束时对深度附件的读写。
-        </p>
-    </li>
-    <li>
-        <p>
-            因为我前面使用的是左手系的模型数据（虽然对正方体来说没太大区别）和位移，且打算使用对应左手系的投影矩阵，那么深度值更小意味着离观察者更近，故使用<span class="enum">VK_COMPARE_OP_LESS</span>。
-        </p>
-    </li>
-</ul>
 <p>
-    <strong>3D渲染中，对于有内外之分的封闭物体（且一般不透明），在栅格化阶段直接剔除其看不见的面以节省运算性能，这叫面剔除。</strong>
+    3D渲染中，对于有内外之分的封闭物体（且一般不透明），在栅格化阶段直接剔除其看不见的面以节省运算性能，这叫面剔除。
     <br>
     这里将cullMode指定为<span class="enum">VK_CULL_MODE_BACK_BIT</span>以开启背面剔除，然后所谓正背面是由顶点顺序决定的，<span class="enum">VK_FRONT_FACE_COUNTER_CLOCKWISE</span>意味着，如果一个三角形中三个顶点的坐标，依被着色器读取的顺序呈现逆时针，那么就是正面。
     <br>
-    这里所谓的坐标为输出到gl_Position的坐标，或NDC坐标（两者必然同顺或同逆：x和y都除以负的w时，相当于双重镜像，或说旋转180°）。
+    这里所谓的坐标为输出到gl_Position的坐标，或NDC坐标（x和y都除以负的w时，相当于双重镜像，或说旋转180°，于是顺/逆时针不变）。
 </p>
 <p>
-    解释先前<code>{ 0, 1, 2, 2, 1, 3 }</code>的顶点顺序：
-    <br>对于我给出的立方体顶点数据中任意面的四个顶点中，0和3号顶点、1和2号顶点各构成对角线，即0和3在1和2构成的线不同侧。那么若<code>{ 0, 1, 2 }</code>的三角形为逆时针，则<code>{ 1, 2, 3 }</code>的三角形必然为顺时针。因此这里第二个三角形的顶点顺序得是<code>{ 2, 1, 3 }</code>。
+    解释先前<code>{ 0, 1, 2, 2, 1, 3 }</code>的顶点顺序：对于我给出的立方体顶点数据中任意面的四个顶点中，0和3号顶点、1和2号顶点各构成对角线，即0和3在1和2构成的线不同侧。那么若<code>{ 0, 1, 2 }</code>的三角形为逆时针，则<code>{ 1, 2, 3 }</code>的三角形必然为顺时针。因此这里第二个三角形的顶点顺序得是<code>{ 2, 1, 3 }</code>。
+</p>
+<p>
+    如果你没有在片段着色器中书写涉及判定gl_FrontFacing的逻辑的话，<span class="enum">VK_CULL_MODE_BACK_BIT</span>和<span class="enum">VK_FRONT_FACE_COUNTER_CLOCKWISE</span>的组合，跟<span class="enum">VK_CULL_MODE_FRONT_BIT</span>和<span class="enum">VK_FRONT_FACE_CLOCKWISE</span>的组合效果是一样的。
+</p>
+</p>
+    TODO 因事中断写作，施工中
 </p></section>
 </section>
 <section id="id8">
 <h2>绘制<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h2>
 <p>
-    调用glm::<span class="fn">infinitePerspectiveLH_ZO</span>(...)来生成对应左手系、NDC深度为[0, 1]的无限远远平面透视投影矩阵，可用glm::<span class="fn">radians</span>(...)将角度制值转到弧度制。
-    <br>
-    并使用先前在<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id4">Ch4-1</a>中所写的函数，应对GLSL和Vulkan的+y方向差异问题：
-</p>
-<pre class="code">
-glm::<span class="type">mat4</span> proj = <span class="fn">FlipVertical</span>(glm::<span class="fn">infinitePerspectiveLH_ZO</span>(glm::<span class="fn">radians</span>(60.f), <span class="kw">float</span>(windowSize.width) / windowSize.height, 0.1f));
-</pre>
-<p>
-    该录制哪些命令应该已完全无需说明，整个主函数如下：
-</p>
-<pre class="code">
-<span class="kw">int</span> <span class="fn">main</span>() {
-    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
-        <span class="kw">return</span> -1;
-
-    <span class="kw">const auto</span>&amp; [renderPass, framebuffers] = <span class="fn">RenderPassAndFramebuffers</span>();
-    <span class="fn">CreateLayout</span>();
-    <span class="fn">CreatePipeline</span>();
-
-    <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
-    <span class="type">semaphore</span> semaphore_imageIsAvailable;
-    <span class="type">semaphore</span> semaphore_renderingIsOver;
-
-    <span class="type">commandBuffer</span> commandBuffer;
-    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
-    commandPool.<span class="type">AllocateBuffers</span>(commandBuffer);
-
-    <span class="type">vertex</span> vertices[] = { <span class="cmt">/*...*/</span> };
-    <span class="type">vertexBuffer</span> vertexBuffer_perVertex(<span class="kw">sizeof</span> vertices);
-    vertexBuffer_perVertex.<span class="type">TransferData</span>(vertices);
-    glm::<span class="type">vec3</span> offsets[] = { <span class="cmt">/*...*/</span> };
-    <span class="type">vertexBuffer</span> vertexBuffer_perInstance(<span class="kw">sizeof</span> offsets);
-    vertexBuffer_perInstance.<span class="type">TransferData</span>(offsets);
-    <span class="type">uint16_t</span> indices[36] = { 0, 1, 2, 2, 1, 3 };
-    <span class="kw">for</span> (<span class="type">size_t</span> i = 1; i &lt; 6; i++)
-        <span class="kw">for</span> (<span class="type">size_t</span> j = 0; j &lt; 6; j++)
-            indices[i * 6 + j] = indices[j] + i * 4;
-    <span class="type">indexBuffer</span> indexBuffer(<span class="kw">sizeof</span> indices);
-    indexBuffer.<span class="type">TransferData</span>(indices);
-
-    glm::<span class="type">mat4</span> proj = <span class="fn">FlipVertical</span>(glm::<span class="fn">infinitePerspectiveLH_ZO</span>(glm::<span class="fn">radians</span>(60.f), <span class="kw">float</span>(windowSize.width) / windowSize.height, 0.1f));
-
-    <span class="type">VkClearValue</span> clearColors[2] = {
-        { .color = { 0.f, 0.f, 0.f, 1.f } },
-        { .depthStencil = { 1.f, 0 } }
-    };
-
-    <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
-        <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
-            <span class="fn">glfwWaitEvents</span>();
-        <span class="fn">TitleFps</span>();
-
-        fence.<span class="fn">WaitAndReset</span>();
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
-        <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
-        commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
-
-        renderPass.<span class="fn">CmdBegin</span>(commandBuffer, framebuffers[i], { {}, windowSize }, clearColors);
-        <span class="type">VkBuffer</span> buffers[2] = { vertexBuffer_perVertex, vertexBuffer_perInstance };
-        <span class="type">VkDeviceSize</span> offsets[2] = {};
-        <span class="fn">vkCmdBindVertexBuffers</span>(commandBuffer, 0, 2, buffers, offsets);
-        <span class="fn">vkCmdBindIndexBuffer</span>(commandBuffer, indexBuffer, 0, <span class="enum">VK_INDEX_TYPE_UINT16</span>);
-        <span class="fn">vkCmdPushConstants</span>(commandBuffer, pipelineLayout_into3d, <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>, 0, 64, &amp;proj);
-        <span class="fn">vkCmdDrawIndexed</span>(commandBuffer, 36, 12, 0, 0, 0);
-        renderPass.<span class="fn">CmdEnd</span>();
-
-        commandBuffer.<span class="fn">End</span>();
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence,
-            <span class="enum">VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT</span>);
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
-
-        <span class="fn">glfwPollEvents</span>();
-    }
-    <span class="fn">TerminateWindow</span>();
-    <span class="kw">return</span> 0;
-}
-</pre>
-<ul>
-    <li>
-        <p>
-            前面创建渲染通道时，子通道依赖的dstStageMask是<span class="enum">VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT</span>，交换链图像和深度附件在该阶段一齐发生布局转换，<span class="var">semaphore_imageIsAvailable</span>对应的等待阶段不得晚于该阶段，原因同<a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html#id3">Ch2-2</a>中的一致。
-        </p>
-    </li>
-</ul>
-<p>
-    运行程序，效果如下：
-</p>
-<img alt="_images/ch8-2-2.png" src="_images/ch8-2-2.png"></section>
+    施工中
+</p></section>
 <section id="id9">
 <h2>采样深度贴图<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h2>
 <p>
-    施工中
+
 </p></section>
 </section>
 
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html" class="btn btn-neutral float-left" title="Ch8-1 离屏渲染" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
-    </div>
+          <footer>
 
   <hr/>
 

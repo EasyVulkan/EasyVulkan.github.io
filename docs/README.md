@@ -3,9 +3,8 @@
 主页：https://easyvulkan.github.io/
 
 联系请至:[【长期】 反馈/交流集中贴](https://github.com/EasyVulkan/EasyVulkan.github.io/issues/7)
-请不要fork成公有仓库（包括到Gitee/GitCode的情況）。
 
-2024.04.01 完成[Ch8-2 深度测试和深度可视化（深度测试部分）](https://easyvulkan.github.io/Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html)。
+2024.03.27 完成[Ch8-1 离屏渲染](https://easyvulkan.github.io/Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html)。
 
 ## 章节目录
 
