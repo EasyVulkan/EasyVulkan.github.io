@@ -116,6 +116,7 @@
 <p class="caption" role="heading"><span class="caption-text">第八章 简单示例</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
 </ul>
 
         </div>
@@ -1365,7 +1366,7 @@ queueFamilyIndex_compute = ic;
 <ul>
     <li>
         <p>
-            从Vulkan1.1开始可以将flags指定为<span class="enum">VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT</span>，说明该队列受保护。虽然本套教程不会对Vulkan1.0以上版本的功能做过分展开，由于受保护内存（protected memory）相关的说明在官方标准中很常见（尽管通常不会被使用），这里还是做一下简单提要。Vulkan的设备内存（物理设备为GPU则等同显存）对主机（指CPU一侧）可以是可见的，这就导致有能力的程序员可以通过一些手段，使得一个程序读写其他程序的设备内存，而受保护设备内存则被严格限制只能被设备写入，受保护队列则是能执行受保护操作的队列，这里头还有一些很麻烦的读写守则，这里不做展开，有兴趣请自行参考官方标准。受保护设备内存的主要应用场景是防止从内存中读取DRM内容（也就是防止盗版加密图像啦！DLsite和Fanza的新版电子书阅读器有这种特性），游戏程序员是用不着的。
+            从Vulkan1.1开始可以将flags指定为<span class="enum">VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT</span>，说明该队列受保护。虽然本套教程不会对Vulkan1.0以上版本的功能做过分展开，由于受保护内存（protected memory）相关的说明在官方标准中很常见（尽管通常不会被使用），这里还是做一下简单提要。Vulkan的设备内存对主机（指CPU一侧）可以是可见的，这就导致有能力的程序员可以通过一些手段，使得一个程序读写其他程序的设备内存，而受保护设备内存则被严格限制只能被设备写入，受保护队列则是能执行受保护操作的队列，这里头还有一些很麻烦的读写守则，这里不做展开，有兴趣请自行参考官方标准。受保护设备内存的主要应用场景是防止从内存中读取DRM内容（也就是防止盗版加密图像啦！DLsite和Fanza的新版电子书阅读器有这种特性），游戏程序员是用不着的。
         </p>
     </li>
 </ul>

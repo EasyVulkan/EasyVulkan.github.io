@@ -110,6 +110,7 @@
 <p class="caption" role="heading"><span class="caption-text">第八章 简单示例</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
 </ul>
 
         </div>
@@ -209,7 +210,7 @@
     <br>
     物理设备即图形处理器，通常为GPU。Vulkan中所谓的物理设备虽称物理（physical），但并非必须是实体设备。
     <br>
-    <span class="type">VkPhysicalDevice</span>类型指代物理设备，从这类handle只能获取物理设备信息。<span class="type">VkDevice</span>类型是逻辑设备的handle，逻辑设备是编程层面上用来与物理设备交互的对象，关于分配显存、创建Vulkan相关对象的命令大都会被提交给逻辑设备。
+    <span class="type">VkPhysicalDevice</span>类型指代物理设备，从这类handle只能获取物理设备信息。<span class="type">VkDevice</span>类型是逻辑设备的handle，逻辑设备是编程层面上用来与物理设备交互的对象，关于分配设备内存、创建Vulkan相关对象的命令大都会被提交给逻辑设备。
 </p>
 <p>
     <strong>什么是队列？</strong>
@@ -534,7 +535,8 @@ std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;
     5.若创建逻辑设备失败，尝试用<span class="fn">DeterminePhysicalDevice</span>(...)更换物理设备。到这一步为止仍没有检查扩展，如果你首先选用的是性能较好的物理设备，且优先看重性能（而非支持的扩展），那么这一步与下一步可互换。
     <br>
     6.若遍历所有物理设备后仍无法创建逻辑设备且<a href="https://renderdoc.org/vkspec_chunked/chap5.html#vkCreateDevice">vkCreateDevice</a>(...)返回<span class="enum">VK_ERROR_EXTENSION_NOT_PRESENT</span>，从<span class="fn">DeviceExtensions</span>()复制一份<span class="var">deviceExtensions</span>，嵌套循环中用<span class="fn">DeterminePhysicalDevice</span>(...)遍历物理设备（会有代码防止反复取得队列族索引），用<span class="fn">CheckDeviceExtensions</span>(...)检查扩展可用性，对于某物理设备，若不可用的仅为非必要的扩展（不过为应对没有某个扩展而书写两套代码可能会很麻烦），创建一份去除该扩展后的<span class="type">vector</span>，用<span class="type">DeviceExtensions</span>(...)复制给<span class="var">deviceExtensions</span>。然后重新尝试创建逻辑设备。
-    <br>
+</p>
+<p>
     上述流程优先考虑在最佳情况下获得最快的初始化速度，因而显得有些繁琐（最佳情况下不需要检查扩展，最糟糕的情况为遍历所有物理设备一次后，因全数无法满足所需扩展，再次遍历并对每个设备检查扩展可用性），如果你的应用程序用到了显卡未必支持但对于程序运行非必要的扩展，且程序对显卡性能没有要求，可以先检查扩展（最佳情况下需要检查扩展一次，最糟糕的情况下需要遍历所有物理设备一次并对每个设备检查扩展可用性一次）。
 </p></section>
 <section id="id4">
@@ -549,7 +551,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;
 <p>
     <strong>什么是image view？</strong>
     <br>
-    Vulkan中，<span class="type">VkImage</span>引用一片物理设备内存（指显存），将该片内存上的数据用作图像，而<span class="type">VkImageView</span>指定图像的使用方式，比如，一个6层的二维图像，可以用作6层的二维图像数组，也可用作天空盒。
+    Vulkan中，<span class="type">VkImage</span>引用一片<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html#device-memory">物理设备内存</a>，将该片内存上的数据用作图像，而<span class="type">VkImageView</span>指定图像的使用方式，比如，一个6层的二维图像，可以用作6层的二维图像数组，也可用作天空盒。
 </p>
 <p>
     书写创建交换链的函数时，重要的一点是要考虑重建交换链，于是在<span class="type">graphicsBase</span>中加入以下内容：

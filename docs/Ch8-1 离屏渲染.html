@@ -20,6 +20,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ch8-2 深度测试和深度可视化" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html" />
     <link rel="prev" title="Ch7-7 使用贴图" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html" /> 
 </head>
 
@@ -110,6 +111,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#id9">写这节时遭遇的硬件差异问题</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
 </ul>
 
         </div>
@@ -192,8 +194,8 @@
     <span class="cmt">//Getter</span>
     <span class="type">VkImageView</span> <span class="fn">ImageView</span>() <span class="kw">const</span> { <span class="kw">return</span> imageView; }
     <span class="type">VkImage</span> <span class="fn">Image</span>() <span class="kw">const</span> { <span class="kw">return</span> imageMemory.<span class="fn">Image</span>(); }
-    <span class="kw">const</span> <span class="type">VkImageView</span>* AddressOfImageView</span>() <span class="kw">const</span> { <span class="kw">return</span> imageView.<span class="fn">Address</span>(); }
-    <span class="kw">const</span> <span class="type">VkImage</span>* AddressOfImage</span>() <span class="kw">const</span> { <span class="kw">return</span> imageMemory.<span class="fn">AddressOfImage</span>(); }
+    <span class="kw">const</span> <span class="type">VkImageView</span>* <span class="fn">AddressOfImageView</span>() <span class="kw">const</span> { <span class="kw">return</span> imageView.<span class="fn">Address</span>(); }
+    <span class="kw">const</span> <span class="type">VkImage</span>* <span class="fn">AddressOfImage</span>() <span class="kw">const</span> { <span class="kw">return</span> imageMemory.<span class="fn">AddressOfImage</span>(); }
     <span class="cmt">//Const Function</span>
     <span class="cmt">//该函数返回写入描述符时需要的信息</span>
     <span class="type">VkDescriptorImageInfo</span> <span class="fn">DescriptorImageInfo</span>(<span class="type">VkSampler</span> sampler) <span class="kw">const</span> {
@@ -1443,6 +1445,7 @@ renderPass_screen.<span class="fn">CmdEnd</span>(commandBuffer);
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html" class="btn btn-neutral float-left" title="Ch7-7 使用贴图" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html" class="btn btn-neutral float-right" title="Ch8-2 深度测试和深度可视化" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

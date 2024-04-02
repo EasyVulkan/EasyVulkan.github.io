@@ -140,6 +140,7 @@
 <p class="caption" role="heading"><span class="caption-text">第八章 简单示例</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
 </ul>
 
         </div>
@@ -170,7 +171,9 @@
 <section id="device-memory">
 <h2>Device Memory<a class="headerlink" href="#device-memory" title="Permalink to this heading"></a></h2>
 <p>
-    设备内存（<span class="type">VkDeviceMemory</span>）是从相应的物理设备上分配的内存，由于通常会使用显卡作为图形处理设备，所以<span class="type">VkDeviceMemory</span>通常指代显存区域。
+    设备内存（<span class="type">VkDeviceMemory</span>）是物理设备可以访问的内存。
+    <br>
+    根据你需要的内存属性，设备内存可以是计算机主存的一部分，也可以是显卡的显存。
 </p><section id="id1">
 <h3>分配设备内存<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
 <p>
@@ -283,7 +286,7 @@
 <section id="id3">
 <h3>映射内存区<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
 <p>
-    对于具有<span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>内存属性的设备内存区（关于取得内存属性的方法见后文的封装代码），在对其进行映射（map）后，可以从CPU侧对其进行直接读写。
+    对于具有<span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>内存属性的设备内存区（关于取得内存属性的方法见后文的封装代码），在对其进行映射（map）后，可以由CPU侧对其进行直接读写。
     <br>
     用<a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkMapMemory">vkMapMemory</a>(...)映射内存区：
 </p>
@@ -451,7 +454,15 @@ size = (size - offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCohe
             <td><p>指向<span class="type">VkMappedMemoryRange</span>的数组，用于指定要被flush的设备内存区域</p></td>
         </tr>
     </tbody>
-</table></section>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>
+    对于具有<span class="enum">VK_MEMORY_PROPERTY_HOST_COHERENT_BIT</span>属性的内存，CPU侧对其写入后，不必取消映射，<a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkQueueSubmit">vkQueueSubmit</a>(...)会确保写入结果在相应的队列族间可见。
+    <br>
+    不过因为映射后，直到取消映射前不能再次映射。为防止重复映射，本套教程中总是会在写入结束后取消映射。
+</p>
+</div></section>
 <section id="devicememory">
 <h3>封装为deviceMemory类<a class="headerlink" href="#devicememory" title="Permalink to this heading"></a></h3>
 <p>
