@@ -135,7 +135,7 @@ int main() {
 
 	glm::mat4 proj = FlipVertical(glm::infinitePerspectiveLH_ZO(glm::radians(60.f), float(windowSize.width) / windowSize.height, 0.1f));
 
-	VkClearValue clearColors[2] = {
+	VkClearValue clearValues[2] = {
 		{ .color = { 0.f, 0.f, 0.f, 1.f } },
 		{ .depthStencil = { 1.f, 0 } }
 	};
@@ -150,7 +150,7 @@ int main() {
 		auto i = graphicsBase::Base().CurrentImageIndex();
 
 		commandBuffer.Begin(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
-		renderPass.CmdBegin(commandBuffer, framebuffers[i], { {}, windowSize }, clearColors);
+		renderPass.CmdBegin(commandBuffer, framebuffers[i], { {}, windowSize }, clearValues);
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_into3d);
 		VkBuffer buffers[2] = { vertexBuffer_perVertex, vertexBuffer_perInstance };
 		VkDeviceSize offsets[2] = {};

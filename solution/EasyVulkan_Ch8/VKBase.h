@@ -1156,19 +1156,19 @@ namespace vulkan {
 		result_t Set() const {
 			VkResult result = vkSetEvent(graphicsBase::Base().Device(), handle);
 			if (result)
-				std::cout << std::format("[ event ] ERROR\nFailed to singal the event!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ event ] ERROR\nFailed to singal the event!\nError code: {}\n", int32_t(result));
 			return result;
 		}
 		result_t Reset() const {
 			VkResult result = vkResetEvent(graphicsBase::Base().Device(), handle);
 			if (result)
-				std::cout << std::format("[ event ] ERROR\nFailed to unsingal the event!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ event ] ERROR\nFailed to unsingal the event!\nError code: {}\n", int32_t(result));
 			return result;
 		}
 		result_t Status() const {
 			VkResult result = vkGetEventStatus(graphicsBase::Base().Device(), handle);
 			if (result < 0)
-				std::cout << std::format("[ event ] ERROR\nFailed to get the status of the event!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ event ] ERROR\nFailed to get the status of the event!\nError code: {}\n", int32_t(result));
 			return result;
 		}
 		//Non-const Function
@@ -1176,7 +1176,7 @@ namespace vulkan {
 			createInfo.sType = VK_STRUCTURE_TYPE_EVENT_CREATE_INFO;
 			VkResult result = vkCreateEvent(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
 			if (result)
-				std::cout << std::format("[ event ] ERROR\nFailed to create a event!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ event ] ERROR\nFailed to create a event!\nError code: {}\n", int32_t(result));
 			return result;
 		}
 		result_t Create(VkEventCreateFlags flags = 0) {

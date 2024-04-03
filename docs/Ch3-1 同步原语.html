@@ -80,7 +80,15 @@
 <li class="toctree-l3"><a class="reference internal" href="#id13">图像内存屏障</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#event">Event</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#event">Event</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id14">创建事件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">置位事件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">等待事件被置位</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id17">将事件重置为未置位状态</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id18">查询事件状态</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id19">封装为event类</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
@@ -151,7 +159,7 @@
   <section id="ch3-1">
 <h1>Ch3-1 同步原语<a class="headerlink" href="#ch3-1" title="Permalink to this heading"></a></h1>
 <p>
-    除去隐式同步外，Vulkan中一共有五种同步方式：
+    除去隐式同步外，Vulkan中一共有六种同步方式：
     <br>
     1.等待物理设备/队列闲置
     <br>
@@ -159,12 +167,11 @@
     <br>
     3.信号量，Vulkan1.0以来的二值信号量用于队列之间（可为队列与其自身）同步
     <br>
-    4.管线屏障（及可附带的内存屏障），用于执行命令时的同步，同步范围通常为同一队列中的命令之间，也可为不同队列的命令间、或命令与外部操作间
+    4.管线屏障（及可附带的内存屏障），用于执行命令时的同步，同步范围通常为同一队列中的命令之间
     <br>
-    5.子通道依赖，相当于在渲染通道的子通道开始和结束时自动执行的内存屏障，见<a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html#id4">子通道依赖</a>。
+    5.子通道依赖，相当于在渲染通道的子通道开始和结束时自动执行的内存屏障，见<a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html#id4">子通道依赖</a>
     <br>
-    6.事件，同步范围通常为同一队列中的命令之间，事件被设置前和事件被等待后的命令纳入同步范围（中间的不受影响），也可用于让队列等待程序（CPU一侧）
-    <br>
+    6.事件，其主要用法类似于拆分成两条命令的管线屏障，同步范围通常为同一队列中的命令之间，也可以是主机（即CPU一侧）与队列之间（但是不安全）
 </p>
 <p>
     等待物理设备/队列闲置的方法已经在第一章里涵盖，本节不再赘述。这种同步方式开销很大，应当只在需要大规模销毁Vulkan对象时使用。
@@ -232,7 +239,7 @@
             <td><p></p></td>
         </tr>
         <tr class="row-odd">
-            <td><p><span class="type">VkRenderPass</span>* pFence</p></td>
+            <td><p><span class="type">VkFence</span>* pFence</p></td>
             <td><p>若执行成功，将栅栏的handle写入*pFence</p></td>
         </tr>
     </tbody>
@@ -284,7 +291,7 @@
         </tr>
         <tr class="row-odd">
             <td><p><span class="type">uint32_t</span> fenceCount</p></td>
-            <td><p>要等带的栅栏的个数</p></td>
+            <td><p>要等待的栅栏的个数</p></td>
         </tr>
         <tr class="row-even">
             <td><p><span class="kw">const</span> <span class="type">VkFence</span>* pFences</p></td>
@@ -339,7 +346,7 @@
         </tr>
         <tr class="row-odd">
             <td><p><span class="type">uint32_t</span> fenceCount</p></td>
-            <td><p>要等带的栅栏的个数</p></td>
+            <td><p>要等待的栅栏的个数</p></td>
         </tr>
         <tr class="row-even">
             <td><p><span class="kw">const</span> <span class="type">VkFence</span>* pFences</p></td>
@@ -376,7 +383,7 @@
 <ul>
     <li>
         <p>
-            该函数的返回值即查询结果，栅栏被置位时返回<span class="enum">VK_SUCCESS</span>，未被置位则返回<span class="enum">VK_NOT_READY</span>，
+            该函数的返回值即查询结果，栅栏被置位时返回<span class="enum">VK_SUCCESS</span>，未被置位则返回<span class="enum">VK_NOT_READY</span>。
             <br>
             逻辑设备丢失时应当返回<span class="enum">VK_ERROR_DEVICE_LOST</span>，但根据具体实现，也可能返回上述三个数值中的任意一个。
         </p>
@@ -392,12 +399,12 @@
     <span class="type">VkFence</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
 <span class="kw">public</span>:
     <span class="cmt">//fence() = default;</span>
-    <span class="fn">fence</span>(<span class="type">VkFenceCreateInfo</span>&amp; createInfo) {
-        <span class="fn">Create</span>(createInfo);
+    <span class="fn">fence</span>(<span class="type">VkFenceCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="fn">Create</span>(<span class="par">createInfo</span>);
     }
     <span class="cmt">//默认构造器创建未置位的栅栏</span>
-    <span class="fn">fence</span>(<span class="type">VkFenceCreateFlags</span> flags = 0) {
-        <span class="fn">Create</span>(flags);
+    <span class="fn">fence</span>(<span class="type">VkFenceCreateFlags</span> <span class="par">flags</span> = 0) {
+        <span class="fn">Create</span>(<span class="par">flags</span>);
     }
     <span class="fn">fence</span>(<span class="type">fence</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
     <span class="fn">~fence</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyFence</span>); }
@@ -425,21 +432,21 @@
     }
     <span class="type">result_t</span> <span class="fn">Status</span>() <span class="kw">const</span> {
         <span class="type">VkResult</span> result = <span class="fn">vkGetFenceStatus</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle);
-        <span class="kw">if</span> (result &lt; 0)<span class="cmt">//vkGetFenceStatus(...)成功时有两种结果，所以不能仅仅判断result是否非0</span>
+        <span class="kw">if</span> (result &lt; 0) <span class="cmt">//vkGetFenceStatus(...)成功时有两种结果，所以不能仅仅判断result是否非0</span>
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ fence ] ERROR\nFailed to get the status of the fence!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="cmt">//Non-const Function</span>
-    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkFenceCreateInfo</span>&amp; createInfo) {
-        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_FENCE_CREATE_INFO</span>;
-        <span class="type">VkResult</span> result = <span class="fn">vkCreateFence</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkFenceCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_FENCE_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateFence</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ fence ] ERROR\nFailed to create a fence!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
-    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkFenceCreateFlags</span> flags = 0) {
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkFenceCreateFlags</span> <span class="par">flags</span> = 0) {
         <span class="type">VkFenceCreateInfo</span> createInfo = {
-            .flags = flags
+            .flags = <span class="par">flags</span>
         };
         <span class="kw">return</span> <span class="fn">Create</span>(createInfo);
     }
@@ -576,22 +583,22 @@
     <span class="type">VkSemaphore</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
 <span class="kw">public</span>:
     <span class="cmt">//semaphore() = default;</span>
-    <span class="fn">semaphore</span>(<span class="type">VkSemaphoreCreateInfo</span>&amp; createInfo) {
-        <span class="fn">Create</span>(createInfo);
+    <span class="fn">semaphore</span>(<span class="type">VkSemaphoreCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="fn">Create</span>(<span class="par">createInfo</span>);
     }
     <span class="cmt">//默认构造器创建未置位的信号量</span>
     <span class="fn">semaphore</span>(<span class="cmt">/*VkSemaphoreCreateFlags flags*/</span>) {
         <span class="fn">Create</span>();
     }
-    <span class="fn">semaphore</span>(<span class="type">semaphore</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    <span class="fn">semaphore</span>(<span class="type">semaphore</span>&amp;&amp; <span class="par">other</span>) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
     <span class="fn">~semaphore</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroySemaphore</span>); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
     <span class="cmt">//Non-const Function</span>
-    <span class="type">result_t</span> Create(<span class="type">VkSemaphoreCreateInfo</span>&amp; createInfo) {
-        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO</span>;
-        <span class="type">VkResult</span> result = <span class="fn">vkCreateSemaphore</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+    <span class="type">result_t</span> Create(<span class="type">VkSemaphoreCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateSemaphore</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ semaphore ] ERROR\nFailed to create a semaphore!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
@@ -751,7 +758,7 @@
         </tr>
         <tr>
             <td><p>1.0</p></td>
-            <td><p><span class="enum">VK_PIPELINE_STAGE_HOST_BIT                           </span>伪管线阶段，对应CPU侧对设备内存的读写</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_HOST_BIT                           </span>伪管线阶段，对应主机（指CPU侧）对设备内存和同步对象的读写</p></td>
         </tr>
         <tr>
             <td><p>1.0</p></td>
@@ -901,7 +908,7 @@
 <section id="id11">
 <h3>全局内存屏障<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>
 <p>
-    全局内存屏障相当简单，它作用于所有资源（缓冲区/图像），仅指定访问域。
+    全局内存屏障相当简单，它作用于所有资源（缓冲区/图像），仅定义内存依赖。
 </p>
 <table class="docutils align-default">
     <colgroup>
@@ -1002,11 +1009,11 @@
         </tr>
         <tr>
             <td><p>1.0</p></td>
-            <td><p><span class="enum">VK_ACCESS_HOST_READ_BIT                      </span>表示CPU侧的读取操作</p></td>
+            <td><p><span class="enum">VK_ACCESS_HOST_READ_BIT                      </span>表示主机（指CPU侧）的读取操作</p></td>
         </tr>
         <tr>
             <td><p>1.0</p></td>
-            <td><p><span class="enum">VK_ACCESS_HOST_WRITE_BIT                     </span>表示CPU侧的写入操作</p></td>
+            <td><p><span class="enum">VK_ACCESS_HOST_WRITE_BIT                     </span>表示主机（指CPU侧）的写入操作</p></td>
         </tr>
         <tr>
             <td><p>1.0</p></td>
@@ -1295,8 +1302,432 @@
 <section id="event">
 <h2>Event<a class="headerlink" href="#event" title="Permalink to this heading"></a></h2>
 <p>
-    //TODO 基本用不着先拖着不写。
-</p></section>
+    事件（<span class="type">VkEvent</span>）是具有管线屏障功能的同步对象，在某些场景下也可以替代信号量。
+    <br>
+    事件跟二值信号量一样，有置位（singaled）和未置位（unsingaled）两种状态。
+</p>
+<p>
+    事件同管线屏障的不同在于，它可以使得部分命令不被纳入同步范围：置位事件前的命令，和等待事件被置位后的命令被纳入同步范围，中间的命令不受影响。
+    <br>
+    如果在置位事件后立刻等待事件被置位，那么效果等效于管线屏障。
+</p><section id="id14">
+<h3>创建事件<a class="headerlink" href="#id14" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkCreateEvent">vkCreateEvent</a>(...)创建事件：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkCreateEvent">vkCreateEvent</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkEventCreateInfo</span>* pCreateInfo</p></td>
+            <td><p>指向<span class="type">VkEvent</span>的创建信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span>* pAllocator</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkEvent</span>* pEvent</p></td>
+            <td><p>若执行成功，将事件的handle写入*pEvent</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkEventCreateInfo">VkEventCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_EVENT_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkEventCreateFlags</span> flags</p></td>
+            <td><p>若填入<span class="enum">VK_EVENT_CREATE_DEVICE_ONLY_BIT</span>（需Vulkan1.3），则说明不会在CPU一侧置位/重置事件，或查询事件状态</p></td>
+        </tr>
+    </tbody>
+</table></section>
+<section id="id15">
+<h3>置位事件<a class="headerlink" href="#id15" title="Permalink to this heading"></a></h3>
+<p>
+    在命令缓冲区中，用<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkCmdSetEvent">vkCmdSetEvent</a>(...)置位事件：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkCmdSetEvent">vkCmdSetEvent</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandBuffer</span> commandBuffer</p></td>
+            <td><p>命令缓冲区的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkEvent</span> event</p></td>
+            <td><p>要被置位的事件的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkPipelineStageFlags</span> stageMask</p></td>
+            <td><p>源管线阶段，相当于内存屏障参数中的srcStageMask</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            该命令定义执行依赖：于该命令前的命令到达stageMask所注明的（但凡达到得了的）阶段后，置位事件。
+        </p>
+    </li>
+    <li>
+        <p>
+            若事件已被置位，该函数没有效果，不会定义执行依赖。
+        </p>
+    </li>
+</ul>
+<p>
+    在主机（CPU）一侧，用<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkSetEvent">vkSetEvent</a>(...)置位事件：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkSetEvent">vkSetEvent</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkEvent</span> event</p></td>
+            <td><p>要被置位的事件的handle</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            若事件已被置位，该函数没有效果。
+        </p>
+    </li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>
+    Vulkan官方标准中不推荐使用<span class="fn">vkSetEvent</span>(...)，要使用的话最好在提交命令前：
+    <br>
+    <span class="ref">If a command buffer is waiting for an event to be signaled from the host, the application must signal the event before submitting the command buffer, as described in the <a href="https://renderdoc.org/vkspec_chunked/chap6.html#commandbuffers-submission-progress">queue forward progress</a> section.</span>
+</p>
+<p>
+    实际上在提交命令后是可以使用的，在一定时间内置位事件的话不会有问题，但如果设备长时间等不到事件被置位，可能导致<span class="enum">VK_ERROR_DEVICE_LOST</span>。而Vulkan标准对这个“一定时间”并没有定义，因此除去在提交命令前，没有安全地使用该函数的方法。
+    <br>
+    存在可能使用该函数的应用场景，比如<span class="fn">vkCmdSetEvent</span>(...)和<span class="fn">vkCmdWaitEvent</span>(...)被分别录制在不同的命令缓冲区中，但有时只需要提交后者所在的命令缓冲区的情况。
+</p>
+</div></section>
+<section id="id16">
+<h3>等待事件被置位<a class="headerlink" href="#id16" title="Permalink to this heading"></a></h3>
+<p>
+    在命令缓冲区中，用<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkCmdWaitEvents">vkCmdWaitEvents</a>(...)等待多个事件被置位：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkCmdWaitEvents">vkCmdWaitEvents</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandBuffer</span> commandBuffer</p></td>
+            <td><p>命令缓冲区的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> eventCount</p></td>
+            <td><p>要等待的事件的个数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkEvent</span>* pEvents</p></td>
+            <td><p>指向所需等待的事件的数组</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkPipelineStageFlags</span> srcStageMask</p></td>
+            <td><p>源管线阶段</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkPipelineStageFlags</span> dstStageMask</p></td>
+            <td><p>目标管线阶段</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> memoryBarrierCount</p></td>
+            <td><p>全局内存屏障的个数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkMemoryBarrier</span>* pMemoryBarriers</p></td>
+            <td><p>指向全局内存屏障的数组</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> bufferMemoryBarrierCount</p></td>
+            <td><p>缓冲区内存屏障的个数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkBufferMemoryBarrier</span>* pBufferMemoryBarriers</p></td>
+            <td><p>指向缓冲区内存屏障的数组</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> imageMemoryBarrierCount</p></td>
+            <td><p>图像内存屏障的个数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkImageMemoryBarrier</span>* pImageMemoryBarriers</p></td>
+            <td><p>指向图像内存屏障的数组</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            置位事件后，你只能在同一队列上等待该事件。
+        </p>
+    </li>
+    <li>
+        <p>
+            若需要等待主机一侧置位事件（即通过<span class="fn">vkSetEvent</span>(...)置位），则srcStageMask中必须包含<span class="enum">VK_PIPELINE_STAGE_HOST_BIT</span>。
+        </p>
+    </li>
+    <li>
+        <p>
+            srcStageMask中最晚的阶段，应不早于通过<span class="fn">vkCmdSetEvent</span>(...)置位pEvents所指各个事件时指定的stageMask中的最晚阶段。
+        </p>
+    </li>
+    <li>
+        <p>
+            该命令定义执行依赖：必须等待pEvents所指各个事件被置位后，该命令后的命令才能到达由dstStageMask注明的阶段。
+        </p>
+    </li>
+    <li>
+        <p>
+            该命令定义内存依赖：确保<strong>在置位各个事件之前的</strong>命令中srcStageMask注明的阶段中（这里各个内存屏障结构体指定的）srcAccessMask注明的写入操作的结果可获（这条仅说明源操作对应的同步范围，后略）。
+        </p>
+    </li>
+</ul></section>
+<section id="id17">
+<h3>将事件重置为未置位状态<a class="headerlink" href="#id17" title="Permalink to this heading"></a></h3>
+<p>
+    在命令缓冲区中，用<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkCmdResetEvent">vkCmdResetEvent</a>(...)将事件重置为未置位状态：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkCmdResetEvent">vkCmdResetEvent</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandBuffer</span> commandBuffer</p></td>
+            <td><p>命令缓冲区的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkEvent</span> event</p></td>
+            <td><p>要被重置的事件的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkPipelineStageFlags</span> stageMask</p></td>
+            <td><p>源管线阶段，相当于内存屏障参数中的srcStageMask</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            该命令定义执行依赖：于该命令前的命令到达stageMask所注明的（但凡达到得了的）阶段后，将事件重置为未置位状态。
+        </p>
+    </li>
+    <li>
+        <p>
+            若事件未被置位，该函数没有效果，不会定义执行依赖。
+        </p>
+    </li>
+</ul>
+<p>
+    在主机（CPU）一侧，用<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkResetEvent">vkResetEvent</a>(...)将事件重置为未置位状态：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkResetEvent">vkResetEvent</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkEvent</span> event</p></td>
+            <td><p>要被重置的事件的handle</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            若事件未被置位，该函数没有效果。
+        </p>
+    </li>
+</ul></section>
+<section id="id18">
+<h3>查询事件状态<a class="headerlink" href="#id18" title="Permalink to this heading"></a></h3>
+<p>
+    在主机（CPU）一侧，用<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkGetEventStatus">vkGetEventStatus</a>(...)查询事件状态：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkGetEventStatus">vkGetEventStatus</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkEvent</span> event</p></td>
+            <td><p>要被查询状态的事件的handle</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            该函数的返回值即查询结果，事件被置位时返回<span class="enum">VK_EVENT_SET</span>，未被置位则返回<span class="enum">VK_EVENT_RESET</span>，其余返回值皆为错误代码。
+        </p>
+    </li>
+</ul></section>
+<section id="id19">
+<h3>封装为event类<a class="headerlink" href="#id19" title="Permalink to this heading"></a></h3>
+<p>
+    向<span class="path">VKBase.h</span>，vulkan命名空间中添加以下代码：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">event</span> {
+    <span class="type">VkEvent</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
+<span class="kw">public</span>:
+    <span class="cmt">//event() = default;</span>
+    <span class="fn">event</span>(<span class="type">VkEventCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="fn">Create</span>(<span class="par">createInfo</span>);
+    }
+    <span class="fn">event</span>(<span class="type">VkEventCreateFlags</span> <span class="par">flags</span> = 0) {
+        <span class="fn">Create</span>(<span class="par">flags</span>);
+    }
+    <span class="fn">event</span>(<span class="type">event</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    <span class="fn">~event</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyEvent</span>); }
+    <span class="cmt">//Getter</span>
+    <span class="mcr">DefineHandleTypeOperator</span>;
+    <span class="mcr">DefineAddressFunction</span>;
+    <span class="cmt">//Const Function</span>
+    <span class="kw">void</span> <span class="fn">CmdSet</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">VkPipelineStageFlags</span> <span class="par">stage_from</span>) <span class="kw">const</span> {
+        <span class="fn">vkCmdSetEvent</span>(<span class="par">commandBuffer</span>, handle, <span class="par">stage_from</span>);
+    }
+    <span class="kw">void</span> <span class="fn">CmdReset</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">VkPipelineStageFlags</span> <span class="par">stage_from</span>) <span class="kw">const</span> {
+        <span class="fn">vkCmdResetEvent</span>(<span class="par">commandBuffer</span>, handle, <span class="par">stage_from</span>);
+    }
+    <span class="kw">void</span> <span class="fn">CmdWait</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">VkPipelineStageFlags</span> <span class="par">stage_from</span>, <span class="type">VkPipelineStageFlags</span> <span class="par">stage_to</span>,
+        <span class="type">arrayRef</span>&lt;<span class="type">VkMemoryBarrier</span>&gt; <span class="par">memoryBarriers</span>
+        <span class="type">arrayRef</span>&lt;<span class="type">VkBufferMemoryBarrier</span>&gt; <span class="par">bufferMemoryBarriers</span>
+        <span class="type">arrayRef</span>&lt;<span class="type">VkImageMemoryBarrier</span>&gt; <span class="par">imageMemoryBarriers</span>) <span class="kw">const</span> {
+        <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : <span class="par">memoryBarriers</span>)
+            i.sType = <span class="enum">VK_STRUCTURE_TYPE_MEMORY_BARRIER</span>;
+        <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : <span class="par">bufferMemoryBarriers</span>)
+            i.sType = <span class="enum">VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER</span>;
+        <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : <span class="par">imageMemoryBarriers</span>)
+            i.sType = <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>;
+        <span class="fn">vkCmdWaitEvents</span>(<span class="par">commandBuffer</span>, 1, &amp;handle, <span class="par">stage_from</span>, <span class="par">stage_to</span>,
+            <span class="par">memoryBarriers</span>.<span class="fn">Count</span>(), <span class="par">memoryBarriers</span>.<span class="fn">Pointer</span>(),
+            <span class="par">bufferMemoryBarriers</span>.<span class="fn">Count</span>(), <span class="par">bufferMemoryBarriers</span>.<span class="fn">Pointer</span>(),
+            <span class="par">imageMemoryBarriers</span>.<span class="fn">Count</span>(), <span class="par">imageMemoryBarriers</span>.<span class="fn">Pointer</span>());
+    }
+    <span class="type">result_t</span> <span class="fn">Set</span>() <span class="kw">const</span> {
+        <span class="type">VkResult</span> result = <span class="fn">vkSetEvent</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ event ] ERROR\nFailed to singal the event!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="type">result_t</span> <span class="fn">Reset</span>() <span class="kw">const</span> {
+        <span class="type">VkResult</span> result = <span class="fn">vkResetEvent</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ event ] ERROR\nFailed to unsingal the event!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="type">result_t</span> <span class="fn">Status</span>() <span class="kw">const</span> {
+        <span class="type">VkResult</span> result = <span class="fn">vkGetEventStatus</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle);
+        <span class="kw">if</span> (result &lt; 0) <span class="cmt">//vkGetEventStatus(...)成功时有两种结果</span>
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ event ] ERROR\nFailed to get the status of the event!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="cmt">//Non-const Function</span>
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkEventCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_EVENT_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateEvent</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ event ] ERROR\nFailed to create a event!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkEventCreateFlags</span> <span class="par">flags</span> = 0) {
+        <span class="type">VkEventCreateInfo</span> createInfo = {
+            .flags = <span class="par">flags</span>
+        };
+        <span class="kw">return</span> <span class="fn">Create</span>(createInfo);
+    }
+};
+</code></section>
+</section>
 </section>
 
 

@@ -152,9 +152,7 @@
     <br>
     1.进行3D渲染，绘制多个远近不同的立方体，使用深度测试呈现出正确的遮挡关系。示例代码：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch8/Ch8-2.hpp">Ch8-2.hpp</a>
     <br>
-    2.离屏渲染深度贴图，然后将其采样到屏幕。示例代码： TODO
-    <br>
-    通过采样深度贴图，使深度可视化，以更直观地理解一些深度相关的功能。
+    2.将深度显示到屏幕，以更直观地理解一些深度相关的功能。
 </p><section id="id1">
 <h2>投影变换<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
 <p>
@@ -888,7 +886,9 @@ pipelineCiPack.viewports.<span class="fn">emplace_back</span>(0.f, 0.f, <span cl
 <p>
     其实笔者原想在这里创建个没有片段着色器的管线只渲染深度，然后采样深度到屏幕（但是这么一来代码量就得跟前一节几乎一样多），或者使用输入附件（这是下一节的内容），因不想这一节冗余的代码太多，索性作罢。
     <br>
-    注：只渲染深度，然后把深度图像blit到交换链图像是不行的，验证层会<a href="https://renderdoc.org/vkspec_chunked/chap20.html#VUID-vkCmdBlitImage-srcImage-00231">报错</a>。
+    注1：只渲染深度，然后把深度图像blit到交换链图像是不行的，验证层会<a href="https://renderdoc.org/vkspec_chunked/chap20.html#VUID-vkCmdBlitImage-srcImage-00231">报错</a>。
+    <br>
+    注2：再次提醒，若要采样深度贴图，写入描述符的image view的aspectMask应只注明深度，不要注明模板（有人为此debug半天却找不出原因所在）。
 </p>
 <p>
     <strong>使用没有片段着色器的管线并没有什么难度，就请各位自己尝试吧！</strong>

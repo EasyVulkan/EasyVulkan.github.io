@@ -1231,11 +1231,11 @@
 <p>
     <span class="type">VkSampleMask</span>实质上是<span class="type">uint32_t</span>别名。
     <br>
-    Sample mask的比特与采样点一一对应，因为至多64个采样点，pSampleMask所指数组中至多两个元素（两个<span class="type">uint32_t</span>）。
+    Sample mask的比特与采样点一一对应，因为至多64个采样点，pSampleMask所指数组中至多两个元素。
     <br>
-    在多重采样中，栅格化时会计算采样点是否被图元覆盖，得到初始的coverage mask（覆盖遮罩）。在4xMSAA中，若四个采样点皆被图元覆盖，coverage mask为0b1111。
+    在多重采样中，栅格化时会计算采样点是否被图元覆盖，得到初始的coverage mask（覆盖遮罩）。在4xMSAA中，四个采样点皆被图元覆盖时的coverage mask为0b1111。
     <br>
-    此处指定的sample mask会与coverage mask做位与，这一步叫做sample mask test，发生在栅格化阶段，片段着色器中gl_SampleMaskIn的数值即此处位与的结果。显然，若在此处把对应某个采样点对应的比特指定为0，就意味着直接把该采样点一概算作不被覆盖了。
+    此处指定的sample mask会与coverage mask做位与，这一步叫做sample mask test，发生在栅格化阶段。显然，若在此处把某个索引的采样点对应的bit指定为0，就意味着直接把该索引的采样点一概算作不被覆盖了。
     <br>
     在执行片段着色器前，无论是否经历sample mask test，若一个片段（像素，或多重采样中的多个采样点）的所有采样点coverage mask为0，则该片段被丢弃，不进行后续其他操作。
 </p>
@@ -1248,7 +1248,7 @@
         <br>
         上述两个概念通常不需要区分，除非你想要使用着色器的副作用，比如写入storage缓冲区。
         <br>
-        你可以用如下GLSL代码进行验证，count_covered和count_notCovered为storage缓冲区中的变量，写入结束后在CPU侧读取其数值，若对不被覆盖的采样点不执行片段着色器，那么count_notCovered应该总是0：
+        你可以开启sample shading后，用如下GLSL代码进行验证，count_covered和count_notCovered为storage缓冲区中的变量，写入结束后在CPU侧读取其数值，若对不被覆盖的采样点不执行片段着色器，那么count_notCovered应该总是0：
         <br>
         <code><span class="kw">if</span> (gl_SampleMaskIn[0] == 1 << gl_SampleID) <span class="fn">atomicAdd</span>(count_covered, 1); <span class="kw">else</span> <span class="fn">atomicAdd</span>(count_notCovered, 1);</code>
         <br>

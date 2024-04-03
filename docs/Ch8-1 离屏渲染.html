@@ -353,9 +353,9 @@
     </li>
     <li>
         <p>
-            格式中同时包含深度和模板分量，之后用作图像附件使用时只使用深度测试/模板测试之一的话，aspectMask中只指定其中之一也是没问题的。
+            格式中同时包含深度和模板分量，之后只使用深度测试/模板测试之一的话，aspectMask中可同时包含两者，但只指定其中之一也是没问题的。
             <br>
-            但是用作输入附件或贴图时，必须只指定深度或模板。
+            但是用作输入附件或贴图时，必须只指定<span class="enum">VK_IMAGE_ASPECT_DEPTH_BIT</span>或<span class="enum">VK_IMAGE_ASPECT_STENCIL_BIT</span>。
         </p>
     </li>
 </ul>
@@ -441,9 +441,9 @@
         .format = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat,
         .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
         .loadOp = <span class="enum">VK_ATTACHMENT_LOAD_OP_LOAD</span>,
-        .storeOp = <span class="type">VK_ATTACHMENT_STORE_OP_STORE</span>,
-        .stencilLoadOp = <span class="type">VK_ATTACHMENT_LOAD_OP_DONT_CARE</span>,
-        .stencilStoreOp = <span class="type">VK_ATTACHMENT_LOAD_OP_DONT_CARE</span>,
+        .storeOp = <span class="enum">VK_ATTACHMENT_STORE_OP_STORE</span>,
+        .stencilLoadOp = <span class="enum">VK_ATTACHMENT_LOAD_OP_DONT_CARE</span>,
+        .stencilStoreOp = <span class="enum">VK_ATTACHMENT_LOAD_OP_DONT_CARE</span>,
         .initialLayout = <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>,
         .finalLayout = <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>
     };
@@ -507,24 +507,24 @@
     srcAccessMask为0（指定<span class="enum">VK_ACCESS_SHADER_READ_BIT</span>这种读操作无意义），而srcStageMask指定为<span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>是多余的，因为有栅栏来同步，填写<span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>即可（你问我为什么每次都不这么写？为了特地反复强调这件事！）。
 </p>
 <pre class="code">
-    <span class="type">VkSubpassDependency</span> subpassDependencies[2] = {
-        {
-            .srcSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
-            .dstSubpass = 0,
-            .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>,
-            .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
-            .srcAccessMask = 0,
-            .dstAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
-            .dependencyFlags = <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span> },
-        {
-            .srcSubpass = 0,
-            .dstSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
-            .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
-            .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>,
-            .srcAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
-            .dstAccessMask = <span class="enum">VK_ACCESS_SHADER_READ_BIT</span>,
-            .dependencyFlags = <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span> }
-    };
+<span class="type">VkSubpassDependency</span> subpassDependencies[2] = {
+    {
+        .srcSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
+        .dstSubpass = 0,
+        .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>,
+        .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+        .srcAccessMask = 0,
+        .dstAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
+        .dependencyFlags = <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span> },
+    {
+        .srcSubpass = 0,
+        .dstSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
+        .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+        .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>,
+        .srcAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
+        .dstAccessMask = <span class="enum">VK_ACCESS_SHADER_READ_BIT</span>,
+        .dependencyFlags = <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span> }
+};
 </pre>
 <p>
     最后非常简单无脑地创建帧缓冲，整个<span class="fn">CreateRpwf_Canvas</span>(...)如下：
@@ -541,9 +541,9 @@
         .format = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat,
         .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
         .loadOp = <span class="enum">VK_ATTACHMENT_LOAD_OP_LOAD</span>,
-        .storeOp = <span class="type">VK_ATTACHMENT_STORE_OP_STORE</span>,
-        .stencilLoadOp = <span class="type">VK_ATTACHMENT_LOAD_OP_DONT_CARE</span>,
-        .stencilStoreOp = <span class="type">VK_ATTACHMENT_LOAD_OP_DONT_CARE</span>,
+        .storeOp = <span class="enum">VK_ATTACHMENT_STORE_OP_STORE</span>,
+        .stencilLoadOp = <span class="enum">VK_ATTACHMENT_LOAD_OP_DONT_CARE</span>,
+        .stencilStoreOp = <span class="enum">VK_ATTACHMENT_LOAD_OP_DONT_CARE</span>,
         .initialLayout = <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>,
         .finalLayout = <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>
     };

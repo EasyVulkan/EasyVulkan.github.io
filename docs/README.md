@@ -5,6 +5,7 @@
 联系请至:[【长期】 反馈/交流集中贴](https://github.com/EasyVulkan/EasyVulkan.github.io/issues/7)
 
 2024.04.02 完成[Ch8-2 深度测试和深度可视化](https://easyvulkan.github.io/Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html)。<br>
+
 2024.04.02 代码里加了CMakeLists.txt（我不确定Visual Studio之外是什么效果，谁愿意的话可以fork到私有仓库，帮我改一下然后pull上来）
 
 ## 章节目录
@@ -37,7 +38,7 @@
 
 ###  Vulkan1.0开始的核心功能（按需阅读）
 
-[Ch3-1 同步原语（有部分未写完）](https://easyvulkan.github.io/Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html)<br>
+[Ch3-1 同步原语](https://easyvulkan.github.io/Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html)<br>
 [Ch3-2 图像与缓冲区](https://easyvulkan.github.io/Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html)<br>
 [Ch3-3 管线布局和管线](https://easyvulkan.github.io/Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html)<br>
 [Ch3-4 渲染通道和帧缓冲](https://easyvulkan.github.io/Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html)<br>

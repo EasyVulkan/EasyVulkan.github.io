@@ -261,13 +261,14 @@
 <section id="gl-samplemaskin">
 <h3>gl_SampleMaskIn<a class="headerlink" href="#gl-samplemaskin" title="Permalink to this heading"></a></h3>
 <p>
-    gl_SampleMaskIn的数组元素个数取决于采样个数，<span class="kw">int</span>的长度为32个bit，因此32xMSAA及以下时gl_SampleMaskIn中有一个元素，64xMSAA时有两个元素。
-    <br>
+    gl_SampleMaskIn中每个bit对应相应索引的采样点，因此其数组元素个数亦取决于采样点个数，<span class="kw">int</span>的长度为32个bit，因此32xMSAA及以下时gl_SampleMaskIn中有一个元素，64xMSAA时有两个元素。
+</p>
+<p>
     （阅读以下文字前请先阅读<a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html#vkpipelinemultisamplestatecreateinfo">Ch3-3 管线布局和管线一节中关于VkPipelineMultisampleStateCreateInfo的说明</a>）
     <br>
-    gl_SampleMaskIn中的每个bit对应相应索引的采样点，若没有在<a href="https://renderdoc.org/vkspec_chunked/chap27.html#VkPipelineMultisampleStateCreateInfo">VkPipelineMultisampleStateCreateInfo</a>中指定sample mask，以少于32xMSAA为例，一个采样点的gl_SampleMaskIn[0]的数值为<code>coverage mask & (1 << gl_SampleID)</code>。
+    开启sample shading时，一个采样点的gl_SampleMaskIn[0]的数值为<code>coverage_mask & sample_mask & (1 << gl_SampleID)</code>。以4xMSAA为例，若四个采样点皆被图元覆盖且没有指定sample mask，那么各个采样点的gl_SampleMaskIn[0]的数值即<code>1 << gl_SampleID</code>。
     <br>
-    比如4xMSAA中，若四个采样点皆被图元覆盖且没有指定sample mask，那么各个采样点的gl_SampleMaskIn[0]的数值为<code>0b1111 & (1 << gl_SampleID)</code>，等价于<code>1 << gl_SampleID</code>。
+    未开sample shading时，一个采样点的gl_SampleMaskIn[0]的数值为<code>coverage_mask & sample_mask</code>。以4xMSAA为例，若四个采样点皆被图元覆盖且没有指定sample mask，则四个采样点的gl_SampleMaskIn[0]的数值皆为0b1111。
 </p></section>
 <section id="gl-helperinvocation">
 <h3>gl_HelperInvocation<a class="headerlink" href="#gl-helperinvocation" title="Permalink to this heading"></a></h3>
@@ -318,9 +319,9 @@
 <p>
     最终，采样点会有一个或0或1的系数，由gl_SampleMask中相应的bit与gl_SampleMaskIn中相应的bit位与决定。
     <br>
-    这里所谓的系数更准确地说是在执行过片段着色器后，最终得到的各个采样点的coverage，即最终coverage mask中的相应bit。我不想在这里解释额外的概念，让我用一个具体的例子说明gl_SampleMask的影响：
+    这里所谓的系数更准确地说是在执行过片段着色器后，最终得到的各个采样点的coverage。我不想在这里解释额外的概念，让我用一个具体的例子说明gl_SampleMask的影响：
     <br>
-    如前文所说，对于4xMSAA，若四个采样点皆被图元覆盖且没有应用sample mask，索引为0的采样点获得的gl_SampleMaskIn[0]为0b0001，索引为1的采样点获得的gl_SampleMaskIn[0]为0b0010，依次类推。那么：
+    如前文所说，对于4xMSAA，开启sample shading时，若四个采样点皆被图元覆盖且没有应用sample mask，索引为0的采样点获得的gl_SampleMaskIn[0]为0b0001，索引为1的采样点获得的gl_SampleMaskIn[0]为0b0010，依次类推。那么：
     <br>
     如果输出的gl_SampleMask[0]，对应从0开始的各个索引的采样点，依次为0b0001、0b0010、0b0100、0b1000，则最后呈现出的效果与不写入gl_SampleMask时一致。
     <br>
