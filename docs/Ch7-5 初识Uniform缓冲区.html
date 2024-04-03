@@ -253,7 +253,7 @@ descriptorSetLayout_triangle.<span class="fn">Create</span>(descriptorSetLayoutC
 <span class="type">VkDescriptorPoolSize</span> descriptorPoolSizes[] = {
     { <span class="enum">VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER</span>, 1 }
 };
-<span class="type">descriptorPool descriptorPool</span>(0, 1, descriptorPoolSizes);
+<span class="type">descriptorPool descriptorPool</span>(1, descriptorPoolSizes);
 </pre>
 <p>
     然后分配描述符集：
@@ -446,7 +446,7 @@ uniformBuffer.<span class="fn">TransferData</span>(uniform_positions, 3, <span c
 <span class="type">VkDescriptorPoolSize</span> descriptorPoolSizes[] = {
     { <span class="enum">VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC</span>, 1 }
 };
-<span class="type">descriptorPool descriptorPool</span>(0, 1, descriptorPoolSizes);
+<span class="type">descriptorPool descriptorPool</span>(1, descriptorPoolSizes);
 <span class="type">descriptorSet</span> descriptorSet_trianglePosition;
 descriptorPool.<span class="fn">AllocateSets</span>(descriptorSet_trianglePosition, descriptorSetLayout_triangle);
 <span class="type">VkDescriptorBufferInfo</span> bufferInfo = {

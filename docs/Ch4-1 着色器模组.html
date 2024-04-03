@@ -1104,7 +1104,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
     <br>
     <code><span class="kw">layout</span>(binding = 0, input_attachment_index = 基础索引) <span class="kw">uniform</span> subpassInput u_GBuffers[3];</code>
     <br>
-    通过表达式<code><span class="var">实例名称</span>[N]</code>进行访问时，访问到<span class="type">VkSubpassDescription</span>::pInputAttachments[基础索引 + N]指代的输入附件。
+    通过表达式<code>实例名称[N]</code>进行访问时，访问到<span class="type">VkSubpassDescription</span>::pInputAttachments[基础索引 + N]指代的输入附件。
     <br>
     这是<a href="https://github.com/KhronosGroup/GLSL/blob/main/extensions/khr/GL_KHR_vulkan_glsl.txt#L1238">Vulkan的GLSL方言</a>中规定的。在将输入附件对应的image view写入描述符时应当注意顺序。
 </p>

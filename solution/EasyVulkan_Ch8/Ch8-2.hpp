@@ -15,7 +15,7 @@ const auto& RenderPassAndFramebuffers() {
 }
 void CreateLayout() {
 	VkPushConstantRange pushConstantRange = { VK_SHADER_STAGE_VERTEX_BIT, 0, 64 };
-	VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo{
+	VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {
 		.pushConstantRangeCount = 1,
 		.pPushConstantRanges = &pushConstantRange
 	};
@@ -83,10 +83,10 @@ int main() {
 		{ {  1,  1,  1 }, { 1, 0, 0, 1 } },
 		{ {  1, -1,  1 }, { 1, 0, 0, 1 } },
 		//x-
-		{ { -1,  1,  1 }, { 0, 1, 1, 0 } },
-		{ { -1, -1,  1 }, { 0, 1, 1, 0 } },
-		{ { -1,  1, -1 }, { 0, 1, 1, 0 } },
-		{ { -1, -1, -1 }, { 0, 1, 1, 0 } },
+		{ { -1,  1,  1 }, { 0, 1, 1, 1 } },
+		{ { -1, -1,  1 }, { 0, 1, 1, 1 } },
+		{ { -1,  1, -1 }, { 0, 1, 1, 1 } },
+		{ { -1, -1, -1 }, { 0, 1, 1, 1 } },
 		//y+
 		{ {  1,  1, -1 }, { 0, 1, 0, 1 } },
 		{ {  1,  1,  1 }, { 0, 1, 0, 1 } },

@@ -405,7 +405,7 @@
 </p>
 <pre class="code">
 <span class="kw">class</span> <span class="type">commandBuffer</span> {
-    <span class="kw">friend class</span> commandPool;<span class="cmt">//封装命令池的commandPool类负责分配和释放命令缓冲区，需要让其能访问私有成员handle</span>
+    <span class="kw">friend class</span> <span class="type">commandPool</span>;<span class="cmt">//封装命令池的commandPool类负责分配和释放命令缓冲区，需要让其能访问私有成员handle</span>
     <span class="type">VkCommandBuffer</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
 <span class="kw">public</span>:
     <span class="fn">commandBuffer</span>() = <span class="kw">default</span>;
@@ -416,7 +416,7 @@
     <span class="mcr">DefineAddressFunction</span>;
     <span class="cmt">//Const Function</span>
     <span class="cmt">//这里没给inheritanceInfo设定默认参数，因为C++标准中规定对解引用空指针是未定义行为（尽管运行期不必发生，且至少MSVC编译器允许这种代码），而我又一定要传引用而非指针，因而形成了两个Begin(...)</span>
-    <span class="type">result_t</span> Begin(<span class="type">VkCommandBufferUsageFlags</span> usageFlags, <span class="type">VkCommandBufferInheritanceInfo</span>&amp; inheritanceInfo) <span class="kw">const</span> {
+    <span class="type">result_t</span> <span class="type">Begin</span>(<span class="type">VkCommandBufferUsageFlags</span> usageFlags, <span class="type">VkCommandBufferInheritanceInfo</span>&amp; inheritanceInfo) <span class="kw">const</span> {
         inheritanceInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO</span>;
         <span class="enum">VkCommandBufferBeginInfo</span> beginInfo = {
             .sType = <span class="enum">VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO</span>,
@@ -428,7 +428,7 @@
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandBuffer ] ERROR\nFailed to begin a command buffer!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
-    <span class="type">result_t</span> Begin(<span class="type">VkCommandBufferUsageFlags</span> usageFlags = 0) <span class="kw">const</span> {
+    <span class="type">result_t</span> <span class="type">Begin</span>(<span class="type">VkCommandBufferUsageFlags</span> usageFlags = 0) <span class="kw">const</span> {
         <span class="enum">VkCommandBufferBeginInfo</span> beginInfo = {
             .sType = <span class="enum">VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO</span>,
             .flags = usageFlags,
@@ -438,7 +438,7 @@
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandBuffer ] ERROR\nFailed to begin a command buffer!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
-    <span class="type">result_t</span> End() <span class="kw">const</span> {
+    <span class="type">result_t</span> <span class="type">End</span>() <span class="kw">const</span> {
         <span class="type">VkResult</span> result = <span class="fn">vkEndCommandBuffer</span>(handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandBuffer ] ERROR\nFailed to end a command buffer!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));

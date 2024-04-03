@@ -307,7 +307,7 @@ std::<span class="type">vector</span>&lt;<span class="type">depthStencilAttachme
 <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkFormat</span> <span class="par">depthStencilFormat</span> = <span class="enum">VK_FORMAT_D24_UNORM_S8_UINT</span>) {
     <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf;
     <span class="mcr">ExecuteOnce</span>(rpwf);<span class="cmt">//防止重复执行</span>
-    <span class="kw">static</span> <span class="type">VkFormat</span> dsFormat = <span class="par">depthStencilFormat</span>;<span class="cmt">//因为一会儿需要用lambda定义重建交换链时的回调函数，把格式存到静态变量</span>
+    <span class="kw">static</span> <span class="type">VkFormat</span> _depthStencilFormat = <span class="par">depthStencilFormat</span>;<span class="cmt">//因为一会儿需要用lambda定义重建交换链时的回调函数，把格式存到静态变量</span>
 
     <span class="cmt">/*待后续填充*/</span>
 
@@ -335,11 +335,11 @@ std::<span class="type">vector</span>&lt;<span class="type">depthStencilAttachme
         .stencilStoreOp = <span class="enum">VK_ATTACHMENT_STORE_OP_DONT_CARE</span>,
         .finalLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span> },
     {<span class="cmt">//深度模板附件</span>
-        .format = dsFormat,
+        .format = _depthStencilFormat,
         .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
-        .loadOp = dsFormat != <span class="enum">VK_FORMAT_S8_UINT</span> ? <span class="enum">VK_ATTACHMENT_LOAD_OP_CLEAR</span> : <span class="enum">VK_ATTACHMENT_LOAD_OP_DONT_CARE</span>,
+        .loadOp = _depthStencilFormat != <span class="enum">VK_FORMAT_S8_UINT</span> ? <span class="enum">VK_ATTACHMENT_LOAD_OP_CLEAR</span> : <span class="enum">VK_ATTACHMENT_LOAD_OP_DONT_CARE</span>,
         .storeOp = <span class="enum">VK_ATTACHMENT_STORE_OP_DONT_CARE</span>,
-        .stencilLoadOp = dsFormat &gt;= <span class="enum">VK_FORMAT_S8_UINT</span> ? <span class="enum">VK_ATTACHMENT_LOAD_OP_CLEAR</span> : <span class="enum">VK_ATTACHMENT_LOAD_OP_DONT_CARE</span>,
+        .stencilLoadOp = _depthStencilFormat &gt;= <span class="enum">VK_FORMAT_S8_UINT</span> ? <span class="enum">VK_ATTACHMENT_LOAD_OP_CLEAR</span> : <span class="enum">VK_ATTACHMENT_LOAD_OP_DONT_CARE</span>,
         .stencilStoreOp = <span class="enum">VK_ATTACHMENT_STORE_OP_DONT_CARE</span>,
         .finalLayout = <span class="enum">VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL</span> }
 };
@@ -426,7 +426,7 @@ CreateFramebuffers();
     dsas_screenWithDS.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
     rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
     <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : dsas_screenWithDS)
-        i.<span class="fn">Create</span>(dsFormat, windowSize, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>, <span class="enum">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</span>);
+        i.<span class="fn">Create</span>(_depthStencilFormat, windowSize, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>, <span class="enum">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</span>);
     <span class="cmt">/*待后续填充*/</span>;
 };
 </pre>
@@ -445,7 +445,7 @@ CreateFramebuffers();
     dsas_screenWithDS.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
     rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
     <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : dsas_screenWithDS)
-        i.<span class="fn">Create</span>(dsFormat, windowSize, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>, <span class="enum">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</span>);
+        i.<span class="fn">Create</span>(_depthStencilFormat, windowSize, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>, <span class="enum">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</span>);
     <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
         .renderPass = rpwf.renderPass,
         .attachmentCount = 2,
@@ -485,10 +485,10 @@ CreateFramebuffers();
     { {  1,  1,  1 }, { 1, 0, 0, 1 } },
     { {  1, -1,  1 }, { 1, 0, 0, 1 } },
     <span class="cmt">//x-</span>
-    { { -1,  1,  1 }, { 0, 1, 1, 0 } },
-    { { -1, -1,  1 }, { 0, 1, 1, 0 } },
-    { { -1,  1, -1 }, { 0, 1, 1, 0 } },
-    { { -1, -1, -1 }, { 0, 1, 1, 0 } },
+    { { -1,  1,  1 }, { 0, 1, 1, 1 } },
+    { { -1, -1,  1 }, { 0, 1, 1, 1 } },
+    { { -1,  1, -1 }, { 0, 1, 1, 1 } },
+    { { -1, -1, -1 }, { 0, 1, 1, 1 } },
     <span class="cmt">//y+</span>
     { {  1,  1, -1 }, { 0, 1, 0, 1 } },
     { {  1,  1,  1 }, { 0, 1, 0, 1 } },

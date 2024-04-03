@@ -235,7 +235,7 @@
 </pre>
 <p>接着来写两个函数</p>
 <pre class="code">
-<span class="kw">bool</span> <span class="fn">InitializeWindow</span>(<span class="type">VkExtent2D</span> size, <span class="kw">bool</span> fullScreen = <span class="kw">false</span>, <span class="kw">bool</span> isResizable = <span class="kw">true</span>, <span class="kw">bool</span> limitFrameRate = <span class="kw">true</span>) {
+<span class="kw">bool</span> <span class="fn">InitializeWindow</span>(<span class="type">VkExtent2D</span> <span class="par">size</span>, <span class="kw">bool</span> <span class="par">fullScreen</span> = <span class="kw">false</span>, <span class="kw">bool</span> <span class="par">isResizable</span> = <span class="kw">true</span>, <span class="kw">bool</span> <span class="par">limitFrameRate</span> = <span class="kw">true</span>) {
 <span class="cmt">/*待后续填充*/</span>
 }
 <span class="kw">void</span> <span class="fn">TerminateWindow</span>() {
@@ -302,16 +302,16 @@
 <span class="fn">glfwWindowHint</span>(<span class="mcr">GLFW_CLIENT_API</span>, <span class="mcr">GLFW_NO_API</span>);
 </pre>
 <p>
-    接着用<a href="https://www.glfw.org/docs/latest/group__init.html#ga110fd1d3f0412822b4f1908c026f724a">glfwWindowHint</a>(<span class="mcr">GLFW_RESIZABLE</span>, isResizable)指定窗口可否拉伸：
+    接着用<a href="https://www.glfw.org/docs/latest/group__init.html#ga110fd1d3f0412822b4f1908c026f724a">glfwWindowHint</a>(<span class="mcr">GLFW_RESIZABLE</span>, <span class="par">isResizable</span>)指定窗口可否拉伸：
 </p>
 <pre class="code">
-<span class="fn">glfwWindowHint</span>(<span class="mcr">GLFW_RESIZABLE</span>, isResizable);
+<span class="fn">glfwWindowHint</span>(<span class="mcr">GLFW_RESIZABLE</span>, <span class="par">isResizable</span>);
 </pre>
 <p>
     然后便能用<a href="https://www.glfw.org/docs/latest/group__window.html#ga3555a418df92ad53f917597fe2f64aeb">glfwCreateWindow</a>(...)创建窗口了，该函数在执行成功时返回一非空指针。
 </p>
 <pre class="code">
-pWindow = <span class="fn">glfwCreateWindow</span>(size.width, size.height, windowTitle, <span class="kw">nullptr</span>, <span class="kw">nullptr</span>);
+pWindow = <span class="fn">glfwCreateWindow</span>(<span class="par">size</span>.width, <span class="par">size</span>.height, windowTitle, <span class="kw">nullptr</span>, <span class="kw">nullptr</span>);
 </pre>
 <p>
     想必<a href="https://www.glfw.org/docs/latest/group__window.html#ga3555a418df92ad53f917597fe2f64aeb">glfwCreateWindow</a>(...)的前三个参数一目了然不必多说，其第四个参数用于指定全屏模式的显示器，若为<span class="kw">nullptr</span>则使用窗口模式，第五个参数可传入一个其他窗口的指针，用于与其他窗口分享内容。
@@ -336,12 +336,12 @@ pMonitor = <span class="fn">glfwGetPrimaryMonitor</span>();
     </li>
 </ul>
 <p>
-    于是，若要实现全屏，根据<span class="var">fullScreen</span>的值决定是否以全屏模式初始化窗口：
+    于是，若要实现全屏，根据<span class="par">fullScreen</span>的值决定是否以全屏模式初始化窗口：
 </p>
 <pre class="code">
-pWindow = fullScreen ?
+pWindow = <span class="par">fullScreen</span> ?
     <span class="fn">glfwCreateWindow</span>(pMode-&gt;width, pMode-&gt;height, windowTitle, pMonitor, <span class="kw">nullptr</span>) :
-    <span class="fn">glfwCreateWindow</span>(size.width, size.height, windowTitle, <span class="kw">nullptr</span>, <span class="kw">nullptr</span>);
+    <span class="fn">glfwCreateWindow</span>(<span class="par">size</span>.width, <span class="par">size</span>.height, windowTitle, <span class="kw">nullptr</span>, <span class="kw">nullptr</span>);
 </pre>
 <p>
     验证<span class="var">pWindow</span>的值，若窗口创建失败，用<a href="https://www.glfw.org/docs/latest/group__init.html#gaaae48c0a18607ea4a4ba951d939f0901">glfwTerminate</a>()来清理GLFW并让函数返回<span class="kw">false</span>：
@@ -357,18 +357,18 @@ pWindow = fullScreen ?
     当然<span class="fn">TerminateWindow</span>()里也会调用<a href="https://www.glfw.org/docs/latest/group__init.html#gaaae48c0a18607ea4a4ba951d939f0901">glfwTerminate</a>()，于是，至此为止<span class="fn">InitializeWindow</span>(...)和<span class="fn">TerminateWindow</span>()的内容总结如下：
 </p>
 <pre class="code">
-<span class="kw">bool</span> <span class="fn">InitializeWindow</span>(<span class="type">VkExtent2D</span> size, <span class="kw">bool</span> fullScreen = <span class="kw">false</span>, <span class="kw">bool</span> isResizable = <span class="kw">true</span>, <span class="kw">bool</span> limitFrameRate = <span class="kw">true</span>) {
+<span class="kw">bool</span> <span class="fn">InitializeWindow</span>(<span class="type">VkExtent2D</span> <span class="par">size</span>, <span class="kw">bool</span> <span class="par">fullScreen</span> = <span class="kw">false</span>, <span class="kw">bool</span> <span class="par">isResizable</span> = <span class="kw">true</span>, <span class="kw">bool</span> <span class="par">limitFrameRate</span> = <span class="kw">true</span>) {
     <span class="kw">if</span> (!<span class="fn">glfwInit</span>()) {
         std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ] ERROR\nFailed to initialize GLFW!\n&quot;</span>);
         <span class="kw">return false</span>;
     }
     <span class="fn">glfwWindowHint</span>(<span class="mcr">GLFW_CLIENT_API</span>, <span class="mcr">GLFW_NO_API</span>);
-    <span class="fn">glfwWindowHint</span>(<span class="mcr">GLFW_RESIZABLE</span>, isResizable);
+    <span class="fn">glfwWindowHint</span>(<span class="mcr">GLFW_RESIZABLE</span>, <span class="par">isResizable</span>);
     pMonitor = <span class="fn">glfwGetPrimaryMonitor</span>();
     <span class="kw">const</span> <span class="type">GLFWvidmode</span>* pMode = <span class="fn">glfwGetVideoMode</span>(pMonitor);
-    pWindow = fullScreen ?
-        <span class="fn">glfwCreateWindow</span>(size.width, size.height, windowTitle, pMonitor, <span class="kw">nullptr</span>) :
-        <span class="fn">glfwCreateWindow</span>(size.width, size.height, windowTitle, <span class="kw">nullptr</span>, <span class="kw">nullptr</span>);
+    pWindow = <span class="par">fullScreen</span> ?
+        <span class="fn">glfwCreateWindow</span>(pMode-&gt;width, pMode-&gt;height, windowTitle, pMonitor, <span class="kw">nullptr</span>) :
+        <span class="fn">glfwCreateWindow</span>(<span class="par">size</span>.width, <span class="par">size</span>.height, windowTitle, <span class="kw">nullptr</span>, <span class="kw">nullptr</span>);
     <span class="kw">if</span> (!pWindow) {
         std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ]\nFailed to create a glfw window!\n&quot;</span>);
         <span class="fn">glfwTerminate</span>();
@@ -532,9 +532,9 @@ pWindow = fullScreen ?
     <span class="kw">const</span> <span class="type">GLFWvidmode</span>* pMode = <span class="fn">glfwGetVideoMode</span>(pMonitor);
     <span class="fn">glfwSetWindowMonitor</span>(pWindow, pMonitor, 0, 0, pMode-&gt;width, pMode-&gt;height, pMode-&gt;refreshRate);
 }
-<span class="kw">void</span> <span class="fn">MakeWindowWindowed</span>(<span class="type">VkOffset2D</span> position, <span class="type">VkExtent2D</span> size) {
+<span class="kw">void</span> <span class="fn">MakeWindowWindowed</span>(<span class="type">VkOffset2D</span> <span class="par">position</span>, <span class="type">VkExtent2D</span> <span class="par">size</span>) {
     <span class="kw">const</span> <span class="type">GLFWvidmode</span>* pMode = <span class="fn">glfwGetVideoMode</span>(pMonitor);
-    <span class="fn">glfwSetWindowMonitor</span>(pWindow, <span class="kw">nullptr</span>, position.x, position.y, size.width, size.height, pMode-&gt;refreshRate);
+    <span class="fn">glfwSetWindowMonitor</span>(pWindow, <span class="kw">nullptr</span>, <span class="par">position</span>.x, <span class="par">position</span>.y, <span class="par">size</span>.width, <span class="par">size</span>.height, pMode-&gt;refreshRate);
 }
 </pre>
 <p>

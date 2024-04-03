@@ -858,7 +858,7 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
 }
 </pre>
 <p>
-    渲染到屏幕的管线，跟Ch2中创建画三角形管线的代码之差别只有绘制模式（不算文件路劲和变量名的不同的话）：
+    渲染到屏幕的管线，跟Ch2中创建画三角形管线的代码之差别只有绘制模式（不算文件路径和变量名的不同的话）：
 </p>
 <pre class="code">
 <span class="kw">void</span> <span class="fn">CreateLayout</span>() {
@@ -1061,11 +1061,11 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
         ca_canvas.<span class="fn">Image</span>(),
         imageSubresourceRange
     };
-
     <span class="fn">vkCmdPipelineBarrier</span>(commandBuffer, <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>, <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, 0,
         0, <span class="kw">nullptr</span>, 0, <span class="kw">nullptr</span>, 1, &amp;imageMemoryBarrier);
 
     <span class="fn">vkCmdClearColorImage</span>(commandBuffer, ca_canvas.<span class="fn">Image</span>(), <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span>, &amp;clearColor, 1, &amp;imageSubresourceRange);
+
     imageMemoryBarrier.srcAccessMask = <span class="enum">VK_ACCESS_TRANSFER_WRITE_BIT</span>;
     imageMemoryBarrier.dstAccessMask = 0;
     imageMemoryBarrier.oldLayout = <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span>;
