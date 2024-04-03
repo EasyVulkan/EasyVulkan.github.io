@@ -231,7 +231,7 @@ namespace easyVulkan {
 		rpwf.renderPass.Create(renderPassCreateInfo);
 
 		ca_canvas.Create(graphicsBase::Base().SwapchainCreateInfo().imageFormat, canvasSize, 1, VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
-		
+
 		VkFramebufferCreateInfo framebufferCreateInfo = {
 			.renderPass = rpwf.renderPass,
 			.attachmentCount = 1,
@@ -345,6 +345,151 @@ namespace easyVulkan {
 		};
 		auto DestroyFramebuffers = [] {
 			dsas_screenWithDS.clear();
+			rpwf.framebuffers.clear();
+		};
+		graphicsBase::Base().AddCallback_CreateSwapchain(CreateFramebuffers);
+		graphicsBase::Base().AddCallback_DestroySwapchain(DestroyFramebuffers);
+		CreateFramebuffers();
+		return rpwf;
+	}
+
+	colorAttachment ca_deferredToScreen_position;
+	colorAttachment ca_deferredToScreen_normal;
+	colorAttachment ca_deferredToScreen_albedoSpecular;
+	depthStencilAttachment dsa_deferredToScreen;
+	const auto& CreateRpwf_DeferredToScreen(VkFormat depthStencilFormat = VK_FORMAT_D24_UNORM_S8_UINT,
+		VkAttachmentStoreOp depthStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE, VkAttachmentStoreOp gBufferStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE) {
+		static renderPassWithFramebuffers rpwf;
+		ExecuteOnce(rpwf);
+		static VkFormat _depthStencilFormat = depthStencilFormat;
+		static VkAttachmentStoreOp _depthStoreOp = depthStoreOp;
+		static VkAttachmentStoreOp _gBufferStoreOp = gBufferStoreOp;
+		VkAttachmentDescription attachmentDescriptions[5] = {
+			{//Swapchain attachment
+				.format = graphicsBase::Base().SwapchainCreateInfo().imageFormat,
+				.samples = VK_SAMPLE_COUNT_1_BIT,
+				.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+				.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+				.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+				.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+				.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR },
+			{//Deferred position attachment
+				.format = VK_FORMAT_R16G16B16A16_SFLOAT,//Or VK_FORMAT_R32G32B32A32_SFLOAT
+				.samples = VK_SAMPLE_COUNT_1_BIT,
+				.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+				.storeOp = _gBufferStoreOp,
+				.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+				.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+				.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL },
+			{//Deferred normal attachment, always the same as above
+				.format = VK_FORMAT_R16G16B16A16_SFLOAT,
+				.samples = VK_SAMPLE_COUNT_1_BIT,
+				.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+				.storeOp = _gBufferStoreOp,
+				.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+				.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+				.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL },
+			{//Deffered albedo specular attachment
+				.format = VK_FORMAT_R8G8B8A8_UNORM,//The only difference from above
+				.samples = VK_SAMPLE_COUNT_1_BIT,
+				.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+				.storeOp = _gBufferStoreOp,
+				.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+				.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+				.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL },
+			{//Depth stencil attachment
+				.format = depthStencilFormat,
+				.samples = VK_SAMPLE_COUNT_1_BIT,
+				.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+				.storeOp = _depthStoreOp,
+				.stencilLoadOp = depthStencilFormat >= VK_FORMAT_S8_UINT ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+				.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+				.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL }
+		};
+		VkAttachmentReference attachmentReferences_subpass0[4] = {
+			{ 1, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL },
+			{ 2, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL },
+			{ 3, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL },
+			{ 4, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL }
+		};
+		VkAttachmentReference attachmentReferences_subpass1[4] = {
+			{ 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL },
+			{ 1, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL },
+			{ 2, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL },
+			{ 3, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL }
+		};
+		VkSubpassDescription subpassDescriptions[2] = {
+			{
+				.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+				.colorAttachmentCount = 3,
+				.pColorAttachments = attachmentReferences_subpass0,
+				.pDepthStencilAttachment = attachmentReferences_subpass0 + 3 },
+			{
+				.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+				.inputAttachmentCount = 3,
+				.pInputAttachments = attachmentReferences_subpass1 + 1,
+				.colorAttachmentCount = 1,
+				.pColorAttachments = attachmentReferences_subpass1 }
+		};
+		VkSubpassDependency subpassDependencies[2] = {
+			{
+				.srcSubpass = VK_SUBPASS_EXTERNAL,
+				.dstSubpass = 0,
+				.srcStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+				.dstStageMask = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,
+				.srcAccessMask = 0,
+				.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
+				.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT },
+			{
+				.srcSubpass = 0,
+				.dstSubpass = 1,
+				.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+				.dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+				.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+				.dstAccessMask = VK_ACCESS_INPUT_ATTACHMENT_READ_BIT,
+				.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT }
+		};
+		VkRenderPassCreateInfo renderPassCreateInfo = {
+			.attachmentCount = 5,
+			.pAttachments = attachmentDescriptions,
+			.subpassCount = 2,
+			.pSubpasses = subpassDescriptions,
+			.dependencyCount = 2,
+			.pDependencies = subpassDependencies
+		};
+		rpwf.renderPass.Create(renderPassCreateInfo);
+		auto CreateFramebuffers = [] {
+			VkImageUsageFlags otherUsage_gBuffer = VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | (_gBufferStoreOp == VK_ATTACHMENT_STORE_OP_DONT_CARE ? VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT : 0);
+			VkImageUsageFlags otherUsage_depthStencil = _depthStoreOp == VK_ATTACHMENT_STORE_OP_DONT_CARE ? VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT : 0;
+			rpwf.framebuffers.resize(graphicsBase::Base().SwapchainImageCount());
+			ca_deferredToScreen_position.Create(VK_FORMAT_R16G16B16A16_SFLOAT, windowSize, 1, VK_SAMPLE_COUNT_1_BIT, otherUsage_gBuffer);
+			ca_deferredToScreen_normal.Create(VK_FORMAT_R16G16B16A16_SFLOAT, windowSize, 1, VK_SAMPLE_COUNT_1_BIT, otherUsage_gBuffer);
+			ca_deferredToScreen_albedoSpecular.Create(VK_FORMAT_R8G8B8A8_UNORM, windowSize, 1, VK_SAMPLE_COUNT_1_BIT, otherUsage_gBuffer);
+			dsa_deferredToScreen.Create(_depthStencilFormat, windowSize, 1, VK_SAMPLE_COUNT_1_BIT, otherUsage_depthStencil);
+			VkImageView attachments[5] = {
+				VK_NULL_HANDLE,
+				ca_deferredToScreen_position.ImageView(),
+				ca_deferredToScreen_normal.ImageView(),
+				ca_deferredToScreen_albedoSpecular.ImageView(),
+				dsa_deferredToScreen.ImageView()
+			};
+			VkFramebufferCreateInfo framebufferCreateInfo = {
+				.renderPass = rpwf.renderPass,
+				.attachmentCount = 5,
+				.pAttachments = attachments,
+				.width = windowSize.width,
+				.height = windowSize.height,
+				.layers = 1
+			};
+			for (size_t i = 0; i < graphicsBase::Base().SwapchainImageCount(); i++)
+				attachments[0] = graphicsBase::Base().SwapchainImageView(i),
+				rpwf.framebuffers[i].Create(framebufferCreateInfo);
+		};
+		auto DestroyFramebuffers = [] {
+			ca_deferredToScreen_position.~colorAttachment();
+			ca_deferredToScreen_normal.~colorAttachment();
+			ca_deferredToScreen_albedoSpecular.~colorAttachment();
+			dsa_deferredToScreen.~depthStencilAttachment();
 			rpwf.framebuffers.clear();
 		};
 		graphicsBase::Base().AddCallback_CreateSwapchain(CreateFramebuffers);

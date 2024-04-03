@@ -1440,4 +1440,152 @@ namespace vulkan {
 			Create_Internal(format_initial, format_final, generateMipmap);
 		}
 	};
+
+	//Query
+	class pipelineStatisticQuery {
+		enum statisticName {
+			//Input Assembly
+			vertexCount_ia,
+			primitiveCount_ia,
+			//Vertex Shader
+			invocationCount_vs,
+			//Geometry Shader
+			invocationCount_gs,
+			primitiveCount_gs,
+			//Clipping
+			invocationCount_clipping,
+			primitiveCount_clipping,
+			//Fragment Shader
+			invocationCount_fs,
+			//Tessellation
+			patchCount_tcs,
+			invocationCount_tes,
+			//Compute Shader
+			invocationCount_cs,
+			statisticCount
+		};
+	protected:
+		queryPool queryPool;
+		uint32_t statistics[statisticCount] = {};
+	public:
+		pipelineStatisticQuery() {
+			if (graphicsBase::Base().Device())
+				Create();
+		}
+		//Getter
+		operator VkQueryPool() const { return queryPool; }
+		const VkQueryPool* Address() const { return queryPool.Address(); }
+		uint32_t     VertexCount_Ia() const { return statistics[vertexCount_ia]; }
+		uint32_t  PrimitiveCount_Ia() const { return statistics[primitiveCount_ia]; }
+		uint32_t InvocationCount_Vs() const { return statistics[invocationCount_vs]; }
+		uint32_t InvocationCount_Gs() const { return statistics[invocationCount_gs]; }
+		uint32_t  PrimitiveCount_Gs() const { return statistics[primitiveCount_gs]; }
+		uint32_t InvocationCount_Clipping() const { return statistics[invocationCount_clipping]; }
+		uint32_t  PrimitiveCount_Clipping() const { return statistics[primitiveCount_clipping]; }
+		uint32_t InvocationCount_Fs() const { return statistics[invocationCount_fs]; }
+		uint32_t      PatchCount_Tcs() const { return statistics[patchCount_tcs]; }
+		uint32_t InvocationCount_Tes() const { return statistics[invocationCount_tes]; }
+		uint32_t InvocationCount_Cs() const { return statistics[invocationCount_cs]; }
+		//Const Function
+		void CmdReset(VkCommandBuffer commandBuffer) const {
+			queryPool.CmdReset(commandBuffer, 0, 1);
+		}
+		void CmdBegin(VkCommandBuffer commandBuffer) const {
+			queryPool.CmdBegin(commandBuffer, 0);
+		}
+		void CmdEnd(VkCommandBuffer commandBuffer) const {
+			queryPool.CmdEnd(commandBuffer, 0);
+		}
+		void CmdResetAndBegin(VkCommandBuffer commandBuffer) const {
+			queryPool.CmdReset(commandBuffer, 0, 1);
+			queryPool.CmdBegin(commandBuffer, 0);
+		}
+		//Non-const Function
+		void Create() {
+			queryPool.Create(VK_QUERY_TYPE_PIPELINE_STATISTICS, 1, (1 << statisticCount) - 1);
+		}
+		result_t GetResults() {
+			return queryPool.GetResults(0, 1, sizeof statistics, statistics, sizeof statistics);
+		}
+	};
+	class occlusionQueries {
+	protected:
+		queryPool queryPool;
+		std::vector<uint32_t> passingSampleCounts;
+	public:
+		occlusionQueries() = default;
+		occlusionQueries(uint32_t capacity) {
+			Create(capacity);
+		}
+		//Getter
+		operator VkQueryPool() const { return queryPool; }
+		const VkQueryPool* Address() const { return queryPool.Address(); }
+		uint32_t Capacity() const { return passingSampleCounts.capacity(); }
+		uint32_t PassingSampleCount(uint32_t index) const { return passingSampleCounts[index]; }
+		//Const Function
+		void CmdReset(VkCommandBuffer commandBuffer) const {
+			queryPool.CmdReset(commandBuffer, 0, Capacity());
+		}
+		void CmdBegin(VkCommandBuffer commandBuffer, uint32_t queryIndexCounter) const {
+			queryPool.CmdBegin(commandBuffer, queryIndexCounter);
+		}
+		void CmdEnd(VkCommandBuffer commandBuffer, uint32_t& queryIndexCounter) const {
+			queryPool.CmdEnd(commandBuffer, queryIndexCounter++);
+		}
+		/*For GPU-driven occlusion culling*/
+		void CmdCopyResults(VkCommandBuffer commandBuffer, uint32_t firstQueryIndex, uint32_t queryCount, VkBuffer buffer_dst, VkDeviceSize offset_dst, VkDeviceSize stride) const {
+			queryPool.CmdCopyResults(commandBuffer, firstQueryIndex, queryCount, buffer_dst, offset_dst, stride, VK_QUERY_RESULT_WAIT_BIT);
+		}
+		//Non-const Function
+		void Create(uint32_t capacity) {
+			passingSampleCounts.resize(capacity);
+			passingSampleCounts.shrink_to_fit();
+			queryPool.Create(VK_QUERY_TYPE_OCCLUSION, Capacity());
+		}
+		void Recreate(uint32_t capacity) {
+			graphicsBase::Base().WaitIdle();
+			queryPool.~queryPool();
+			Create(capacity);
+		}
+		result_t GetResults(uint32_t queryCount) {
+			return queryPool.GetResults(0, queryCount, queryCount * 4, passingSampleCounts.data(), 4);
+		}
+	};
+	class timestampQueries {
+	protected:
+		queryPool queryPool;
+		std::vector<uint32_t> timestamps;
+	public:
+		timestampQueries() = default;
+		timestampQueries(uint32_t capacity) {
+			Create(capacity);
+		}
+		//Getter
+		operator VkQueryPool() const { return queryPool; }
+		const VkQueryPool* Address() const { return queryPool.Address(); }
+		uint32_t Capacity() const { return timestamps.capacity(); }
+		uint32_t Timestamp(uint32_t index) const { return timestamps[index]; }
+		uint32_t Duration(uint32_t index) const { return timestamps[index + 1] - timestamps[index]; }
+		//Const Function
+		void CmdReset(VkCommandBuffer commandBuffer) const {
+			queryPool.CmdReset(commandBuffer, 0, Capacity());
+		}
+		void CmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage, uint32_t& queryIndexCounter) const {
+			queryPool.CmdWriteTimestamp(commandBuffer, pipelineStage, queryIndexCounter++);
+		}
+		//Non-const Function
+		void Create(uint32_t capacity) {
+			timestamps.resize(capacity);
+			timestamps.shrink_to_fit();
+			queryPool.Create(VK_QUERY_TYPE_TIMESTAMP, Capacity());
+		}
+		void Recreate(uint32_t capacity) {
+			graphicsBase::Base().WaitIdle();
+			queryPool.~queryPool();
+			Create(capacity);
+		}
+		result_t GetResults(uint32_t queryCount) {
+			return queryPool.GetResults(0, queryCount, queryCount * 4, timestamps.data(), 4);
+		}
+	};
 }

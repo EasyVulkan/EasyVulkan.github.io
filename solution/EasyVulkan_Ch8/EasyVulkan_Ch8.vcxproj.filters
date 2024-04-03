@@ -31,6 +31,9 @@
     <ClInclude Include="Ch8-2.hpp">
       <Filter>EasyVK_HPP</Filter>
     </ClInclude>
+    <ClInclude Include="Ch8-3.hpp">
+      <Filter>EasyVK_HPP</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="EasyVK_CPP">
