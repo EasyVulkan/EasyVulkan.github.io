@@ -113,6 +113,11 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#id8">绘制</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id9">将深度显示到屏幕</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">深度边界测试</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id11">创建管线</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">绘制</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -764,6 +769,7 @@ glm::<span class="type">mat4</span> proj = <span class="fn">FlipVertical</span>(
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
 
         renderPass.<span class="fn">CmdBegin</span>(commandBuffer, framebuffers[i], { {}, windowSize }, clearColors);
+        <span class="fn">vkCmdBindPipeline</span>(commandBuffer, <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>, pipeline_into3d);
         <span class="type">VkBuffer</span> buffers[2] = { vertexBuffer_perVertex, vertexBuffer_perInstance };
         <span class="type">VkDeviceSize</span> offsets[2] = {};
         <span class="fn">vkCmdBindVertexBuffers</span>(commandBuffer, 0, 2, buffers, offsets);
@@ -881,18 +887,113 @@ pipelineCiPack.viewports.<span class="fn">emplace_back</span>(0.f, 0.f, <span cl
 </p>
 <img alt="_images/ch8-2-7.png" src="_images/ch8-2-7.png">
 <p>
-    这一节没有涉及到的深度边界测试，用例见TODO Ch8-3 延迟渲染。
-</p>
-<p>
-    其实笔者原想在这里创建个没有片段着色器的管线只渲染深度，然后采样深度到屏幕（但是这么一来代码量就得跟前一节几乎一样多），或者使用输入附件（这是下一节的内容），因不想这一节冗余的代码太多，索性作罢。
+    其实笔者原想在这里采样深度贴图到屏幕（但是这么一来代码量就得跟前一节几乎一样多），或者使用输入附件（这是下一节的内容），因不想这一节冗余的代码太多，索性作罢。
     <br>
-    注1：只渲染深度，然后把深度图像blit到交换链图像是不行的，验证层会<a href="https://renderdoc.org/vkspec_chunked/chap20.html#VUID-vkCmdBlitImage-srcImage-00231">报错</a>。
+    注1：只渲染深度，然后把深度图像blit到交换链图像是不行的，验证层会报错（深度模板格式的图像只能被blit到相同格式的图像）。
     <br>
-    注2：再次提醒，若要采样深度贴图，写入描述符的image view的aspectMask应只注明深度，不要注明模板（有人为此debug半天却找不出原因所在）。
-</p>
-<p>
-    <strong>使用没有片段着色器的管线并没有什么难度，就请各位自己尝试吧！</strong>
+    注2：若要采样深度贴图，再次提醒，写入描述符的image view的aspectMask应只注明深度，不要注明模板（有人为此debug半天却找不出原因所在）。
 </p></section>
+<section id="id10">
+<h2>深度边界测试<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h2>
+<p>
+    在此简单演示下深度边界测试的使用，深度边界测试的解释见<a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html#vkpipelinedepthstencilstatecreateinfo">深度模板状态创建信息</a>。
+    <br>
+    取决于具体型号，英特尔核显可能不支持深度边界测试。
+</p>
+<p>
+    深度边界测试根据已在深度缓冲中的深度值，决定是否要执行后续管线功能。
+    <br>
+    这里的“已在深度缓冲中的深度值”指的是渲染过程中，在执行某次绘制命令前，已经记录下的深度值。
+</p>
+<p>
+    这里用一个非常简单的流程来演示深度边界测试：
+    <br>
+    1.使用没有片段着色器的管线进行绘制，留下深度值
+    <br>
+    2.使用开启了深度边界测试的管线，进行片段着色
+    <br>
+    这两步会在同一个渲染通道的同一个子通道中完成。
+</p><section id="id11">
+<h3>创建管线<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>
+<p>
+    基于先前的程序进行修改，创建只留下深度的管线<span class="var">pipeline_depthOnly</span>：
+</p>
+<pre class="code">
+<span class="type">pipeline</span> pipeline_depthOnly;
+<span class="kw">void</span> <span class="fn">CreateLayout</span>() {
+    <span class="cmt">/*...前面略*/</span>
+    <span class="kw">auto</span> Create = [] {
+        <span class="cmt">/*...略去与先前创建pipeline_into3d时完全相同的代码*/</span>
+        pipelineCiPack.createInfo.stageCount = 1; <span class="cmt">//着色器阶段数量变为1，只剩顶点着色器</span>
+        pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_into3d;
+        pipeline_depthOnly.<span class="fn">Create</span>(pipelineCiPack);
+    };
+    <span class="cmt">/*...后面略*/</span>
+}
+</pre>
+<p>
+    然后创建<span class="var">pipeline_into3d</span>，开启深度边界测试：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">CreateLayout</span>() {
+    <span class="cmt">/*...*/</span>
+    <span class="kw">auto</span> Create = [] {
+        <span class="cmt">/*...*/</span>
+        pipelineCiPack.createInfo.stageCount = 1;
+        pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_into3d;
+        pipeline_depthOnly.<span class="fn">Create</span>(pipelineCiPack);
+
+        pipelineCiPack.depthStencilStateCi.depthCompareOp = <span class="enum">VK_COMPARE_OP_EQUAL</span>; <span class="cmt">//深度比较方式变为相等</span>
+        pipelineCiPack.depthStencilStateCi.depthBoundsTestEnable = <span class="mcr">VK_TRUE</span>;
+        pipelineCiPack.depthStencilStateCi.minDepthBounds = 0.4f;
+        pipelineCiPack.depthStencilStateCi.maxDepthBounds = 0.7f;
+        pipelineCiPack.createInfo.stageCount = 2;
+        pipeline_into3d.<span class="fn">Create</span>(pipelineCiPack);
+    };
+    <span class="cmt">/*...*/</span>
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            深度范围[0.4, 0.7]可以使得近平面位置为5.f时，画面中正好只留下四个立方体，这个深度范围是对先前的深度图取色测得的。
+        </p>
+    </li>
+</ul></section>
+<section id="id12">
+<h3>绘制<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h3>
+<p>
+    近平面位置设置在5.f：
+</p>
+<pre class="code">
+glm::<span class="type">mat4</span> proj = <span class="fn">FlipVertical</span>(glm::<span class="fn">infinitePerspectiveLH_ZO</span>(glm::<span class="fn">radians</span>(60.f), <span class="kw">float</span>(windowSize.width) / windowSize.height, 5.f));
+</pre>
+<p>
+    先后绑定管线然后绘制：
+</p>
+<pre class="code">
+renderPass.<span class="fn">CmdBegin</span>(commandBuffer, framebuffers[i], { {}, windowSize }, clearColors);
+
+<span class="cmt">//先绑定pipeline_depthOnly留下深度</span>
+<span class="fn">vkCmdBindPipeline</span>(commandBuffer, <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>, pipeline_depthOnly);
+<span class="type">VkBuffer</span> buffers[2] = { vertexBuffer_perVertex, vertexBuffer_perInstance };
+<span class="type">VkDeviceSize</span> offsets[2] = {};
+<span class="fn">vkCmdBindVertexBuffers</span>(commandBuffer, 0, 2, buffers, offsets);
+<span class="fn">vkCmdBindIndexBuffer</span>(commandBuffer, indexBuffer, 0, <span class="enum">VK_INDEX_TYPE_UINT16</span>);
+<span class="fn">vkCmdPushConstants</span>(commandBuffer, pipelineLayout_into3d, <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>, 0, 64, &amp;proj);
+<span class="fn">vkCmdDrawIndexed</span>(commandBuffer, 36, 12, 0, 0, 0);
+
+<span class="cmt">//再绑定pipeline_into3d进行片段着色</span>
+<span class="fn">vkCmdBindPipeline</span>(commandBuffer, <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>, pipeline_into3d);
+<span class="fn">vkCmdDrawIndexed</span>(commandBuffer, 36, 12, 0, 0, 0);
+
+renderPass.<span class="fn">CmdEnd</span>();
+</pre>
+<p>
+    运行程序，效果如下：
+</p>
+<img alt="_images/ch8-2-8.png" src="_images/ch8-2-8.png"></section>
+</section>
 </section>
 
 

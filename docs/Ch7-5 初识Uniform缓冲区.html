@@ -452,7 +452,7 @@ descriptorPool.<span class="fn">AllocateSets</span>(descriptorSet_trianglePositi
 <span class="type">VkDescriptorBufferInfo</span> bufferInfo = {
     .buffer = uniformBuffer,
     .offset = 0,
-    .range = <span class="kw">sizeof</span>(glm::<span class="type">vec2</span>)
+    .range = <span class="kw">sizeof</span>(glm::<span class="type">vec2</span>) <span class="cmt">//可通过描述符访问的范围为一个vec2的大小即可</span>
 };
 descriptorSet_trianglePosition.<span class="fn">Write</span>(bufferInfo, <span class="enum">VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC</span>);
 </pre>
@@ -461,8 +461,9 @@ descriptorSet_trianglePosition.<span class="fn">Write</span>(bufferInfo, <span c
 </p>
 <pre class="code">
 <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; 3; i++) {
+    <span class="type">uint32_t</span> dynamicOffset = uniformAlignment * i;
     <span class="fn">vkCmdBindDescriptorSets</span>(commandBuffer, <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>,
-    pipelineLayout_triangle, 0, 1, descriptorSet_trianglePosition.<span class="fn">Address</span>(), 1, &amp;uniformAlignment);
+    pipelineLayout_triangle, 0, 1, descriptorSet_trianglePosition.<span class="fn">Address</span>(), 1, &amp;dynamicOffset);
     <span class="fn">vkCmdDraw</span>(commandBuffer, 3, 1, 0, 0);
 }
 </pre>

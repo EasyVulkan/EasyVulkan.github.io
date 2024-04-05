@@ -270,7 +270,7 @@ namespace easyVulkan {
 	const auto& CreateRpwf_ScreenWithDS(VkFormat depthStencilFormat = VK_FORMAT_D24_UNORM_S8_UINT) {
 		static renderPassWithFramebuffers rpwf;
 		ExecuteOnce(rpwf);
-		static VkFormat dsFormat = depthStencilFormat;
+		static VkFormat _depthStencilFormat = depthStencilFormat;
 
 		VkAttachmentDescription attachmentDescriptions[2] = {
 			{//Color attachment
@@ -282,17 +282,17 @@ namespace easyVulkan {
 				.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
 				.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR },
 			{//Depth stencil attachment
-				.format = dsFormat,
+				.format = _depthStencilFormat,
 				.samples = VK_SAMPLE_COUNT_1_BIT,
-				.loadOp = dsFormat != VK_FORMAT_S8_UINT ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+				.loadOp = _depthStencilFormat != VK_FORMAT_S8_UINT ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 				.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-				.stencilLoadOp = dsFormat >= VK_FORMAT_S8_UINT ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+				.stencilLoadOp = _depthStencilFormat >= VK_FORMAT_S8_UINT ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 				.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
 				.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL }
 		};
 		VkAttachmentReference attachmentReferences[2] = {
 			{ 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL },
-			//Unless the separateDepthStencilLayouts feature is enabled, even if dsFormat doesn't support stencil, layout must be VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL.
+			//Unless the separateDepthStencilLayouts feature is enabled, even if depthStencilFormat doesn't support stencil, layout must be VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL.
 			{ 1, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL }
 		};
 		VkSubpassDescription subpassDescription = {
@@ -326,7 +326,7 @@ namespace easyVulkan {
 			dsas_screenWithDS.resize(graphicsBase::Base().SwapchainImageCount());
 			rpwf.framebuffers.resize(graphicsBase::Base().SwapchainImageCount());
 			for (auto& i : dsas_screenWithDS)
-				i.Create(dsFormat, windowSize, 1, VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT);
+				i.Create(_depthStencilFormat, windowSize, 1, VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT);
 			VkFramebufferCreateInfo framebufferCreateInfo = {
 				.renderPass = rpwf.renderPass,
 				.attachmentCount = 2,
@@ -353,18 +353,14 @@ namespace easyVulkan {
 		return rpwf;
 	}
 
-	colorAttachment ca_deferredToScreen_position;
-	colorAttachment ca_deferredToScreen_normal;
+	colorAttachment ca_deferredToScreen_normalZ;
 	colorAttachment ca_deferredToScreen_albedoSpecular;
 	depthStencilAttachment dsa_deferredToScreen;
-	const auto& CreateRpwf_DeferredToScreen(VkFormat depthStencilFormat = VK_FORMAT_D24_UNORM_S8_UINT,
-		VkAttachmentStoreOp depthStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE, VkAttachmentStoreOp gBufferStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE) {
+	const auto& CreateRpwf_DeferredToScreen(VkFormat depthStencilFormat = VK_FORMAT_D24_UNORM_S8_UINT) {
 		static renderPassWithFramebuffers rpwf;
 		ExecuteOnce(rpwf);
 		static VkFormat _depthStencilFormat = depthStencilFormat;
-		static VkAttachmentStoreOp _depthStoreOp = depthStoreOp;
-		static VkAttachmentStoreOp _gBufferStoreOp = gBufferStoreOp;
-		VkAttachmentDescription attachmentDescriptions[5] = {
+		VkAttachmentDescription attachmentDescriptions[4] = {
 			{//Swapchain attachment
 				.format = graphicsBase::Base().SwapchainCreateInfo().imageFormat,
 				.samples = VK_SAMPLE_COUNT_1_BIT,
@@ -373,60 +369,50 @@ namespace easyVulkan {
 				.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 				.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
 				.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR },
-			{//Deferred position attachment
+			{//Deferred normal & z attachment
 				.format = VK_FORMAT_R16G16B16A16_SFLOAT,//Or VK_FORMAT_R32G32B32A32_SFLOAT
 				.samples = VK_SAMPLE_COUNT_1_BIT,
 				.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-				.storeOp = _gBufferStoreOp,
+				.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
 				.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 				.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
 				.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL },
-			{//Deferred normal attachment, always the same as above
-				.format = VK_FORMAT_R16G16B16A16_SFLOAT,
-				.samples = VK_SAMPLE_COUNT_1_BIT,
-				.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-				.storeOp = _gBufferStoreOp,
-				.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-				.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-				.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL },
-			{//Deffered albedo specular attachment
+			{//Deffered albedo & specular attachment
 				.format = VK_FORMAT_R8G8B8A8_UNORM,//The only difference from above
 				.samples = VK_SAMPLE_COUNT_1_BIT,
 				.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-				.storeOp = _gBufferStoreOp,
+				.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
 				.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 				.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
 				.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL },
 			{//Depth stencil attachment
-				.format = depthStencilFormat,
+				.format = _depthStencilFormat,
 				.samples = VK_SAMPLE_COUNT_1_BIT,
 				.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-				.storeOp = _depthStoreOp,
-				.stencilLoadOp = depthStencilFormat >= VK_FORMAT_S8_UINT ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+				.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+				.stencilLoadOp = _depthStencilFormat >= VK_FORMAT_S8_UINT ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 				.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
 				.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL }
 		};
-		VkAttachmentReference attachmentReferences_subpass0[4] = {
+		VkAttachmentReference attachmentReferences_subpass0[3] = {
 			{ 1, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL },
 			{ 2, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL },
-			{ 3, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL },
-			{ 4, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL }
+			{ 3, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL }
 		};
-		VkAttachmentReference attachmentReferences_subpass1[4] = {
+		VkAttachmentReference attachmentReferences_subpass1[3] = {
 			{ 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL },
 			{ 1, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL },
-			{ 2, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL },
-			{ 3, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL }
+			{ 2, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL }
 		};
 		VkSubpassDescription subpassDescriptions[2] = {
 			{
 				.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
-				.colorAttachmentCount = 3,
+				.colorAttachmentCount = 2,
 				.pColorAttachments = attachmentReferences_subpass0,
-				.pDepthStencilAttachment = attachmentReferences_subpass0 + 3 },
+				.pDepthStencilAttachment = attachmentReferences_subpass0 + 2 },
 			{
 				.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
-				.inputAttachmentCount = 3,
+				.inputAttachmentCount = 2,
 				.pInputAttachments = attachmentReferences_subpass1 + 1,
 				.colorAttachmentCount = 1,
 				.pColorAttachments = attachmentReferences_subpass1 }
@@ -450,7 +436,7 @@ namespace easyVulkan {
 				.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT }
 		};
 		VkRenderPassCreateInfo renderPassCreateInfo = {
-			.attachmentCount = 5,
+			.attachmentCount = 4,
 			.pAttachments = attachmentDescriptions,
 			.subpassCount = 2,
 			.pSubpasses = subpassDescriptions,
@@ -459,23 +445,19 @@ namespace easyVulkan {
 		};
 		rpwf.renderPass.Create(renderPassCreateInfo);
 		auto CreateFramebuffers = [] {
-			VkImageUsageFlags otherUsage_gBuffer = VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | (_gBufferStoreOp == VK_ATTACHMENT_STORE_OP_DONT_CARE ? VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT : 0);
-			VkImageUsageFlags otherUsage_depthStencil = _depthStoreOp == VK_ATTACHMENT_STORE_OP_DONT_CARE ? VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT : 0;
 			rpwf.framebuffers.resize(graphicsBase::Base().SwapchainImageCount());
-			ca_deferredToScreen_position.Create(VK_FORMAT_R16G16B16A16_SFLOAT, windowSize, 1, VK_SAMPLE_COUNT_1_BIT, otherUsage_gBuffer);
-			ca_deferredToScreen_normal.Create(VK_FORMAT_R16G16B16A16_SFLOAT, windowSize, 1, VK_SAMPLE_COUNT_1_BIT, otherUsage_gBuffer);
-			ca_deferredToScreen_albedoSpecular.Create(VK_FORMAT_R8G8B8A8_UNORM, windowSize, 1, VK_SAMPLE_COUNT_1_BIT, otherUsage_gBuffer);
-			dsa_deferredToScreen.Create(_depthStencilFormat, windowSize, 1, VK_SAMPLE_COUNT_1_BIT, otherUsage_depthStencil);
-			VkImageView attachments[5] = {
+			ca_deferredToScreen_normalZ.Create(VK_FORMAT_R16G16B16A16_SFLOAT, windowSize, 1, VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT);
+			ca_deferredToScreen_albedoSpecular.Create(VK_FORMAT_R8G8B8A8_UNORM, windowSize, 1, VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT);
+			dsa_deferredToScreen.Create(_depthStencilFormat, windowSize, 1, VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT);
+			VkImageView attachments[4] = {
 				VK_NULL_HANDLE,
-				ca_deferredToScreen_position.ImageView(),
-				ca_deferredToScreen_normal.ImageView(),
+				ca_deferredToScreen_normalZ.ImageView(),
 				ca_deferredToScreen_albedoSpecular.ImageView(),
 				dsa_deferredToScreen.ImageView()
 			};
 			VkFramebufferCreateInfo framebufferCreateInfo = {
 				.renderPass = rpwf.renderPass,
-				.attachmentCount = 5,
+				.attachmentCount = 4,
 				.pAttachments = attachments,
 				.width = windowSize.width,
 				.height = windowSize.height,
@@ -486,8 +468,7 @@ namespace easyVulkan {
 				rpwf.framebuffers[i].Create(framebufferCreateInfo);
 		};
 		auto DestroyFramebuffers = [] {
-			ca_deferredToScreen_position.~colorAttachment();
-			ca_deferredToScreen_normal.~colorAttachment();
+			ca_deferredToScreen_normalZ.~colorAttachment();
 			ca_deferredToScreen_albedoSpecular.~colorAttachment();
 			dsa_deferredToScreen.~depthStencilAttachment();
 			rpwf.framebuffers.clear();

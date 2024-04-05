@@ -1091,7 +1091,7 @@
     </li>
     <li>
         <p>
-            深度偏移为：depthBiasConstantFactor*r+depthBiasSlopeFactor*m，其中r是深度缓冲中的最小可表示正数，数值取决于深度缓冲的格式，m为片段的视口深度在x和y方向的偏导数平方和的开方，或可能为x和y方向的偏导数绝对值的较大值。
+            深度偏移为：<code>depthBiasConstantFactor * r + depthBiasSlopeFactor * m</code>，其中r是深度缓冲中的最小可表示正数，数值取决于深度缓冲的格式，m为片段的视口深度在x和y方向的偏导数平方和的开方，或可能为x和y方向的偏导数绝对值的较大值。
             <br>
             注：视口变换发生在栅格化阶段前，所以被求导的是视口变换后的深度，不是NDC深度。
         </p>

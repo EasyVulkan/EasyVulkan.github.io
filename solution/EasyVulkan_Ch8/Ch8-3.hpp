@@ -8,6 +8,7 @@ struct vertex {
 	glm::vec4 albedoSpecular;
 };
 
+descriptorSetLayout descriptorSetLayout_gBuffer;
 pipelineLayout pipelineLayout_gBuffer;
 pipeline pipeline_gBuffer;
 descriptorSetLayout descriptorSetLayout_composition;
@@ -19,25 +20,26 @@ const auto& RenderPassAndFramebuffers() {
 }
 void CreateLayout() {
 	//G-buffer
-	VkPushConstantRange pushConstantRange = { VK_SHADER_STAGE_VERTEX_BIT, 0, 64 };
+	VkDescriptorSetLayoutBinding descriptorSetLayoutBinding_gBuffer = { 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT };
+	VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {
+		.bindingCount = 1,
+		.pBindings = &descriptorSetLayoutBinding_gBuffer
+	};
+	descriptorSetLayout_gBuffer.Create(descriptorSetLayoutCreateInfo);
 	VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {
-		.pushConstantRangeCount = 1,
-		.pPushConstantRanges = &pushConstantRange
+		.setLayoutCount = 1,
+		.pSetLayouts = descriptorSetLayout_gBuffer.Address()
 	};
 	pipelineLayout_gBuffer.Create(pipelineLayoutCreateInfo);
 	//Composition
 	VkDescriptorSetLayoutBinding descriptorSetLayoutBindings_composition[2] = {
-		{ 0, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 3, VK_SHADER_STAGE_FRAGMENT_BIT },
-		{ 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_FRAGMENT_BIT }
+		{ 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_FRAGMENT_BIT },
+		{ 1, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 2, VK_SHADER_STAGE_FRAGMENT_BIT }
 	};
-	VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {
-		.bindingCount = 2,
-		.pBindings = descriptorSetLayoutBindings_composition
-	};
+	descriptorSetLayoutCreateInfo.bindingCount = 2;
+	descriptorSetLayoutCreateInfo.pBindings = descriptorSetLayoutBindings_composition;
 	descriptorSetLayout_composition.Create(descriptorSetLayoutCreateInfo);
-	pipelineLayoutCreateInfo.setLayoutCount = 1;
 	pipelineLayoutCreateInfo.pSetLayouts = descriptorSetLayout_composition.Address();
-	pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
 	pipelineLayout_composition.Create(pipelineLayoutCreateInfo);
 }
 void CreatePipeline() {
@@ -77,15 +79,14 @@ void CreatePipeline() {
 		pipelineCiPack.viewports.emplace_back(0.f, 0.f, float(windowSize.width), float(windowSize.height), 0.f, 1.f);
 		pipelineCiPack.scissors.emplace_back(VkOffset2D{}, windowSize);
 		pipelineCiPack.rasterizationStateCi.cullMode = VK_CULL_MODE_BACK_BIT;
-		pipelineCiPack.rasterizationStateCi.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;//Default
+		pipelineCiPack.rasterizationStateCi.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 		pipelineCiPack.multisampleStateCi.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 		pipelineCiPack.depthStencilStateCi.depthTestEnable = VK_TRUE;
 		pipelineCiPack.depthStencilStateCi.depthWriteEnable = VK_TRUE;
 		pipelineCiPack.depthStencilStateCi.depthCompareOp = VK_COMPARE_OP_LESS;
-		pipelineCiPack.colorBlendAttachmentStates.resize(3);//Default initialization, results in zero initialization
+		pipelineCiPack.colorBlendAttachmentStates.resize(2);
 		pipelineCiPack.colorBlendAttachmentStates[0].colorWriteMask = 0b1111;
 		pipelineCiPack.colorBlendAttachmentStates[1].colorWriteMask = 0b1111;
-		pipelineCiPack.colorBlendAttachmentStates[2].colorWriteMask = 0b1111;
 		pipelineCiPack.UpdateAllArrays();
 		pipelineCiPack.createInfo.stageCount = 2;
 		pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_gBuffer;
@@ -183,7 +184,8 @@ int main() {
 	indexBuffer.TransferData(indices);
 
 	struct {
-		alignas(16) glm::vec3 cameraPosition;
+		glm::mat4 proj = FlipVertical(glm::infinitePerspectiveLH_ZO(glm::radians(60.f), float(windowSize.width) / windowSize.height, 5.f));
+		glm::mat4 view = glm::mat4(1);
 		int32_t lightCount;
 		struct {
 			alignas(16) glm::vec3 position;
@@ -191,48 +193,39 @@ int main() {
 			float strength;
 		} lights[8];
 	} descriptorConstants;
-	descriptorConstants.cameraPosition = {};
 	descriptorConstants.lightCount = 3;
-	descriptorConstants.lights[0] = { { 0.f,  4.f, 0.f }, { 1.f, 0.f, 0.f }, 100.f };
-	descriptorConstants.lights[1] = { { 0.f,  0.f, 0.f }, { 0.f, 1.f, 0.f }, 100.f };
-	descriptorConstants.lights[2] = { { 0.f, -4.f, 0.f }, { 0.f, 0.f, 1.f }, 100.f };
+	descriptorConstants.lights[0] = { { 0.f,  4.f,  0.f }, { 1.f, 0.f, 0.f }, 100.f };
+	descriptorConstants.lights[1] = { { 0.f,  0.f, 16.f }, { 0.f, 1.f, 0.f }, 100.f };
+	descriptorConstants.lights[2] = { { 0.f, -4.f,  0.f }, { 0.f, 0.f, 1.f }, 100.f };
 	uniformBuffer uniformBuffer(sizeof descriptorConstants);
 	uniformBuffer.TransferData(descriptorConstants);
 
 	VkDescriptorPoolSize descriptorPoolSizes[] = {
-		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1 },
-		{ VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 3 }
+		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 2 },
+		{ VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 2 }
 	};
-	descriptorPool descriptorPool(1, descriptorPoolSizes);
+	descriptorPool descriptorPool(2, descriptorPoolSizes);
+	descriptorSet descriptorSet_gBuffer;
 	static descriptorSet descriptorSet_composition;
+	descriptorPool.AllocateSets(descriptorSet_gBuffer, descriptorSetLayout_gBuffer);
 	descriptorPool.AllocateSets(descriptorSet_composition, descriptorSetLayout_composition);
 	VkDescriptorBufferInfo bufferInfos[] = {
+		{ uniformBuffer, 0, sizeof(glm::mat4) * 2 },
 		{ uniformBuffer, 0, VK_WHOLE_SIZE }
 	};
-	descriptorSet_composition.Write(bufferInfos, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, 0);
+	descriptorSet_gBuffer.Write(bufferInfos[0], VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 0, 0);
+	descriptorSet_composition.Write(bufferInfos[1], VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 0, 0);
 	auto UpdateDescriptorSet_InputAttachments = [] {
-		VkDescriptorImageInfo imageInfos[3] = {
-			{ VK_NULL_HANDLE, easyVulkan::ca_deferredToScreen_position.ImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL },
-			{ VK_NULL_HANDLE, easyVulkan::ca_deferredToScreen_normal.ImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL },
+		VkDescriptorImageInfo imageInfos[2] = {
+			{ VK_NULL_HANDLE, easyVulkan::ca_deferredToScreen_normalZ.ImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL },
 			{ VK_NULL_HANDLE, easyVulkan::ca_deferredToScreen_albedoSpecular.ImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL },
 		};
-		VkWriteDescriptorSet writeDescriptorSets[] = {
-			{
-				.dstSet = descriptorSet_composition,
-				.dstBinding = 0,
-				.descriptorCount = 3,
-				.descriptorType = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
-				.pImageInfo = imageInfos }
-		};
-		descriptorSet::Update(writeDescriptorSets);
+		descriptorSet_composition.Write(imageInfos, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1, 0);
 	};
 	graphicsBase::Base().AddCallback_CreateSwapchain(UpdateDescriptorSet_InputAttachments);
 	UpdateDescriptorSet_InputAttachments();
 
-	glm::mat4 proj = FlipVertical(glm::infinitePerspectiveLH_ZO(glm::radians(60.f), float(windowSize.width) / windowSize.height, 0.1f));
-
-	VkClearValue clearValues[5] = {
-		{ .color = {} },
+	VkClearValue clearValues[4] = {
 		{ .color = {} },
 		{ .color = {} },
 		{ .color = {} },
@@ -256,7 +249,7 @@ int main() {
 		VkDeviceSize offsets[2] = {};
 		vkCmdBindVertexBuffers(commandBuffer, 0, 2, buffers, offsets);
 		vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
-		vkCmdPushConstants(commandBuffer, pipelineLayout_gBuffer, VK_SHADER_STAGE_VERTEX_BIT, 0, 64, &proj);
+		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout_gBuffer, 0, 1, descriptorSet_gBuffer.Address(), 0, nullptr);
 		vkCmdDrawIndexed(commandBuffer, 36, 12, 0, 0, 0);
 		renderPass.CmdNext(commandBuffer);
 		//Composition
