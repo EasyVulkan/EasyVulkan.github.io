@@ -136,7 +136,12 @@
 </p>
 <p>
     这一节使用顶点缓冲区和索引缓冲区来绘制长方形。
-</p><section id="id1">
+</p>
+<p>
+    索引绘制（indexed draw），是在绘制时根据索引缓冲区（index buffer）中的索引值取得相应顶点数据的绘制方式。
+    <br>
+    相比只用顶点缓冲区进行绘制的方式，这么做得以在需要提供相同的顶点数据时，复用同一组数据。
+<br><section id="id1">
 <h2>使用顶点和索引缓冲区绘制长方形的流程<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
 <p>
     在之前<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7/Ch7-1.hpp">Ch7-1.hpp</a>用顶点缓冲区绘制三角形代码的基础上，使用顶点和索引缓冲区绘制长方形需要经历以下步骤：
@@ -227,7 +232,7 @@ indexBuffer.<span class="fn">TransferData</span>(indices);
 <section id="id4">
 <h2>使用索引进行绘制<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
 <p>
-    用<a href="https://renderdoc.org/vkspec_chunked/chap21.html#vkCmdDrawIndexed">vkCmdDrawIndexed</a>(...)进行索引绘制，其效果是根据索引从顶点缓冲区中取出相应顶点数据进行绘制：
+    用<a href="https://renderdoc.org/vkspec_chunked/chap21.html#vkCmdDrawIndexed">vkCmdDrawIndexed</a>(...)进行索引绘制：
 </p>
 <table class="docutils align-default">
     <colgroup>

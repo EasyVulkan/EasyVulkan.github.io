@@ -139,7 +139,7 @@
     本节的<span class="path">main.cpp</span>对应示例代码中的：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7/Ch7-1.hpp">Ch7-1.hpp</a>
 </p>
 <p>
-    在你成功仅用着色器绘制出一个无法变更的三角形后，是时候使用顶点缓冲区来绘制三角形了。
+    在你成功仅用着色器绘制出一个无法变更的三角形后，是时候使用顶点缓冲区（vertex buffer）来绘制三角形了。
 </p><section id="id1">
 <h2>使用顶点缓冲区绘制三角形的流程<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
 <p>
@@ -149,7 +149,7 @@
     <br>
     2.映射内存区后，用<span class="fn">memcpy</span>(...)将顶点数据拷贝到暂存缓冲区
     <br>
-    3.创建一个顶点缓冲区（vertex buffer），具有<span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>内存属性（对GPU侧读写效率最佳）
+    3.创建一个顶点缓冲区，具有<span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>内存属性（对GPU侧读写效率最佳）
     <br>
     4.用<a href="https://renderdoc.org/vkspec_chunked/chap20.html#vkCmdCopyBuffer">vkCmdCopyBuffer</a>(...)将数据从暂存缓冲区拷贝到顶点缓冲区
     <br>
