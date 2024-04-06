@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ap1-1 运行期编译GLSL &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="prev" title="Ch8-2 深度测试和深度可视化" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html">Ch3-7 采样器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VKBase%2B.h.html">Ch5-0 VKBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch6-1 无图像帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html">Ch6-2 动态渲染</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%BB%98%E5%88%B6.html">Ch7-3 初识实例化绘制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-4 初识Push Constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-5 初识Uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第八章 简单示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">附录</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ap1-1 运行期编译GLSL</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#lib">头文件和Lib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fcompileglsltospv">fCompileGlslToSpv</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#includer">includer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">代码汇总及使用</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ap1-1 运行期编译GLSL</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ap1-1-glsl">
+<h1>Ap1-1 运行期编译GLSL<a class="headerlink" href="#ap1-1-glsl" title="Permalink to this heading"></a></h1>
+<p>
+    你是否已经厌倦了每次写完GLSL着色器代码，都得在文件浏览器的地址栏中复制入<code>glslc.exe路径 着色器文件路径 -c</code>这样的语句？
+    <br>
+    你可以用一些简单的C++代码来写个exe放桌面上，使得着色器拖上去就能编译：
+</p>
+<pre class="code">
+<span class="pragma">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="pragma">#include</span> <span class="str">&lt;sstream&gt;</span>
+
+<span class="pragma">#define</span> <span class="mcr">COMPILER</span> <span class="str">&quot;glslc.exe路径&quot;</span>
+
+<span class="kw">int</span> <span class="fn">main</span>(<span class="kw">int</span> <span class="par">argc</span>, <span class="kw">char</span>** <span class="par">argv</span>) {
+    <span class="cmt">//argv[0]是程序本身的路径，argv[1]开始是拖上去的文件的路径</span>
+    <span class="kw">for</span> (<span class="kw">int</span> count = 1; count < <span class="par">argc</span>; count++) {
+            <span class="cmt">//显示被编译的文件名</span>
+            std::cout &lt;&lt; <span class="str">&quot;Compile file: &quot;</span> &lt;&lt; <span class="par">argv</span>[count] &lt;&lt; std::endl;
+            <span class="cmt">//构造命令行语句</span>
+            std::<span class="type">stringstream</span> command;
+            command &lt;&lt; <span class="mcr">COMPILER</span> &lt;&lt; <span class="str">' '</span> &lt;&lt; <span class="par">argv</span>[count] &lt;&lt; <span class="str">&quot; -c&quot</span>;
+            <span class="cmt">//使用system(...)来执行命令行语句</span>
+            <span class="fn">system</span>(command.<span class="fn">str</span>().<span class="fn">c_str</span>());
+        }
+    <span class="fn">system</span>(<span class="str">&quot;pause&quot;</span>);
+    <span class="kw">return</span> 0;
+}
+</pre>
+<p>
+    不过，如果还在不断修改着色器代码，每次改完想看看效果前，都得从文件夹里把文件拖到编译用的exe上，那还是挺麻烦的。
+    <br>
+    要是在IDE或文本编辑器中保存完GLSL代码后，直接运行程序就能反映出着色器的修改的话，那就太好了呢！
+</p>
+<p>
+    Vulkan SDK中包含了谷歌的shaderc库，它提供将GLSL或HLSL代码编译到SPIR-V的功能。
+    <br>
+    本节中对使用shaderc编译GLSL的方法进行简单介绍。
+</p><section id="lib">
+<h2>头文件和Lib<a class="headerlink" href="#lib" title="Permalink to this heading"></a></h2>
+<p>
+    从Vulkan SDK的安装目录下找到<span class="path">Include/shaderc</span>，里面是所需的头文件，将该文件夹复制到Vulkan相关文件的附加包含目录中。
+</p>
+<p>
+    Vulkan SDK的安装目录中，<span class="path">Lib</span>文件夹下有这三个与shaderc相关的预编译库：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 40%">
+        <col style="width: 60%">
+    </colgroup>
+    <tbody>
+        <tr class="row-even">
+            <td><p>shaderc_combined.lib</p></td>
+            <td><p>包含C运行库以外的所有依赖项</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p>shaderc.lib</p></td>
+            <td><p>只包含shaderc，需要其他依赖项，用起来比较麻烦，无视它</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p>shaderc_shared.lib</p></td>
+            <td><p>存根库，依赖项皆为动态链接</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            Vulkan SDK中提供的这个<span class="path">shaderc_combined.lib</span>几乎是个静态库，但是它不包含C标准库中一些数学函数的实现，编译时要求动态链接。
+            <br>
+            如果需要静态链接，你可以从<a href="https://github.com/google/shaderc/">谷歌的Github仓库</a>把项目拖下来自己编译成lib。
+        </p>
+    </li>
+</ul>
+<p>
+    将<span class="path">shaderc_combined.lib</span>和<span class="path">shaderc_shared.lib</span>复制到Vulkan相关文件的附加库目录中。
+    <br>
+    然后新建一个头文件，加入以下代码：
+</p>
+<pre class="code">
+<span class="pragma">#include</span> <span class="str">&quot;EasyVKStart.h&quot;</span> <span class="cmt">//意在使用&lt;iostream&gt;、&lt;ifstream&gt;、&lt;span&gt;</span>
+<span class="pragma">#include</span> <span class="str">&lt;shaderc/shaderc.hpp&gt;</span>
+<span class="pragma">#ifdef</span> <span class="mcr">NDEBUG</span>
+<span class="pragma">#pragma comment</span>(<span class="pragma">lib</span>, <span class="str">&quot;shaderc_combined.lib&quot;</span>)
+<span class="pragma">#else</span>
+<span class="pragma">#pragma comment</span>(<span class="pragma">lib</span>, <span class="str">&quot;shaderc_shared.lib&quot;</span>)
+<span class="pragma">#endif</span>
+</pre>
+<ul>
+    <li>
+        <p>
+            Vulkan SDK中提供的<span class="path">shaderc_combined.lib</span>不支持Debug Build，只在Release Build下链接它。
+        </p>
+    </li>
+</ul></section>
+<section id="fcompileglsltospv">
+<h2>fCompileGlslToSpv<a class="headerlink" href="#fcompileglsltospv" title="Permalink to this heading"></a></h2>
+<p>
+    定义<span class="type">fCompileGlslToSpv</span>类，并加入以下成员变量：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">fCompileGlslToSpv</span> {
+    shaderc::<span class="type">Compiler</span> compiler;
+    shaderc::<span class="type">CompileOptions</span> options;
+    shaderc::<span class="type">SpvCompilationResult</span> result;
+    <span class="cmt">/*待填充*/</span>
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            shaderc::<span class="type">Compiler</span>是<span class="path">shaderc.hpp</span>中提供的对编译器的封装类型。
+        </p>
+    </li>
+    <li>
+        <p>
+            shaderc::<span class="type">CompileOptions</span>是对编译选项的封装类型。
+        </p>
+    </li>
+    <li>
+        <p>
+            shaderc::<span class="type">SpvCompilationResult</span>是用于接受编译结果的类型。
+        </p>
+    </li>
+</ul>
+<p>
+    用<span class="type">Compiler</span>的成员函数<span class="fn">CompileGlslToSpv</span>(...)将GLSL编译到SPIR-V：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">SpvCompilationResult</span> <span class="type">Compiler</span>::<span class="fn">CompileGlslToSpv</span>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="kw">const char</span>* source_text</p></td>
+            <td><p>指向GLSL代码</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">size_t</span> source_text_size</p></td>
+            <td><p>GLSL代码的大小，单位是字节</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">shaderc_shader_kind</span> shader_kind</p></td>
+            <td><p>着色器类型，用<span class="enum">shaderc_glsl_infer_from_source</span>表示根据代码中的<code><span class="pragma">#pragma shader_stage</span>(...)</code>语句自动推断</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const char</span>* input_file_name</p></td>
+            <td><p>代码文件的路径，见后文</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const char</span>* entry_point_name</p></td>
+            <td><p>接入点函数名称</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">CompileOptions</span>&amp; options</p></td>
+            <td><p>编译选项</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            该函数不负责读取文件，但是要向input_file_name提供代码文件路径，之后需要从该路径出发，找到被<span class="pragma">#include</span>的文件。
+            <br>
+            若被编译的代码中没有<span class="pragma">#include</span>，则仅将input_file_name用于报错信息（随便填也没关系）。
+        </p>
+    </li>
+</ul>
+<p>
+    因为<span class="type">Compiler</span>::<span class="fn">CompileGlslToSpv</span>(...)不负责读取代码文件（其所有重载都没有读取文件的功能），定义一个<span class="type">fCompileGlslToSpv</span>的静态成员函数来读取文件：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">fCompileGlslToSpv</span> {
+    shaderc::<span class="type">Compiler</span> compiler;
+    shaderc::<span class="type">CompileOptions</span> options;
+    shaderc::<span class="type">SpvCompilationResult</span> result;
+    <span class="cmt">//Static Function</span>
+    <span class="kw">static void</span> <span class="sfn">LoadFile</span>(<span class="kw">const char</span>* <span class="par">filepath</span>, std::<span class="type">vector</span>&lt;<span class="kw">char</span>&gt;&amp; <span class="par">binaries</span>) {
+        std::<span class="type">ifstream</span> file(<span class="par">filepath</span>, std::<span class="type">ios</span>::ate | std::<span class="type">ios</span>::binary);
+        <span class="kw">if</span> (!file) {
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ fCompileGlslToSpv ] ERROR\nFailed to open the file: {}\n&quot;</span>, <span class="par">filepath</span>);
+            <span class="kw">return</span>;
+        }
+        <span class="type">size_t</span> fileSize = <span class="type">size_t</span>(file.<span class="fn">tellg</span>());
+        <span class="par">binaries</span>.<span class="fn">resize</span>(fileSize);
+        file.<span class="fn">seekg</span>(0);
+        file.<span class="fn">read</span>(<span class="kw">reinterpret_cast</span>&lt;<span class="kw">char</span>*&gt;(<span class="par">binaries</span>.<span class="fn">data</span>()), fileSize);
+        file.<span class="fn">close</span>();
+    }
+};
+</pre>
+<p>
+    然后来指定编译选项，就在<span class="type">fCompileGlslToSpv</span>的构造函数中指定吧，暂且先只指定优化等级：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">fCompileGlslToSpv</span> {
+    shaderc::<span class="type">Compiler</span> compiler;
+    shaderc::<span class="type">CompileOptions</span> options;
+    shaderc::<span class="type">SpvCompilationResult</span> result;
+    <span class="cmt">//Static Function</span>
+    <span class="kw">static void</span> <span class="sfn">LoadFile</span>(<span class="kw">const char</span>* <span class="par">filepath</span>, std::<span class="type">vector</span>&lt;<span class="kw">char</span>&gt;&amp; <span class="par">binaries</span>) { <span class="cmt">/*...*/</span> }
+<span class="kw">public</span>:
+    <span class="fn">fCompileGlslToSpv</span>() {
+        options.<span class="fn">SetOptimizationLevel</span>(<span class="enum">shaderc_optimization_level_performance</span>);
+        <span class="cmt">/*待后续填充*/</span>
+    }
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            优化等级的可选项有：
+            <br>
+            <span class="enum">shaderc_optimization_level_zero</span>（无优化）
+            <br>
+            <span class="enum">shaderc_optimization_level_size</span>（优化程序大小）
+            <br>
+            <span class="enum">shaderc_optimization_level_performance</span>（优化程序效率）。
+        </p>
+    </li>
+</ul>
+<p>
+    定义用于执行编译的成员函数，如类型名<span class="type">fCompileGlslToSpv</span>中前缀的f所言，我打算让其实例可以像函数一般被使用：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">fCompileGlslToSpv</span> {
+    shaderc::<span class="type">Compiler</span> compiler;
+    shaderc::<span class="type">CompileOptions</span> options;
+    shaderc::<span class="type">SpvCompilationResult</span> result;
+    <span class="cmt">//Static Function</span>
+    <span class="kw">static void</span> <span class="sfn">LoadFile</span>(<span class="kw">const char</span>* <span class="par">filepath</span>, std::<span class="type">vector</span>&lt;<span class="kw">char</span>&gt;&amp; <span class="par">binaries</span>) { <span class="cmt">/*...*/</span> }
+<span class="kw">public</span>:
+    <span class="fn">fCompileGlslToSpv</span>() {
+        options.<span class="fn">SetOptimizationLevel</span>(<span class="enum">shaderc_optimization_level_performance</span>);
+        <span class="cmt">/*待后续填充*/</span>
+    }
+    <span class="cmt">//Non-const Function</span>
+    std::<span class="type">span</span>&lt;<span class="kw">const</span> <span class="type">uint32_t</span>&gt; <span class="fn">operator()</span>(std::<span class="type">span</span>&lt;<span class="kw">const char</span>&gt; <span class="par">code</span>, <span class="kw">const char</span>* <span class="par">filepath</span>, <span class="kw">const char</span>* <span class="par">entry</span> = <span class="str">&quot;main&quot;</span>) {
+        result = compiler.<span class="fn">CompileGlslToSpv</span>(<span class="par">code</span>.<span class="fn">data</span>(), <span class="par">code</span>.<span class="fn">size</span>(), <span class="enum">shaderc_glsl_infer_from_source</span>, <span class="par">filepath</span>, <span class="par">entry</span>, options);
+        outStream &lt;&lt; result.<span class="fn">GetErrorMessage</span>(); <span class="cmt">//输出错误信息，没有错误的话不会输出任何东西</span>
+        <span class="kw">return</span> { result.<span class="fn">begin</span>(), <span class="type">size_t</span>(result.<span class="fn">end</span>() - result.<span class="fn">begin</span>()) * 4 };
+    }
+    std::<span class="type">span</span>&lt;<span class="kw">const</span> <span class="type">uint32_t</span>&gt; <span class="fn">operator()</span>(<span class="kw">const char</span>* <span class="par">filepath</span>, <span class="kw">const char</span>* <span class="par">entry</span> = <span class="str">&quot;main&quot;</span>) {
+        std::<span class="type">vector</span>&lt;<span class="kw">char</span>&gt; binaries;
+        <span class="sfn">LoadFile</span>(<span class="par">filepath</span>, binaries);
+        <span class="kw">if</span> (<span class="type">size_t</span> fileSize = binaries.<span class="fn">size</span>())
+            <span class="kw">return</span> (*<span class="kw">this</span>)(binaries, <span class="par">filepath</span>, <span class="par">etry</span>);
+        <span class="kw">return</span> {};
+    }
+};
+</pre><section id="includer">
+<h3>includer<a class="headerlink" href="#includer" title="Permalink to this heading"></a></h3>
+<p>
+    <span class="type">Compiler</span>::<span class="fn">CompileGlslToSpv</span>(...)不负责读取代码文件，当然也包括被<span class="pragma">#include</span>的文件。
+    <br>
+    <span class="path">shaderc.hpp</span>中定义了抽象类shaderc::<span class="type">CompileOptions</span>::<span class="type">IncluderInterface</span>作为读取被包含文件的接口类，定义<span class="type">fCompileGlslToSpv</span>的内部类型<span class="type">includer</span>以实现接口：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">fCompileGlslToSpv</span> {
+    <span class="kw">struct</span> <span class="type">includer</span>: <span class="kw">public</span> shaderc::<span class="type">CompileOptions</span>::<span class="type">IncluderInterface</span> {
+        <span class="cmt">/*待填充*/</span>
+    };
+    <span class="cmt">//--------------------</span>
+    shaderc::<span class="type">Compiler</span> compiler;
+    shaderc::<span class="type">CompileOptions</span> options;
+    shaderc::<span class="type">SpvCompilationResult</span> result;
+    <span class="cmt">//Static Function</span>
+    <span class="kw">static void</span> <span class="sfn">LoadFile</span>(<span class="kw">const char</span>* <span class="par">filepath</span>, std::<span class="type">vector</span>&lt;<span class="kw">char</span>&gt;&amp; <span class="par">binaries</span>) { <span class="cmt">/*...*/</span> }
+<span class="kw">public</span>:
+    <span class="fn">fCompileGlslToSpv</span>() {
+        options.<span class="fn">SetOptimizationLevel</span>(<span class="enum">shaderc_optimization_level_performance</span>);
+        <span class="cmt">/*待后续填充*/</span>
+    }
+    <span class="cmt">//Non-const Function</span>
+    std::<span class="type">span</span>&lt;<span class="kw">const</span> <span class="type">uint32_t</span>&gt; <span class="fn">operator()</span>(std::<span class="type">span</span>&lt;<span class="kw">const char</span>&gt; <span class="par">code</span>, <span class="kw">const char</span>* <span class="par">filepath</span>, <span class="kw">const char</span>* <span class="par">entry</span> = <span class="str">&quot;main&quot;</span>) { <span class="cmt">/*...*/</span> }
+    std::<span class="type">span</span>&lt;<span class="kw">const</span> <span class="type">uint32_t</span>&gt; <span class="fn">operator()</span>(<span class="kw">const char</span>* <span class="par">filepath</span>, <span class="kw">const char</span>* <span class="par">entry</span> = <span class="str">&quot;main&quot;</span>) { <span class="cmt">/*...*/</span> }
+};
+</pre>
+<p>
+    来看一下shaderc::<span class="type">CompileOptions</span>::<span class="type">IncluderInterface</span>的内容：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">IncluderInterface</span> {
+<span class="kw">public</span>:
+    <span class="kw">virtual</span> <span class="type">shaderc_include_result</span>* <span class="fn">GetInclude</span>(<span class="kw">const char</span>* <span class="par">requested_source</span>, <span class="type">shaderc_include_result</span> <span class="par">type</span>, <span class="kw">const char</span>* <span class="par">requesting_source</span>, <span class="type">size_t</span> <span class="par">include_depth</span>) = 0;
+    <span class="kw">virtual</span> <span class="kw">void</span> <span class="fn">ReleaseInclude</span>(<span class="type">shaderc_include_result</span>* <span class="par">data</span>) = 0;
+    <span class="kw">virtual</span> <span class="fn">~IncluderInterface</span>() = <span class="kw">default</span>;
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            编译过程中遇到<span class="pragma">#include</span>时，会调用<span class="fn">GetInclude</span>(...)读取文件，之后会调用<span class="fn">ReleaseInclude</span>(...)释放相关的动态分配内存。
+        </p>
+    </li>
+</ul>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">shaderc_include_result</span>* <span class="type">IncluderInterface</span>::<span class="fn">GetInclude</span>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="kw">const char</span>* requested_source</p></td>
+            <td><p>着色器代码中被包含文件的路径（<code><span class="pragma">#include <span class="str">&quot;requested_source&quot;</span></span></code>）</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">shaderc_include_result</span> type</p></td>
+            <td><p><span class="enum">shaderc_include_type_relative</span>对应<span class="str">&quot;requested_source&quot;</span>，<br><span class="enum">shaderc_include_type_standard</span>对应<span class="str">&lt;requested_source&gt;</span></p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const char</span>* requesting_source</p></td>
+            <td><p>当前（包含<code><span class="pragma">#include <span class="str">&quot;requested_source&quot;</span></span></code>一句的）着色器代码文件的路径</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">size_t</span> include_depth</p></td>
+            <td><p>包含的纵深，若最初通过<span class="type">Compiler</span>::<span class="fn">CompileGlslToSpv</span>(...)编译的文件包含了文件A，A又包含了另一个文件B，则B的include_depth为2</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            <span class="str">&quot;requested_source&quot;</span>和<span class="str">&lt;requested_source&gt;</span>有什么差别由你自己定，我接下来的代码不区分两者，一概当做相对路径。
+        </p>
+    </li>
+</ul>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%">
+        <col style="width: 70%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <span class="type">shaderc_include_result</span> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="kw">const char</span>* source_name</p></td>
+            <td><p>被包含文件的路径</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">size_t</span>* source_name_length</p></td>
+            <td><p>被包含文件的路径的长度，单位是字节</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const char</span>* content_name</p></td>
+            <td><p>指向被包含文件的GLSL代码</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">size_t</span>* content_length</p></td>
+            <td><p>被包含文件的GLSL代码的大小，单位是字节</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">void</span>* user_data</p></td>
+            <td><p>填<span class="kw">this</span>指针即可，解释略</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    于是来实现<span class="fn">GetInclude</span>(...)和<span class="fn">ReleaseInclude</span>(...)：
+</p>
+<pre class="code">
+<span class="kw">struct</span> <span class="type">includer</span>: <span class="kw">public</span> shaderc::<span class="type">CompileOptions</span>::<span class="type">IncluderInterface</span> {
+    <span class="kw">struct</span> <span class="type">result_t</span> : <span class="type">shaderc_include_result</span> {
+        std::<span class="type">string</span> filepath;   <span class="cmt">//用来存被包含文件的文件路径</span>
+        std::<span class="type">vector</span>&lt;<span class="kw">char</span>&gt; code; <span class="cmt">//用来存被包含文件的内容</span>
+    };
+    <span class="type">shaderc_include_result</span>* <span class="fn">GetInclude</span>(<span class="kw">const char</span>* <span class="par">requested_source</span>, <span class="type">shaderc_include_result</span>, <span class="kw">const char</span>* <span class="par">requesting_source</span>, <span class="type">size_t</span>) <span class="kw">override</span> {
+        <span class="cmt">//↑无实参名的形参在我接下来的逻辑里都用不着</span>
+
+        <span class="kw">auto</span>&amp; result = *(<span class="kw">new</span> <span class="type">result_t</span>);
+        <span class="kw">auto</span>&amp; filepath = result.filepath;
+        <span class="kw">auto</span>&amp; code = result.code;
+
+        <span class="cmt">/*待填充*/</span>
+
+        <span class="kw">return</span> &amp;result;
+    }
+    <span class="kw">void</span> <span class="fn">ReleaseInclude</span>(<span class="type">shaderc_include_result</span>* <span class="par">data</span>) <span class="kw">override</span> {
+        <span class="cmt">//将指针类型转到result_t*，以正确调用string和vector的析构器</span>
+        <span class="kw">delete static_cast</span>&lt;<span class="type">result_t</span>*&gt;(<span class="par">data</span>);
+    }
+};
+</pre>
+<p>
+    获取当前GLSL着色器代码文件的路径：
+</p>
+<pre class="code">
+filepath = <span class="par">requesting_source</span>;
+</pre>
+<p>
+    <span class="par">requested_source</span>是被包含文件相对于<span class="par">requesting_source</span>的路径（一般没人会自找麻烦用绝对路径，就不处理绝对路径了），那么将<span class="par">requesting_source</span>尾部的文件名换成<span class="par">requested_source</span>即是<span class="sfn">LoadFile</span>(...)所需的被包含文件的路径：
+</p>
+<pre class="code">
+filepath = <span class="par">requesting_source</span>;
+<span class="type">size_t</span> pos = filepath.<span class="fn">rfind</span>(<span class="str">'/'</span>);
+<span class="kw">if</span> (pos == -1)
+    pos = filepath.<span class="fn">rfind</span>(<span class="str">'\\'</span>);
+filepath.<span class="fn">replace</span>(pos + 1 + filepath.<span class="fn">begin</span>(), filepath.<span class="fn">end</span>(), <span class="par">requested_source</span>);
+<span class="sfn">LoadFile</span>(filepath.<span class="fn">c_str</span>(), code);
+</pre>
+<ul>
+    <li>
+        <p>
+            std::<span class="type">string</span>::<span class="fn">rfind</span>(...)从字符串尾部开始查找字符或子串，找不到时返回std::<span class="type">string</span>::npos，值为<span class="type">size_t</span>的最大值，C++中<code>无符号整形最大值 == -1</code>返回<span class="kw">true</span>。
+        </p>
+    </li>
+    <li>
+        <p>
+            根据个人习惯的不同，文件路径中的分隔符可能是斜杠也可能是反斜杠，这里反斜杠的写法为转义字符。
+        </p>
+    </li>
+    <li>
+        <p>
+            查找不到分隔符时，说明被包含文件和当前文件在同一文件夹中，<code>pos + 1</code>为0，替换整个字符串。
+        </p>
+    </p>
+    <li>
+        <p>
+            至少对于Windows的文件系统而言，<span class="str">&quot;shader/../shader/FirstTriangle.frag.shader&quot;</span>与<span class="str">&quot;shader/FirstTriangle.frag.shader&quot;</span>是等价的，因此不必对用于返回上级目录的<span class="str">&quot;../&quot;</span>特地做处理。
+        </p>
+    </p>
+</ul>
+<p>
+    填写<span class="var">result</span>开头的<span class="type">shaderc_include_result</span>部分，整个<span class="type">includer</span>::<span class="fn">GetInclude</span>(...)如下：
+</p>
+<pre class="code">
+    <span class="type">shaderc_include_result</span>* <span class="fn">GetInclude</span>(<span class="kw">const char</span>* <span class="par">requested_source</span>, <span class="type">shaderc_include_result</span>, <span class="kw">const char</span>* <span class="par">requesting_source</span>, <span class="type">size_t</span>) <span class="kw">override</span> {
+        <span class="kw">auto</span>&amp; result = *(<span class="kw">new</span> <span class="type">result_t</span>);
+        <span class="kw">auto</span>&amp; filepath = result.filepath;
+        <span class="kw">auto</span>&amp; code = result.code;
+        filepath = <span class="par">requesting_source</span>;
+        <span class="type">size_t</span> pos = filepath.<span class="fn">rfind</span>(<span class="str">'/'</span>);
+        <span class="kw">if</span> (pos == -1)
+            pos = filepath.<span class="fn">rfind</span>(<span class="str">'\\'</span>);
+        filepath.<span class="fn">replace</span>(pos + 1 + filepath.<span class="fn">begin</span>(), filepath.<span class="fn">end</span>(), <span class="par">requested_source</span>);
+        <span class="sfn">LoadFile</span>(filepath.<span class="fn">c_str</span>(), code);
+        <span class="kw">static_cast</span>&lt;<span class="type">shaderc_include_result</span>&amp;&gt;(result) = {
+            filepath.<span class="fn">c_str</span>(),
+            filepath.<span class="fn">length</span>(),
+            code.<span class="fn">data</span>(),
+            code.<span class="fn">size</span>(),
+            <span class="kw">this</span>
+        };
+        <span class="kw">return</span> &amp;result;
+    }
+</pre>
+<p>
+    最后将<span class="type">includer</span>设置到编译选项：
+</p>
+<pre class="code">
+<span class="fn">fCompileGlslToSpv</span>() {
+    options.<span class="fn">SetOptimizationLevel</span>(<span class="enum">shaderc_optimization_level_performance</span>);
+    options.<span class="fn">SetIncluder</span>(std::<span class="fn">make_unique</span>&lt;<span class="type">includer</span>&gt;());
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            <span class="type">CompileOptions</span>::<span class="fn">SetIncluder</span>(...)要求的参数类型为std::<span class="type">unique_ptr</span>&lt;<span class="type">IncluderInterface</span>&gt;&amp;&amp;，即需要转移对象的所有权，由<span class="var">options</span>管理<span class="type">IncluderInterface</span>对象的生存期。
+        </p>
+    </li>
+</ul></section>
+<section id="id1">
+<h3>代码汇总及使用<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<p>
+    这一节的代码没有上传到Github，整个文件的内容就写在这儿了：
+</p>
+<pre class="code">
+<span class="pragma">#include</span> <span class="str">&quot;EasyVKStart.h&quot;</span>
+<span class="pragma">#include</span> <span class="str">&lt;shaderc/shaderc.hpp&gt;</span>
+<span class="pragma">#ifdef</span> <span class="mcr">NDEBUG</span>
+<span class="pragma">#pragma comment</span>(<span class="pragma">lib</span>, <span class="str">&quot;shaderc_combined.lib&quot;</span>)
+<span class="pragma">#else</span>
+<span class="pragma">#pragma comment</span>(<span class="pragma">lib</span>, <span class="str">&quot;shaderc_shared.lib&quot;</span>)
+<span class="pragma">#endif</span>
+
+<span class="kw">class</span> <span class="type">fCompileGlslToSpv</span> {
+    <span class="kw">struct</span> <span class="type">includer</span>: <span class="kw">public</span> shaderc::<span class="type">CompileOptions</span>::<span class="type">IncluderInterface</span> {
+        <span class="kw">struct</span> <span class="type">result_t</span> : <span class="type">shaderc_include_result</span> {
+            std::<span class="type">string</span> filepath;
+            std::<span class="type">vector</span>&lt;<span class="kw">char</span>&gt; code;
+        };
+        <span class="type">shaderc_include_result</span>* <span class="fn">GetInclude</span>(<span class="kw">const char</span>* <span class="par">requested_source</span>, <span class="type">shaderc_include_result</span>, <span class="kw">const char</span>* <span class="par">requesting_source</span>, <span class="type">size_t</span>) <span class="kw">override</span> {
+            <span class="kw">auto</span>&amp; result = *(<span class="kw">new</span> <span class="type">result_t</span>);
+            <span class="kw">auto</span>&amp; filepath = result.filepath;
+            <span class="kw">auto</span>&amp; code = result.code;
+            filepath = <span class="par">requesting_source</span>;
+            <span class="type">size_t</span> pos = filepath.<span class="fn">rfind</span>(<span class="str">'/'</span>);
+            <span class="kw">if</span> (pos == -1)
+                pos = filepath.<span class="fn">rfind</span>(<span class="str">'\\'</span>);
+            filepath.<span class="fn">replace</span>(pos + 1 + filepath.<span class="fn">begin</span>(), filepath.<span class="fn">end</span>(), <span class="par">requested_source</span>);
+            <span class="sfn">LoadFile</span>(filepath.<span class="fn">c_str</span>(), code);
+            <span class="kw">static_cast</span>&lt;<span class="type">shaderc_include_result</span>&amp;&gt;(result) = {
+                filepath.<span class="fn">c_str</span>(),
+                filepath.<span class="fn">length</span>(),
+                code.<span class="fn">data</span>(),
+                code.<span class="fn">size</span>(),
+                <span class="kw">this</span>
+            };
+            <span class="kw">return</span> &amp;result;
+        }
+        <span class="kw">void</span> <span class="fn">ReleaseInclude</span>(<span class="type">shaderc_include_result</span>* <span class="par">data</span>) <span class="kw">override</span> {
+            <span class="kw">delete static_cast</span>&lt;<span class="type">result_t</span>*&gt;(<span class="par">data</span>);
+        }
+    };
+    <span class="cmt">//--------------------</span>
+    shaderc::<span class="type">Compiler</span> compiler;
+    shaderc::<span class="type">CompileOptions</span> options;
+    shaderc::<span class="type">SpvCompilationResult</span> result;
+    <span class="cmt">//Static Function</span>
+    <span class="kw">static void</span> <span class="sfn">LoadFile</span>(<span class="kw">const char</span>* <span class="par">filepath</span>, std::<span class="type">vector</span>&lt;<span class="kw">char</span>&gt;&amp; <span class="par">binaries</span>) {
+        std::<span class="type">ifstream</span> file(<span class="par">filepath</span>, std::<span class="type">ios</span>::ate | std::<span class="type">ios</span>::binary);
+        <span class="kw">if</span> (!file) {
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ fCompileGlslToSpv ] ERROR\nFailed to open the file: {}\n&quot;</span>, <span class="par">filepath</span>);
+            <span class="kw">return</span>;
+        }
+        <span class="type">size_t</span> fileSize = <span class="type">size_t</span>(file.<span class="fn">tellg</span>());
+        <span class="par">binaries</span>.<span class="fn">resize</span>(fileSize);
+        file.<span class="fn">seekg</span>(0);
+        file.<span class="fn">read</span>(<span class="kw">reinterpret_cast</span>&lt;<span class="kw">char</span>*&gt;(<span class="par">binaries</span>.<span class="fn">data</span>()), fileSize);
+        file.<span class="fn">close</span>();
+    }
+<span class="kw">public</span>:
+    <span class="fn">fCompileGlslToSpv</span>() {
+        options.<span class="fn">SetOptimizationLevel</span>(<span class="enum">shaderc_optimization_level_performance</span>);
+        options.<span class="fn">SetIncluder</span>(std::<span class="fn">make_unique</span>&lt;<span class="type">includer</span>&gt;());
+    }
+    <span class="cmt">//Non-const Function</span>
+    std::<span class="type">span</span>&lt;<span class="kw">const</span> <span class="type">uint32_t</span>&gt; <span class="fn">operator()</span>(std::<span class="type">span</span>&lt;<span class="kw">const char</span>&gt; <span class="par">code</span>, <span class="kw">const char</span>* <span class="par">filepath</span>, <span class="kw">const char</span>* <span class="par">entry</span> = <span class="str">&quot;main&quot;</span>) {
+        result = compiler.<span class="fn">CompileGlslToSpv</span>(<span class="par">code</span>.<span class="fn">data</span>(), <span class="par">code</span>.<span class="fn">size</span>(), <span class="enum">shaderc_glsl_infer_from_source</span>, <span class="par">filepath</span>, <span class="par">entry</span>, options);
+        outStream &lt;&lt; result.<span class="fn">GetErrorMessage</span>();
+        <span class="kw">return</span> { result.<span class="fn">begin</span>(), <span class="type">size_t</span>(result.<span class="fn">end</span>() - result.<span class="fn">begin</span>()) * 4 };
+    }
+    std::<span class="type">span</span>&lt;<span class="kw">const</span> <span class="type">uint32_t</span>&gt; <span class="fn">operator()</span>(<span class="kw">const char</span>* <span class="par">filepath</span>, <span class="kw">const char</span>* <span class="par">entry</span> = <span class="str">&quot;main&quot;</span>) {
+        std::<span class="type">vector</span>&lt;<span class="kw">char</span>&gt; binaries;
+        <span class="sfn">LoadFile</span>(<span class="par">filepath</span>, binaries);
+        <span class="kw">if</span> (<span class="type">size_t</span> fileSize = binaries.<span class="fn">size</span>())
+            <span class="kw">return</span> (*<span class="kw">this</span>)(binaries, <span class="par">filepath</span>, <span class="par">etry</span>);
+        <span class="kw">return</span> {};
+    }
+};
+</pre>
+<p>
+    使用<span class="type">fCompileGlslToSpv</span>的方法很简单，类似这样：
+</p>
+<pre class="code">
+<span class="type">fCompileGlslToSpv</span> compiler;
+
+<span class="kw">void</span> <span class="fn">CreatePipeline</span>() {
+    <span class="kw">auto</span> code = compiler(<span class="str">&quot;shader/FirstTriangle.vert.shader&quot;</span>);
+    <span class="type">shaderModule</span> vert(coda.<span class="fn">size</span>(), coda.<span class="fn">data</span>());
+    <span class="cmt">/*...*/</span>
+}
+</pre></section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html" class="btn btn-neutral float-left" title="Ch8-2 深度测试和深度可视化" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021-2024, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

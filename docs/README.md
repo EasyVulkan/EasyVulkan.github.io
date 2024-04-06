@@ -2,9 +2,10 @@
 面向懒人的Vulkan中文教程<br>
 主页：https://easyvulkan.github.io/
 
-联系请至:[【长期】 反馈/交流集中贴](https://github.com/EasyVulkan/EasyVulkan.github.io/issues/7)
+联系可至：[【长期】 反馈/交流集中贴](https://github.com/EasyVulkan/EasyVulkan.github.io/issues/7)<br>
+也可以发Discussion。
 
-2024.04.02 完成[Ch8-2 深度测试和深度可视化](https://easyvulkan.github.io/Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html)。<br>
+2024.04.07 新增[Ap1-1 运行期编译GLSL](https://easyvulkan.github.io/Ap1-1%20%E8%BF%90%E8%A1%8C%E6%9C%9F%E7%BC%96%E8%AF%91GLSL.html)。<br>
 
 2024.04.02 代码里加了CMakeLists.txt（我不确定Visual Studio之外是什么效果，谁愿意的话可以fork到私有仓库，帮我改一下然后pull上来）
 
@@ -52,6 +53,9 @@
 [Ch6-0 使用新版本功能](https://easyvulkan.github.io/Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html)<br>
 [Ch6-1 无图像帧缓冲](https://easyvulkan.github.io/Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html)<br>
 [Ch6-2 动态渲染](https://easyvulkan.github.io/Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html)
+
+### 附录
+[Ap1-1 运行期编译GLSL](https://easyvulkan.github.io/Ap1-1%20%E8%BF%90%E8%A1%8C%E6%9C%9F%E7%BC%96%E8%AF%91GLSL.html)
 
 ## 更新计划（6月底前）
 

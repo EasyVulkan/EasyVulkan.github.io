@@ -106,6 +106,10 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">附录</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ap1-1%20%E8%BF%90%E8%A1%8C%E6%9C%9F%E7%BC%96%E8%AF%91GLSL.html">Ap1-1 运行期编译GLSL</a></li>
+</ul>
 
         </div>
       </div>
@@ -214,6 +218,11 @@
     <li>
         <p>
             要将GLFW用于Vulkan，必须在包含GLFW之前，定义<span class="mcr">GLFW_INCLUDE_VULKAN</span>宏。
+        </p>
+    </li>
+    <li>
+        <p>
+            如果你在编译时使用静态链接，则这里的<span class="path">glfw3.lib</span>改为<span class="path">glfw3_mt.lib</span>。
         </p>
     </li>
 </ul>

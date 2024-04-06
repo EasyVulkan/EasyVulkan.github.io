@@ -114,6 +114,10 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">附录</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ap1-1%20%E8%BF%90%E8%A1%8C%E6%9C%9F%E7%BC%96%E8%AF%91GLSL.html">Ap1-1 运行期编译GLSL</a></li>
+</ul>
 
         </div>
       </div>
@@ -243,7 +247,7 @@
     于是一个最简单的顶点着色器就写好了，之后用<a href="https://renderdoc.org/vkspec_chunked/chap21.html#vkCmdDraw">vkCmdDraw</a>(...)绘制时，指定绘制3个顶点以构建三角形，首个顶点索引为0，那么上述着色器便会依次生成在NDC中坐标为<code>{ 0, -0.5, 0, 1 }</code>、<code>{ -0.5, 0.5, 0, 1 }</code>、<code>{ 0.5, 0.5, 0, 1 }</code>的三个顶点。
 </p>
 <p>
-    书写完着色器后，在<span class="path">shader</span>文件夹下打开控制台（文件浏览器的地址栏中直接输入cmd并回车即可），用以下控制台指令将GLSL着色器其编译到SPIR-V：
+    书写完着色器后，在<span class="path">shader</span>文件夹下打开控制台（文件浏览器的地址栏中直接输入cmd并回车即可），用以下控制台指令将GLSL着色器编译到SPIR-V：
 </p>
 <pre class="code">
 glslc.exe路径 FirstTriangle.vert.shader -c
@@ -257,6 +261,11 @@ glslc.exe路径 FirstTriangle.vert.shader -c
     <li>
         <p>
             关于上述控制台语句的具体说明，参见<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#glslspir-v">从GLSL编译到SPIR-V</a>。
+        </p>
+    </li>
+    <li>
+        <p>
+            可以跳过输入cmd的步骤，直接在地址栏中输入这串语句并回车即可（但这样一来控制台会在执行完语句后立刻消失，来不及看错误信息）。
         </p>
     </li>
 </ul></section>
