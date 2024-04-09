@@ -114,6 +114,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html">Ch8-3 延迟渲染</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">附录</span></p>
 <ul>
@@ -153,19 +154,7 @@
     注：具体而言，片段着色器被定义为逐片段调用至少一次，而开启多重采样后，可能会发生额外调用。<a href="https://renderdoc.org/vkspec_chunked/chap29.html#fragops-shader">来源见此。</a>当然，这种概念不用区分得那么清楚。
     <br>
     ↑不管你干什么，最好不要依赖于“逐片段调用”这一说法，若Vulkan的实现能判断某个片段最终会被后续其他片段覆盖（即不影响最终渲染结果），那么可能直接不对其执行片段着色器。
-</p>
-<div class="admonition note">
-    <p class="admonition-title">Note</p>
-    <p>
-        在2020年5月以后，Vulkan官方标准放宽了fragment的定义，不排除一个片段可以覆盖多个像素。
-        <br>
-        比如<a href="https://renderdoc.org/vkspec_chunked/chap28.html#primsrast">28. Rasterization</a>在28.1一段前的部分的最后有这句：<span class="ref">Rasterization only generates fragments which cover one or more pixels inside the framebuffer.</span>。
-        <br>
-        （这是试图将像素与多重采样中的采样点等价吗？这部分概念我没搞得太清楚，按下不表）
-        <br>
-        这套教程中还是以片段即（无多重采样或多重采样后得到的）像素来考虑。如某些叙述有歧义，欢迎汇报。
-    </p>
-</div><section id="id1">
+</p><section id="id1">
 <h2>片段着色器的内置输入<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
 <p>
     用GLSL编写的片段着色器有以下内置输入：

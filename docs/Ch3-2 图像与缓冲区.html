@@ -141,6 +141,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html">Ch8-3 延迟渲染</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">附录</span></p>
 <ul>
@@ -1920,12 +1921,6 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
     非压缩颜色格式有两个部分，以<span class="enum">VK_FORMAT_R8G8B8A8_UNORM</span>为例，是R8G8B8A8和UNORM，前者是作为图像格式的各个通道名称与该通道所占据的比特数的组合，后者叫做数字格式（numeric format）。
 </p>
 <table class="docutils align-default">
-    <colgroup>
-        <col style="width: 15%">
-        <col style="width: 15%">
-        <col style="width: 15%">
-        <col style="width: 55%">
-    </colgroup>
     <thead>
         <tr class="row-odd">
             <th class="head"><p>数字格式</p></th>
@@ -1987,7 +1982,7 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
             <td><p>SRGB</p></td>
             <td><p>无符号整型</p></td>
             <td><p><span class="kw">float</span></p></td>
-            <td><p>在着色器中被标准化到[ 0, 1]的范围，RGB通道被映射到sRGB色彩空间</p></td>
+            <td><p>在着色器中被标准化到[ 0, 1]的范围，通过渲染等方式写入该格式的图像时，RGB通道被映射到sRGB色彩空间</p></td>
         </tr>
     </tbody>
 </table>
@@ -2004,7 +1999,7 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
     </li>
     <li>
         <p>
-            关于sRGB色彩空间，参见//TODO Ch8-7 HDR与sRGB色彩空间。
+            关于sRGB色彩空间，参见//TODO Ch8-5 sRGB色调映射与HDR。
         </p>
     </li>
 </ul>

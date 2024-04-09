@@ -130,6 +130,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html">Ch8-3 延迟渲染</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">附录</span></p>
 <ul>
@@ -1106,7 +1107,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
     <br>
     实例可以为数组，对应的描述符构成数组。啊？你问这要怎么构成数组？以下式为例：
     <br>
-    <code><span class="kw">layout</span>(binding = 0, input_attachment_index = 基础索引) <span class="kw">uniform</span> subpassInput u_GBuffers[3];</code>
+    <code><span class="kw">layout</span>(binding = 0, input_attachment_index = 基础索引) <span class="kw">uniform</span> <span class="type">subpassInput</span> u_GBuffers[3];</code>
     <br>
     通过表达式<code>实例名称[N]</code>进行访问时，访问到<span class="type">VkSubpassDescription</span>::pInputAttachments[基础索引 + N]指代的输入附件。
     <br>

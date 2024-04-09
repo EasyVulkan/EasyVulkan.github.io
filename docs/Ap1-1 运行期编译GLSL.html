@@ -20,7 +20,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="prev" title="Ch8-2 深度测试和深度可视化" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html" /> 
+    <link rel="prev" title="Ch8-3 延迟渲染" href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -97,14 +97,19 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html">Ch8-3 延迟渲染</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">附录</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Ap1-1 运行期编译GLSL</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#lib">头文件和Lib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#shaderc">shaderc</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">所需的头文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lib">所需的lib</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#fcompileglsltospv">fCompileGlslToSpv</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#includer">includer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id1">代码汇总及使用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">代码汇总及使用</a></li>
 </ul>
 </li>
 </ul>
@@ -165,17 +170,20 @@
 <p>
     不过，如果还在不断修改着色器代码，每次改完想看看效果前，都得从文件夹里把文件拖到编译用的exe上，那还是挺麻烦的。
     <br>
-    要是在IDE或文本编辑器中保存完GLSL代码后，直接运行程序就能反映出着色器的修改的话，那就太好了呢！
-</p>
+    而且，也可能会有需要根据具体情况，动态地生成着色器代码，然后再编译的需求。
+    <br>
+    出于以上考虑，这一节对如何在运行期编译GLSL进行简单介绍。
+</p><section id="shaderc">
+<h2>shaderc<a class="headerlink" href="#shaderc" title="Permalink to this heading"></a></h2>
 <p>
     Vulkan SDK中包含了谷歌的shaderc库，它提供将GLSL或HLSL代码编译到SPIR-V的功能。
-    <br>
-    本节中对使用shaderc编译GLSL的方法进行简单介绍。
-</p><section id="lib">
-<h2>头文件和Lib<a class="headerlink" href="#lib" title="Permalink to this heading"></a></h2>
+</p><section id="id1">
+<h3>所需的头文件<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
 <p>
     从Vulkan SDK的安装目录下找到<span class="path">Include/shaderc</span>，里面是所需的头文件，将该文件夹复制到Vulkan相关文件的附加包含目录中。
-</p>
+</p></section>
+<section id="lib">
+<h3>所需的lib<a class="headerlink" href="#lib" title="Permalink to this heading"></a></h3>
 <p>
     Vulkan SDK的安装目录中，<span class="path">Lib</span>文件夹下有这三个与shaderc相关的预编译库：
 </p>
@@ -229,6 +237,7 @@
         </p>
     </li>
 </ul></section>
+</section>
 <section id="fcompileglsltospv">
 <h2>fCompileGlslToSpv<a class="headerlink" href="#fcompileglsltospv" title="Permalink to this heading"></a></h2>
 <p>
@@ -386,7 +395,7 @@
         std::<span class="type">vector</span>&lt;<span class="kw">char</span>&gt; binaries;
         <span class="sfn">LoadFile</span>(<span class="par">filepath</span>, binaries);
         <span class="kw">if</span> (<span class="type">size_t</span> fileSize = binaries.<span class="fn">size</span>())
-            <span class="kw">return</span> (*<span class="kw">this</span>)(binaries, <span class="par">filepath</span>, <span class="par">etry</span>);
+            <span class="kw">return</span> (*<span class="kw">this</span>)(binaries, <span class="par">filepath</span>, <span class="par">entry</span>);
         <span class="kw">return</span> {};
     }
 };
@@ -610,8 +619,8 @@ filepath.<span class="fn">replace</span>(pos + 1 + filepath.<span class="fn">beg
         </p>
     </li>
 </ul></section>
-<section id="id1">
-<h3>代码汇总及使用<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<section id="id2">
+<h3>代码汇总及使用<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
 <p>
     这一节的代码没有上传到Github，整个文件的内容就写在这儿了：
 </p>
@@ -685,7 +694,7 @@ filepath.<span class="fn">replace</span>(pos + 1 + filepath.<span class="fn">beg
         std::<span class="type">vector</span>&lt;<span class="kw">char</span>&gt; binaries;
         <span class="sfn">LoadFile</span>(<span class="par">filepath</span>, binaries);
         <span class="kw">if</span> (<span class="type">size_t</span> fileSize = binaries.<span class="fn">size</span>())
-            <span class="kw">return</span> (*<span class="kw">this</span>)(binaries, <span class="par">filepath</span>, <span class="par">etry</span>);
+            <span class="kw">return</span> (*<span class="kw">this</span>)(binaries, <span class="par">filepath</span>, <span class="par">entry</span>);
         <span class="kw">return</span> {};
     }
 };
@@ -694,11 +703,15 @@ filepath.<span class="fn">replace</span>(pos + 1 + filepath.<span class="fn">beg
     使用<span class="type">fCompileGlslToSpv</span>的方法很简单，类似这样：
 </p>
 <pre class="code">
-<span class="type">fCompileGlslToSpv</span> compiler;
+<span class="kw">inline</span> <span class="type">shaderModule</span> <span class="fn">CreateShaderModuleFromGlsl</span>(<span class="type">fCompileGlslToSpv</span>&amp; <span class="par">fCompile</span>, <span class="kw">const char</span>* <span class="par">filepath</span>, <span class="kw">const char</span>* <span class="par">entry</span> = <span class="str">&quot;main&quot;</span>) {
+    <span class="kw">auto</span> code = <span class="par">fCompile</span>(<span class="par">filepath</span>, <span class="par">entry</span>);
+    <span class="kw">return</span> <span class="type">shaderModule</span>(code.<span class="fn">size</span>(), code.<span class="fn">data</span>()); <span class="cmt">//必定发生RVO（返回值优化）</span>
+}
 
 <span class="kw">void</span> <span class="fn">CreatePipeline</span>() {
-    <span class="kw">auto</span> code = compiler(<span class="str">&quot;shader/FirstTriangle.vert.shader&quot;</span>);
-    <span class="type">shaderModule</span> vert(coda.<span class="fn">size</span>(), coda.<span class="fn">data</span>());
+    <span class="type">fCompileGlslToSpv</span> fCompile;
+    <span class="type">shaderModule</span> vert = <span class="fn">CreateShaderModuleFromGlsl</span>(fCompile, <span class="str">&quot;shader/FirstTriangle.vert.shader&quot;</span>);
+    <span class="type">shaderModule</span> frag = <span class="fn">CreateShaderModuleFromGlsl</span>(fCompile, <span class="str">&quot;shader/FirstTriangle.frag.shader&quot;</span>);
     <span class="cmt">/*...*/</span>
 }
 </pre></section>
@@ -709,7 +722,7 @@ filepath.<span class="fn">replace</span>(pos + 1 + filepath.<span class="fn">beg
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html" class="btn btn-neutral float-left" title="Ch8-2 深度测试和深度可视化" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html" class="btn btn-neutral float-left" title="Ch8-3 延迟渲染" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
     </div>
 
   <hr/>

@@ -112,6 +112,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html">Ch8-3 延迟渲染</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">附录</span></p>
 <ul>
@@ -173,7 +174,7 @@
     <br>
     5.分配描述符集（描述符布局在上一步中创建），将图像附件的view写入描述符
     <br>
-    6.渲染到离屏缓冲
+    6.渲染到离屏帧缓冲
     <br>
     7.采样贴图，渲染到交换链图像
 </p>
@@ -508,7 +509,9 @@
 <p>
     渲染通道开始时的情况则与结束时相反即可。
     <br>
-    srcAccessMask为0（指定<span class="enum">VK_ACCESS_SHADER_READ_BIT</span>这种读操作无意义），而srcStageMask指定为<span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>是多余的，因为有栅栏来同步，填写<span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>即可（你问我为什么每次都不这么写？为了特地反复强调这件事！）。
+    srcAccessMask为0，指定<span class="enum">VK_ACCESS_SHADER_READ_BIT</span>这种读操作无意义，而前一帧中对该图像附件的写入结果在当前帧的<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#id10">可见性</a>，由在前一帧中等待<span class="var">semaphore_renderingIsOver</span>来确保。
+    <br>
+    指定srcStageMask为<span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>是多余的，因为有栅栏来同步，填写<span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>即可（你问我为什么每次都不这么写？为了特地反复强调这件事！）。
 </p>
 <pre class="code">
 <span class="type">VkSubpassDependency</span> subpassDependencies[2] = {
@@ -1143,6 +1146,13 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
     <span class="kw">return</span> 0;
 }
 </pre>
+<ul>
+    <li>
+        <p>
+            因为每一帧中使用的是相同的离屏帧缓冲，不能应用<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id7">即时帧</a>（即每一帧应使用同一套同步对象）。
+        </p>
+    </li>
+</ul>
 <p>
     这里操作逻辑被我放到了<span class="fn">glfwPollEvents</span>()之后，嘛在循环里的话其实放哪儿都差不多，不过这里是有点讲究的。
     <br>

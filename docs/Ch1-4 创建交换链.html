@@ -117,6 +117,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html">Ch8-3 延迟渲染</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">附录</span></p>
 <ul>
@@ -432,8 +433,6 @@ swapchainCreateInfo.preTransform = = surfaceCapabilities.currentTransform;
 </ul>
 <p>
     将直接透明度形式颜色值的RGB通道乘以其A通道即为预乘透明度形式，举例而言，一个恰好半透明的红色写作直接透明度形式为(1.0f ,0.0f ,0.0f ,0.5f)，写作预乘透明度形式为(0.5f ,0.0f ,0.0f ,0.5f)。
-    <br>
-    在渲染中用作颜色附件的图像，其颜色值通常都是预乘透明度形式，具体参见：//TODO Ch8-1 预乘透明度。
 </p>
 <p>
     在呈现时处理透明通道的方式未必能由Vulkan决定，而窗口系统可能会指定这一方式，这种情况下应当将<span class="var">swapchainCreateInfo.compositeAlpha</span>设置为<span class="enum">VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR</span>，该bit说明程序会用窗口系统相关的指令设定处理透明通道的方式，若程序没有执行这样的指令，该bit会确保使用程序的运行平台默认的透明度处理方式（通常为使用不透明背景）。

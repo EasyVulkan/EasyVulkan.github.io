@@ -124,6 +124,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html">Ch8-3 延迟渲染</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">附录</span></p>
 <ul>
@@ -276,18 +277,18 @@
     <span class="type">VkPipelineLayout</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
 <span class="kw">public</span>:
     <span class="fn">pipelineLayout</span>() = <span class="kw">default</span>;
-    <span class="fn">pipelineLayout</span>(<span class="type">VkPipelineLayoutCreateInfo</span>&amp; createInfo) {
-        <span class="fn">Create</span>(createInfo);
+    <span class="fn">pipelineLayout</span>(<span class="type">VkPipelineLayoutCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="fn">Create</span>(<span class="par">createInfo</span>);
     }
-    <span class="fn">pipelineLayout</span>(<span class="type">pipelineLayout</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    <span class="fn">pipelineLayout</span>(<span class="type">pipelineLayout</span>&amp;&amp; <span class="par">other</span>) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
     <span class="fn">~pipelineLayout</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyPipelineLayout</span>); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator;</span>
     <span class="mcr">DefineAddressFunction;</span>
     <span class="cmt">//Non-const Function</span>
-    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkPipelineLayoutCreateInfo</span>&amp; createInfo) {
-        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO</span>;
-        <span class="type">VkResult</span> result = <span class="fn">vkCreatePipelineLayout</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkPipelineLayoutCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreatePipelineLayout</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ pipelineLayout ] ERROR\nFailed to create a pipeline layout!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
@@ -2033,27 +2034,27 @@
         createInfo.basePipelineIndex = -1;
     }
     <span class="cmt">//移动构造器，所有指针都要重新赋值</span>
-    <span class="fn">graphicsPipelineCreateInfoPack</span>(<span class="kw">const</span> <span class="fn">graphicsPipelineCreateInfoPack</span>&amp; other) <span class="kw">noexcept</span> {
-        createInfo = other.createInfo;
+    <span class="fn">graphicsPipelineCreateInfoPack</span>(<span class="kw">const</span> <span class="fn">graphicsPipelineCreateInfoPack</span>&amp; <span class="par">other</span>) <span class="kw">noexcept</span> {
+        createInfo = <span class="par">other</span>.createInfo;
         <span class="fn">SetCreateInfos</span>();
 
-        vertexInputStateCi = other.vertexInputStateCi;
-        inputAssemblyStateCi = other.inputAssemblyStateCi;
-        tessellationStateCi = other.tessellationStateCi;
-        viewportStateCi = other.viewportStateCi;
-        rasterizationStateCi = other.rasterizationStateCi;
-        multisampleStateCi = other.multisampleStateCi;
-        depthStencilStateCi = other.depthStencilStateCi;
-        colorBlendStateCi = other.colorBlendStateCi;
-        dynamicStateCi = other.dynamicStateCi;
+        vertexInputStateCi = <span class="par">other</span>.vertexInputStateCi;
+        inputAssemblyStateCi = <span class="par">other</span>.inputAssemblyStateCi;
+        tessellationStateCi = <span class="par">other</span>.tessellationStateCi;
+        viewportStateCi = <span class="par">other</span>.viewportStateCi;
+        rasterizationStateCi = <span class="par">other</span>.rasterizationStateCi;
+        multisampleStateCi = <span class="par">other</span>.multisampleStateCi;
+        depthStencilStateCi = <span class="par">other</span>.depthStencilStateCi;
+        colorBlendStateCi = <span class="par">other</span>.colorBlendStateCi;
+        dynamicStateCi = <span class="par">other</span>.dynamicStateCi;
 
-        shaderStages = other.shaderStages;
-        vertexInputBindings = other.vertexInputBindings;
-        vertexInputAttributes = other.vertexInputAttributes;
-        viewports = other.viewports;
-        scissors = other.scissors;
-        colorBlendAttachmentStates = other.colorBlendAttachmentStates;
-        dynamicStates = other.dynamicStates;
+        shaderStages = <span class="par">other</span>.shaderStages;
+        vertexInputBindings = <span class="par">other</span>.vertexInputBindings;
+        vertexInputAttributes = <span class="par">other</span>.vertexInputAttributes;
+        viewports = <span class="par">other</span>.viewports;
+        scissors = <span class="par">other</span>.scissors;
+        colorBlendAttachmentStates = <span class="par">other</span>.colorBlendAttachmentStates;
+        dynamicStates = <span class="par">other</span>.dynamicStates;
         <span class="fn">UpdateAllArrayAddresses</span>();
     }
     <span class="cmt">//Getter，这里我没用const修饰符</span>
@@ -2196,28 +2197,28 @@
     <span class="type">VkPipeline</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
 <span class="kw">public</span>:
     <span class="fn">pipeline</span>() = <span class="kw">default</span>;
-    <span class="fn">pipeline</span>(<span class="type">VkGraphicsPipelineCreateInfo</span>&amp; createInfo) {
-        <span class="fn">Create</span>(createInfo);
+    <span class="fn">pipeline</span>(<span class="type">VkGraphicsPipelineCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="fn">Create</span>(<span class="par">createInfo</span>);
     }
-    <span class="fn">pipeline</span>(<span class="type">VkComputePipelineCreateInfo</span>&amp; createInfo) {
-        <span class="fn">Create</span>(createInfo);
+    <span class="fn">pipeline</span>(<span class="type">VkComputePipelineCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="fn">Create</span>(<span class="par">createInfo</span>);
     }
-    <span class="fn">pipeline</span>(<span class="type">pipeline</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    <span class="fn">pipeline</span>(<span class="type">pipeline</span>&amp;&amp; <span class="par">other</span>) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
     <span class="fn">~pipeline</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyPipeline</span>); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
     <span class="cmt">//Non-const Function</span>
-    <span class="type">result_t</span> Create(<span class="type">VkGraphicsPipelineCreateInfo</span>&amp; createInfo) {
-        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO</span>;
-        <span class="type">VkResult</span> result = <span class="fn">vkCreateGraphicsPipelines</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), <span class="mcr">VK_NULL_HANDLE</span>, 1, &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+    <span class="type">result_t</span> Create(<span class="type">VkGraphicsPipelineCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateGraphicsPipelines</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), <span class="mcr">VK_NULL_HANDLE</span>, 1, &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ pipeline ] ERROR\nFailed to create a graphics pipeline!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
-    <span class="type">result_t</span> Create(<span class="type">VkComputePipelineCreateInfo</span>&amp; createInfo) {
-        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO</span>;
-        <span class="type">VkResult</span> result = <span class="fn">vkCreateComputePipelines</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), <span class="mcr">VK_NULL_HANDLE</span>, 1, &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+    <span class="type">result_t</span> Create(<span class="type">VkComputePipelineCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateComputePipelines</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), <span class="mcr">VK_NULL_HANDLE</span>, 1, &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ pipeline ] ERROR\nFailed to create a compute pipeline!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
