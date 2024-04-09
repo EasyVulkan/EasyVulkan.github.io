@@ -400,9 +400,9 @@ namespace easyVulkan {
 			{ 3, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL }
 		};
 		VkAttachmentReference attachmentReferences_subpass1[3] = {
-			{ 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL },
 			{ 1, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL },
-			{ 2, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL }
+			{ 2, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL },
+			{ 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL }
 		};
 		VkSubpassDescription subpassDescriptions[2] = {
 			{
@@ -413,9 +413,9 @@ namespace easyVulkan {
 			{
 				.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
 				.inputAttachmentCount = 2,
-				.pInputAttachments = attachmentReferences_subpass1 + 1,
+				.pInputAttachments = attachmentReferences_subpass1,
 				.colorAttachmentCount = 1,
-				.pColorAttachments = attachmentReferences_subpass1 }
+				.pColorAttachments = attachmentReferences_subpass1 + 2}
 		};
 		VkSubpassDependency subpassDependencies[2] = {
 			{

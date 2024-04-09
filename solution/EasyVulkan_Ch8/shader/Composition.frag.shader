@@ -27,7 +27,7 @@ void main() {
 	position.x = (i_Position.x - proj[2][0]) * position.z / proj[0][0];
 	position.y = (i_Position.y - proj[2][1]) * position.z / proj[1][1];
 	position = vec4(inverseView * vec4(position, 1)).xyz;
-	vec3 normal = subpassLoad(u_GBuffers[0]).xyz;
+	vec3 normal = normalize(subpassLoad(u_GBuffers[0]).xyz);
 	vec3 albedo = subpassLoad(u_GBuffers[1]).xyz;
 	float specular = subpassLoad(u_GBuffers[1]).w;
 	o_Color = vec4(0, 0, 0, 1);

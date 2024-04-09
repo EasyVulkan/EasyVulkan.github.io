@@ -43,14 +43,14 @@ void CreateLayout() {
 	pipelineLayout_composition.Create(pipelineLayoutCreateInfo);
 }
 void CreatePipeline() {
-	static shaderModule vert_gBuffer("shader/DeferredToScreen_GBuffer.vert.spv");
-	static shaderModule frag_gBuffer("shader/DeferredToScreen_GBuffer.frag.spv");
+	static shaderModule vert_gBuffer("shader/GBuffer.vert.spv");
+	static shaderModule frag_gBuffer("shader/GBuffer.frag.spv");
 	static VkPipelineShaderStageCreateInfo shaderStageCreateInfos_gBuffer[2] = {
 		vert_gBuffer.StageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT),
 		frag_gBuffer.StageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT)
 	};
-	static shaderModule vert_composition("shader/DeferredToScreen_Composition.vert.spv");
-	static shaderModule frag_composition("shader/DeferredToScreen_Composition.frag.spv");
+	static shaderModule vert_composition("shader/Composition.vert.spv");
+	static shaderModule frag_composition("shader/Composition.frag.spv");
 	static VkPipelineShaderStageCreateInfo shaderStageCreateInfos_composition[2] = {
 		vert_composition.StageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT),
 		frag_composition.StageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT)
@@ -184,8 +184,8 @@ int main() {
 	indexBuffer.TransferData(indices);
 
 	struct {
-		glm::mat4 proj = FlipVertical(glm::infinitePerspectiveLH_ZO(glm::radians(60.f), float(windowSize.width) / windowSize.height, 5.f));
-		glm::mat4 view = glm::mat4(1);
+		glm::mat4 proj = FlipVertical(glm::infinitePerspectiveLH_ZO(glm::radians(60.f), float(windowSize.width) / windowSize.height, 0.1f));
+		glm::mat4 view = glm::lookAtLH(glm::vec3(0, 0, 0), glm::vec3(0, 0, 1), glm::vec3(-1, 0, 0));
 		int32_t lightCount;
 		struct {
 			alignas(16) glm::vec3 position;
