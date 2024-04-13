@@ -800,13 +800,13 @@ swapchainImages.<span class="fn">resize</span>(swapchainImageCount);
 }
 <span class="kw">if</span> (surfaceCapabilities.currentExtent.width == 0 ||
     surfaceCapabilities.currentExtent.height == 0)
-    <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
+    <span class="kw">return</span> <span class="enum">VK_SUBOPTIMAL_KHR</span>;
 swapchainCreateInfo.imageExtent = surfaceCapabilities.currentExtent;
 </pre>
 <ul>
     <li>
         <p>
-            如果窗口显示区域的长或宽为0（通常发生在最小化到任务栏窗口时），不重建交换链（若所创建图像的大小为0，特定显卡驱动可能报错），留待窗口大小非0时重建，函数执行视为成功返回<span class="enum">VK_SUCCESS</span>。
+            如果窗口显示区域的长或宽为0（通常发生在最小化到任务栏窗口时），不重建交换链（若所创建图像的大小为0，特定显卡驱动可能报错），留待窗口大小非0时重建，函数执行视为不完全成功返回<span class="enum">VK_SUBOPTIMAL_KHR</span>（该返回值意味着交换链图像与window surface的属性不匹配，与之后<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id2">获取交换链图像索引</a>时可能遭遇的情况相符）。
         </p>
     </li>
 </ul>
@@ -1063,7 +1063,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
     }
     <span class="kw">if</span> (surfaceCapabilities.currentExtent.width == 0 ||
         surfaceCapabilities.currentExtent.height == 0)
-        <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
+        <span class="kw">return</span> <span class="enum">VK_SUBOPTIMAL_KHR</span>;
     swapchainCreateInfo.imageExtent = surfaceCapabilities.currentExtent;
     swapchainCreateInfo.oldSwapchain = swapchain;
     <span class="type">VkResult</span> result = <span class="fn">vkQueueWaitIdle</span>(queue_graphics);

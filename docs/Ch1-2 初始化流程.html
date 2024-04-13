@@ -196,9 +196,9 @@
 <p>
     <strong>什么是Vulkan实例？</strong>
     <br>
-    应用程序必须显式地告诉操作系统和显卡驱动，说明其需要使用Vulkan的功能，这一步是由创建Vulkan实例（<span class="type">VkInstance</span>）来完成的。
+    应用程序必须显式地告诉操作系统，说明其需要使用Vulkan的功能，这一步是由创建Vulkan实例（<span class="type">VkInstance</span>）来完成的。
     <br>
-    Vulkan实例是你的应用程序与显卡驱动所提供的Vulkan实现之间的联系，其底层是一系列Vulkan运行所必需的用于记录状态和信息的变量。
+    Vulkan实例的底层是一系列Vulkan运行所必需的用于记录状态和信息的变量。
 </p>
 <p>
     <strong>什么是debug messenger？</strong>
@@ -220,11 +220,11 @@
 <p>
     <strong>什么是队列？</strong>
     <br>
-    队列（<span class="type">VkQueue</span>）类似于线程，命令被提交到队列执行，<a href="https://renderdoc.org/vkspec_chunked/chap3.html#fundamentals-queueoperation">Vulkan官方标准</a>中将队列描述为 <a href=""></a>命令执行引擎的接口：
+    队列（<span class="type">VkQueue</span>）类似于线程，命令被提交到队列执行，<a href="https://renderdoc.org/vkspec_chunked/chap3.html#fundamentals-queueoperation">Vulkan官方标准</a>中将队列描述为命令执行引擎的接口：
     <br>
     <span class="ref">Vulkan queues provide an interface to the execution engines of a device.</span>
     <br>
-    Vulkan核心功能中规定队列支持的操作类型包括图形、计算、数据传送、稀疏绑定四种，图形和计算队列必定也支持数据传送。一组功能相同的队列称为队列族。
+    Vulkan核心功能中规定队列支持的操作类型包括图形、计算、数据传送、稀疏绑定四种，图形和计算队列必定也支持数据传送。一族功能相同的队列称为队列族。
     <br>
     任何支持Vulkan的显卡驱动确保你能找到<strong>至少一个</strong>同时支持图形和计算操作的队列族。
 </p>

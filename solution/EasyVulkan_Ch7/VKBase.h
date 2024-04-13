@@ -780,7 +780,7 @@ namespace vulkan {
 			}
 			if (surfaceCapabilities.currentExtent.width == 0 ||
 				surfaceCapabilities.currentExtent.height == 0)
-				return VK_SUCCESS;
+				return VK_SUBOPTIMAL_KHR;
 			swapchainCreateInfo.imageExtent = surfaceCapabilities.currentExtent;
 			swapchainCreateInfo.oldSwapchain = swapchain;
 			VkResult result = vkQueueWaitIdle(queue_graphics);
