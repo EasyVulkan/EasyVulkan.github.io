@@ -159,7 +159,7 @@
 <section id="pipeline-layout">
 <h2>Pipeline Layout<a class="headerlink" href="#pipeline-layout" title="Permalink to this heading"></a></h2>
 <p>
-    管线布局（<span class="type">VkPipelineLayout</span>）包含了管线如何使用描述符（uniform缓冲区、storage缓冲区、贴图和采样器等，//TODO 详见）以及push constant的信息。
+    管线布局（<span class="type">VkPipelineLayout</span>）包含了管线如何使用<a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">描述符</a>以及push constant的信息。
 </p><section id="id1">
 <h3>创建管线布局<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
 <p>
@@ -1227,27 +1227,28 @@
 <p>
     当rasterizationSamples为<span class="enum">VK_SAMPLE_COUNT_1_BIT</span>以外的值时即表示开启多重采样（MSAA）。
     <br>
-    记最大采样点个数为N，开启多重采样后，空间开销为原先的(1+N)倍，这个1来源于解析附件，无多重采样时不需要解析。
-    <br>
-    不开启sample shading的情况下，只会在物体边缘进行多重采样，物体内部只采样一次。
-    <br>
-    开启sample shading可以确保每个像素的采样点不少于一定数值，最少的采样点个数为minSampleShading*最大采样点个数，minSampleShading为1时，即超采样（SSAA）。
+    记采样点个数为N，开启多重采样后，空间开销为原先的(1+N)倍，这个1来源于解析附件，无多重采样时不需要解析。
 </p>
 <p>
-    <span class="type">VkSampleMask</span>实质上是<span class="type">uint32_t</span>别名。
+    Sample shading（采样点着色）对一个像素中的多个采样点执行片段着色。
     <br>
-    Sample mask的比特与采样点一一对应，因为至多64个采样点，pSampleMask所指数组中至多两个元素。
+    不开启sample shading时，只会在计算像素的coverage mask（覆盖遮罩，见下文）时选取多个采样点，片段着色器仍旧只对每个像素执行一次（虽然Vulkan标准中没有规定，但通常如此）。因为只有图元边缘的像素可能不被图元完全覆盖，最终只有图元边缘呈现出抗锯齿的效果。
     <br>
-    在多重采样中，栅格化时会计算采样点是否被图元覆盖，得到初始的coverage mask（覆盖遮罩）。在4xMSAA中，四个采样点皆被图元覆盖时的coverage mask为0b1111。
+    开启sample shading后，选取像素内部一定数量的采样点调用片段着色器，最少的着色次数为<code>minSampleShading * 采样点个数</code>，minSampleShading为1时，即超采样（SSAA）。
+</p>
+<p>
+    <span class="type">VkSampleMask</span>实质上就是<span class="type">uint32_t</span>。Sample mask的比特与采样点一一对应，因为至多64个采样点，pSampleMask所指数组中至多两个元素。
+    <br>
+    在多重采样中，栅格化时会计算采样点是否被图元覆盖，得到初始的coverage mask。在4xMSAA中，四个采样点皆被图元覆盖时的初始coverage mask为0b1111。
     <br>
     此处指定的sample mask会与coverage mask做位与，这一步叫做sample mask test，发生在栅格化阶段。显然，若在此处把某个索引的采样点对应的bit指定为0，就意味着直接把该索引的采样点一概算作不被覆盖了。
     <br>
-    在执行片段着色器前，无论是否经历sample mask test，若一个片段（像素，或多重采样中的多个采样点）的所有采样点coverage mask为0，则该片段被丢弃，不进行后续其他操作。
+    在执行片段着色器前，无论是否经历sample mask test，若一个片段（非MSAA的像素，或MSAA中包含多个采样点的像素）的所有采样点coverage mask为0，则该片段被丢弃，不进行后续其他操作。
 </p>
 <div class="admonition note">
     <p class="admonition-title">Note</p>
     <p>
-        关于单个采样点的coverage mask的相应bit为0时，是否还会执行其片段着色器：
+        关于<strong>单个采样点</strong>的coverage mask的相应bit为0时，是否还会执行其片段着色器：
         <br>
         Vulkan官方标准中，对于各类测试不通过时的结果，采用的说法是“coverage为0”，在OpenGL的官方wiki上，采样的说法多为“discard（丢弃）”，显然Vulkan官方标准采用了较为保守的说法。
         <br>
@@ -1257,14 +1258,15 @@
         <br>
         <code><span class="kw">if</span> (gl_SampleMaskIn[0] == 1 << gl_SampleID) <span class="fn">atomicAdd</span>(count_covered, 1); <span class="kw">else</span> <span class="fn">atomicAdd</span>(count_notCovered, 1);</code>
         <br>
-        ↑你可以顺带验证一下gl_SampleMaskIn[0]的数值。
+        ↑你可以顺带验证一下<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#gl-samplemaskin">gl_SampleMaskIn</a>[0]的数值。
     </p>
 </div>
 <p>
     若alphaToCoverageEnable为<span class="mcr">VK_TRUE</span>，则会在执行片段着色器后，根据输出的各个采样点的透明度，生成一个遮罩与片段着色器后的coverage mask（应用可能发生的sample mask test及片段着色器中可能输出的gl_SampleMask后得到的结果）做位与，透明度到遮罩的转换是实现特定的，标准仅规定透明度为0时生成的遮罩为0。
     <br>
     若alphaToOneEnable为<span class="mcr">VK_TRUE</span>，则会在执行片段着色器后，无视输出颜色的透明度，使得采样点的透明度为1，考虑到（多重采样后得到的）像素的颜色是采样点的颜色应用遮罩后取平均，这可以在alphaToCoverageEnable为<span class="mcr">VK_TRUE</span>时使像素的透明度不至于过低。
-    <br>
+</p>
+<p>
     注意，虽然名称很相似，alphaToCoverageEnable影响coverage mask，而alphaToOneEnable影响透明度。Alpha to coverage的效果在alpha to one前应用，即alpha to one使得采样点透明度为1并不影响coverage mask。
     <br>
     alphaToCoverageEnable和alphaToOneEnable都只影响片段着色器输出到0号索引的色值，关于输出到0号索引，见<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#dual-source-blending">Dual-source Blending</a>。

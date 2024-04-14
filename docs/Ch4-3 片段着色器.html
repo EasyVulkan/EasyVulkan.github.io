@@ -148,10 +148,11 @@
 <h1>Ch4-3 片段着色器<a class="headerlink" href="#ch4-3" title="Permalink to this heading"></a></h1>
 <p>
     片段着色器（fragment shader）是图形管线中的一个着色器，用于处理片段（即像素）的颜色，也可以改变片段或采样点的深度值。片段着色器是图形管线中最后执行的着色器。
+</p>
+<p>
+    片段着色器对每个被图元（即点、线、三角形）覆盖的像素，或（多重采样中开启sample shading时的）采样点发生调用。
     <br>
-    片段着色器逐像素，或多重采样中的采样点发生调用，对每个被图元（即点、线、三角形）覆盖的采样点执行一次。对于不被图元覆盖的采样点，不对其执行片段着色器。
-    <br>
-    注：具体而言，片段着色器被定义为逐片段调用至少一次，而开启多重采样后，可能会发生额外调用。<a href="https://renderdoc.org/vkspec_chunked/chap29.html#fragops-shader">来源见此。</a>当然，这种概念不用区分得那么清楚。
+    注：具体而言，片段着色器被定义为逐片段调用至少一次，而开启sample shading后，可能会发生额外调用（<a href="https://renderdoc.org/vkspec_chunked/chap29.html#fragops-shader">官方文档中的说法见此</a>）。
     <br>
     ↑不管你干什么，最好不要依赖于“逐片段调用”这一说法，若Vulkan的实现能判断某个片段最终会被后续其他片段覆盖（即不影响最终渲染结果），那么可能直接不对其执行片段着色器。
 </p><section id="id1">
@@ -172,7 +173,7 @@
     <tbody>
         <tr class="row-even">
             <td><p><span class="type">vec4</span> gl_FragCoord</p></td>
-            <td><p>当前片段在屏幕空间内的坐标</p></td>
+            <td><p>当前采样点在屏幕空间内的坐标</p></td>
         </tr>
         <tr class="row-odd">
             <td><p><span class="kw">bool</span> gl_FrontFacing</p></td>
@@ -227,7 +228,7 @@
 </p><section id="gl-fragcoord">
 <h3>gl_FragCoord<a class="headerlink" href="#gl-fragcoord" title="Permalink to this heading"></a></h3>
 <p>
-    gl_FragCoord的x和y坐标是屏幕空间内的<strong>非标准化坐标</strong>，在没有多重采样的情况下，坐标选取各个像素的中心位置即数值以.5结尾，以左上角为原点，左上角像素坐标为(0.5, 0.5)。
+    gl_FragCoord的x和y坐标是<strong>屏幕空间内的非标准化坐标</strong>，在没有多重采样的情况下，坐标选取各个像素的中心位置即数值以.5结尾，以左上角为原点，左上角像素坐标为(0.5, 0.5)。
     <br>
     从OpenGL转来的程序员注意，OpenGL中默认以左下角为原点，并且Vulkan中不再支持pixel_center_integer修饰符。
     <br>
@@ -314,7 +315,7 @@
     <br>
     这里所谓的系数更准确地说是在执行过片段着色器后，最终得到的各个采样点的coverage。我不想在这里解释额外的概念，让我用一个具体的例子说明gl_SampleMask的影响：
     <br>
-    如前文所说，对于4xMSAA，开启sample shading时，若四个采样点皆被图元覆盖且没有应用sample mask，索引为0的采样点获得的gl_SampleMaskIn[0]为0b0001，索引为1的采样点获得的gl_SampleMaskIn[0]为0b0010，依次类推。那么：
+    如前文所说，对于4xMSAA，<strong>开启sample shading时</strong>，若四个采样点皆被图元覆盖且没有应用sample mask，索引为0的采样点获得的gl_SampleMaskIn[0]为0b0001，索引为1的采样点获得的gl_SampleMaskIn[0]为0b0010，依次类推。那么：
     <br>
     如果输出的gl_SampleMask[0]，对应从0开始的各个索引的采样点，依次为0b0001、0b0010、0b0100、0b1000，则最后呈现出的效果与不写入gl_SampleMask时一致。
     <br>
