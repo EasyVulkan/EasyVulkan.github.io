@@ -57,12 +57,7 @@ void CreatePipeline() {
 	};
 	static constexpr int32_t shininess = 64;
 	static VkSpecializationMapEntry mapEntry = { 1, 0, sizeof shininess };
-	static VkSpecializationInfo specializationInfo = {
-		.mapEntryCount = 1,
-		.pMapEntries = &mapEntry,
-		.dataSize = sizeof shininess,
-		.pData = &shininess
-	};
+	static VkSpecializationInfo specializationInfo = { 1, &mapEntry, sizeof shininess, &shininess };
 	auto Create = [] {
 		//G-buffer
 		graphicsPipelineCreateInfoPack pipelineCiPack;
@@ -161,18 +156,12 @@ int main() {
 	vertexBuffer vertexBuffer_perVertex(sizeof vertices);
 	vertexBuffer_perVertex.TransferData(vertices);
 	glm::vec3 offsets[] = {
-		{ -4, -4,  6 },
-		{ -4,  4, 10 },
-		{ -4, -4, 14 },
-		{ -4,  4, 18 },
-		{ -4, -4, 22 },
-		{ -4,  4, 26 },
-		{  4, -4,  6 },
-		{  4,  4, 10 },
-		{  4, -4, 14 },
-		{  4,  4, 18 },
-		{  4, -4, 22 },
-		{  4,  4, 26 }
+        { -4, -4,  6 }, {  4, -4,  6 },
+        { -4,  4, 10 }, {  4,  4, 10 },
+        { -4, -4, 14 }, {  4, -4, 14 },
+        { -4,  4, 18 }, {  4,  4, 18 },
+        { -4, -4, 22 }, {  4, -4, 22 },
+        { -4,  4, 26 }, {  4,  4, 26 }
 	};
 	vertexBuffer vertexBuffer_perInstance(sizeof offsets);
 	vertexBuffer_perInstance.TransferData(offsets);
@@ -194,9 +183,9 @@ int main() {
 		} lights[8];
 	} descriptorConstants;
 	descriptorConstants.lightCount = 3;
-	descriptorConstants.lights[0] = { { 0.f,  4.f,  0.f }, { 1.f, 0.f, 0.f }, 100.f };
+	descriptorConstants.lights[0] = { { 0.f,  4.f,  6.f }, { 1.f, 0.f, 0.f }, 100.f };
 	descriptorConstants.lights[1] = { { 0.f,  0.f, 16.f }, { 0.f, 1.f, 0.f }, 100.f };
-	descriptorConstants.lights[2] = { { 0.f, -4.f,  0.f }, { 0.f, 0.f, 1.f }, 100.f };
+	descriptorConstants.lights[2] = { { 0.f, -4.f,  6.f }, { 0.f, 0.f, 1.f }, 100.f };
 	uniformBuffer uniformBuffer(sizeof descriptorConstants);
 	uniformBuffer.TransferData(descriptorConstants);
 

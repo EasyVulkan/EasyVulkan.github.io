@@ -26,24 +26,19 @@ void main() {
 	position.z = subpassLoad(u_GBuffers[0]).w;
 	position.x = (i_Position.x - proj[2][0]) * position.z / proj[0][0];
 	position.y = (i_Position.y - proj[2][1]) * position.z / proj[1][1];
-	position = vec4(inverseView * vec4(position, 1)).xyz;
+	position = (inverseView * vec4(position, 1)).xyz;
 	vec3 normal = normalize(subpassLoad(u_GBuffers[0]).xyz);
 	vec3 albedo = subpassLoad(u_GBuffers[1]).xyz;
 	float specular = subpassLoad(u_GBuffers[1]).w;
+
 	o_Color = vec4(0, 0, 0, 1);
 	for (uint i = 0; i < lightCount; i++) {
 		vec3 toLight = lights[i].position - position;
-		//No Ambient
-		//Diffuse
 		vec3 lightIntensity = lights[i].color * lights[i].strength / pow(length(toLight), 2);//Light strength follows inverse-square law in vacuum.
 		toLight = normalize(toLight);
-		vec3 diffuse = albedo * lightIntensity * max(dot(normal, toLight), 0);
-		//Specular
 		vec3 halfway = normalize(/*toCamera*/normalize(cameraPosition - position) + toLight);
-		vec3 specular = specular * lightIntensity * pow(
-			max(dot(normal, halfway), 0),
-			shininess);
-		//Final Color
-		o_Color.rgb += diffuse + specular;
+		o_Color.rgb += lightIntensity * (
+			albedo * max(dot(normal, toLight), 0) + 
+			specular * pow(max(dot(normal, halfway), 0), shininess));
 	}
 }

@@ -111,18 +111,12 @@ int main() {
 	vertexBuffer vertexBuffer_perVertex(sizeof vertices);
 	vertexBuffer_perVertex.TransferData(vertices);
 	glm::vec3 offsets[] = {
-		{ -4, -4,  6 },
-		{ -4,  4, 10 },
-		{ -4, -4, 14 },
-		{ -4,  4, 18 },
-		{ -4, -4, 22 },
-		{ -4,  4, 26 },
-		{  4, -4,  6 },
-		{  4,  4, 10 },
-		{  4, -4, 14 },
-		{  4,  4, 18 },
-		{  4, -4, 22 },
-		{  4,  4, 26 }
+        { -4, -4,  6 }, {  4, -4,  6 },
+        { -4,  4, 10 }, {  4,  4, 10 },
+        { -4, -4, 14 }, {  4, -4, 14 },
+        { -4,  4, 18 }, {  4,  4, 18 },
+        { -4, -4, 22 }, {  4, -4, 22 },
+        { -4,  4, 26 }, {  4,  4, 26 }
 	};
 	vertexBuffer vertexBuffer_perInstance(sizeof offsets);
 	vertexBuffer_perInstance.TransferData(offsets);
