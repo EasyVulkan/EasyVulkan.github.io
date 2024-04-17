@@ -5,8 +5,7 @@
 联系可至：[【长期】 反馈/交流集中贴](https://github.com/EasyVulkan/EasyVulkan.github.io/issues/7)<br>
 也可以发Discussion。
 
-2024.04.09 输入附件示例：[Ch8-3 延迟渲染](https://easyvulkan.github.io/Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html)施工中（因接下来将有几天无法动笔，先把写好了的发了，代码已上传）。<br>
-2024.04.07 新增[Ap1-1 运行期编译GLSL](https://easyvulkan.github.io/Ap1-1%20%E8%BF%90%E8%A1%8C%E6%9C%9F%E7%BC%96%E8%AF%91GLSL.html)。<br>
+2024.04.17 [Ch8-3 输入附件示例：延迟渲染](https://easyvulkan.github.io/Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html)完成。<br>
 2024.04.02 代码里加了CMakeLists.txt（我不确定Visual Studio之外是什么效果，谁愿意的话可以fork到私有仓库，帮我改一下然后pull上来）
 
 ## 章节目录
@@ -34,6 +33,7 @@
 [Ch7-7 使用贴图](https://easyvulkan.github.io/Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html)<br>
 [Ch8-1 离屏渲染](https://easyvulkan.github.io/Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html)<br>
 [Ch8-2 深度测试和深度可视化](https://easyvulkan.github.io/Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html)<br>
+[Ch8-3 输入附件示例：延迟渲染](https://easyvulkan.github.io/Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html)
 
 若要生成mipmap，请阅读Ch7-6和Ch7-7。
 
@@ -58,10 +58,9 @@
 
 [Ap1-1 运行期编译GLSL](https://easyvulkan.github.io/Ap1-1%20%E8%BF%90%E8%A1%8C%E6%9C%9F%E7%BC%96%E8%AF%91GLSL.html)
 
-## 更新计划（6月底前）
+## 更新计划（6月底前？）
 
-Ch8-3 输入附件示例：延迟渲染<br>
-Ch8-4 混色与预乘透明度<br>
+Ch8-4 预乘透明度<br>
 Ch8-5 sRGB色调映射与HDR<br>
 Ch8-6 多重采样与超采样<br>
 Ch5-4 立方体贴图<br>
