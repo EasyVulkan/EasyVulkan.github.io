@@ -1262,9 +1262,9 @@
     </p>
 </div>
 <p>
-    若alphaToCoverageEnable为<span class="mcr">VK_TRUE</span>，则会在执行片段着色器后，根据输出的各个采样点的透明度，生成一个遮罩与片段着色器后的coverage mask（应用可能发生的sample mask test及片段着色器中可能输出的gl_SampleMask后得到的结果）做位与，透明度到遮罩的转换是实现特定的，标准仅规定透明度为0时生成的遮罩为0。
+    若alphaToCoverageEnable为<span class="mcr">VK_TRUE</span>，则会在执行片段着色器后，根据输出的各个采样点的透明度，生成一个遮罩与片段着色器后的coverage mask（应用可能发生的sample mask test及片段着色器中可能输出的<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#gl-samplemask">gl_SampleMask</a>后得到的结果）做位与，透明度到遮罩的转换是实现特定的，标准仅规定透明度为0时生成的遮罩为0。
     <br>
-    若alphaToOneEnable为<span class="mcr">VK_TRUE</span>，则会在执行片段着色器后，无视输出颜色的透明度，使得采样点的透明度为1，考虑到（多重采样后得到的）像素的颜色是采样点的颜色应用遮罩后取平均，这可以在alphaToCoverageEnable为<span class="mcr">VK_TRUE</span>时使像素的透明度不至于过低。
+    若alphaToOneEnable为<span class="mcr">VK_TRUE</span>，则会在执行片段着色器后，无视输出颜色的透明度，使得采样点的透明度为1，这可以在alphaToCoverageEnable为<span class="mcr">VK_TRUE</span>时使像素的透明度不至于过低。
 </p>
 <p>
     注意，虽然名称很相似，alphaToCoverageEnable影响coverage mask，而alphaToOneEnable影响透明度。Alpha to coverage的效果在alpha to one前应用，即alpha to one使得采样点透明度为1并不影响coverage mask。
