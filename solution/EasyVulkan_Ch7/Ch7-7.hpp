@@ -81,7 +81,7 @@ int main() {
 	commandPool.AllocateBuffers(commandBuffer);
 
 	//Load image
-	texture2d texture("image/testImage.png", VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_R8G8B8A8_UNORM, 0);
+	texture2d texture("image/testImage.png", VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_R8G8B8A8_UNORM, true);
 	//Create sampler
 	VkSamplerCreateInfo samplerCreateInfo = texture::SamplerCreateInfo();
 	sampler sampler(samplerCreateInfo);

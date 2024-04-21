@@ -478,7 +478,7 @@
     <br>
     读取输入附件的效率比采样高，并且可以使用frambuffer-local依赖（见后文“子通道依赖”）。
     <br>
-    输入附件的使用案例见//TODO 延迟渲染。
+    输入附件的使用案例见<a class="reference internal" href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html">Ch8-3 延迟渲染</a>。
 </p>
 <p>
     颜色附件（color attachment）的概念应该不需要过多解释，令人疑惑的大概是为什么可以有多个颜色附件，事实上，你是可以在片段着色器中把颜色输出到多个颜色附件的，见<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#dual-source-blending">Dual-source Blending</a>。注意所有颜色附件的采样次数都得是一致的。
@@ -657,28 +657,28 @@
 <pre class="code">
 <span class="cmt">//渲染通道开始时的隐式依赖</span>
 <span class="type">VkSubpassDependency</span> implicitDependency_renderPassBegin = {
-    .srcSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>;
-    .dstSubpass = firstSubpass;<span class="cmt">//首个使用了图像附件的子通道</span>
-    .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_NONE</span>;
-    .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_ALL_COMMANDS_BIT</span>;
-    .srcAccessMask = 0;
+    .srcSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
+    .dstSubpass = firstSubpass, <span class="cmt">//首个使用了图像附件的子通道</span>
+    .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_NONE</span>,
+    .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_ALL_COMMANDS_BIT</span>,
+    .srcAccessMask = 0,
     .dstAccessMask = <span class="enum">VK_ACCESS_INPUT_ATTACHMENT_READ_BIT</span> |
                      <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_READ_BIT</span> |
                      <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span> |
                      <span class="enum">VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT</span> |
-                     <span class="enum">VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT</span>;
-    .dependencyFlags = 0;
+                     <span class="enum">VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT</span>,
+    .dependencyFlags = 0,
 };
 <span class="cmt">//渲染通道结束时的隐式依赖</span>
 <span class="type">VkSubpassDependency</span> implicitDependency_renderPassEnd = {
-    .srcSubpass = lastSubpass;<span class="cmt">//最后一个使用了图像附件的子通道</span>
-    .dstSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>;
-    .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_ALL_COMMANDS_BIT</span>;
-    .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_NONE</span>;
+    .srcSubpass = lastSubpass, <span class="cmt">//最后一个使用了图像附件的子通道</span>
+    .dstSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
+    .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_ALL_COMMANDS_BIT</span>,
+    .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_NONE</span>,
     .srcAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span> |
-                     <span class="enum">VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT</span>;
-    .dstAccessMask = 0;
-    .dependencyFlags = 0;
+                     <span class="enum">VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT</span>,
+    .dstAccessMask = 0,
+    .dependencyFlags = 0,
 };
 </pre>
 <ul>

@@ -732,13 +732,13 @@ commandBuffer.<span class="fn">End</span>();
     </li>
 </ul>
 <p>
-    于是，拷贝前的管线屏障旨在要求：先于该屏障的命令中由<span class="var">imb_from</span>.stage所指示的阶段（第一个同步域），必须在该屏障后的<span class="fn">vkCmdCopyBufferToImage</span>(...)命令执行到<span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>阶段（第二个同步域）前完成，即拷贝发生前完成。
+    于是，拷贝前的管线屏障旨在要求：先于该屏障的命令中由<span class="var">imb_from.stage</span>所指示的阶段（第一个同步域），必须在该屏障后的<span class="fn">vkCmdCopyBufferToImage</span>(...)命令执行到<span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>阶段（第二个同步域）前完成，即拷贝发生前完成。
     <br>
     以防你没有仔细阅读<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#pipeline-barrier">管线屏障相关的说明</a>，再次强调，简而言之，管线屏障注明其前后的命令在执行时，有哪些阶段不能重叠。
     <br>
-    图像的内存布局会在两个同步域间，由<span class="var">imb_from</span>.layout转到<span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span>。
+    图像的内存布局会在两个同步域间，由<span class="var">imb_from.layout</span>转到<span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span>。
     <br>
-    此处的内存屏障还应当确保传输命令的写入操作（<span class="enum">VK_ACCESS_TRANSFER_WRITE_BIT</span>），在由<span class="var">imb_from</span>.access指明的、先前的写入操作的结果的基础上发生。
+    此处的内存屏障还应当确保传输命令的写入操作（<span class="enum">VK_ACCESS_TRANSFER_WRITE_BIT</span>），在由<span class="var">imb_from.access</span>指明的、先前的写入操作的结果的基础上发生。
 </p>
 <p>
     于是拷贝前的管线屏障为：
@@ -1184,9 +1184,9 @@ commandBuffer.<span class="fn">End</span>();
 }
 </pre>
 <p>
-    先前调用了<span class="type">stagingBuffer</span>::<span class="sfn">BufferData_MainThread</span>(...)将来源图像的数据紧密地存入了暂存缓冲区起始的位置。因而<span class="var">region_copy</span>.bufferOffset、<span class="var">region_copy</span>.bufferRowLength、<span class="var">region_copy</span>.bufferImageHeight皆为0。
+    先前调用了<span class="type">stagingBuffer</span>::<span class="sfn">BufferData_MainThread</span>(...)将来源图像的数据紧密地存入了暂存缓冲区起始的位置。因而<span class="var">region_copy.bufferOffset</span>、<span class="var">region_copy.bufferRowLength</span>、<span class="var">region_copy.bufferImageHeight</span>皆为0。
     <br>
-    图像数据被拷入交换链图像的起始位置，因而<span class="var">region_copy</span>.imageOffset皆0。
+    图像数据被拷入交换链图像的起始位置，因而<span class="var">region_copy.imageOffset</span>皆0。
     <br>
     这个分支的前提是，所使用图像大小与交换链图像一致，于是<span class="var">region_copy</span>为：
 </p>
@@ -1199,7 +1199,7 @@ commandBuffer.<span class="fn">End</span>();
 <p>
     显然，因为这个函数旨在于程序开始时显示图像，所以交换链图像尚未被使用过，在管线屏障中没有需要被阻塞的命令，srcStageMask填写为<span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>，则srcAccessMask必须为0。图像的初始内存布局则是<span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>。
     <br>
-    而之后，因为会用栅栏来同步，便不需要通过管线屏障来堵住后续命令的管线阶段。也无需注明访问操作的类型来确保交换链图像的资源可见性，因为虽然等待栅栏不会确保资源可见性，但是<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...)会，于是只需要指定最后的内存布局是<span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR </span>即可。
+    而之后，因为会用栅栏来同步，便不需要通过管线屏障来堵住后续命令的管线阶段。也无需注明访问操作的类型来确保交换链图像的资源可见性，因为虽然等待栅栏不会确保资源可见性，但是<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...)会，于是只需要指定最后的内存布局是<span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>即可。
 </p>
 <pre class="code">
 <span class="kw">if</span> (blit) {

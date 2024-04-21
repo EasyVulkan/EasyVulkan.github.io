@@ -615,11 +615,15 @@
 </p>
 <img alt="_images/ch5-2-1.png" src="_images/ch5-2-1.png" width="480px">
 <p>
-    <strong>Mipmap的存在意义是降低采样开销。</strong>
+    <strong>Mipmap的存在意义是：以有限的采样开销获得正确的采样结果。</strong>
     <br>
-    举例而言：将一张16x16大小的图像渲染到4x4大小，滤波方式为线性插值<span class="enum">VK_FILTER_LINEAR</span>，那么渲染出的一个像素就对应原图中4x4的区域，每个像素得采样原图的16个像素。
+    举例而言：将一张16x16大小的图像渲染到4x4大小，滤波方式为线性插值<span class="enum">VK_FILTER_LINEAR</span>，那么渲染出的一个像素就对应原图中4x4的区域，若要获得正确的采样结果，每渲染一个像素得采样原图的16个像素，如此一来开销就很大。
     <br>
-    若没有mipmap且滤波方式不是<span class="enum">VK_FILTER_NEAREST</span>的话，无论原图被渲染到多小，都得采样整张原图，这在原图很大时显然很不划算。事先生成mipmap，再根据渲染时的放缩程度选择相应的mip等级进行采样，就能大幅降低开销。
+    不过实际情况是，驱动当然会抑制夸张的采样开销，被采样图像被缩小很多时，很可能只会在原图中选取有限的像素来做线性插值，这就会导致显著的摩尔纹：
+</p>
+<img alt="_images/ch5-2-2.png" src="_images/ch5-2-2.png" width="660px">
+<p>
+    事先生成mipmap，再根据渲染时的放缩程度选择相应的mip等级进行采样，就能以有限的开销获得令人满意的采样结果。
 </p><section id="mip">
 <h3>计算Mip等级数<a class="headerlink" href="#mip" title="Permalink to this heading"></a></h3>
 <p>
@@ -787,7 +791,7 @@
     <br>
     这个函数被设计为也适用于给贴图数组生成mipmap，然而，在一些GPU上（比如我的Nvidia 1060 Max-Q），为NPOT（Non-power-of-two，长宽非2的幂）图像的数组生成mipmap时，会出现如下奇异现象：
 </p>
-<img alt="_images/ch5-2-2.png" src="_images/ch5-2-2.png" width="1048px">
+<img alt="_images/ch5-2-3.png" src="_images/ch5-2-3.png" width="1048px">
 <p>
     上图渲染了LastResortHE-Regular字体中的所有字形，左图是期望的情况，右图中则出现了诡异的重复。
 </p>

@@ -558,7 +558,6 @@ glm::<span class="type">vec3</span> offsets[] = {
 };
 <span class="type">vertexBuffer</span> vertexBuffer_perInstance(<span class="kw">sizeof</span> offsets);
 vertexBuffer_perInstance.<span class="type">TransferData</span>(offsets);
-<pre class="code">
 <span class="type">uint16_t</span> indices[36] = { 0, 1, 2, 2, 1, 3 };
 <span class="kw">for</span> (<span class="type">size_t</span> i = 1; i &lt; 6; i++)
     <span class="kw">for</span> (<span class="type">size_t</span> j = 0; j &lt; 6; j++)
