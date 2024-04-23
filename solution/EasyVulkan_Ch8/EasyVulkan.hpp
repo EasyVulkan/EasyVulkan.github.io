@@ -711,7 +711,8 @@ namespace easyVulkan {
 			framebuffer framebuffer(framebufferCreateInfo);
 			//Record command buffer
 			{
-				VkCommandBuffer commandBuffer = graphicsBase::Plus().CommandBuffer_Transfer();
+				auto& commandBuffer = graphicsBase::Plus().CommandBuffer_Transfer();
+				commandBuffer.Begin();
 				//Transfer data to image
 				CmdTransferDataToImage(commandBuffer, pImageData, extent, format_initial, imageMemory_conversion, image);
 				//Render
@@ -735,6 +736,7 @@ namespace easyVulkan {
 					imageOperation::CmdGenerateMipmap2d(commandBuffer, image, extent, mipLevelCount, 1,
 						{ VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, VK_ACCESS_SHADER_READ_BIT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL });
 				//Submit
+				commandBuffer.End();
 				graphicsBase::Plus().ExecuteCommandBuffer_Graphics(commandBuffer);
 			}
 			//Execute callback

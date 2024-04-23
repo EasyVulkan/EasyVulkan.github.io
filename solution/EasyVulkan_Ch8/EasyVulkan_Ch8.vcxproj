@@ -27,6 +27,7 @@
     <ClInclude Include="Ch8-2.hpp" />
     <ClInclude Include="Ch8-2_DepthBoundTest.hpp" />
     <ClInclude Include="Ch8-3.hpp" />
+    <ClInclude Include="Ch8-4.hpp" />
     <ClInclude Include="EasyVKStart.h" />
     <ClInclude Include="EasyVulkan.hpp" />
     <ClInclude Include="GlfwGeneral.hpp" />
