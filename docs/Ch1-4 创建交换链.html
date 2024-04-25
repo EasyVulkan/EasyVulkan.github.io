@@ -118,6 +118,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html">Ch8-3 延迟渲染</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html">Ch8-4 预乘Alpha</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">附录</span></p>
 <ul>
@@ -370,8 +371,8 @@ swapchainCreateInfo.minImageCount = surfaceCapabilities.minImageCount + (surface
     对于图像尺寸，若当前尺寸已定，那么直接使用当前尺寸，否则使用一个由你指定的默认大小。
 </p>
 <pre class="code">
-<span class="cmt">//全局常量用constexpr修饰定义在类外：</span>
 <span class="kw">namespace</span> vulkan {
+    <span class="cmt">//全局常量用constexpr修饰定义在类外：</span>
     <span class="kw">constexpr</span> <span class="type">VkExtent2D</span> defaultWindowSize = { 1280, 720 };
     <span class="kw">class</span> <span class="type">graphicsBase</span> {
         <span class="type">VkResult</span> <span class="fn">CreateSwapchain</span>(<span class="kw">bool</span> limitFrameRate = <span class="kw">true</span>, <span class="type">VkSwapchainCreateFlagsKHR</span> flags = 0) {
@@ -412,7 +413,7 @@ swapchainCreateInfo.preTransform = = surfaceCapabilities.currentTransform;
 <ul>
     <li>
         <p>
-            <span class="enum">VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR</span>表示不透明，每个像素的透明度皆被视作1.f。
+            <span class="enum">VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR</span>表示不透明，每个像素的A通道值皆被视作1.f。
         </p>
     </li>
     <li>

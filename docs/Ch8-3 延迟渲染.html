@@ -20,7 +20,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="Ap1-1 运行期编译GLSL" href="Ap1-1%20%E8%BF%90%E8%A1%8C%E6%9C%9F%E7%BC%96%E8%AF%91GLSL.html" />
+    <link rel="next" title="Ch8-4 预乘Alpha" href="Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html" />
     <link rel="prev" title="Ch8-2 深度测试和深度可视化" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html" /> 
 </head>
 
@@ -123,6 +123,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#id11">绘制</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html">Ch8-4 预乘Alpha</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">附录</span></p>
 <ul>
@@ -848,7 +849,7 @@ position = (inverseView * <span class="kw">vec4</span>(position, 1)).xyz;
 </p>
 </div>
 <p>
-    从观察矩阵的逆矩阵还可以取得相机/观察者在世界空间中的位置，对相机空间的原点应逆观察矩阵即可：
+    从观察矩阵的逆矩阵还可以取得相机/观察者在世界空间中的位置，用逆观察矩阵乘以相机空间的原点即可：
 </p>
 <pre class="code">
 <span class="cmt">//vec3 cameraPosition = (inverseView * vec4(0, 0, 0, 1)).xyz;</span>
@@ -1221,7 +1222,7 @@ renderPass.<span class="fn">CmdNext</span>(commandBuffer);
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html" class="btn btn-neutral float-left" title="Ch8-2 深度测试和深度可视化" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
-        <a href="Ap1-1%20%E8%BF%90%E8%A1%8C%E6%9C%9F%E7%BC%96%E8%AF%91GLSL.html" class="btn btn-neutral float-right" title="Ap1-1 运行期编译GLSL" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html" class="btn btn-neutral float-right" title="Ch8-4 预乘Alpha" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

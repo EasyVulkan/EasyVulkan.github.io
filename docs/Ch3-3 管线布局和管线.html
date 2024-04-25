@@ -125,6 +125,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html">Ch8-3 延迟渲染</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html">Ch8-4 预乘Alpha</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">附录</span></p>
 <ul>
@@ -1262,12 +1263,12 @@
     </p>
 </div>
 <p>
-    若alphaToCoverageEnable为<span class="mcr">VK_TRUE</span>，则会在执行片段着色器后，根据输出的各个采样点的透明度，生成一个遮罩与片段着色器后的coverage mask（应用可能发生的sample mask test及片段着色器中可能输出的<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#gl-samplemask">gl_SampleMask</a>后得到的结果）做位与，透明度到遮罩的转换是实现特定的，标准仅规定透明度为0时生成的遮罩为0。
+    若alphaToCoverageEnable为<span class="mcr">VK_TRUE</span>，则会在执行片段着色器后，根据输出的各个采样点的A通道值，生成一个遮罩与片段着色器后的coverage mask（应用可能发生的sample mask test及片段着色器中可能输出的<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#gl-samplemask">gl_SampleMask</a>后得到的结果）做位与，A通道值到遮罩的转换是实现特定的，标准仅规定A通道为0时生成的遮罩为0。
     <br>
-    若alphaToOneEnable为<span class="mcr">VK_TRUE</span>，则会在执行片段着色器后，无视输出颜色的透明度，使得采样点的透明度为1，这可以在alphaToCoverageEnable为<span class="mcr">VK_TRUE</span>时使像素的透明度不至于过低。
+    若alphaToOneEnable为<span class="mcr">VK_TRUE</span>，则会在执行片段着色器后，无视输出颜色的A通道，使得采样点的A通道值为1，这可以在alphaToCoverageEnable为<span class="mcr">VK_TRUE</span>时使像素的A通道值不至于过低。
 </p>
 <p>
-    注意，虽然名称很相似，alphaToCoverageEnable影响coverage mask，而alphaToOneEnable影响透明度。Alpha to coverage的效果在alpha to one前应用，即alpha to one使得采样点透明度为1并不影响coverage mask。
+    注意，虽然名称很相似，alphaToCoverageEnable影响coverage mask，而alphaToOneEnable影响A通道。Alpha to coverage的效果在alpha to one前应用，即alpha to one使得采样点A通道值为1并不影响coverage mask。
     <br>
     alphaToCoverageEnable和alphaToOneEnable都只影响片段着色器输出到0号索引的色值，关于输出到0号索引，见<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#dual-source-blending">Dual-source Blending</a>。
 </p>
@@ -1276,7 +1277,7 @@
     <p>
         关于alpha to coverage的效果：
         <br>
-        即便你给所有采样点一个相同的透明度，且不做sample mask test，若透明度不是<code>整数/采样点个数</code>，最终呈现的图像中，各个像素点可能是不同的透明度。就我的Nvidia 1060 Max-Q显卡而言，图像整体算是均匀的，但细看会察觉到“棋盘格”或“网格”，类似“半调图案”的效果。Vulkan标准中允许底层实现对不同坐标的片段采用不同的算法（<span class="ref">The algorithm <strong>may</strong> be different at different framebuffer coordinates.</span>）以规避一些图像瑕疵（artifact），在为特定平台开发时你可以考虑利用这一效果。
+        即便你给所有采样点一个相同的A通道值，且不做sample mask test，若A通道值不是<code>整数/采样点个数</code>，最终呈现的图像中，各个像素点可能是不同的透明度。就我的Nvidia 1060 Max-Q显卡而言，图像整体算是均匀的，但细看会察觉到“棋盘格”或“网格”，类似“半调图案”的效果。Vulkan标准中允许底层实现对不同坐标的片段采用不同的算法（<span class="ref">The algorithm <strong>may</strong> be different at different framebuffer coordinates.</span>）以规避一些图像瑕疵（artifact），在为特定平台开发时你可以考虑利用这一效果。
     </p>
 </div></section>
 <section id="vkpipelinedepthstencilstatecreateinfo">
@@ -1500,7 +1501,9 @@
     最终，覆盖到DS附件中的数值为 (writeMask & Sg) | (~writeMask & Sa)。
 </p>
 <p>
-    关于深度测试和模板测试的实际使用，参见//TODO Ch8-2 深度和模板测试
+    关于深度测试的实际使用，参见<a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a>。
+    <br>
+    关于模板测试的实际使用，参见//TODO
 </p></section>
 <section id="vkpipelinecolorblendstatecreateinfo">
 <h4>VkPipelineColorBlendStateCreateInfo<a class="headerlink" href="#vkpipelinecolorblendstatecreateinfo" title="Permalink to this heading"></a></h4>
@@ -1548,7 +1551,7 @@
         </tr>
         <tr class="row-even">
             <td><p><span class="kw">float</span> blendConstants[4]</p></td>
-            <td><p>如<span class="type">VkPipelineColorBlendAttachmentState</span>中的混色因子涉及到常量，在此按RGBA顺序指定</p></td>
+            <td><p>若<span class="type">VkPipelineColorBlendAttachmentState</span>中的混色因子涉及到常量，在此按RGBA顺序指定</p></td>
         </tr>
     </tbody>
 </table>
@@ -1674,7 +1677,7 @@
         </tr>
         <tr class="row-even">
             <td><p><span class="type">VkBlendOp</span> alphaBlendOp</p></td>
-            <td><p>对Alpha通道的混色选项（运算方式）</p></td>
+            <td><p>对A通道的混色选项（运算方式）</p></td>
         </tr>
         <tr class="row-odd">
             <td><p><span class="type">VkColorComponentFlags</span> colorWriteMask</p></td>
@@ -1818,11 +1821,15 @@
         </tr>
     </tbody>
 </table>
+<ul>
+    <li>
+        <p>
+            关于另一混色来源，参见<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#dual-source-blending">Dual-source Blending</a>。
+        </p>
+    </li>
+</ul>
 <p>
-    关于另一混色来源，参见<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#dual-source-blending">Dual-source Blending</a>。
-</p>
-<p>
-    关于混色方式的实际使用案例，参见//TODO Ch8-1 预乘透明度
+    关于混色方式的实际使用案例，参见<a class="reference internal" href="Ch8-4%20%E9%A2%84%E4%B9%98%E9%80%8F%E6%98%8E%E5%BA%A6.html">Ch8-4 预乘Alpha</a>。
 </p></section>
 <section id="vkpipelinedynamicstatecreateinfo">
 <h4>VkPipelineDynamicStateCreateInfo<a class="headerlink" href="#vkpipelinedynamicstatecreateinfo" title="Permalink to this heading"></a></h4>

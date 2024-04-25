@@ -109,6 +109,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html">Ch8-3 延迟渲染</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html">Ch8-4 预乘Alpha</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">附录</span></p>
 <ul>
@@ -397,7 +398,7 @@ pipelineCiPack.vertexInputAttributes.<span class="fn">emplace_back</span>(1, 0, 
 <section id="id5">
 <h2>创建管线并绘制<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
 <p>
-    其他该改的管线创建参数都改了，这次（顺带）尝试将图元拓扑类型改为<span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP</span>，这么一来即使没有绑定索引缓冲区，也能仅靠4个顶点来绘制长方形（使用该种图源拓扑类型时，4个顶点生成2个三角形）：
+    其他该改的管线创建参数都改了，这次（顺带）尝试将图元拓扑类型改为<span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP</span>，这么一来即使没有绑定索引缓冲区，也能仅靠4个顶点来绘制长方形（使用该种图元拓扑类型时，4个顶点生成2个三角形）：
 </p>
 <pre class="code">
 pipelineCiPack.inputAssemblyStateCi.topology = <span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP</span>;

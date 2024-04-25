@@ -111,6 +111,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html">Ch8-3 延迟渲染</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html">Ch8-4 预乘Alpha</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">附录</span></p>
 <ul>
@@ -323,7 +324,7 @@
     <tbody>
         <tr>
             <td><p>1.0</p></td>
-            <td><p><span class="enum">VK_FILTER_NEAREST </span>表示使用临近滤波（有明显锯齿），适用于像素风游戏等比放大</p></td>
+            <td><p><span class="enum">VK_FILTER_NEAREST </span>表示使用邻近滤波（有明显锯齿），适用于像素风游戏等比放大</p></td>
         </tr>
         <tr>
             <td><p>1.0</p></td>
@@ -338,9 +339,9 @@
 <p>
     毕竟放大了16倍，线性插值的结果显得很糊。
     <br>
-    但是临近滤波是没有颜色过渡的，所以若不是编写像素风游戏或图像处理软件，通常你会希望使用<span class="enum">VK_FILTER_LINER</span>。
+    但是邻近滤波是没有颜色过渡的，所以若不是编写像素风游戏或图像处理软件，通常你会希望使用<span class="enum">VK_FILTER_LINER</span>。
     <br>
-    值得注意的是，如果你打算使用线性插值，且被渲染的图像有透明区域，那么被渲染的图像是否为预乘透明度会导致不同的结果（这在白色背景上尤为明显），具体参见//TODO Ch8-1 预乘透明度。
+    值得注意的是，如果你打算使用线性插值，且被渲染的图像有透明区域，那么被渲染的图像是否为预乘透明度会导致不同的结果（这在白色背景上尤为明显），具体参见<a class="reference internal" href="Ch8-4%20%E9%A2%84%E4%B9%98%E9%80%8F%E6%98%8E%E5%BA%A6.html">Ch8-4 预乘Alpha</a>。
     <br>
     图中右下角的效果可能显得仍旧不够平滑，这可以通过使用sRGB格式的颜色附件解决，具体参见//TODO Ch8-7 HDR与sRGB色彩空间。
 </p>
