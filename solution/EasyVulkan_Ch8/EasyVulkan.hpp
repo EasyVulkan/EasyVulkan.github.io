@@ -15,64 +15,62 @@ namespace easyVulkan {
 
 	const auto& CreateRpwf_Screen() {
 		static renderPassWithFramebuffers rpwf;
-		if (rpwf.renderPass)
-			outStream << std::format("[ easyVulkan ] WARNING\nDon't call CreateRpwf_Screen() twice!\n");
-		else {
-			VkAttachmentDescription attachmentDescription = {
-				.format = graphicsBase::Base().SwapchainCreateInfo().imageFormat,
-				.samples = VK_SAMPLE_COUNT_1_BIT,
-				.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-				.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
-				.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-				.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
-			};
-			VkAttachmentReference attachmentReference = { 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL };
-			VkSubpassDescription subpassDescription = {
-				.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
-				.colorAttachmentCount = 1,
-				.pColorAttachments = &attachmentReference
-			};
-			VkSubpassDependency subpassDependency = {
-				.srcSubpass = VK_SUBPASS_EXTERNAL,
-				.dstSubpass = 0,
-				.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-				.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-				.srcAccessMask = 0,
-				.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-				.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT
-			};
-			VkRenderPassCreateInfo renderPassCreateInfo = {
-				.attachmentCount = 1,
-				.pAttachments = &attachmentDescription,
-				.subpassCount = 1,
-				.pSubpasses = &subpassDescription,
-				.dependencyCount = 1,
-				.pDependencies = &subpassDependency
-			};
-			rpwf.renderPass.Create(renderPassCreateInfo);
 
-			auto CreateFramebuffers = [] {
-				rpwf.framebuffers.resize(graphicsBase::Base().SwapchainImageCount());
-				VkFramebufferCreateInfo framebufferCreateInfo = {
-					.renderPass = rpwf.renderPass,
-					.attachmentCount = 1,
-					.width = windowSize.width,
-					.height = windowSize.height,
-					.layers = 1
-				};
-				for (size_t i = 0; i < graphicsBase::Base().SwapchainImageCount(); i++) {
-					VkImageView attachment = graphicsBase::Base().SwapchainImageView(i);
-					framebufferCreateInfo.pAttachments = &attachment;
-					rpwf.framebuffers[i].Create(framebufferCreateInfo);
-				}
+		VkAttachmentDescription attachmentDescription = {
+			.format = graphicsBase::Base().SwapchainCreateInfo().imageFormat,
+			.samples = VK_SAMPLE_COUNT_1_BIT,
+			.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+			.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
+		};
+		VkAttachmentReference attachmentReference = { 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL };
+		VkSubpassDescription subpassDescription = {
+			.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+			.colorAttachmentCount = 1,
+			.pColorAttachments = &attachmentReference
+		};
+		VkSubpassDependency subpassDependency = {
+			.srcSubpass = VK_SUBPASS_EXTERNAL,
+			.dstSubpass = 0,
+			.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+			.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+			.srcAccessMask = 0,
+			.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+			.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT
+		};
+		VkRenderPassCreateInfo renderPassCreateInfo = {
+			.attachmentCount = 1,
+			.pAttachments = &attachmentDescription,
+			.subpassCount = 1,
+			.pSubpasses = &subpassDescription,
+			.dependencyCount = 1,
+			.pDependencies = &subpassDependency
+		};
+		rpwf.renderPass.Create(renderPassCreateInfo);
+		auto CreateFramebuffers = [] {
+			rpwf.framebuffers.resize(graphicsBase::Base().SwapchainImageCount());
+			VkFramebufferCreateInfo framebufferCreateInfo = {
+				.renderPass = rpwf.renderPass,
+				.attachmentCount = 1,
+				.width = windowSize.width,
+				.height = windowSize.height,
+				.layers = 1
 			};
-			auto DestroyFramebuffers = [] {
-				rpwf.framebuffers.clear();
-			};
-			graphicsBase::Base().AddCallback_CreateSwapchain(CreateFramebuffers);
-			graphicsBase::Base().AddCallback_DestroySwapchain(DestroyFramebuffers);
-			CreateFramebuffers();
-		}
+			for (size_t i = 0; i < graphicsBase::Base().SwapchainImageCount(); i++) {
+				VkImageView attachment = graphicsBase::Base().SwapchainImageView(i);
+				framebufferCreateInfo.pAttachments = &attachment;
+				rpwf.framebuffers[i].Create(framebufferCreateInfo);
+			}
+		};
+		auto DestroyFramebuffers = [] {
+			rpwf.framebuffers.clear();
+		};
+		CreateFramebuffers();
+
+		ExecuteOnce(rpwf);
+		graphicsBase::Base().AddCallback_CreateSwapchain(CreateFramebuffers);
+		graphicsBase::Base().AddCallback_DestroySwapchain(DestroyFramebuffers);
 		return rpwf;
 	}
 	void BootScreen(const char* imagePath, VkFormat imageFormat) {
@@ -182,8 +180,6 @@ namespace easyVulkan {
 	colorAttachment ca_canvas;
 	const auto& CreateRpwf_Canvas(VkExtent2D canvasSize) {
 		static renderPassWithFramebuffer rpwf;
-		ExecuteOnce(rpwf);
-
 		//When this render pass begins, the image keeps its contents.
 		VkAttachmentDescription attachmentDescription = {
 			.format = graphicsBase::Base().SwapchainCreateInfo().imageFormat,
@@ -229,9 +225,7 @@ namespace easyVulkan {
 			.pDependencies = subpassDependencies,
 		};
 		rpwf.renderPass.Create(renderPassCreateInfo);
-
 		ca_canvas.Create(graphicsBase::Base().SwapchainCreateInfo().imageFormat, canvasSize, 1, VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
-
 		VkFramebufferCreateInfo framebufferCreateInfo = {
 			.renderPass = rpwf.renderPass,
 			.attachmentCount = 1,
@@ -269,7 +263,6 @@ namespace easyVulkan {
 	std::vector<depthStencilAttachment> dsas_screenWithDS;
 	const auto& CreateRpwf_ScreenWithDS(VkFormat depthStencilFormat = VK_FORMAT_D24_UNORM_S8_UINT) {
 		static renderPassWithFramebuffers rpwf;
-		ExecuteOnce(rpwf);
 		static VkFormat _depthStencilFormat = depthStencilFormat;
 
 		VkAttachmentDescription attachmentDescriptions[2] = {
@@ -321,7 +314,6 @@ namespace easyVulkan {
 			.pDependencies = &subpassDependency
 		};
 		rpwf.renderPass.Create(renderPassCreateInfo);
-
 		auto CreateFramebuffers = [] {
 			dsas_screenWithDS.resize(graphicsBase::Base().SwapchainImageCount());
 			rpwf.framebuffers.resize(graphicsBase::Base().SwapchainImageCount());
@@ -347,9 +339,11 @@ namespace easyVulkan {
 			dsas_screenWithDS.clear();
 			rpwf.framebuffers.clear();
 		};
+		CreateFramebuffers();
+
+		ExecuteOnce(rpwf);
 		graphicsBase::Base().AddCallback_CreateSwapchain(CreateFramebuffers);
 		graphicsBase::Base().AddCallback_DestroySwapchain(DestroyFramebuffers);
-		CreateFramebuffers();
 		return rpwf;
 	}
 
@@ -358,8 +352,8 @@ namespace easyVulkan {
 	depthStencilAttachment dsa_deferredToScreen;
 	const auto& CreateRpwf_DeferredToScreen(VkFormat depthStencilFormat = VK_FORMAT_D24_UNORM_S8_UINT) {
 		static renderPassWithFramebuffers rpwf;
-		ExecuteOnce(rpwf);
 		static VkFormat _depthStencilFormat = depthStencilFormat;
+
 		VkAttachmentDescription attachmentDescriptions[4] = {
 			{//Swapchain attachment
 				.format = graphicsBase::Base().SwapchainCreateInfo().imageFormat,
@@ -473,17 +467,19 @@ namespace easyVulkan {
 			dsa_deferredToScreen.~depthStencilAttachment();
 			rpwf.framebuffers.clear();
 		};
+		CreateFramebuffers();
+
+		ExecuteOnce(rpwf);
 		graphicsBase::Base().AddCallback_CreateSwapchain(CreateFramebuffers);
 		graphicsBase::Base().AddCallback_DestroySwapchain(DestroyFramebuffers);
-		CreateFramebuffers();
 		return rpwf;
 	}
 
 	std::vector<colorAttachment> cas_msaaToScreen;
 	const auto& CreateRpwf_MsaaToScreen(VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_4_BIT) {
 		static renderPassWithFramebuffers rpwf;
-		ExecuteOnce(rpwf);
 		static VkSampleCountFlagBits _sampleCount = sampleCount;
+
 		VkAttachmentDescription attachmentDescriptions[2] = {
 			{//Swapchain attachment, used as resolve attachment
 				.format = graphicsBase::Base().SwapchainCreateInfo().imageFormat,
@@ -555,9 +551,11 @@ namespace easyVulkan {
 			cas_msaaToScreen.clear();
 			rpwf.framebuffers.clear();
 		};
+		CreateFramebuffers();
+
+		ExecuteOnce(rpwf);
 		graphicsBase::Base().AddCallback_CreateSwapchain(CreateFramebuffers);
 		graphicsBase::Base().AddCallback_DestroySwapchain(DestroyFramebuffers);
-		CreateFramebuffers();
 		return rpwf;
 	}
 
@@ -568,7 +566,6 @@ namespace easyVulkan {
 		bool generateMipmap = false;
 		callback_copyData_t callback_copyData = nullptr;
 		renderPass renderPass;
-		pipelineLayout pipelineLayout;
 		pipeline pipeline;
 		//--------------------
 		void CmdTransferDataToImage(VkCommandBuffer commandBuffer, const uint8_t* pImageData, VkExtent2D extent, VkFormat format_initial, imageMemory& imageMemory_conversion, VkImage image) const {
@@ -656,6 +653,16 @@ namespace easyVulkan {
 				graphicsBase::Base().AddCallback_DestroyDevice([] { shader.~shaderModule(); });
 			}
 			return shader.StageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT);
+		}
+		static const VkPipelineLayout PipelineLayout() {
+			static pipelineLayout pipelineLayout;
+			if (!pipelineLayout) {
+				VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {};
+				pipelineLayout.Create(pipelineLayoutCreateInfo);
+				ExecuteOnce(pipelineLayout);
+				graphicsBase::Base().AddCallback_DestroyDevice([] { pipelineLayout.~pipelineLayout(); });
+			}
+			return pipelineLayout;
 		}
 	public:
 		fCreateTexture2d_multiplyAlpha() = default;
@@ -761,7 +768,7 @@ namespace easyVulkan {
 				.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD,
 				.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 				.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-				.finalLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL
+				.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 			};
 			VkAttachmentReference attachmentReference = { 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL };
 			VkSubpassDescription subpassDescription = {
@@ -781,26 +788,19 @@ namespace easyVulkan {
 				.attachmentCount = 1,
 				.pAttachments = &attachmentDescription,
 				.subpassCount = 1,
-				.pSubpasses = &subpassDescription,
-				.dependencyCount = 1,
-				.pDependencies = &subpassDependency
+				.pSubpasses = &subpassDescription
 			};
-			if (!(generateMipmap || callback_copyData))
-				attachmentDescription.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-				renderPassCreateInfo.dependencyCount = 0;
+			if (generateMipmap || callback_copyData)
+				attachmentDescription.finalLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+				renderPassCreateInfo.dependencyCount = 1,
+				renderPassCreateInfo.pDependencies = &subpassDependency;
 			renderPass.Create(renderPassCreateInfo);
 			//Create pipeline
-			VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {};
-			pipelineLayout.Create(pipelineLayoutCreateInfo);
-			VkPipelineShaderStageCreateInfo shaderStageCreateInfos[2] = {
-				Ssci_Vert(),
-				Ssci_Frag()
-			};
 			graphicsPipelineCreateInfoPack pipelineCiPack;
-			for (auto& i : shaderStageCreateInfos)
-				pipelineCiPack.shaderStages.push_back(i);
-			pipelineCiPack.createInfo.layout = pipelineLayout;
+			pipelineCiPack.createInfo.layout = PipelineLayout();
 			pipelineCiPack.createInfo.renderPass = renderPass;
+			pipelineCiPack.shaderStages.push_back(Ssci_Vert());
+			pipelineCiPack.shaderStages.push_back(Ssci_Frag());
 			pipelineCiPack.inputAssemblyStateCi.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
 			pipelineCiPack.scissors.emplace_back(VkOffset2D{}, VkExtent2D{
 				graphicsBase::Base().PhysicalDeviceProperties().limits.maxFramebufferWidth,
