@@ -680,18 +680,22 @@ namespace easyVulkan {
 			return texture2d{};
 		}
 		texture2d operator()(const uint8_t* pImageData, VkExtent2D extent, VkFormat format_initial) const {
-			VkDeviceSize imageDataSize_final = VkDeviceSize(FormatInfo(format_final).sizePerPixel) * extent.width * extent.height;
+			texture2d texture;
+			imageMemory imageMemory_conversion;
+			//Expand staging buffer if necessary
+			uint32_t pixelCount = extent.width * extent.height;
+			VkDeviceSize imageDataSize_initial = VkDeviceSize(FormatInfo(format_initial).sizePerPixel) * pixelCount;
+			VkDeviceSize imageDataSize_final = VkDeviceSize(FormatInfo(format_final).sizePerPixel) * pixelCount;
 			if (callback_copyData)
-				stagingBuffer::Expand_MainThread(imageDataSize_final);
+				stagingBuffer::Expand_MainThread(std::max(imageDataSize_initial, imageDataSize_final));
+			//Get access to protected member
 			struct texture2d_local :texture2d {
 				using texture::imageView;
 				using texture::imageMemory;
 				using texture2d::extent;
 			}*pTexture;
-			texture2d texture;
 			pTexture = static_cast<texture2d_local*>(&texture);
 			pTexture->extent = extent;
-			imageMemory imageMemory_conversion;
 			//Create imageMemory
 			uint32_t mipLevelCount = generateMipmap ? texture::CalculateMipLevelCount(extent) : 1;
 			VkImageCreateInfo imageCreateInfo = {
@@ -716,18 +720,17 @@ namespace easyVulkan {
 				.layers = 1
 			};
 			framebuffer framebuffer(framebufferCreateInfo);
-			//Record command buffer
 			{
+				//Record commands
 				auto& commandBuffer = graphicsBase::Plus().CommandBuffer_Transfer();
 				commandBuffer.Begin();
 				//Transfer data to image
 				CmdTransferDataToImage(commandBuffer, pImageData, extent, format_initial, imageMemory_conversion, image);
 				//Render
+				renderPass.CmdBegin(commandBuffer, framebuffer, { {}, extent });
 				vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 				VkViewport viewport = { 0, 0, float(extent.width), float(extent.height), 0.f, 1.f };
-				VkRect2D renderArea = { {}, extent };
 				vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
-				renderPass.CmdBegin(commandBuffer, framebuffer, renderArea);
 				vkCmdDraw(commandBuffer, 4, 1, 0, 0);
 				renderPass.CmdEnd(commandBuffer);
 				//Copy data to staging buffer if necessary
@@ -742,7 +745,7 @@ namespace easyVulkan {
 				if (mipLevelCount > 1 || callback_copyData)
 					imageOperation::CmdGenerateMipmap2d(commandBuffer, image, extent, mipLevelCount, 1,
 						{ VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, VK_ACCESS_SHADER_READ_BIT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL });
-				//Submit
+				//Submit commands
 				commandBuffer.End();
 				graphicsBase::Plus().ExecuteCommandBuffer_Graphics(commandBuffer);
 			}

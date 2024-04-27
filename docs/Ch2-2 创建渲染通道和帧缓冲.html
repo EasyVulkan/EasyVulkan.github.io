@@ -238,11 +238,9 @@
     };
     <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Screen</span>() {
         <span class="kw">static</span> <span class="type">renderPassWithFramebuffers</span> rpwf;
-        <span class="kw">if</span> (rpwf.renderPass) <span class="cmt">//防止重复调用</span>
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ easyVulkan ] WARNING\nDon't call CreateRpwf_Screen() twice!\n&quot;</span>);
-        <span class="kw">else</span> {
-            <span class="cmt">/*待后续填充*/</span>
-        }
+
+        <span class="cmt">/*待后续填充*/</span>
+
         <span class="kw">return</span> rpwf;
     }
 }
@@ -352,7 +350,7 @@ rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase
 }
 </pre>
 <p>
-    由于帧缓冲的大小与交换链图像相关，重建交换链时也会需要重建帧缓冲，于是将创建和销毁帧缓冲的代码扔进各自的lambda表达式，以作为回调函数：
+    由于帧缓冲的大小与交换链图像相关，重建交换链时也会需要重建帧缓冲，于是将创建和销毁帧缓冲的代码扔进各自的lambda表达式，以用作回调函数：
 </p>
 <pre class="code">
 <span class="kw">auto</span> CreateFramebuffers = [] {
@@ -373,6 +371,7 @@ rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase
 <span class="kw">auto</span> DestroyFramebuffers = [] {
     rpwf.framebuffers.<span class="fn">clear</span>();<span class="cmt">//清空vector中的元素时会逐一执行析构函数</span>
 };
+<span class="cmt">/*待后续填充*/</span>
 <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>(CreateFramebuffers);
 <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroySwapchain</span>(DestroyFramebuffers);
 </pre>
@@ -382,66 +381,73 @@ rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase
 <pre class="code">
 <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Screen</span>() {
     <span class="kw">static</span> <span class="type">renderPassWithFramebuffers</span> rpwf;
-    <span class="kw">if</span> (rpwf.renderPass)
-        outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ easyVulkan ] WARNING\nDon't call CreateRpwf_Screen() twice!\n&quot;</span>);
-    <span class="kw">else</span> {
-        <span class="type">VkAttachmentDescription</span> attachmentDescription = {
-            .format = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat,
-            .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
-            .loadOp = <span class="enum">VK_ATTACHMENT_LOAD_OP_CLEAR</span>,
-            .storeOp = <span class="enum">VK_ATTACHMENT_STORE_OP_STORE</span>,
-            .initialLayout = <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>,
-            .finalLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>
-        };
-        <span class="type">VkAttachmentReference</span> attachmentReference = { 0, <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span> };
-        <span class="type">VkSubpassDescription</span> subpassDescription = {
-            .pipelineBindPoint = <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>,
-            .colorAttachmentCount = 1,
-            .pColorAttachments = &amp;attachmentReference
-        };
-        <span class="type">VkSubpassDependency</span> subpassDependency = {
-            .srcSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
-            .dstSubpass = 0,
-            .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
-            .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,<span class="cmt">//不早于提交命令缓冲区时对应的waitDstStageMask</span>
-            .srcAccessMask = 0,
-            .dstAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
-            .dependencyFlags = <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span>
-        };
-        <span class="type">VkRenderPassCreateInfo</span> renderPassCreateInfo = {
+
+    <span class="type">VkAttachmentDescription</span> attachmentDescription = {
+        .format = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat,
+        .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+        .loadOp = <span class="enum">VK_ATTACHMENT_LOAD_OP_CLEAR</span>,
+        .storeOp = <span class="enum">VK_ATTACHMENT_STORE_OP_STORE</span>,
+        .initialLayout = <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>,
+        .finalLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>
+    };
+    <span class="type">VkAttachmentReference</span> attachmentReference = { 0, <span class="enum">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span> };
+    <span class="type">VkSubpassDescription</span> subpassDescription = {
+        .pipelineBindPoint = <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>,
+        .colorAttachmentCount = 1,
+        .pColorAttachments = &amp;attachmentReference
+    };
+    <span class="type">VkSubpassDependency</span> subpassDependency = {
+        .srcSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
+        .dstSubpass = 0,
+        .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+        .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
+        .srcAccessMask = 0,
+        .dstAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
+        .dependencyFlags = <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span>
+    };
+    <span class="type">VkRenderPassCreateInfo</span> renderPassCreateInfo = {
+        .attachmentCount = 1,
+        .pAttachments = &amp;attachmentDescription,
+        .subpassCount = 1,
+        .pSubpasses = &amp;subpassDescription,
+        .dependencyCount = 1,
+        .pDependencies = &amp;subpassDependency
+    };
+    rpwf.renderPass.<span class="fn">Create</span>(renderPassCreateInfo);
+
+    <span class="kw">auto</span> CreateFramebuffers = [] {
+        rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
+        <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
+            .renderPass = rpwf.renderPass,
             .attachmentCount = 1,
-            .pAttachments = &amp;attachmentDescription,
-            .subpassCount = 1,
-            .pSubpasses = &amp;subpassDescription,
-            .dependencyCount = 1,
-            .pDependencies = &amp;subpassDependency
+            .width = windowSize.width,
+            .height = windowSize.height,
+            .layers = 1
         };
-        rpwf.renderPass.<span class="fn">Create</span>(renderPassCreateInfo);
-        <span class="kw">auto</span> CreateFramebuffers = [] {
-            rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
-            <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
-                .renderPass = rpwf.renderPass,
-                .attachmentCount = 1,
-                .width = windowSize.width,
-                .height = windowSize.height,
-                .layers = 1
-            };
-            <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span        class="fn">SwapchainImageCount</span>(); i++) {
-                <span class="type">VkImageView</span> attachment = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageView</span>(i);
-                framebufferCreateInfo.pAttachments = &amp;attachment;
-                rpwf.framebuffers[i].<span class="fn">Create</span>(framebufferCreateInfo);
-            }
-        };
-        <span class="kw">auto</span> DestroyFramebuffers = [] {
-            rpwf.framebuffers.<span class="fn">clear</span>();<span class="cmt">//清空vector中的元素时会逐一执行析构函数</span>
-        };
-        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>(CreateFramebuffers);
-        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroySwapchain</span>(DestroyFramebuffers);
-        CreateFramebuffers();
-    }
+        <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span        class="fn">SwapchainImageCount</span>(); i++) {
+            <span class="type">VkImageView</span> attachment = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageView</span>(i);
+            framebufferCreateInfo.pAttachments = &amp;attachment;
+            rpwf.framebuffers[i].<span class="fn">Create</span>(framebufferCreateInfo);
+        }
+    };
+    <span class="kw">auto</span> DestroyFramebuffers = [] {
+        rpwf.framebuffers.<span class="fn">clear</span>();
+    };
+    CreateFramebuffers();
+
+    <span class="mcr" id="executeonce">ExecuteOnce</span>(rpwf); <span class="cmt">//防止再次调用本函数时，重复添加回调函数</span>
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>(CreateFramebuffers);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroySwapchain</span>(DestroyFramebuffers);
     <span class="kw">return</span> rpwf;
 }
-</pre></section>
+</pre>
+<ul>
+    <li>
+        <p>
+            如果你需要重建逻辑设备，那么需要一并重建与之相关的Vulkan对象，则重建逻辑设备后势必会再次调用<span class="fn">CreateRpwf_Screen</span>()，而添加回调函数的两条语句只应该被执行一次，用<a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html#executeonce">Ch2-0</a>中定义的宏<span class="mcr">ExecuteOnce</span>来确保这一点。
+        </p>
+    </li>
+</ul></section>
 <section id="id5">
 <h2>更新主函数并测试<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
 <p>

@@ -10,7 +10,7 @@ struct vertex {
 descriptorSetLayout descriptorSetLayout_texture;
 pipelineLayout pipelineLayout_texture;
 pipeline pipeline_straightAlpha;
-pipeline pipeline_premultiplyAlpha;
+pipeline pipeline_premultipliedAlpha;
 const auto& RenderPassAndFramebuffers() {
 	static const auto& rpwf = easyVulkan::CreateRpwf_Screen();
 	return rpwf;
@@ -66,11 +66,11 @@ void CreatePipeline() {
 		pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_texture;
 		pipeline_straightAlpha.Create(pipelineCiPack);
 		pipelineCiPack.colorBlendAttachmentStates[0].srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-		pipeline_premultiplyAlpha.Create(pipelineCiPack);
+		pipeline_premultipliedAlpha.Create(pipelineCiPack);
 	};
 	auto Destroy = [] {
 		pipeline_straightAlpha.~pipeline();
-		pipeline_premultiplyAlpha.~pipeline();
+		pipeline_premultipliedAlpha.~pipeline();
 	};
 	graphicsBase::Base().AddCallback_CreateSwapchain(Create);
 	graphicsBase::Base().AddCallback_DestroySwapchain(Destroy);
@@ -98,7 +98,7 @@ int main() {
 	auto pImageData = texture::LoadFile("texture/testImage.png", imageExtent, FormatInfo(VK_FORMAT_R8G8B8A8_UNORM));
 	texture2d texture_straightAlpha(pImageData.get(), imageExtent, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_R8G8B8A8_UNORM);
 	easyVulkan::fCreateTexture2d_multiplyAlpha function(VK_FORMAT_R8G8B8A8_UNORM, true, nullptr);
-	texture2d texture_premultiplyAlpha = function(pImageData.get(), imageExtent, VK_FORMAT_R8G8B8A8_UNORM);
+	texture2d texture_premultipliedAlpha = function(pImageData.get(), imageExtent, VK_FORMAT_R8G8B8A8_UNORM);
 	//Create sampler
 	VkSamplerCreateInfo samplerCreateInfo = texture::SamplerCreateInfo();
 	sampler sampler(samplerCreateInfo);
@@ -108,11 +108,11 @@ int main() {
 	};
 	descriptorPool descriptorPool(2, descriptorPoolSizes);
 	descriptorSet descriptorSet_straightAlpha;
-	descriptorSet descriptorSet_premultiplyAlpha;
+	descriptorSet descriptorSet_premultipliedAlpha;
 	descriptorPool.AllocateSets(descriptorSet_straightAlpha, descriptorSetLayout_texture);
-	descriptorPool.AllocateSets(descriptorSet_premultiplyAlpha, descriptorSetLayout_texture);
+	descriptorPool.AllocateSets(descriptorSet_premultipliedAlpha, descriptorSetLayout_texture);
 	descriptorSet_straightAlpha.Write(texture_straightAlpha.DescriptorImageInfo(sampler), VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
-	descriptorSet_premultiplyAlpha.Write(texture_premultiplyAlpha.DescriptorImageInfo(sampler), VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
+	descriptorSet_premultipliedAlpha.Write(texture_premultipliedAlpha.DescriptorImageInfo(sampler), VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
 
 	float w = 2 * imageExtent.width * 10.f / windowSize.width;
 	float halfH = imageExtent.height * 10.f / windowSize.height;
@@ -149,8 +149,8 @@ int main() {
 		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout_texture, 0, 1, descriptorSet_straightAlpha.Address(), 0, nullptr);
 		vkCmdDraw(commandBuffer, 4, 1, 0, 0);
 		//Premultiply alpha
-		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_premultiplyAlpha);
-		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,pipelineLayout_texture, 0, 1, descriptorSet_premultiplyAlpha.Address(), 0, nullptr);
+		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_premultipliedAlpha);
+		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,pipelineLayout_texture, 0, 1, descriptorSet_premultipliedAlpha.Address(), 0, nullptr);
 		vkCmdDraw(commandBuffer, 4, 1, 4, 0);
 		renderPass.CmdEnd(commandBuffer);
 		commandBuffer.End();

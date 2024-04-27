@@ -385,7 +385,6 @@
     };
     <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> canvasSize) {
         <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf;
-        <span class="mcr">ExecuteOnce</span>(rpwf);<span class="cmt">//防止重复执行</span>
 
         <span class="cmt">/*待后续填充*/</span>
 
@@ -410,7 +409,6 @@
 
     <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> canvasSize) {
         <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf;
-        <span class="mcr">ExecuteOnce</span>(rpwf);
 
         ca_canvas.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat, canvasSize, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
             <span class="enum">VK_IMAGE_USAGE_SAMPLED_BIT</span> | <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>);
@@ -438,7 +436,6 @@
 <pre class="code">
 <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> canvasSize) {
     <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf;
-    <span class="mcr">ExecuteOnce</span>(rpwf);
 
     ca_canvas.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat, canvasSize, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
         <span class="enum">VK_IMAGE_USAGE_SAMPLED_BIT</span> | <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>);
@@ -540,7 +537,6 @@
 <pre class="code">
 <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> canvasSize = windowSize) {
     <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf;
-    <span class="mcr">ExecuteOnce</span>(rpwf);
 
     ca_canvas.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat, canvasSize, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
         <span class="enum">VK_IMAGE_USAGE_SAMPLED_BIT</span> | <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>);

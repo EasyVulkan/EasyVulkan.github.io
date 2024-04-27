@@ -2,10 +2,11 @@
 面向懒人的Vulkan中文教程<br>
 主页：https://easyvulkan.github.io/
 
-联系可至：[【长期】 反馈/交流集中贴](https://github.com/EasyVulkan/EasyVulkan.github.io/issues/7)<br>
-也可以发Discussion。
+联系请：<br>
+1.捉虫/答疑，发Issue，开新的，或者发在[【长期】 捉虫/答疑集中贴](https://github.com/EasyVulkan/EasyVulkan.github.io/issues/7)。<br>
+2.反馈/交流/答疑，发Discussion。
 
-2024.04.17 [Ch8-3 输入附件示例：延迟渲染](https://easyvulkan.github.io/Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html)完成。<br>
+2024.04.29 [Ch8-4 预乘Alpha](https://easyvulkan.github.io/Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html)完成。<br>
 2024.04.02 代码里加了CMakeLists.txt（我不确定Visual Studio之外是什么效果，谁愿意的话可以fork到私有仓库，帮我改一下然后pull上来）
 
 ## 章节目录
@@ -33,7 +34,8 @@
 [Ch7-7 使用贴图](https://easyvulkan.github.io/Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html)<br>
 [Ch8-1 离屏渲染](https://easyvulkan.github.io/Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html)<br>
 [Ch8-2 深度测试和深度可视化](https://easyvulkan.github.io/Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html)<br>
-[Ch8-3 输入附件示例：延迟渲染](https://easyvulkan.github.io/Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html)
+[Ch8-3 输入附件示例：延迟渲染](https://easyvulkan.github.io/Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html)<br>
+[Ch8-4 预乘Alpha](https://easyvulkan.github.io/Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html)
 
 若要生成mipmap，请阅读Ch7-6和Ch7-7。
 
@@ -60,7 +62,6 @@
 
 ## 更新计划（6月底前？）
 
-Ch8-4 预乘Alpha<br>
 Ch8-5 sRGB色调映射（原定还要写HDR，跟Vulkan API关系不大+除了概念外没太多可以展开的，遂作罢）<br>
 Ch7-8 多重采样与超采样<br>
 Ch5-4 立方体贴图<br>

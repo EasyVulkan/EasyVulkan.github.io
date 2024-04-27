@@ -309,7 +309,6 @@
 <span class="type">depthStencilAttachment</span> dsa_deferredToScreen;        <span class="cmt">//深度</span>
 <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_DeferredToScreen</span>(<span class="type">VkFormat</span> <span class="par">depthStencilFormat</span> = <span class="enum">VK_FORMAT_D24_UNORM_S8_UINT</span>) {
     <span class="kw">static</span> <span class="type">renderPassWithFramebuffers</span> rpwf;
-    <span class="mcr">ExecuteOnce</span>(rpwf); <span class="cmt">//防止重复执行</span>
     <span class="kw">static</span> <span class="type">VkFormat</span> _depthStencilFormat = <span class="par">depthStencilFormat</span>; <span class="cmt">//因为一会儿需要用lambda定义重建交换链时的回调函数，把格式存到静态变量</span>
 
     <span class="cmt">/*待后续填充*/</span>
@@ -486,9 +485,11 @@ rpwf.renderPass.<span class="fn">Create</span>(renderPassCreateInfo);
         dsa_deferredToScreen.<span class="fn">~depthStencilAttachment</span>();
         rpwf.framebuffers.<span class="fn">clear</span>();
     };
+    CreateFramebuffers();
+
+    <span class="mcr">ExecuteOnce</span>(rpwf); <span class="cmt">//防止需重建逻辑设备时，重复添加回调函数</span>
     <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>(CreateFramebuffers);
     <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroySwapchain</span>(DestroyFramebuffers);
-    CreateFramebuffers();
     <span class="kw">return</span> rpwf;
 }
 </pre></section>

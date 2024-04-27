@@ -705,7 +705,7 @@ filepath.<span class="fn">replace</span>(pos + 1 + filepath.<span class="fn">beg
 </p>
 <pre class="code">
 <span class="kw">inline</span> <span class="type">shaderModule</span> <span class="fn">CreateShaderModuleFromGlsl</span>(<span class="type">fCompileGlslToSpv</span>&amp; <span class="par">fCompile</span>, <span class="kw">const char</span>* <span class="par">filepath</span>, <span class="kw">const char</span>* <span class="par">entry</span> = <span class="str">&quot;main&quot;</span>) {
-    <span class="kw">auto</span> code = <span class="par">fCompile</span>(<span class="par">filepath</span>, <span class="par">entry</span>);
+    <span class="kw">auto</span> code = <span class="par">fCompile</span><span class="fn">(</span><span class="par">filepath</span>, <span class="par">entry</span><span class="fn">)</span>;
     <span class="kw">return</span> <span class="type">shaderModule</span>(code.<span class="fn">size</span>(), code.<span class="fn">data</span>()); <span class="cmt">//必定发生RVO（返回值优化）</span>
 }
 

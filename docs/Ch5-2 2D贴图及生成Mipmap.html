@@ -277,7 +277,8 @@
 </pre>
 <p>
     注意到参数<span class="var">format_initial</span>和<span class="var">format_final</span>，读取到的图像数据的格式，可能与我们最终期望的图像格式不同，比如stb_image读取hdr文件得到的是32位浮点数，而通常16位的精度便已足够，出于节省设备内存的目的，往往会使用blit命令进行图像格式转换。
-    <br>
+</p>
+<p>
     填充<span class="fn">Create_Internal</span>(...)，首先根据<span class="var">generateMipmap</span>的值，确定是否调用<span class="sfn">CalculateMipLevelCount</span>(...)计算mipmap的等级总数：
 </p>
 <pre class="code">
