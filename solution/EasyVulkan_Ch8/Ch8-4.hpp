@@ -148,7 +148,7 @@ int main() {
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_straightAlpha);
 		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout_texture, 0, 1, descriptorSet_straightAlpha.Address(), 0, nullptr);
 		vkCmdDraw(commandBuffer, 4, 1, 0, 0);
-		//Premultiply alpha
+		//Premultiplied alpha
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_premultipliedAlpha);
 		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,pipelineLayout_texture, 0, 1, descriptorSet_premultipliedAlpha.Address(), 0, nullptr);
 		vkCmdDraw(commandBuffer, 4, 1, 4, 0);

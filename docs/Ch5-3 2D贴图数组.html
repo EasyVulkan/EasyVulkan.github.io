@@ -288,7 +288,7 @@ std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]
 <p>
     填充<span class="fn">Create</span>(...)的首个参数为内存地址的重载。
     <br>
-    考虑到该函数可能被外部直接调用，因此也在其开头判定会否满足图层限制，以及<span class="var">fullExtent</span>是否能被<span class="var">extentInTiles</span>整除，顺便记下图层数layerCount。
+    考虑到该函数可能被外部直接调用，因此也在其开头判定会否满足图层限制，以及<span class="var">fullExtent</span>能否被<span class="var">extentInTiles</span>整除，顺便记下图层数layerCount。
 </p>
 <pre class="code">
 <span class="kw">void</span> <span class="fn">Create</span>(<span class="kw">const</span> <span class="type">uint8_t</span>* pImageData, <span class="type">VkExtent2D</span> extent, <span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap = <span class="kw">true</span>) {
@@ -446,31 +446,30 @@ std::<span class="type">unique_ptr</span>&lt;<span class="type">VkBufferImageCop
 }
 </pre>
 <p>
-    接着填充<span class="type">texture2dArray</span>::<span class="fn">Create_Internal</span>(...)，跟先前<span class="type">texture2d</span>::<span class="fn">Create_Internal</span>(...)非常类似，图像视图的类型变为<span class="enum">VK_IMAGE_VIEW_TYPE_2D_ARRAY</span>，除此之外就是图层数由1变为<span class="var">layerCount</span>：
+    接着填充<span class="type">texture2dArray</span>::<span class="fn">Create_Internal</span>(...)，大体上跟先前的<span class="type">texture2d</span>::<span class="fn">Create_Internal</span>(...)类似。
+    <br>
+    图层数由1变为layerCount，图像视图的类型变为<span class="enum">VK_IMAGE_VIEW_TYPE_2D_ARRAY</span>，此外在需要进行格式转换时，因为<a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html#staging-buffer">先前所述的原因</a>，不必考虑能否为暂存缓冲区创建混叠图像：
 </p>
 <pre class="code">
-<span class="kw">void</span> <span class="fn">Create_Internal</span>(<span class="type">VkFormat</span> format_initial, <span class="type">VkFormat</span> format_final, <span class="kw">bool</span> generateMipmap) {
-    <span class="type">uint32_t</span> mipLevelCount = generateMipmap ? <span class="sfn">CalculateMipLevelCount</span>(extent) : 1;
-    <span class="fn">CreateImageMemory</span>(<span class="enum">VK_IMAGE_TYPE_2D</span>, format_final, { extent.width, extent.height, 1 }, mipLevelCount, layerCount);
-    <span class="fn">CreateImageView</span>(<span class="enum">VK_IMAGE_VIEW_TYPE_2D_ARRAY</span>, format_final, mipLevelCount, layerCount);
-    <span class="kw">if</span> (format_initial == format_final)
+<span class="kw">void</span> <span class="fn">Create_Internal</span>(<span class="type">VkFormat</span> <span class="par">format_initial</span>, <span class="type">VkFormat</span> <span class="par">format_final</span>, <span class="kw">bool</span> <span class="par">generateMipmap</span>) {
+    <span class="type">uint32_t</span> mipLevelCount = <span class="par">generateMipmap</span> ? <span class="sfn">CalculateMipLevelCount</span>(extent) : 1;
+    <span class="fn">CreateImageMemory</span>(<span class="enum">VK_IMAGE_TYPE_2D</span>, <span class="par">format_final</span>, { extent.width, extent.height, 1 }, mipLevelCount, layerCount);
+    <span class="fn">CreateImageView</span>(<span class="enum">VK_IMAGE_VIEW_TYPE_2D_ARRAY</span>, <span class="par">format_final</span>, mipLevelCount, layerCount);
+    <span class="kw">if</span> (<span class="par">format_initial</span> == <span class="par">format_final</span>)
         <span class="sfn">CopyBlitAndGenerateMipmap2d</span>(<span class="type">stagingBuffer</span>::<span class="sfn">Buffer_MainThread</span>(), imageMemory.<span class="fn">Image</span>(), imageMemory.<span class="fn">Image</span>(), extent, mipLevelCount, layerCount);
-    <span class="kw">else</span>
-        <span class="kw">if</span> (<span class="type">VkImage</span> image_conversion = <span class="type">stagingBuffer</span>::<span class="sfn">AliasedImage2d_MainThread</span>(format_initial, extent))
-            <span class="sfn">BlitAndGenerateMipmap2d</span>(image_conversion, imageMemory.<span class="fn">Image</span>(), extent, mipLevelCount, 1);
-        <span class="kw">else</span> {
-            <span class="type">VkImageCreateInfo</span> imageCreateInfo = {
-                .imageType = <span class="enum">VK_IMAGE_TYPE_2D</span>,
-                .format = format_initial,
-                .extent = { extent.width, extent.height, 1 },
-                .mipLevels = 1,
-                .arrayLayers = layerCount,
-                .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
-                .usage = <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span> | <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>
-            };
-            vulkan::<span class="type">imageMemory</span> imageMemory_conversion(imageCreateInfo, <span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>);
-            <span class="sfn">CopyBlitAndGenerateMipmap2d</span>(<span class="type">stagingBuffer</span>::<span class="sfn">Buffer_MainThread</span>(), imageMemory_conversion.<span class="fn">Image</span>(), imageMemory.<span class="fn">Image</span>(), extent, mipLevelCount, layerCount);
-        }
+    <span class="kw">else</span> {
+        <span class="type">VkImageCreateInfo</span> imageCreateInfo = {
+            .imageType = <span class="enum">VK_IMAGE_TYPE_2D</span>,
+            .format = <span class="par">format_initial</span>,
+            .extent = { extent.width, extent.height, 1 },
+            .mipLevels = 1,
+            .arrayLayers = layerCount,
+            .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+            .usage = <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span> | <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>
+        };
+        vulkan::<span class="type">imageMemory</span> imageMemory_conversion(imageCreateInfo, <span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>);
+        <span class="sfn">CopyBlitAndGenerateMipmap2d</span>(<span class="type">stagingBuffer</span>::<span class="sfn">Buffer_MainThread</span>(), imageMemory_conversion.<span class="fn">Image</span>(), imageMemory.<span class="fn">Image</span>(), extent, mipLevelCount, layerCount);
+    }
 }
 </pre></section>
 <section id="id2">
