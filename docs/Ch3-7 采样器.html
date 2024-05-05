@@ -290,18 +290,18 @@
     <span class="type">VkSampler</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
 <span class="kw">public</span>:
     <span class="fn">sampler</span>() = <span class="kw">default</span>;
-    <span class="fn">sampler</span>(<span class="type">VkSamplerCreateInfo</span>&amp; createInfo) {
-        <span class="fn">Create</span>(createInfo);
+    <span class="fn">sampler</span>(<span class="type">VkSamplerCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="fn">Create</span>(<span class="par">createInfo</span>);
     }
-    <span class="fn">sampler</span>(<span class="type">sampler</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    <span class="fn">sampler</span>(<span class="type">sampler</span>&amp;&amp; <span class="par">other</span>) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
     <span class="fn">~sampler</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroySampler</span>); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
     <span class="cmt">//Non-const Function</span>
-    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkSamplerCreateInfo</span>&amp; createInfo) {
-        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO</span>;
-        <span class="type">VkResult</span> result = vkCreateSampler(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkSamplerCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateSampler</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ sampler ] ERROR\nFailed to create a sampler!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;

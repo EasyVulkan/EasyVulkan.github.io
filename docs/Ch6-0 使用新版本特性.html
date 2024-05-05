@@ -270,10 +270,7 @@
     <span class="kw">else</span>
         <span class="fn">vkGetPhysicalDeviceFeatures</span>(physicalDevice, &amp;physicalDeviceFeatures.features);
 }
-</pre>
-<p>
-    事情没完，请向下完整阅读本节。
-</p></section>
+</pre></section>
 <section id="id2">
 <h2>获取物理设备属性和物理设备内存属性<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
 <p>
@@ -337,7 +334,7 @@
     <span class="type">VkPhysicalDeviceVulkan11Properties</span> physicalDeviceVulkan11Properties;<span class="cmt">//Provided by VK_API_VERSION_1_2</span>
     <span class="type">VkPhysicalDeviceVulkan12Properties</span> physicalDeviceVulkan12Properties;
     <span class="type">VkPhysicalDeviceVulkan13Properties</span> physicalDeviceVulkan13Properties;
-    <span class="type">VkPhysicalDeviceMemoryProperties2</span> physicalDeviceMemoryProperties;   <span class="cmt">//不存在VkPhysicalDeviceVulkan11MemoryProperties等</span>
+    <span class="type">VkPhysicalDeviceMemoryProperties2</span> physicalDeviceMemoryProperties;   <span class="cmt">//截至Vulkan1.3为止，不存在VkPhysicalDeviceVulkan11MemoryProperties等结构体</span>
     <span class="cmt">//获取物理设备属性，逻辑跟GetPhysicalDeviceFeatures()一样，解说略</span>
     <span class="kw">void</span> <span class="type">GetPhysicalDeviceProperties</span>() {
         <span class="kw">if</span> (apiVersion &gt;= <span class="mcr">VK_API_VERSION_1_1</span>) {
@@ -670,7 +667,7 @@
 }
 </pre>
 <p>
-    事情还没完，标准中规定：如果开启的设备特性由<span class="type">VkPhysicalDeviceFeatures2</span>而非<span class="type">VkPhysicalDeviceFeatures</span>指定，那么<span class="type">VkPhysicalDeviceFeatures2</span>被接在<span class="type">VkDeviceCreateInfo</span>的pNext链中，而<span class="type">VkDeviceCreateInfo</span>::pEnabledFeatures必须为空指针：
+    事情没完，标准中规定：如果开启的设备特性由<span class="type">VkPhysicalDeviceFeatures2</span>而非<span class="type">VkPhysicalDeviceFeatures</span>指定，那么<span class="type">VkPhysicalDeviceFeatures2</span>被接在<span class="type">VkDeviceCreateInfo</span>的pNext链中，而<span class="type">VkDeviceCreateInfo</span>::pEnabledFeatures必须为空指针：
 </p>
 <pre class="code">
 <span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="type">VkDeviceCreateFlags</span> flags = 0) {
@@ -678,7 +675,7 @@
     <span class="fn">GetPhysicalDeviceFeatures</span>();
     <span class="type">VkDeviceCreateInfo</span> deviceCreateInfo = {
         .sType = <span class="enum">VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO</span>,
-        .pNext = pNext_deviceCreateInfo,
+        <span class="cmt">//.pNext = pNext_deviceCreateInfo, //若pNext_deviceCreateInfo为nullptr，在此赋值没有意义，到执行SetPNext(...)后再赋值pNext</span>
         .flags = flags,
         .queueCreateInfoCount = queueCreateInfoCount,
         .pQueueCreateInfos = queueCreateInfos,
@@ -687,9 +684,10 @@
         <span class="cmt">//.pEnabledFeatures = &amp;physicalDeviceFeatures</span>
     };
     <span class="kw">if</span> (apiVersion &gt;= <span class="mcr">VK_API_VERSION_1_1</span>)
-        <span class="sfn">SetPNext</span>(<span class="kw">const_cast</span>&lt;<span class="kw">void</span>*&amp;&gt;(deviceCreateInfo.pNext), &amp;physicalDeviceFeatures);
+        <span class="sfn">SetPNext</span>(pNext_deviceCreateInfo, &amp;physicalDeviceFeatures);
     <span class="kw">else</span>
         deviceCreateInfo.pEnabledFeatures = &amp;physicalDeviceFeatures.features;
+    deviceCreateInfo.pNext = pNext_deviceCreateInfo;
     <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkCreateDevice</span>(physicalDevice, &amp;deviceCreateInfo, <span class="kw">nullptr</span>, &amp;device)) {
         outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a vulkan logical device!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
@@ -697,15 +695,6 @@
     <span class="cmt">/*...*/</span>
 }
 </pre>
-<ul>
-    <li>
-        <p>
-            这里<span class="sfn">SetPNext</span>(...)的首个参数是<code><span class="kw">const_cast</span>&lt;<span class="kw">void</span>*&amp;&gt;(deviceCreateInfo.pNext)</code>，而非pNext_deviceCreateInfo，这是为了防止pNext_deviceCreateInfo为<span class="kw">nullptr</span>的情况（这种情况下，<span class="sfn">SetPNext</span>(...)导致pNext_deviceCreateInfo被赋值为&amp;physicalDeviceFeatures，但<span class="var">deviceCreateInfo.pEnabledFeatures</span>仍为<span class="kw">nullptr</span>）。
-            <br>
-            可以将<span class="var">deviceCreateInfo.pEnabledFeatures</span>的赋值移到<span class="kw">if</span>-<span class="kw">else</span>之后来免除<span class="kw">const_cast</span>。
-        </p>
-    </li>
-</ul>
 <p>
     事情还是没完，上述代码有个隐藏的风险。
     <br>

@@ -281,7 +281,7 @@ namespace vulkan {
 			};
 			VkResult result = vkWaitSemaphores(graphicsBase::Base().Device(), &waitInfo, UINT64_MAX);
 			if (result)
-				outStream <<std::format("[ timelineSemaphore ] ERROR\nFailed to wait for semaphores!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ timelineSemaphore ] ERROR\nFailed to wait for semaphores!\nError code: {}\n", int32_t(result));
 			return result;
 		}
 	};
@@ -1442,6 +1442,49 @@ namespace vulkan {
 	};
 
 	//Query
+	class occlusionQueries {
+	protected:
+		queryPool queryPool;
+		std::vector<uint32_t> passingSampleCounts;
+	public:
+		occlusionQueries() = default;
+		occlusionQueries(uint32_t capacity) {
+			Create(capacity);
+		}
+		//Getter
+		operator VkQueryPool() const { return queryPool; }
+		const VkQueryPool* Address() const { return queryPool.Address(); }
+		uint32_t Capacity() const { return passingSampleCounts.capacity(); }
+		uint32_t PassingSampleCount(uint32_t index) const { return passingSampleCounts[index]; }
+		//Const Function
+		void CmdReset(VkCommandBuffer commandBuffer) const {
+			queryPool.CmdReset(commandBuffer, 0, Capacity());
+		}
+		void CmdBegin(VkCommandBuffer commandBuffer, uint32_t queryIndexCounter) const {
+			queryPool.CmdBegin(commandBuffer, queryIndexCounter);
+		}
+		void CmdEnd(VkCommandBuffer commandBuffer, uint32_t& queryIndexCounter) const {
+			queryPool.CmdEnd(commandBuffer, queryIndexCounter++);
+		}
+		/*For GPU-driven occlusion culling*/
+		void CmdCopyResults(VkCommandBuffer commandBuffer, uint32_t firstQueryIndex, uint32_t queryCount, VkBuffer buffer_dst, VkDeviceSize offset_dst, VkDeviceSize stride) const {
+			queryPool.CmdCopyResults(commandBuffer, firstQueryIndex, queryCount, buffer_dst, offset_dst, stride, VK_QUERY_RESULT_WAIT_BIT);
+		}
+		//Non-const Function
+		void Create(uint32_t capacity) {
+			passingSampleCounts.resize(capacity);
+			passingSampleCounts.shrink_to_fit();
+			queryPool.Create(VK_QUERY_TYPE_OCCLUSION, Capacity());
+		}
+		void Recreate(uint32_t capacity) {
+			graphicsBase::Base().WaitIdle();
+			queryPool.~queryPool();
+			Create(capacity);
+		}
+		result_t GetResults(uint32_t queryCount) {
+			return queryPool.GetResults(0, queryCount, queryCount * 4, passingSampleCounts.data(), 4);
+		}
+	};
 	class pipelineStatisticQuery {
 		enum statisticName {
 			//Input Assembly
@@ -1506,49 +1549,6 @@ namespace vulkan {
 		}
 		result_t GetResults() {
 			return queryPool.GetResults(0, 1, sizeof statistics, statistics, sizeof statistics);
-		}
-	};
-	class occlusionQueries {
-	protected:
-		queryPool queryPool;
-		std::vector<uint32_t> passingSampleCounts;
-	public:
-		occlusionQueries() = default;
-		occlusionQueries(uint32_t capacity) {
-			Create(capacity);
-		}
-		//Getter
-		operator VkQueryPool() const { return queryPool; }
-		const VkQueryPool* Address() const { return queryPool.Address(); }
-		uint32_t Capacity() const { return passingSampleCounts.capacity(); }
-		uint32_t PassingSampleCount(uint32_t index) const { return passingSampleCounts[index]; }
-		//Const Function
-		void CmdReset(VkCommandBuffer commandBuffer) const {
-			queryPool.CmdReset(commandBuffer, 0, Capacity());
-		}
-		void CmdBegin(VkCommandBuffer commandBuffer, uint32_t queryIndexCounter) const {
-			queryPool.CmdBegin(commandBuffer, queryIndexCounter);
-		}
-		void CmdEnd(VkCommandBuffer commandBuffer, uint32_t& queryIndexCounter) const {
-			queryPool.CmdEnd(commandBuffer, queryIndexCounter++);
-		}
-		/*For GPU-driven occlusion culling*/
-		void CmdCopyResults(VkCommandBuffer commandBuffer, uint32_t firstQueryIndex, uint32_t queryCount, VkBuffer buffer_dst, VkDeviceSize offset_dst, VkDeviceSize stride) const {
-			queryPool.CmdCopyResults(commandBuffer, firstQueryIndex, queryCount, buffer_dst, offset_dst, stride, VK_QUERY_RESULT_WAIT_BIT);
-		}
-		//Non-const Function
-		void Create(uint32_t capacity) {
-			passingSampleCounts.resize(capacity);
-			passingSampleCounts.shrink_to_fit();
-			queryPool.Create(VK_QUERY_TYPE_OCCLUSION, Capacity());
-		}
-		void Recreate(uint32_t capacity) {
-			graphicsBase::Base().WaitIdle();
-			queryPool.~queryPool();
-			Create(capacity);
-		}
-		result_t GetResults(uint32_t queryCount) {
-			return queryPool.GetResults(0, queryCount, queryCount * 4, passingSampleCounts.data(), 4);
 		}
 	};
 	class timestampQueries {

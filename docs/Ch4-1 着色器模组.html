@@ -895,8 +895,13 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
 </p>
 <pre class="code">
 <span class="cmt">//输入</span>
+<span class="kw">layout</span>(location = 索引) <span class="kw">in</span> 插值修饰符 类型 名称;
+<span class="cmt">//或</span>
 <span class="kw">layout</span>(location = 索引) 插值修饰符 <span class="kw">in</span> 类型 名称;
+
 <span class="cmt">//输出，若为片段着色器的输出，location为颜色附件索引</span>
+<span class="kw">layout</span>(location = 索引) <span class="kw">out</span> 插值修饰符 类型 名称;
+<span class="cmt">//或</span>
 <span class="kw">layout</span>(location = 索引) 插值修饰符 <span class="kw">out</span> 类型 名称;
 </pre>
 <ul>
@@ -912,7 +917,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
     </li>
     <li>
         <p>
-            相应索引的颜色附件对应创建渲染通道时，<a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkSubpassDescription">VkSubpassDescription</a>::pColorAttachments所指数组中相应<a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkAttachmentReference">VkAttachmentReference</a>元素代表的颜色附件。
+            相应索引的颜色附件对应创建渲染通道时，<span class="type">VkSubpassDescription</span>::pColorAttachments所指数组中相应<span class="type">VkAttachmentReference</span>元素代表的颜色附件。
         </p>
     </li>
 </ul><section id="id11">
@@ -1022,7 +1027,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
     </li>
     <li>
         <p>
-            实例可以为数组，对应的描述符亦构成数组（创建相应描述符布局时<a href="https://renderdoc.org/vkspec_chunked/chap14.html#VkDescriptorSetLayoutBinding">VkDescriptorSetLayoutBinding</a>::descriptorCount大于1）。
+            实例可以为数组，对应的描述符亦构成数组（创建相应描述符布局时<span class="type">VkDescriptorSetLayoutBinding</span>::descriptorCount大于1）。
         </p>
     </li>
     <li>

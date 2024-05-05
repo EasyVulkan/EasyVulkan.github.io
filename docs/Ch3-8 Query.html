@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch3-8 Query &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html">Ch3-7 采样器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VKBase%2B.h.html">Ch5-0 VKBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch6-1 无图像帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html">Ch6-2 动态渲染</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%BB%98%E5%88%B6.html">Ch7-3 初识实例化绘制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-4 初识Push Constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-5 初识Uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第八章 简单示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html">Ch8-3 延迟渲染</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html">Ch8-4 预乘Alpha</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">附录</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ap1-1%20%E8%BF%90%E8%A1%8C%E6%9C%9F%E7%BC%96%E8%AF%91GLSL.html">Ap1-1 运行期编译GLSL</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch3-8 Query</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch3-8-query">
+<h1>Ch3-8 Query<a class="headerlink" href="#ch3-8-query" title="Permalink to this heading"></a></h1>
+<p>
+    Vulkan中提供了一种用来取得Vulkan命令执行信息的机制，称之为查询（query）。
+    <br>
+    相比其他Vulkan对象对应的专有名词而言，“查询”这个词实在太宽泛，本套教程中以query称之。
+</p><section id="query-pool">
+<h2>Query Pool<a class="headerlink" href="#query-pool" title="Permalink to this heading"></a></h2>
+<p>
+    查询池（<span class="type">VkQueryPool</span>）是用于管理查询的Vulkan对象。
+</p><section id="id1">
+<h3>创建查询池<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap18.html#vkCreateQueryPool">vkCreateQueryPool</a>(...)创建采样器：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap18.html#vkCreateQueryPool">vkCreateQueryPool</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const</span> <span class="type">VkQueryPoolCreateInfo</span>* pCreateInfo</p></td>
+            <td><p>指向<span class="type">VkQueryPool</span>的创建信息</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="kw">const</span> <span class="type">VkAllocationCallbacks</span>* pAllocator</p></td>
+            <td><p></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkQueryPool</span>* pQueryPool</p></td>
+            <td><p>若执行成功，将查询池的handle写入*pQueryPool</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap18.html#VkQueryPoolCreateInfo">VkQueryPoolCreateInfo</a> 的成员说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkStructureType</span> sType</p></td>
+            <td><p>结构体的类型，本处必须是<span class="enum">VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">const void</span>* pNext</p></td>
+            <td><p>如有必要，指向一个用于扩展该结构体的结构体</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkQueryPoolCreateFlags</span> flags</p></td>
+            <td><p>到Vulkan1.3为止没用</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkQueryType</span> queryType</p></td>
+            <td><p>查询的类型</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> queryCount</p></td>
+            <td><p>查询的个数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkQueryPipelineStatisticFlags</span> pipelineStatistics</p></td>
+            <td><p>如果查询的类型为管线统计查询，在此指定需要进行哪些统计</p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap18.html#VkQueryType">VkQueryType</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_QUERY_TYPE_OCCLUSION </span>表示遮挡查询</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_QUERY_TYPE_PIPELINE_STATISTICS </span>表示管线统计查询</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_QUERY_TYPE_TIMESTAMP </span>表示时间戳查询</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    接下来先对<span class="type">VkQueryPool</span>进行封装，再逐一解说以上三种查询类型及各种相关函数。
+</p></section>
+<section id="querypool">
+<h3>封装为queryPool类<a class="headerlink" href="#querypool" title="Permalink to this heading"></a></h3>
+<p>
+    向<span class="path">VKBase.h</span>，vulkan命名空间中添加以下代码：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">queryPool</span> {
+    <span class="type">VkQueryPool</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
+<span class="kw">public</span>:
+    <span class="fn">queryPool</span>() = <span class="kw">default</span>;
+    <span class="fn">queryPool</span>(<span class="type">VkQueryPoolCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="fn">Create</span>(<span class="par">createInfo</span>);
+    }
+    <span class="fn">queryPool</span>(<span class="type">VkQueryType</span> <span class="par">queryType</span>, <span class="type">uint32_t</span> <span class="par">queryCount</span>, <span class="type">VkQueryPipelineStatisticFlags</span> <span class="par">pipelineStatistics</span> = 0 <span class="cmt">/*VkQueryPoolCreateFlags flags*/</span>) {
+        <span class="fn">Create</span>(<span class="par">queryType</span>, <span class="par">queryCount</span>, <span class="par">pipelineStatistics</span>);
+    }
+    <span class="fn">queryPool</span>(<span class="type">queryPool</span>&amp;&amp; <span class="par">other</span>) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    <span class="fn">~queryPool</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyQueryPool</span>); }
+    <span class="cmt">//Getter</span>
+    <span class="mcr">DefineHandleTypeOperator</span>;
+    <span class="mcr">DefineAddressFunction</span>;
+    <span class="cmt">//Const Function</span>
+    <span class="kw">void</span> <span class="fn">CmdReset</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">uint32_t</span> <span class="par">firstQueryIndex</span>, <span class="type">uint32_t</span> <span class="par">queryCount</span>) <span class="kw">const</span> {
+        <span class="fn">vkCmdResetQueryPool</span>(<span class="par">commandBuffer</span>, handle, <span class="par">firstQueryIndex</span>, <span class="par">queryCount</span>);
+    }
+    <span class="kw">void</span> <span class="fn">CmdBegin</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">uint32_t</span> <span class="par">queryIndex</span>, <span class="type">VkQueryControlFlags</span> <span class="par">flags</span> = 0) <span class="kw">const</span> {
+        <span class="fn">vkCmdBeginQuery</span>(<span class="par">commandBuffer</span>, handle, <span class="par">queryIndex</span>, <span class="par">flags</span>);
+    }
+    <span class="kw">void</span> <span class="fn">CmdEnd</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">uint32_t</span> <span class="par">queryIndex</span>) <span class="kw">const</span> {
+        <span class="fn">vkCmdEndQuery</span>(<span class="par">commandBuffer</span>, handle, <span class="par">queryIndex</span>);
+    }
+    <span class="kw">void</span> <span class="fn">CmdWriteTimestamp</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">VkPipelineStageFlagBits</span> <span class="par">pipelineStage</span>, <span class="type">uint32_t</span> <span class="par">queryIndex</span>) <span class="kw">const</span> {
+        <span class="fn">vkCmdWriteTimestamp</span>(<span class="par">commandBuffer</span>, <span class="par">pipelineStage</span>, handle, <span class="par">queryIndex</span>);
+    }
+    <span class="kw">void</span> <span class="fn">CmdCopyResults</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">uint32_t</span> <span class="par">firstQueryIndex</span>, <span class="type">uint32_t</span> <span class="par">queryCount</span>,
+        <span class="type">VkBuffer</span> <span class="par">buffer_dst</span>, <span class="type">VkDeviceSize</span> <span class="par">offset_dst</span>, <span class="type">VkDeviceSize</span> <span class="par">stride</span>, <span class="type">VkQueryResultFlags</span> <span class="par">flags</span> = 0) <span class="kw">const</span> {
+        <span class="fn">vkCmdCopyQueryPoolResults</span>(<span class="par">commandBuffer</span>, handle, <span class="par">firstQueryIndex</span>, <span class="par">queryCount</span>, <span class="par">buffer_dst</span>,<span class="par">offset_dst</span>, <span class="par">stride</span>, <span class="par">flags</span>);
+    }
+    <span class="type">result_t</span> <span class="fn">GetResults</span>(<span class="type">uint32_t</span> <span class="par">firstQueryIndex</span>, <span class="type">uint32_t</span> <span class="par">queryCount</span>, <span class="type">size_t</span> <span class="par">dataSize</span>, <span class="kw">void</span>* <span class="par">pData_dst</span>, <span class="type">VkDeviceSize</span> <span class="par">stride</span>, <span class="type">VkQueryResultFlags</span> <span class="par">flags</span> = 0) <span class="kw">const</span> {
+        <span class="type">VkResult</span> result = <span class="fn">vkGetQueryPoolResults</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), <span class="par">firstQueryIndex</span>, <span class="par">queryCount</span>, <span class="par">dataSize</span>, <span class="par">pData_dst</span>, <span class="par">stride</span>, <span class="par">flags</span>);
+        <span class="kw">if</span> (result)
+            result > 0 ?
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ queryPool ] WARNING\nNot all queries are available!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result)) :
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ queryPool ] ERROR\nFailed to get query pool results!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="cmt">/*Provided by VK_API_VERSION_1_2*/</span>
+    <span class="kw">void</span> <span class="fn">Reset</span>(<span class="type">uint32_t</span> <span class="par">firstQueryIndex</span>, <span class="type">uint32_t</span> <span class="par">queryCount</span>) {
+        <span class="fn">vkResetQueryPool</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, <span class="par">firstQueryIndex</span>, <span class="par">queryCount</span>);
+    }
+    <span class="cmt">//Non-const Function</span>
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkQueryPoolCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateQueryPool</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ queryPool ] ERROR\nFailed to create a query pool!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        <span class="kw">return</span> result;
+    }
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkQueryType</span> <span class="par">queryType</span>, <span class="type">uint32_t</span> <span class="par">queryCount</span>, <span class="type">VkQueryPipelineStatisticFlags</span> <span class="par">pipelineStatistics</span> = 0 <span class="cmt">/*VkQueryPoolCreateFlags flags*/</span>) {
+        <span class="type">VkQueryPoolCreateInfo</span> createInfo = {
+            .queryType = <span class="par">queryType</span>,
+            .queryCount = <span class="par">queryCount</span>,
+            .pipelineStatistics = <span class="par">pipelineStatistics</span>
+        };
+        <span class="kw">return</span> <span class="fn">Create</span>(createInfo);
+    }
+};
+</pre></section>
+</section>
+<section id="id2">
+<h2>遮挡查询<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<p>
+
+</p></section>
+<section id="id3">
+<h2>管线统计查询<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<p>
+    可通过管线统计查询（pipeline statistics query）进行以下统计：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap18.html#VkQueryPipelineStatisticFlagBits">VkQueryPipelineStatisticFlagBits</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_QUERY_PIPELINE_STATISTIC_INPUT_ASSEMBLY_VERTICES_BIT                    </span>表示输入的顶点个数，<strong>可能</strong>计算不构成完整图元的顶点</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_QUERY_PIPELINE_STATISTIC_INPUT_ASSEMBLY_PRIMITIVES_BIT                  </span>表示输入的图元个数，<strong>可能</strong>计算不完整的图元</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_QUERY_PIPELINE_STATISTIC_VERTEX_SHADER_INVOCATIONS_BIT                  </span>表示顶点着色器的执行次数</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_QUERY_PIPELINE_STATISTIC_GEOMETRY_SHADER_INVOCATIONS_BIT                </span>表示几何着色器的执行次数</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_QUERY_PIPELINE_STATISTIC_GEOMETRY_SHADER_PRIMITIVES_BIT                 </span>表示几何着色器生成的图元个数</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_QUERY_PIPELINE_STATISTIC_CLIPPING_INVOCATIONS_BIT                       </span>表示到达图元剪裁阶段的图元个数</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_QUERY_PIPELINE_STATISTIC_CLIPPING_PRIMITIVES_BIT                        </span>表示图元剪裁阶段输出的图元个数，计数方法为实现特定</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_QUERY_PIPELINE_STATISTIC_FRAGMENT_SHADER_INVOCATIONS_BIT                </span>表示片段着色器的执行次数，<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#gl-helperinvocation">辅助调用</a>被计算在内</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_CONTROL_SHADER_PATCHES_BIT        </span>表示细分控制着色器处理的patch的个数</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_EVALUATION_SHADER_INVOCATIONS_BIT </span>表示细分求值着色器的执行次数</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_QUERY_PIPELINE_STATISTIC_COMPUTE_SHADER_INVOCATIONS_BIT                 </span>表示计算着色器的执行次数</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            图元剪裁（primitive cliping）阶段指根据视见体、<a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html#gl-clipdistancegl">gl_ClipDistance</a>、<a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html#gl-culldistance">gl_CullDistance</a>，剪裁和丢弃图元的阶段。
+        </p>
+    </li>
+    <li>
+        <p>
+            到达图元剪裁阶段的图元个数，与片段着色器前最后一个着色器阶段生成的图元个数一致。
+        </p>
+    </li>
+    <li>
+        <p>
+            视见体（view volume）即齐次剪裁空间的可视范围，根据视见体进行剪裁，等价于只保留<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id4">NDC坐标</a>在可渲染范围内的片段。如果绘制的图元全部在范围之外，图元剪裁阶段输出的图元个数为0。
+        </p>
+    </li>
+</ul></section>
+<section id="id4">
+<h2>时间戳查询<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021-2024, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
