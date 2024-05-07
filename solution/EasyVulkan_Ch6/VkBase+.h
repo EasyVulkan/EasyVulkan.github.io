@@ -1373,11 +1373,11 @@ namespace vulkan {
 		void CmdReset(VkCommandBuffer commandBuffer) const {
 			queryPool.CmdReset(commandBuffer, 0, Capacity());
 		}
-		void CmdBegin(VkCommandBuffer commandBuffer, uint32_t queryIndexCounter) const {
-			queryPool.CmdBegin(commandBuffer, queryIndexCounter);
+		void CmdBegin(VkCommandBuffer commandBuffer, uint32_t queryIndex, bool isPrecise = false) const {
+			queryPool.CmdBegin(commandBuffer, queryIndex, isPrecise);
 		}
-		void CmdEnd(VkCommandBuffer commandBuffer, uint32_t& queryIndexCounter) const {
-			queryPool.CmdEnd(commandBuffer, queryIndexCounter++);
+		void CmdEnd(VkCommandBuffer commandBuffer, uint32_t queryIndex) const {
+			queryPool.CmdEnd(commandBuffer, queryIndex);
 		}
 		/*For GPU-driven occlusion culling*/
 		void CmdCopyResults(VkCommandBuffer commandBuffer, uint32_t firstQueryIndex, uint32_t queryCount, VkBuffer buffer_dst, VkDeviceSize offset_dst, VkDeviceSize stride) const {
@@ -1393,6 +1393,9 @@ namespace vulkan {
 			graphicsBase::Base().WaitIdle();
 			queryPool.~queryPool();
 			Create(capacity);
+		}
+		result_t GetResults() {
+			return GetResults(Capacity());
 		}
 		result_t GetResults(uint32_t queryCount) {
 			return queryPool.GetResults(0, queryCount, queryCount * 4, passingSampleCounts.data(), 4);
@@ -1483,8 +1486,8 @@ namespace vulkan {
 		void CmdReset(VkCommandBuffer commandBuffer) const {
 			queryPool.CmdReset(commandBuffer, 0, Capacity());
 		}
-		void CmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage, uint32_t& queryIndexCounter) const {
-			queryPool.CmdWriteTimestamp(commandBuffer, pipelineStage, queryIndexCounter++);
+		void CmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage, uint32_t queryIndex) const {
+			queryPool.CmdWriteTimestamp(commandBuffer, pipelineStage, queryIndex);
 		}
 		//Non-const Function
 		void Create(uint32_t capacity) {
@@ -1496,6 +1499,9 @@ namespace vulkan {
 			graphicsBase::Base().WaitIdle();
 			queryPool.~queryPool();
 			Create(capacity);
+		}
+		result_t GetResults() {
+			return GetResults(Capacity());
 		}
 		result_t GetResults(uint32_t queryCount) {
 			return queryPool.GetResults(0, queryCount, queryCount * 4, timestamps.data(), 4);

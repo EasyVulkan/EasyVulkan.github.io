@@ -64,6 +64,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html">Ch3-7 采样器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-8%20%E6%9F%A5%E8%AF%A2.html">Ch3-8 查询</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
 <ul class="current">
@@ -252,16 +253,16 @@
 <p>
     gl_ClipDistance数组中的每个元素代表着到不同剪裁平面的距离。
     <br>
-    <strong>“剪裁”的效果大致等价于：对于任意片段，若gl_ClipDistance数组中的任一元素数值小于0，则该片段被丢弃。</strong>
+    “剪裁”的效果大致等价于：对于任意片段，若gl_ClipDistance数组中的任一元素数值小于0，则该片段被丢弃。
     <br>
-    上述只是一种直观且便于理解的解释，因为<strong>这里所谓的剪裁发生在栅格化前</strong>，实际上并不涉及片段。
+    上述只是一种直观且便于理解的解释，因为<strong>这里所谓的剪裁发生在栅格化前</strong>，其底层实现可能是修改图元，并不需要涉及片段。
 </p>
 <p>
     <strong>剪裁可能会生成新的顶点</strong>，例如：
     <br>
     若三角形有一个角被裁掉，会生成两个新的顶点构成新的边，变成一个四边形（即两个三角形图元）。
     <br>
-    （该行为的结果影响<a class="reference internal" href="Ch3-8%20Query.html#id3">管线统计</a>）
+    （该行为的结果影响<a class="reference internal" href="Ch3-8%20%E6%9F%A5%E8%AF%A2.html#id7">管线统计</a>）
 </p>
 <p>
     要使用gl_ClipDistance，需开启<a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html#devicefeature">设备特性</a>中的shaderClipDistance，gl_ClipDistance数组元素个数最大不超过硬件限制中的maxClipDistances。
@@ -286,7 +287,7 @@
 <p>
     gl_CullDistance数组中的每个元素代表着到不同剔除平面的距离，则：
     <br>
-    <strong>对于任意图元，若构成其图形的所有顶点皆满足到某一剔除平面的距离小于0（比如gl_CullDistance[0]都小于0），则图元被整个丢弃。</strong>
+    对于任意图元，若构成其图形的所有顶点皆满足到某一剔除平面的距离小于0（比如gl_CullDistance[0]都小于0），则图元被整个丢弃。
 </p>
 <p>
     要使用gl_CullDistance，需开启<a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html#devicefeature">设备特性</a>中的shaderCullDistance，gl_CullDistance数组元素个数最大不超过硬件限制中的maxCullDistances。

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ch3-8 Query &mdash; EasyVulkan</title>
+  <title>Ch3-8 查询 &mdash; EasyVulkan</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/theme.css" type="text/css" />
@@ -19,7 +19,9 @@
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
-    <link rel="search" title="搜索" href="search.html" /> 
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ch4-1 着色器模组" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html" />
+    <link rel="prev" title="Ch3-7 采样器" href="Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -54,7 +56,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
@@ -62,6 +64,29 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html">Ch3-7 采样器</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch3-8 查询</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#query-pool">Query Pool</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">创建查询池</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">开始和结束查询</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">获取查询结果</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">重置查询</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#querypool">封装为queryPool类</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">遮挡查询</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">开始和结束遮挡查询</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">管线统计查询</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id8">创建管线统计查询</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">时间戳查询</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id10">写入时间戳</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
 <ul>
@@ -118,7 +143,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Ch3-8 Query</li>
+      <li>Ch3-8 查询</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -127,12 +152,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="ch3-8-query">
-<h1>Ch3-8 Query<a class="headerlink" href="#ch3-8-query" title="Permalink to this heading"></a></h1>
+  <section id="ch3-8">
+<h1>Ch3-8 查询<a class="headerlink" href="#ch3-8" title="Permalink to this heading"></a></h1>
 <p>
     Vulkan中提供了一种用来取得Vulkan命令执行信息的机制，称之为查询（query）。
-    <br>
-    相比其他Vulkan对象对应的专有名词而言，“查询”这个词实在太宽泛，本套教程中以query称之。
 </p><section id="query-pool">
 <h2>Query Pool<a class="headerlink" href="#query-pool" title="Permalink to this heading"></a></h2>
 <p>
@@ -140,7 +163,7 @@
 </p><section id="id1">
 <h3>创建查询池<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
 <p>
-    用<a href="https://renderdoc.org/vkspec_chunked/chap18.html#vkCreateQueryPool">vkCreateQueryPool</a>(...)创建采样器：
+    用<a href="https://renderdoc.org/vkspec_chunked/chap18.html#vkCreateQueryPool">vkCreateQueryPool</a>(...)创建查询池：
 </p>
 <table class="docutils align-default">
     <colgroup>
@@ -233,13 +256,321 @@
             <td><p><span class="enum">VK_QUERY_TYPE_TIMESTAMP </span>表示时间戳查询</p></td>
         </tr>
     </tbody>
+</table></section>
+<section id="id2">
+<h3>开始和结束查询<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<p>
+    在Vulkan核心功能提供的三种查询中，遮挡查询和管线统计查询基于一定范围发生，有开始和结束。
+</p>
+<p>
+    在命令缓冲区中，用<a href="https://renderdoc.org/vkspec_chunked/chap18.html#vkCmdBeginQuery">vkCmdBeginQuery</a>(...)标记查询范围的起始：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap18.html#vkCmdBeginQuery">vkCmdBeginQuery</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandBuffer</span> commandBuffer</p></td>
+            <td><p>命令缓冲区的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkQueryPool</span> queryPool</p></td>
+            <td><p>查询池的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> query</p></td>
+            <td><p>要开始的查询的索引</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkQueryControlFlags</span> flags</p></td>
+            <td><p>自Vulkan1.0到1.3，<span class="enum">VK_QUERY_CONTROL_PRECISE_BIT</span>是唯一可用的bit，相关说明见后文的遮挡查询</p></td>
+        </tr>
+    </tbody>
 </table>
 <p>
-    接下来先对<span class="type">VkQueryPool</span>进行封装，再逐一解说以上三种查询类型及各种相关函数。
-</p></section>
+    在命令缓冲区中，用<a href="https://renderdoc.org/vkspec_chunked/chap18.html#vkCmdEndQuery">vkCmdEndQuery</a>(...)标记查询范围的结束：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap18.html#vkCmdEndQuery">vkCmdEndQuery</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandBuffer</span> commandBuffer</p></td>
+            <td><p>命令缓冲区的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkQueryPool</span> queryPool</p></td>
+            <td><p>查询池的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> query</p></td>
+            <td><p>要结束的查询的索引</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            如果查询在渲染通道外开始，相应地得在渲染通道外结束。
+            <br>
+            如果查询在渲染通道内开始，相应地得在该渲染通道的同一子通道内结束。
+        </p>
+    </li>
+<ul></section>
+<section id="id3">
+<h3>获取查询结果<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<p>
+    在命令缓冲区中，用<a href="https://renderdoc.org/vkspec_chunked/chap18.html#vkCmdCopyQueryPoolResults">vkCmdCopyQueryPoolResults</a>(...)将查询结果拷贝到数据缓冲区：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap18.html#vkCmdCopyQueryPoolResults">vkCmdCopyQueryPoolResults</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandBuffer</span> commandBuffer</p></td>
+            <td><p>命令缓冲区的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkQueryPool</span> queryPool</p></td>
+            <td><p>查询池的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> firstQuery</p></td>
+            <td><p>首个要被拷贝结果的查询的索引</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> queryCount</p></td>
+            <td><p>要被拷贝结果的查询的个数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkBuffer</span> dstBuffer</p></td>
+            <td><p>目标缓冲区</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkDeviceSize</span> dstOffset</p></td>
+            <td><p>查询结果要被拷贝到目标缓冲区中的位置，单位是字节，必须是4的倍数（或8的倍数，见后文）</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkDeviceSize</span> stride</p></td>
+            <td><p>每组查询结果在目标缓冲区中的间距，单位是字节，必须是4的倍数（或8的倍数，见后文）</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkQueryResultFlagBits</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+    </tbody>
+</table>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap18.html#VkQueryResultFlagBits">VkQueryResultFlagBits</a> 的枚举值</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_QUERY_RESULT_64_BIT                </span>如不注明该bit，获取到的每个查询结果为4字节无符号整形，注明该bit时为8字节</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_QUERY_RESULT_WAIT_BIT              </span>表示在获取查询结果前，等待查询的完成</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_QUERY_RESULT_WITH_AVAILABILITY_BIT </span>见后文</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0</p></td>
+            <td><p><span class="enum">VK_QUERY_RESULT_PARTIAL_BIT           </span>见后文</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            注明<span class="enum">VK_QUERY_RESULT_64_BIT</span>时，dstOffset和stride也相应地须是8的倍数。
+        </p>
+    </li>
+    <li>
+        <p>
+            <span class="enum">VK_QUERY_RESULT_WITH_AVAILABILITY_BIT </span>表示在每组查询结果尾端添加一个数值，用于表示是否已完成查询，未完成时为0，已完成则非零。
+            <br>
+            该数值的字节数同查询结果一样，受<span class="enum">VK_QUERY_RESULT_64_BIT</span>影响。
+        </p>
+    </li>
+    <li>
+        <p>
+            若注明<span class="enum">VK_QUERY_RESULT_PARTIAL_BIT</span>，查询尚未完成时获取到的结果，是查询尚未完成时的中间结果。<span class="cmt">//A就是A，这个叫“小泉进次郎式构文”</span>
+            <br>
+            若没有注明<span class="enum">VK_QUERY_RESULT_PARTIAL_BIT</span>，且查询尚未完成，获取到的查询结果未定义（可能是任意不准确的数值）。
+        </p>
+    </li>
+    <li>
+        <p>
+            <span class="enum">VK_QUERY_RESULT_PARTIAL_BIT</span>不适用于时间戳查询（时间戳查询没有操作范围，“写入时间戳”是瞬间性的操作）。
+        </p>
+    </li>
+</ul>
+<p>
+    <span class="fn">vkCmdCopyQueryPoolResults</span>(...)适用于可以在GPU侧直接处理查询结果的情形，比如实现GPU-driven的遮挡剔除。
+    <br>
+    对于管线统计查询和时间戳查询，你可能会更倾向于把查询结果拷贝到主机一侧（要将查询结果显示到屏幕，用计算着色器根据数值生成字符的顶点数据是可行的，不过大部分人应该会用开源GUI的功能来绘制吧）。
+</p>
+<p>
+    在主机（CPU）一侧，用<a href="https://renderdoc.org/vkspec_chunked/chap18.html#vkGetQueryPoolResults">vkGetQueryPoolResults</a>(...)获取查询结果：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap18.html#vkGetQueryPoolResults">vkGetQueryPoolResults</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkQueryPool</span> queryPool</p></td>
+            <td><p>查询池的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> firstQuery</p></td>
+            <td><p>首个要被拷贝结果的查询的索引</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> queryCount</p></td>
+            <td><p>要被拷贝结果的查询的个数</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">size_t</span> dataSize</p></td>
+            <td><p>pData所指向的内存区的容量（虽然该参数如此命名，并不是要你填查询结果的大小），大小须能容纳所有查询结果</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">void</span>* pData</p></td>
+            <td><p>查询结果被拷贝到pData所指向的内存区</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkDeviceSize</span> stride</p></td>
+            <td><p>每组查询结果在目标内存区中的间距，单位是字节，必须是4的倍数（或8的倍数，见前文）</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkQueryResultFlagBits</span> flags</p></td>
+            <td><p></p></td>
+        </tr>
+    </tbody>
+</table></section>
+<section id="id4">
+<h3>重置查询<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<p>
+    进行过查询后，在再次开始同一查询前，必须重置查询（重置还未使用过的查询当然也是可以的）。
+</p>
+<p>
+    在命令缓冲区中，用<a href="https://renderdoc.org/vkspec_chunked/chap18.html#vkCmdResetQueryPool">vkCmdResetQueryPool</a>(...)重置查询：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap18.html#vkCmdResetQueryPool">vkCmdResetQueryPool</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandBuffer</span> commandBuffer</p></td>
+            <td><p>命令缓冲区的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkQueryPool</span> queryPool</p></td>
+            <td><p>查询池的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> firstQuery</p></td>
+            <td><p>首个要被重置的查询的索引</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> queryCount</p></td>
+            <td><p>要被重置的查询的个数</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            必须在渲染通道之外重置查询。
+        </p>
+    </li>
+</ul>
+<p>
+    自Vulkan1.2起，可以在主机（CPU）一侧，用<a href="https://renderdoc.org/vkspec_chunked/chap18.html#vkResetQueryPool">vkResetQueryPool</a>(...)重置查询：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap18.html#vkResetQueryPool">vkResetQueryPool</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkQueryPool</span> queryPool</p></td>
+            <td><p>查询池的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">uint32_t</span> firstQuery</p></td>
+            <td><p>首个要被重置的查询的索引</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> queryCount</p></td>
+            <td><p>要被重置的查询的个数</p></td>
+        </tr>
+    </tbody>
+</table></section>
 <section id="querypool">
 <h3>封装为queryPool类<a class="headerlink" href="#querypool" title="Permalink to this heading"></a></h3>
 <p>
+    接下来先对<span class="type">VkQueryPool</span>进行封装，再逐一解说Vulkan核心功能中提供的三种查询类型及相关函数。
+    <br>
     向<span class="path">VKBase.h</span>，vulkan命名空间中添加以下代码：
 </p>
 <pre class="code">
@@ -276,7 +607,7 @@
         <span class="fn">vkCmdCopyQueryPoolResults</span>(<span class="par">commandBuffer</span>, handle, <span class="par">firstQueryIndex</span>, <span class="par">queryCount</span>, <span class="par">buffer_dst</span>,<span class="par">offset_dst</span>, <span class="par">stride</span>, <span class="par">flags</span>);
     }
     <span class="type">result_t</span> <span class="fn">GetResults</span>(<span class="type">uint32_t</span> <span class="par">firstQueryIndex</span>, <span class="type">uint32_t</span> <span class="par">queryCount</span>, <span class="type">size_t</span> <span class="par">dataSize</span>, <span class="kw">void</span>* <span class="par">pData_dst</span>, <span class="type">VkDeviceSize</span> <span class="par">stride</span>, <span class="type">VkQueryResultFlags</span> <span class="par">flags</span> = 0) <span class="kw">const</span> {
-        <span class="type">VkResult</span> result = <span class="fn">vkGetQueryPoolResults</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), <span class="par">firstQueryIndex</span>, <span class="par">queryCount</span>, <span class="par">dataSize</span>, <span class="par">pData_dst</span>, <span class="par">stride</span>, <span class="par">flags</span>);
+        <span class="type">VkResult</span> result = <span class="fn">vkGetQueryPoolResults</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, <span class="par">firstQueryIndex</span>, <span class="par">queryCount</span>, <span class="par">dataSize</span>, <span class="par">pData_dst</span>, <span class="par">stride</span>, <span class="par">flags</span>);
         <span class="kw">if</span> (result)
             result > 0 ?
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ queryPool ] WARNING\nNot all queries are available!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result)) :
@@ -304,15 +635,36 @@
         <span class="kw">return</span> <span class="fn">Create</span>(createInfo);
     }
 };
-</pre></section>
-</section>
-<section id="id2">
-<h2>遮挡查询<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
-<p>
+</pre>
 
+<p>
+    <span class="cmt">//这里往后还在施工</span>
+    <br>
+    <span class="cmt">//这里往后还在施工</span>
+    <br>
+    <span class="cmt">//这里往后还在施工</span>
 </p></section>
-<section id="id3">
-<h2>管线统计查询<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+</section>
+<section id="id5">
+<h2>遮挡查询<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<p>
+    遮挡查询（occlusion query）可以统计通过了一系列片段测试，最后保留下来的采样点的数量。
+    <br>
+
+    <span class="cmt">//TODO 施工中</span>
+
+</p><section id="id6">
+<h3>开始和结束遮挡查询<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<p>
+    若向<span href="fn">vkCmdBeginQuery</span>(...)的<span class="par">flags</span>参数填入<span class="enum">VK_QUERY_CONTROL_PRECISE_BIT</span>，则查询结果为最终保留下来的采样点个数的精确值（计数方法为实现特定，不同Vulkan实现提供的数值间可能略有偏差）。
+    <br>
+    否则，应当将查询结果视为二值的：在有采样点被保留下来时的查询结果为非零值（对具体数值无要求），所有采样点皆不被保留时的查询结果为0。
+    <br>
+    注明<span class="enum">VK_QUERY_CONTROL_PRECISE_BIT</span>时的开销很可能大于不注明该bit时的开销，在只需要知晓是否会渲染出内容，而不关注具体的采样点数量时，应当注明该bit。
+</p></section>
+</section>
+<section id="id7">
+<h2>管线统计查询<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h2>
 <p>
     可通过管线统计查询（pipeline statistics query）进行以下统计：
 </p>
@@ -324,7 +676,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap18.html#VkQueryPipelineStatisticFlagBits">VkQueryPipelineStatisticFlagBits</a> 的枚举值</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap18.html#VkQueryPipelineStatisticFlagBits">VkQueryPipelineStatisticFlagBits</a> 的枚举值（省略与扩展相关的bit）</p></th>
         </tr>
     </thead>
     <tbody>
@@ -390,16 +742,104 @@
             视见体（view volume）即齐次剪裁空间的可视范围，根据视见体进行剪裁，等价于只保留<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id4">NDC坐标</a>在可渲染范围内的片段。如果绘制的图元全部在范围之外，图元剪裁阶段输出的图元个数为0。
         </p>
     </li>
+</ul>
+<p>
+    管线统计查询可以被用于debug。
+    <br>
+    比如，如果图元剪裁阶段输出的图元个数非0，而片段着色器执行次数为0，那么说明片段没有通过<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#early-fragment-test">早期片段测试</a>，进而检查相关参数来找出问题所在（注：对于这里所述的情况，如果开了深度测试，深度比较方式/深度清屏值的嫌疑很大）。
+</p><section id="id8">
+<h3>创建管线统计查询<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<p>
+    不涉及扩展，<span class="type">VkQueryPipelineStatisticFlagBits</span>的枚举值有11种，各个bit的总和是<code>(1 << 11) - 1</code>，即2047。
+    <br>
+    创建保存1组管线统计查询结果的查询池：
+</p>
+<pre class="code">
+<span class="kw">constexpr</span> <span class="type">uint32_t</span> statisticCount;
+<span class="type">VkQueryPoolCreateInfo</span> createInfo = {
+    .queryType = <span class="enum">VK_QUERY_TYPE_PIPELINE_STATISTICS</span>,
+    .queryCount = 1,
+    .pipelineStatistics = (1 << statisticCount) - 1
+};
+<span class="type">queryPool</span> queryPool(createInfo);
+</pre>
+<p>
+    管线统计查询的结果是整形，根据你向<span class="type">VkQueryPoolCreateInfo</span>::pipelineStatistics提供的数值，各项统计数值按照前述<span class="type">VkQueryPipelineStatisticFlagBits</span>枚举值表格中的顺序排列。
+    <br>
+
+    <span class="cmt">//TODO 施工中</span>
+
+</p></section>
+</section>
+<section id="id9">
+<h2>时间戳查询<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h2>
+<p>
+    在命令缓冲区的执行过程中，可写入时间戳到时间戳查询（timestamp query）。
+    <br>
+    时间戳查询可用于性能测试：两个时间戳相减即为两次写入的间隔时间，即其间命令的执行耗时。
+</p>
+<p>
+    要创建时间戳查询，只需要指定查询类型和查询个数即可：
+</p>
+<pre class="code">
+
+<span class="cmt">//TODO 施工中</span>
+
+</pre><section id="id10">
+<h3>写入时间戳<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
+<p>
+    时间戳查询没有“开始”和“结束”，不对其使用<span class="fn">vkCmdBeginQuery</span>(...)和<span class="fn">vkCmdEndQuery</span>(...)。
+    <br>
+    相应地，在命令缓冲区中，用<a href="https://renderdoc.org/vkspec_chunked/chap18.html#vkCmdWriteTimestamp">vkCmdWriteTimestamp</a>(...)写入时间戳：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="kw">void</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap18.html#vkCmdWriteTimestamp">vkCmdWriteTimestamp</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandBuffer</span> commandBuffer</p></td>
+            <td><p>命令缓冲区的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkPipelineStageFlagBits</span> pipelineStage</p></td>
+            <td><p>需要等待的管线阶段</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkQueryPool</span> queryPool</p></td>
+            <td><p>查询池的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">uint32_t</span> query</p></td>
+            <td><p>被写入时间戳的查询的索引</p></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            该命令定义执行依赖：于该命令前的命令到达pipelineStage所注明的（但凡达到得了的）阶段后，写入时间戳。
+            <br>
+            注意该函数不保证写入时间戳的最晚阶段，Vulkan的实现可能在pipelineStage所注明的阶段后的任何阶段写入时间戳。
+        </p>
+    </li>
 </ul></section>
-<section id="id4">
-<h2>时间戳查询<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
 </section>
 </section>
 
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html" class="btn btn-neutral float-left" title="Ch3-7 采样器" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html" class="btn btn-neutral float-right" title="Ch4-1 着色器模组" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

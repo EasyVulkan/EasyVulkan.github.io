@@ -7,7 +7,7 @@
 2.反馈/交流/答疑，发Discussion。
 
 2024.04.29 [Ch8-4 预乘Alpha](https://easyvulkan.github.io/Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html)完成。<br>
-2024.04.02 代码里加了CMakeLists.txt（我不确定Visual Studio之外是什么效果，谁愿意的话可以fork到私有仓库，帮我改一下然后pull上来）
+2024.04.02 代码里加了CMakeLists.txt（我不确定Visual Studio之外是什么效果，谁愿意的话可以fork到私有仓库，帮我改一下然后pull request给我）
 
 ## 章节目录
 

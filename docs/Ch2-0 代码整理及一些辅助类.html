@@ -78,6 +78,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html">Ch3-7 采样器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-8%20%E6%9F%A5%E8%AF%A2.html">Ch3-8 查询</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
 <ul>
@@ -401,7 +402,7 @@
 <ul>
     <li>
         <p>
-            别把<code><span class="kw">operator decltype</span>(handle)</span></code>写成<code><span class="kw">operator auto</span></code>（除非你是对继承深恶痛绝的的程序员），到占位类型的类型转换函数不能在子类中被<span class="kw">using</span>重设其访问级别。
+            别把<code><span class="kw">operator decltype</span>(handle)</span></code>写成<code><span class="kw">operator auto</span></code>（除非你是对继承深恶痛绝的的程序员），到占位类型的类型转换函数不能在派生类中被<span class="kw">using</span><a class="reference internal" href="Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html#using">重设其访问级别</a>。
         </p>
     </li>
 </ul>
@@ -429,7 +430,7 @@
 <p>
     于是，这个宏能如同函数般被使用，在其之上的部分可以被多次执行，在其之下的部分只会被执行一次，如果在其之下的部分已经执行过了，那么就直接返回括号中的参数。
     <br>
-    用例：<a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html#id4">Ch2-2 创建渲染通道和帧缓冲</a>、<a class="reference internal" href="Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html#id3">Ch8-4 预乘Alpha</a>
+    用例：<a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html#executeonce">Ch2-2 创建渲染通道和帧缓冲</a>
 </p></section>
 </section>
 <section id="id3">

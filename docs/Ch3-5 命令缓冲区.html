@@ -83,6 +83,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html">Ch3-7 采样器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-8%20%E6%9F%A5%E8%AF%A2.html">Ch3-8 查询</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
 <ul>
@@ -300,11 +301,11 @@
     （其实这不是什么要特别注意的点，除非你故意用一些很麻烦的写法，比如在提交更新数据用的命令缓冲区时使用二值信号量而非栅栏来同步）
 </p>
 <p>
-    总结，用<a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkQueueSubmit">vkQueueSubmit</a>(...)提交命令缓冲区后，剧本流程如下：
+    总结，用<span href="type">vkQueueSubmit</span>(...)提交命令缓冲区后，剧本流程如下：
     <br>
     1.若指定了需要等待的信号量，定义对信号量的等待操作。
     <br>
-    2.命令开始执行，等执行到相应等待阶段（或可能延后到栅格化后），等待信号量。
+    2.命令开始执行，执行到相应等待阶段后（或可能延后到栅格化后），等待信号量。
     <br>
     3.所需等待的信号量被置位后，继续执行后续操作，直至完成命令的执行。
     <br>
@@ -392,11 +393,25 @@
     </tbody>
 </table>
 <p>
-    <a href="https://renderdoc.org/vkspec_chunked/chap6.html#VkCommandBufferInheritanceInfo">VkCommandBufferInheritanceInfo</a>的解说见后文。
+    用<a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkEndCommandBuffer">vkEndCommandBuffer</a>(...)结束录制命令缓冲区：
 </p>
-<p>
-    用<a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkEndCommandBuffer">vkEndCommandBuffer</a>(...)结束录制命令缓冲区，单个参数为命令缓冲区的handle。
-</p></section>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkEndCommandBuffer">vkEndCommandBuffer</a>(...) 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkCommandBuffer</span> commandBuffer</p></td>
+            <td><p>命令缓冲区的handle</p></td>
+        </tr>
+    </tbody>
+</table></section>
 <section id="id4">
 <h3>二级命令缓冲区<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
 <p>
@@ -415,36 +430,36 @@
     <span class="type">VkCommandBuffer</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
 <span class="kw">public</span>:
     <span class="fn">commandBuffer</span>() = <span class="kw">default</span>;
-    <span class="fn">commandBuffer</span>(<span class="type">commandBuffer</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    <span class="fn">commandBuffer</span>(<span class="type">commandBuffer</span>&amp;&amp; <span class="par">other</span>) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
     <span class="cmt">//因释放命令缓冲区的函数被我定义在封装命令池的commandPool类中，没析构器</span>
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
     <span class="cmt">//Const Function</span>
-    <span class="cmt">//这里没给inheritanceInfo设定默认参数，因为C++标准中规定对解引用空指针是未定义行为（尽管运行期不必发生，且至少MSVC编译器允许这种代码），而我又一定要传引用而非指针，因而形成了两个Begin(...)</span>
-    <span class="type">result_t</span> <span class="type">Begin</span>(<span class="type">VkCommandBufferUsageFlags</span> usageFlags, <span class="type">VkCommandBufferInheritanceInfo</span>&amp; inheritanceInfo) <span class="kw">const</span> {
-        inheritanceInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO</span>;
-        <span class="enum">VkCommandBufferBeginInfo</span> beginInfo = {
+    <span class="cmt">//这里没给inheritanceInfo设定默认参数，因为C++标准中规定对空指针解引用是未定义行为（尽管运行期不必发生，且至少MSVC编译器允许这种代码），而我又一定要传引用而非指针，因而形成了两个Begin(...)</span>
+    <span class="type">result_t</span> <span class="fn">Begin</span>(<span class="type">VkCommandBufferUsageFlags</span> <span class="par">usageFlags</span>, <span class="type">VkCommandBufferInheritanceInfo</span>&amp; <span class="par">inheritanceInfo</span>) <span class="kw">const</span> {
+        <span class="par">inheritanceInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO</span>;
+        <span class="type">VkCommandBufferBeginInfo</span> beginInfo = {
             .sType = <span class="enum">VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO</span>,
-            .flags = usageFlags,
-            .pInheritanceInfo = &amp;inheritanceInfo
+            .flags = <span class="par">usageFlags</span>,
+            .pInheritanceInfo = &amp;<span class="par">inheritanceInfo</span>
         };
         <span class="type">VkResult</span> result = <span class="fn">vkBeginCommandBuffer</span>(handle, &amp;beginInfo);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandBuffer ] ERROR\nFailed to begin a command buffer!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
-    <span class="type">result_t</span> <span class="type">Begin</span>(<span class="type">VkCommandBufferUsageFlags</span> usageFlags = 0) <span class="kw">const</span> {
-        <span class="enum">VkCommandBufferBeginInfo</span> beginInfo = {
+    <span class="type">result_t</span> <span class="fn">Begin</span>(<span class="type">VkCommandBufferUsageFlags</span> <span class="par">usageFlags</span> = 0) <span class="kw">const</span> {
+        <span class="type">VkCommandBufferBeginInfo</span> beginInfo = {
             .sType = <span class="enum">VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO</span>,
-            .flags = usageFlags,
+            .flags = <span class="par">usageFlags</span>,
         };
         <span class="type">VkResult</span> result = <span class="fn">vkBeginCommandBuffer</span>(handle, &amp;beginInfo);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandBuffer ] ERROR\nFailed to begin a command buffer!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
-    <span class="type">result_t</span> <span class="type">End</span>() <span class="kw">const</span> {
+    <span class="type">result_t</span> <span class="fn">End</span>() <span class="kw">const</span> {
         <span class="type">VkResult</span> result = <span class="fn">vkEndCommandBuffer</span>(handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandBuffer ] ERROR\nFailed to end a command buffer!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
@@ -713,54 +728,54 @@
     <span class="type">VkCommandPool</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
 <span class="kw">public</span>:
     <span class="fn">commandPool</span>() = <span class="kw">default</span>;
-    <span class="fn">commandPool</span>(<span class="type">VkCommandPoolCreateInfo</span>&amp; createInfo) {
-        <span class="fn">Create</span>(createInfo);
+    <span class="fn">commandPool</span>(<span class="type">VkCommandPoolCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="fn">Create</span>(<span class="par">createInfo</span>);
     }
-    <span class="fn">commandPool</span>(<span class="type">uint32_t</span> queueFamilyIndex, <span class="type">VkCommandPoolCreateFlags</span> flags = 0) {
-        <span class="fn">Create</span>(queueFamilyIndex, flags);
+    <span class="fn">commandPool</span>(<span class="type">uint32_t</span> <span class="par">queueFamilyIndex</span>, <span class="type">VkCommandPoolCreateFlags</span> <span class="par">flags</span> = 0) {
+        <span class="fn">Create</span>(<span class="par">queueFamilyIndex</span>, <span class="par">flags</span>);
     }
-    <span class="fn">commandPool</span>(<span class="type">commandPool</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
-    <span class="fn">~commandPool</span>() { <span class="mcr">DestroyHandleBy</span>(vkDestroyCommandPool); }
+    <span class="fn">commandPool</span>(<span class="type">commandPool</span>&amp;&amp; <span class="par">other</span>) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    <span class="fn">~commandPool</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyCommandPool</span>); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
     <span class="cmt">//Const Function</span>
-    <span class="type">result_t</span> <span class="fn">AllocateBuffers</span>(<span class="type">arrayRef</span>&lt;<span class="type">VkCommandBuffer</span>&gt; buffers, <span class="type">VkCommandBufferLevel</span> level = <span class="enum">VK_COMMAND_BUFFER_LEVEL_PRIMARY</span>) <span class="kw">const</span> {
+    <span class="type">result_t</span> <span class="fn">AllocateBuffers</span>(<span class="type">arrayRef</span>&lt;<span class="type">VkCommandBuffer</span>&gt; <span class="par">buffers</span>, <span class="type">VkCommandBufferLevel</span> <span class="par">level</span> = <span class="enum">VK_COMMAND_BUFFER_LEVEL_PRIMARY</span>) <span class="kw">const</span> {
         <span class="type">VkCommandBufferAllocateInfo</span> allocateInfo = {
             .sType = <span class="enum">VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO</span>,
             .commandPool = handle,
-            .level = level,
-            .commandBufferCount = <span class="type">uint32_t</span>(buffers.<span class="fn">Count</span>())
+            .level = <span class="par">level</span>,
+            .commandBufferCount = <span class="type">uint32_t</span>(<span class="par">buffers</span>.<span class="fn">Count</span>())
         };
-        <span class="type">VkResult</span> result = <span class="fn">vkAllocateCommandBuffers</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;allocateInfo, buffers.<span class="fn">Pointer</span>());
+        <span class="type">VkResult</span> result = <span class="fn">vkAllocateCommandBuffers</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;allocateInfo, <span class="par">buffers</span>.<span class="fn">Pointer</span>());
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandPool ] ERROR\nFailed to allocate command buffers!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
-    <span class="type">result_t</span> <span class="fn">AllocateBuffers</span>(<span class="type">arrayRef</span>&lt;<span class="type">commandBuffer</span>&gt; buffers, <span class="type">VkCommandBufferLevel</span> level = <span class="enum">VK_COMMAND_BUFFER_LEVEL_PRIMARY</span>) <span class="kw">const</span> {
+    <span class="type">result_t</span> <span class="fn">AllocateBuffers</span>(<span class="type">arrayRef</span>&lt;<span class="type">commandBuffer</span>&gt; <span class="par">buffers</span>, <span class="type">VkCommandBufferLevel</span> <span class="par">level</span> = <span class="enum">VK_COMMAND_BUFFER_LEVEL_PRIMARY</span>) <span class="kw">const</span> {
         <span class="kw">return</span> <span class="fn">AllocateBuffers</span>(
-            { &amp;buffers[0].handle, buffers.<span class="fn">Count</span>() },
-            level);
+            { &amp;<span class="par">buffers</span>[0].handle, <span class="par">buffers</span>.<span class="fn">Count</span>() },
+            <span class="par">level</span>);
     }
-    <span class="kw">void</span> <span class="fn">FreeBuffers</span>(<span class="type">arrayRef</span>&lt;<span class="type">VkCommandBuffer</span>&gt; buffers) <span class="kw">const</span> {
-        <span class="fn">vkFreeCommandBuffers</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, buffers.<span class="fn">Count</span>(), buffers.<span class="fn">Pointer</span>());
-        <span class="fn">memset</span>(buffers.<span class="fn">Pointer</span>(), 0, buffers.<span class="fn">Count</span>() * <span class="kw">sizeof</span>(<span class="type">VkCommandBuffer</span>));
+    <span class="kw">void</span> <span class="fn">FreeBuffers</span>(<span class="type">arrayRef</span>&lt;<span class="type">VkCommandBuffer</span>&gt; <span class="par">buffers</span>) <span class="kw">const</span> {
+        <span class="fn">vkFreeCommandBuffers</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, <span class="par">buffers</span>.<span class="fn">Count</span>(), <span class="par">buffers</span>.<span class="fn">Pointer</span>());
+        <span class="fn">memset</span>(<span class="par">buffers</span>.<span class="fn">Pointer</span>(), 0, <span class="par">buffers</span>.<span class="fn">Count</span>() * <span class="kw">sizeof</span>(<span class="type">VkCommandBuffer</span>));
     }
-    <span class="kw">void</span> <span class="fn">FreeBuffers</span>(<span class="type">arrayRef</span>&lt;<span class="type">commandBuffer</span>&gt; buffers) <span class="kw">const</span> {
-        <span class="fn">FreeBuffers</span>({ &amp;buffers[0].handle, buffers.<span class="fn">Count</span>() });
+    <span class="kw">void</span> <span class="fn">FreeBuffers</span>(<span class="type">arrayRef</span>&lt;<span class="type">commandBuffer</span>&gt; <span class="par">buffers</span>) <span class="kw">const</span> {
+        <span class="fn">FreeBuffers</span>({ &amp;<span class="par">buffers</span>[0].handle, <span class="par">buffers</span>.<span class="fn">Count</span>() });
     }
     <span class="cmt">//Non-const Function</span>
-    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkCommandPoolCreateInfo</span>&amp; createInfo) {
-        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO</span>;
-        <span class="type">VkResult</span> result = <span class="fn">vkCreateCommandPool</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="enum">nullptr</span>, &amp;handle);
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkCommandPoolCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateCommandPool</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="enum">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandPool ] ERROR\nFailed to create a command pool!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
-    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">uint32_t</span> queueFamilyIndex, <span class="type">VkCommandPoolCreateFlags</span> flags = 0) {
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">uint32_t</span> <span class="par">queueFamilyIndex</span>, <span class="type">VkCommandPoolCreateFlags</span> <span class="par">flags</span> = 0) {
         <span class="type">VkCommandPoolCreateInfo</span> createInfo = {
-            .flags = flags,
-            .queueFamilyIndex = queueFamilyIndex
+            .flags = <span class="par">flags</span>,
+            .queueFamilyIndex = <span class="par">queueFamilyIndex</span>
         };
         <span class="kw">return</span> <span class="fn">Create</span>(createInfo);
     }
