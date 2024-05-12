@@ -265,7 +265,7 @@
     2.总是倾向于使用最优数据排列以获得最佳性能。
 </p>
 <p>
-    先前在<a class="reference internal" href="Ch5-0%20VKBase%2B.h.html">Ch5-0 VKBase+.h</a>中获取了所有格式的<span class="type">VkFormatProperties</span>，现在用先前准备好的函数<span class="fn">FormatProperties</span>(...)获取格式属性，让其optimalTilingFeatures成员与相应的<span class="type">VkImageUsageFlagBits</span>枚举值做位与，即可知某种格式的图像能否用作颜色/深度模板附件：
+    先前在<a class="reference internal" href="Ch5-0%20VKBase%2B.h.html">Ch5-0 VKBase+.h</a>中获取了所有格式的<span class="type">VkFormatProperties</span>，现在用先前准备好的函数<span class="fn">FormatProperties</span>(...)获取格式属性，让其optimalTilingFeatures成员与相应的<span class="type">VkImageUsageFlagBits</span>枚举项做位与，即可知某种格式的图像能否用作颜色/深度模板附件：
 </p>
 <pre class="code">
 <span class="kw">static</span> <span class="type">colorAttachment</span>::<span class="sfn">FormatAvailability</span>(<spanclass="type">VkFormat</span> format, <span class="kw">bool</span> supportBlending = true) {
@@ -1099,7 +1099,7 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
     <span class="fn">CreateLayout</span>();
     <span class="fn">CreatePipeline</span>();
 
-    <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
+    <span class="type">fence</span> fence;
     <span class="type">semaphore</span> semaphore_imageIsAvailable;
     <span class="type">semaphore</span> semaphore_renderingIsOver;
 
@@ -1123,9 +1123,7 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
             <span class="fn">glfwWaitEvents</span>();
-        <span class="fn">TitleFps</span>();
 
-        fence.<span class="fn">WaitAndReset</span>();
         <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
         <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
@@ -1139,6 +1137,10 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
         <span class="fn">glfwPollEvents</span>();
 
         <span class="cmt">/*操作逻辑，待填充*/</span>
+
+        <span class="fn">TitleFps</span>();
+
+        fence.<span class="fn">WaitAndReset</span>();
     }
     <span class="fn">TerminateWindow</span>();
     <span class="kw">return</span> 0;
@@ -1147,7 +1149,7 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
 <ul>
     <li>
         <p>
-            因为每一帧中使用的是相同的离屏帧缓冲，不能应用<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id7">即时帧</a>（即每一帧应使用同一套同步对象）。
+            因为每一帧中使用的是相同的离屏帧缓冲，不能应用<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id8">即时帧</a>（即每一帧应使用同一套同步对象）。
         </p>
     </li>
 </ul>
@@ -1167,9 +1169,7 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
             <span class="fn">glfwWaitEvents</span>();
-        <span class="fn">TitleFps</span>();
 
-        fence.<span class="fn">WaitAndReset</span>();
         <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
         <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
@@ -1187,6 +1187,10 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
         <span class="fn">glfwPollEvents</span>();
 
         <span class="cmt">/*操作逻辑，待填充*/</span>
+
+        <span class="fn">TitleFps</span>();
+
+        fence.<span class="fn">WaitAndReset</span>();
     }
     <span class="fn">TerminateWindow</span>();
     <span class="kw">return</span> 0;
@@ -1208,9 +1212,7 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
             <span class="fn">glfwWaitEvents</span>();
-        <span class="fn">TitleFps</span>();
 
-        fence.<span class="fn">WaitAndReset</span>();
         <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
         <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
@@ -1229,6 +1231,10 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
 
         <span class="cmt">/*待后续填充*/</span>
         clearCanvas = <span class="fn">glfwGetMouseButton</a>(pWindow, <span class="mcr">GLFW_MOUSE_BUTTON_LEFT</span>)
+
+        <span class="fn">TitleFps</span>();
+
+        fence.<span class="fn">WaitAndReset</span>();
     }
     <span class="fn">TerminateWindow</span>();
     <span class="kw">return</span> 0;
@@ -1313,9 +1319,7 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
             <span class="fn">glfwWaitEvents</span>();
-        <span class="fn">TitleFps</span>();
 
-        fence.<span class="fn">WaitAndReset</span>();
         <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
         <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
@@ -1338,10 +1342,12 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
         <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
 
         <span class="fn">glfwPollEvents</span>();
-
         <span class="fn">glfwGetCursorPos</span>(pWindow, &amp;mouseX, &amp;mouseY);
         pushConstants_offscreen.offsets[index = !index] = { mouseX, mouseY };
         clearCanvas = <span class="fn">glfwGetMouseButton</a>(pWindow, <span class="mcr">GLFW_MOUSE_BUTTON_LEFT</span>)
+        <span class="fn">TitleFps</span>();
+
+        fence.<span class="fn">WaitAndReset</span>();
     }
     <span class="fn">TerminateWindow</span>();
     <span class="kw">return</span> 0;
@@ -1440,7 +1446,7 @@ renderPass_screen.<span class="fn">CmdEnd</span>(commandBuffer);
 <p>
     也能这么解决：因为push constant的常量是记录在命令缓冲区中的，只要把“离屏渲染”和“渲染到屏幕”分别录制在不同的命令缓冲区中，前者的push constant就不可能影响到后者。
     <br>
-    也能这么解决：不管某个值在某个阶段用不用得到，在所有着色器阶段中声明全部的push constant范围，然后总是一次性更新整个范围（做法是很保险，不过迄今为止我没这么解决过问题）。
+    也能这么解决：不管某个值在某个阶段用不用得到，在所有着色器阶段中声明全部的push constant范围，然后总是一次性更新整个范围（做法是很保险，就是太简单粗暴了）。
     <br>
     还能这么解决：抛弃Vulkan，去用OpenGL！。。。
 </p>

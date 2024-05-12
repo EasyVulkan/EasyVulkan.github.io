@@ -487,7 +487,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap10.html#VkPipelineCreateFlagBits">VkPipelineCreateFlagBits</a> 的枚举值</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap10.html#VkPipelineCreateFlagBits">VkPipelineCreateFlagBits</a> 的枚举项</p></th>
         </tr>
     </thead>
     <tbody>
@@ -788,7 +788,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap21.html#VkPrimitiveTopology">VkPrimitiveTopology</a> 的枚举值</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap21.html#VkPrimitiveTopology">VkPrimitiveTopology</a> 的枚举项</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1117,7 +1117,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap28.html#VkPolygonMode">VkPolygonMode</a> 的枚举值</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap28.html#VkPolygonMode">VkPolygonMode</a> 的枚举项</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1150,7 +1150,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap28.html#VkCullModeFlagBits">VkCullModeFlagBits</a> 的枚举值</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap28.html#VkCullModeFlagBits">VkCullModeFlagBits</a> 的枚举项</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1237,6 +1237,8 @@
     不开启sample shading时，只会在计算像素的coverage mask（覆盖遮罩，见下文）时选取多个采样点，片段着色器仍旧只对每个像素执行一次（虽然Vulkan标准中没有规定，但通常如此）。因为只有图元边缘的像素可能不被图元完全覆盖，最终只有图元边缘呈现出抗锯齿的效果。
     <br>
     开启sample shading后，选取像素内部一定数量的采样点调用片段着色器，最少的着色次数为<code>minSampleShading * 采样点个数</code>，minSampleShading为1时，即超采样（SSAA）。
+    <br>
+    注意无论片段着色器对每个像素执行几次，每个像素的采样点个数都是确定的。
 </p>
 <p>
     <span class="type">VkSampleMask</span>实质上就是<span class="type">uint32_t</span>。Sample mask的比特与采样点一一对应，因为至多64个采样点，pSampleMask所指数组中至多两个元素。
@@ -1396,7 +1398,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap13.html#VkCompareOp">VkCompareOp</a> 的枚举值</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap13.html#VkCompareOp">VkCompareOp</a> 的枚举项</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1454,7 +1456,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap29.html#VkStencilOp">VkStencilOp</a> 的枚举值</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap29.html#VkStencilOp">VkStencilOp</a> 的枚举项</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1564,7 +1566,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap30.html#VkLogicOp">VkLogicOp</a> 的枚举值（记新生成片元的任一通道值为s，颜色附件中已有的对应通道值为d）</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap30.html#VkLogicOp">VkLogicOp</a> 的枚举项（记新生成片元的任一通道值为s，颜色附件中已有的对应通道值为d）</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1641,7 +1643,7 @@
     <br>
     开启逻辑运算时，无论<span class="type">VkPipelineColorBlendAttachmentState</span>::blendEnable是否为<span class="mcr">VK_TRUE</span>，一律关闭混色。
 </p>
-<table class="docutils align-default">
+<table class="docutils align-default" id="vkpipelinecolorblendattachmentstate">
     <colgroup>
         <col style="width: 30%" />
         <col style="width: 70%" />
@@ -1706,7 +1708,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap30.html#VkBlendOp">VkBlendOp</a> 的枚举值（记新生成片元的任一通道值为s，颜色附件中已有的对应通道值为d，混色因子分别为fs和fd）</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap30.html#VkBlendOp">VkBlendOp</a> 的枚举项（记新生成片元的任一通道值为s，颜色附件中已有的对应通道值为d，混色因子分别为fs和fd）</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1740,7 +1742,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap30.html#VkBlendFactor">VkBlendFactor</a> 的枚举值（记新生成片元的颜色值为s.rgba，另一混色来源的颜色值为s1.rgba，颜色附件中已有的颜色值为d.rgba）</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap30.html#VkBlendFactor">VkBlendFactor</a> 的枚举项（记新生成片元的颜色值为s.rgba，另一混色来源的颜色值为s1.rgba，颜色附件中已有的颜色值为d.rgba）</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1878,7 +1880,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap10.html#VkDynamicState">VkDynamicState</a> 的枚举值</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap10.html#VkDynamicState">VkDynamicState</a> 的枚举项</p></th>
         </tr>
     </thead>
     <tbody>

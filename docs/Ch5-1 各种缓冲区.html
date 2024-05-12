@@ -722,7 +722,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
 <section id="device-local-buffer">
 <h2>Device Local Buffer<a class="headerlink" href="#device-local-buffer" title="Permalink to this heading"></a></h2>
 <p>
-    将具有<span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>内存属性的缓冲区封装为<span class="type">deviceLocalBuffer</span>，首先定义基本的Getter和创建/重建函数：
+    将具有<span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>内存属性的缓冲区封装为<span class="type">deviceLocalBuffer</span>，首先定义基本的Getter和创建/重建函数：
 </p>
     <pre class="code">
 <span class="kw">class</span> <span class="type">deviceLocalBuffer</span> {
@@ -751,7 +751,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
             bufferMemory.<span class="fn">BindMemory</span>();
     }
     <span class="kw">void</span> <span class="fn">Recreate</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkBufferUsageFlags</span> desiredUsages_Without_transfer_dst) {
-        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">WaitIdle</span>();
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">WaitIdle</span>(); <span class="cmt">//deviceLocalBuffer封装的缓冲区可能会在每一帧中被频繁使用，重建它之前应确保物理设备没有在使用它</span>
         bufferMemory.<span class="fn">~bufferMemory</span>();
         <span class="fn">Create</span>(size, desiredUsages_Without_transfer_dst);
     }

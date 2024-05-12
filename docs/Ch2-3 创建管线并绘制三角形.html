@@ -493,7 +493,7 @@ pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
     <span class="cmt">/*新增*/</span><span class="fn">CreateLayout</span>();
     <span class="cmt">/*新增*/</span><span class="fn">CreatePipeline</span>();
 
-    <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
+    <span class="type">fence</span> fence;
     <span class="type">semaphore</span> semaphore_imageIsAvailable;
     <span class="type">semaphore</span> semaphore_renderingIsOver;
 
@@ -506,9 +506,7 @@ pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
             <span class="fn">glfwWaitEvents</span>();
-        <span class="fn">TitleFps</span>();
 
-        fence.<span class="fn">WaitAndReset</span>();
         <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
         <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
 
@@ -522,6 +520,9 @@ pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
         <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
 
         <span class="fn">glfwPollEvents</span>();
+        <span class="fn">TitleFps</span>();
+
+        fence.<span class="fn">WaitAndReset</span>();
     }
     <span class="fn">TerminateWindow</span>();
     <span class="kw">return</span> 0;
@@ -567,7 +568,7 @@ pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap10.html#VkPipelineBindPoint">VkPipelineBindPoint</a> 的枚举值</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap10.html#VkPipelineBindPoint">VkPipelineBindPoint</a> 的枚举项</p></th>
         </tr>
     </thead>
     <tbody>
@@ -639,7 +640,7 @@ pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
     </span><span class="fn">CreateLayout</span>();
     </span><span class="fn">CreatePipeline</span>();
 
-    <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
+    <span class="type">fence</span> fence;
     <span class="type">semaphore</span> semaphore_imageIsAvailable;
     <span class="type">semaphore</span> semaphore_renderingIsOver;
 
@@ -652,9 +653,7 @@ pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
             <span class="fn">glfwWaitEvents</span>();
-        <span class="fn">TitleFps</span>();
 
-        fence.<span class="fn">WaitAndReset</span>();
         <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
         <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
 
@@ -671,6 +670,9 @@ pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
         <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
 
         <span class="fn">glfwPollEvents</span>();
+        <span class="fn">TitleFps</span>();
+
+        fence.<span class="fn">WaitAndReset</span>();
     }
     <span class="fn">TerminateWindow</span>();
     <span class="kw">return</span> 0;

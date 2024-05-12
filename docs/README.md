@@ -6,7 +6,7 @@
 1.捉虫/答疑，发Issue，开新的，或者发在[【长期】 捉虫/答疑集中贴](https://github.com/EasyVulkan/EasyVulkan.github.io/issues/7)。<br>
 2.反馈/交流/答疑，发Discussion。
 
-2024.04.29 [Ch8-4 预乘Alpha](https://easyvulkan.github.io/Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html)完成。<br>
+2024.05.12 [Ch3-8 查询](https://easyvulkan.github.io/Ch3-8%20%E6%9F%A5%E8%AF%A2.html)完成。<br>
 2024.04.02 代码里加了CMakeLists.txt（我不确定Visual Studio之外是什么效果，谁愿意的话可以fork到私有仓库，帮我改一下然后pull request给我）
 
 ## 章节目录
@@ -48,7 +48,8 @@
 [Ch3-5 命令缓冲区（有部分未写完）](https://easyvulkan.github.io/Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html)<br>
 [Ch3-6 描述符](https://easyvulkan.github.io/Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html)<br>
 [Ch3-7 采样器](https://easyvulkan.github.io/Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html)<br>
-[Ch4-1 着色器模组（有部分未写完）](https://easyvulkan.github.io/Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html)<br>
+[Ch3-8 查询](https://easyvulkan.github.io/Ch3-8%20%E6%9F%A5%E8%AF%A2.html)<br>
+[Ch4-1 着色器模组和GLSL基本语法（有部分未写完）](https://easyvulkan.github.io/Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html)<br>
 
 ### Vulkan1.1后的新增核心功能（按需阅读）
 
@@ -69,4 +70,5 @@ Ch8-7 立方体贴图应用实例<br>
 Ch4-4 几何着色器<br>
 Ch9-1 将ERP图像转到立方体贴图（暂定）<br>
 
+细分和计算着色器相关内容放下半年。
 撰写顺序可能变卦。

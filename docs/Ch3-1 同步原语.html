@@ -699,7 +699,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkPipelineStageFlagBits">VkPipelineStageFlagBits</a> 的枚举值</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkPipelineStageFlagBits">VkPipelineStageFlagBits</a> 的枚举项</p></th>
         </tr>
     </thead>
     <tbody>
@@ -749,7 +749,7 @@
         </tr>
         <tr>
             <td><p>1.0</p></td>
-            <td><p><span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT        </span>表示图形管线中经过混色后，将色值输出到颜色附件的阶段，用<a href="https://renderdoc.org/vkspec_chunked/chap19.html#vkCmdClearAttachments">vkCmdClearAttachments</a>(...)手动清空颜色/深度模板附件也算在这一阶段。</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT        </span>表示图形管线中进行混色，并将色值输出到颜色附件的阶段，用<a href="https://renderdoc.org/vkspec_chunked/chap19.html#vkCmdClearAttachments">vkCmdClearAttachments</a>(...)手动清空颜色/深度模板附件也算在这一阶段。</p></td>
         </tr>
         <tr>
             <td><p>1.0</p></td>
@@ -801,7 +801,7 @@
     <thead>
         <tr>
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkDependencyFlagBits">VkDependencyFlagBits</a> 的枚举值</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkDependencyFlagBits">VkDependencyFlagBits</a> 的枚举项</p></th>
         </tr>
     </thead>
     <tbody>
@@ -907,7 +907,7 @@
     总结地讲，在提交进行数据传输的命令缓冲区（比如用来加载资源）时只要带上一个栅栏并等待，就足以确保<a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html#device-local-buffer">各类缓冲区</a>能被之后的命令正确读写了（但对于图像，你仍旧可能需要图像内存屏障以确保内存布局转换在正确的时机发生）。
 </p>
 <p>
-    注意虽然官方标准中没有到处提及，同步操作的作用若无明确说明，默认不适用于不同队列族间，这时候得（虽然你应该已经读过了）：<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id8">队列族所有权转移</a>。
+    注意虽然官方标准中没有到处提及，同步操作的作用若无明确说明，默认不适用于不同队列族间，这时候得（虽然你应该已经读过了）：<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id9">队列族所有权转移</a>。
 </p>
 <p>
     写到这里我真的得吐槽下：<strong>那些说C++官方标准太学术化太难啃的程序员，真该看看Vulkan官方标准！</strong>
@@ -954,7 +954,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkAccessFlagBits">VkAccessFlagBits</a> 的枚举值</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap7.html#VkAccessFlagBits">VkAccessFlagBits</a> 的枚举项</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1101,7 +1101,7 @@
 <ul>
     <li>
         <p>
-            关于资源的队列族所有权转移，具体说明参见<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id8">队列族所有权转移</a>，若不需要转移资源的队列族所有权，则srcQueueFamilyIndex和dstQueueFamilyIndex应当皆为<span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>。
+            关于资源的队列族所有权转移，具体说明参见<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id9">队列族所有权转移</a>，若不需要转移资源的队列族所有权，则srcQueueFamilyIndex和dstQueueFamilyIndex应当皆为<span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>。
         </p>
     </li>
 </ul></section>
@@ -1175,7 +1175,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkImageLayout">VkImageLayout</a> 的枚举值</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkImageLayout">VkImageLayout</a> 的枚举项</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1409,7 +1409,7 @@
 <ul>
     <li>
         <p>
-            该命令定义执行依赖：于该命令前的命令到达stageMask所注明的（但凡达到得了的）阶段后，置位事件。
+            该命令定义执行依赖：于该命令前的命令到达stageMask所注明的（但凡到达得了的）阶段后，置位事件。
         </p>
     </li>
     <li>
@@ -1584,7 +1584,7 @@
 <ul>
     <li>
         <p>
-            该命令定义执行依赖：于该命令前的命令到达stageMask所注明的（但凡达到得了的）阶段后，将事件重置为未置位状态。
+            该命令定义执行依赖：于该命令前的命令到达stageMask所注明的（但凡到达得了的）阶段后，将事件重置为未置位状态。
         </p>
     </li>
     <li>

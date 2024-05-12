@@ -1165,9 +1165,7 @@ UpdateDescriptorSet_InputAttachments();
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
             <span class="fn">glfwWaitEvents</span>();
-        <span class="fn">TitleFps</span>();
 
-        fence.<span class="fn">WaitAndReset</span>();
         <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
         <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
@@ -1183,6 +1181,9 @@ UpdateDescriptorSet_InputAttachments();
         <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
 
         <span class="fn">glfwPollEvents</span>();
+        <span class="fn">TitleFps</span>();
+
+        fence.<span class="fn">WaitAndReset</span>();
     }
     <span class="fn">TerminateWindow</span>();
     <span class="kw">return</span> 0;

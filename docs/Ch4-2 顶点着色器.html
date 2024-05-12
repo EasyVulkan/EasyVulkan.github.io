@@ -265,12 +265,19 @@
     （该行为的结果影响<a class="reference internal" href="Ch3-8%20%E6%9F%A5%E8%AF%A2.html#id7">管线统计</a>）
 </p>
 <p>
-    要使用gl_ClipDistance，需开启<a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html#devicefeature">设备特性</a>中的shaderClipDistance，gl_ClipDistance数组元素个数最大不超过硬件限制中的maxClipDistances。
+    要使用gl_ClipDistance，需开启<a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html#device_feature">设备特性</a>中的shaderClipDistance，gl_ClipDistance数组元素个数最大不超过硬件限制中的maxClipDistances。
 </p>
 <p>
     利用gl_ClipDistance在3D渲染中将模型切开：
 </p>
 <img alt="_images/ch4-2-2.png" src="_images/ch4-2-2.png" width="360px">
+<ul>
+    <li>
+        <p>
+            用例：有一种简单粗暴的渲染镜面效果的方法——将物体沿着镜面翻转然后再渲染一遍，典型的情况比如渲染物体在水面上的倒影，倒影当然只会映照出水面以上的物体，利用gl_ClipDistance即可轻易地达成这一效果。
+        </p>
+    </li>
+</ul>
 <p>
     绘制三角形的三条边（图元类型为三角形，绘制模式为<span class="enum">VK_POLYGON_MODE_LINE</span>），令gl_ClipDistance[0]为gl_Position.x的效果如下：
 </p>
@@ -290,7 +297,7 @@
     对于任意图元，若构成其图形的所有顶点皆满足到某一剔除平面的距离小于0（比如gl_CullDistance[0]都小于0），则图元被整个丢弃。
 </p>
 <p>
-    要使用gl_CullDistance，需开启<a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html#devicefeature">设备特性</a>中的shaderCullDistance，gl_CullDistance数组元素个数最大不超过硬件限制中的maxCullDistances。
+    要使用gl_CullDistance，需开启<a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html#device_feature">设备特性</a>中的shaderCullDistance，gl_CullDistance数组元素个数最大不超过硬件限制中的maxCullDistances。
 </p></section>
 </section>
 </section>

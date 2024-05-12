@@ -76,7 +76,7 @@ int main() {
 	CreateLayout();
 	CreatePipeline();
 
-	fence fence(VK_FENCE_CREATE_SIGNALED_BIT);
+	fence fence;
 	semaphore semaphore_imageIsAvailable;
 	semaphore semaphore_renderingIsOver;
 
@@ -145,9 +145,7 @@ int main() {
 	while (!glfwWindowShouldClose(pWindow)) {
 		while (glfwGetWindowAttrib(pWindow, GLFW_ICONIFIED))
 			glfwWaitEvents();
-		TitleFps();
 
-		fence.WaitAndReset();
 		graphicsBase::Base().SwapImage(semaphore_imageIsAvailable);
 		auto i = graphicsBase::Base().CurrentImageIndex();
 
@@ -169,6 +167,9 @@ int main() {
 		graphicsBase::Base().PresentImage(semaphore_renderingIsOver);
 
 		glfwPollEvents();
+		TitleFps();
+
+		fence.WaitAndReset();
 	}
 	TerminateWindow();
 	return 0;

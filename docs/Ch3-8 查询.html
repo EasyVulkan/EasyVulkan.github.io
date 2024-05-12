@@ -74,15 +74,19 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#id5">遮挡查询</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id6">开始和结束遮挡查询</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">创建遮挡查询</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">开始和结束遮挡查询</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">封装</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id7">管线统计查询</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id8">创建管线统计查询</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">管线统计查询</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id10">创建管线统计查询</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">封装</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id9">时间戳查询</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id10">写入时间戳</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id12">时间戳查询</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id13">写入时间戳</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">封装</a></li>
 </ul>
 </li>
 </ul>
@@ -239,7 +243,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap18.html#VkQueryType">VkQueryType</a> 的枚举值</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap18.html#VkQueryType">VkQueryType</a> 的枚举项</p></th>
         </tr>
     </thead>
     <tbody>
@@ -381,6 +385,13 @@
         </tr>
     </tbody>
 </table>
+<ul>
+    <li>
+        <p>
+            若queryCount为1，stride可以为0。
+        </p>
+    </li>
+</ul>
 <table class="docutils align-default">
     <colgroup>
         <col>
@@ -389,7 +400,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap18.html#VkQueryResultFlagBits">VkQueryResultFlagBits</a> 的枚举值</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap18.html#VkQueryResultFlagBits">VkQueryResultFlagBits</a> 的枚举项</p></th>
         </tr>
     </thead>
     <tbody>
@@ -426,7 +437,7 @@
     </li>
     <li>
         <p>
-            若注明<span class="enum">VK_QUERY_RESULT_PARTIAL_BIT</span>，查询尚未完成时获取到的结果，是查询尚未完成时的中间结果。<span class="cmt">//A就是A，这个叫“小泉进次郎式构文”</span>
+            若注明<span class="enum">VK_QUERY_RESULT_PARTIAL_BIT</span>，查询尚未完成时获取到的结果，是查询过程中的中间结果。
             <br>
             若没有注明<span class="enum">VK_QUERY_RESULT_PARTIAL_BIT</span>，且查询尚未完成，获取到的查询结果未定义（可能是任意不准确的数值）。
         </p>
@@ -474,7 +485,7 @@
         </tr>
         <tr class="row-even">
             <td><p><span class="type">size_t</span> dataSize</p></td>
-            <td><p>pData所指向的内存区的容量（虽然该参数如此命名，并不是要你填查询结果的大小），大小须能容纳所有查询结果</p></td>
+            <td><p>pData所指向的内存区的容量（虽然该参数如此命名，并不是要你填查询结果的大小），大小须能容纳queryCount个查询结果</p></td>
         </tr>
         <tr class="row-odd">
             <td><p><span class="kw">void</span>* pData</p></td>
@@ -489,11 +500,18 @@
             <td><p></p></td>
         </tr>
     </tbody>
-</table></section>
+</table>
+<ul>
+    <li>
+        <p>
+            函数执行成功时，除了<span class="enum">VK_SUCCESS</span>还可能会返回<span class="enum">VK_NOT_READY</span>（值为1），表示查询尚未结束。
+        </p>
+    </li>
+</ul></section>
 <section id="id4">
 <h3>重置查询<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
 <p>
-    进行过查询后，在再次开始同一查询前，必须重置查询（重置还未使用过的查询当然也是可以的）。
+    开始查询前（包括首次开始），必须重置查询。
 </p>
 <p>
     在命令缓冲区中，用<a href="https://renderdoc.org/vkspec_chunked/chap18.html#vkCmdResetQueryPool">vkCmdResetQueryPool</a>(...)重置查询：
@@ -609,7 +627,7 @@
     <span class="type">result_t</span> <span class="fn">GetResults</span>(<span class="type">uint32_t</span> <span class="par">firstQueryIndex</span>, <span class="type">uint32_t</span> <span class="par">queryCount</span>, <span class="type">size_t</span> <span class="par">dataSize</span>, <span class="kw">void</span>* <span class="par">pData_dst</span>, <span class="type">VkDeviceSize</span> <span class="par">stride</span>, <span class="type">VkQueryResultFlags</span> <span class="par">flags</span> = 0) <span class="kw">const</span> {
         <span class="type">VkResult</span> result = <span class="fn">vkGetQueryPoolResults</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, <span class="par">firstQueryIndex</span>, <span class="par">queryCount</span>, <span class="par">dataSize</span>, <span class="par">pData_dst</span>, <span class="par">stride</span>, <span class="par">flags</span>);
         <span class="kw">if</span> (result)
-            result > 0 ?
+            result > 0 ? <span class="cmt">//若返回值为VK_NOT_READY，则查询尚未结束，有查询结果尚不可获</span>
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ queryPool ] WARNING\nNot all queries are available!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result)) :
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ queryPool ] ERROR\nFailed to get query pool results!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
@@ -635,38 +653,170 @@
         <span class="kw">return</span> <span class="fn">Create</span>(createInfo);
     }
 };
-</pre>
-
-<p>
-    <span class="cmt">//这里往后还在施工</span>
-    <br>
-    <span class="cmt">//这里往后还在施工</span>
-    <br>
-    <span class="cmt">//这里往后还在施工</span>
-</p></section>
+</pre></section>
 </section>
 <section id="id5">
 <h2>遮挡查询<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
 <p>
-    遮挡查询（occlusion query）可以统计通过了一系列片段测试，最后保留下来的采样点的数量。
-    <br>
-
-    <span class="cmt">//TODO 施工中</span>
-
-</p><section id="id6">
-<h3>开始和结束遮挡查询<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+    遮挡查询（occlusion query）可以统计绘制出的采样点的数量。
+</p>
 <p>
-    若向<span href="fn">vkCmdBeginQuery</span>(...)的<span class="par">flags</span>参数填入<span class="enum">VK_QUERY_CONTROL_PRECISE_BIT</span>，则查询结果为最终保留下来的采样点个数的精确值（计数方法为实现特定，不同Vulkan实现提供的数值间可能略有偏差）。
+    没有通过深度测试和模板测试等早期/后期片段测试的、覆盖率（见<a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html#vkpipelinemultisamplestatecreateinfo">多重采样</a>和<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#gl-samplemask">gl_SampleMask</a>、<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#gl-samplemaskin">gl_SampleMaskIn</a>）为0的、在片段着色器中被<span class="kw">discard</span>的，这些采样点都算是“被遮挡”，不计入查询结果。
     <br>
+    另外，管线混色状态中，若将<a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html#vkpipelinecolorblendattachmentstate">VkPipelineColorBlendAttachmentState</a>::colorWriteMask指定为0（即关闭对RGBA四通道的颜色写入），则查询结果的计数不会增加。
+    <br>
+    先被绘制出来，之后被遮掉的采样点，当然计入查询结果（毕竟在计数的时候不知道后来会不会被遮掉）。
+</p><section id="id6">
+<h3>创建遮挡查询<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<p>
+    要创建遮挡查询，只需要指定查询类型和查询个数即可，每组查询结果是一个整形数值，于是：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">occlusionQueries</span> {
+<span class="kw">protected</span>:
+    <span class="type">queryPool</span> queryPool;
+    std::<span class="type">vector</span>&lt;<span class="type">uint32_t</span>&gt; passingSampleCounts;
+<span class="kw">public</span>:
+    <span class="fn">occlusionQueries</span>() = <span class="kw">default</span>;
+    <span class="fn">occlusionQueries</span>(<span class="type">uint32_t</span> <span class="par">capacity</span>) {
+        <span class="fn">Create</span>(<span class="par">capacity</span>);
+    }
+    <span class="cmt">//Getter</span>
+    <span class="kw">operator</span> <span class="type">VkQueryPool</span>() <span class="kw">const</span> { <span class="kw">return</span> queryPool; }
+    <span class="kw">const</span> <span class="type">VkQueryPool</span>* <span class="fn">Address</span>() <span class="kw">const</span> { <span class="kw">return</span> queryPool.<span class="fn">Address</span>(); }
+    <span class="type">uint32_t</span> <span class="fn">Capacity</span>() <span class="kw">const</span> { <span class="kw">return</span> passingSampleCounts.<span class="fn">size</span>(); }
+    <span class="type">uint32_t</span> <span class="fn">PassingSampleCount</span>(<span class="type">uint32_t</span> <span class="par">index</span>) <span class="kw">const</span> { <span class="kw">return</span> passingSampleCounts[<span class="par">index</span>]; }
+    <span class="cmt">//Const Function</span>
+    <span class="cmt">/*待填充*/</span>
+    <span class="cmt">//Non-const Function</span>
+    <span class="kw">void</span> <span class="fn">Create</span>(<span class="type">uint32_t</span> <span class="par">capacity</span>) {
+        passingSampleCounts.<span class="fn">resize</span>(<span class="par">capacity</span>); <span class="cmt">//使passingSampleCounts的元素个数等于查询池容量</span>
+        queryPool.<span class="fn">Create</span>(<span class="enum">VK_QUERY_TYPE_OCCLUSION</span>, <span class="par">capacity</span>);
+    }
+    <span class="type">result_t</span> <span class="fn">GetResults</span>() {
+        <span class="kw">return</span> queryPool.<span class="fn">GetResults</span>(<span class="fn">Capacity</span>());
+    }
+    <span class="type">result_t</span> <span class="fn">GetResults</span>(<span class="type">uint32_t</span> <span class="par">queryCount</span>) {
+        <span class="kw">return</span> queryPool.<span class="fn">GetResults</span>(
+            0,                          <span class="cmt">//firstQuery</span>
+            <span class="par">queryCount</span>,                 <span class="cmt">//queryCount</span>
+            <span class="par">queryCount</span> * 4,             <span class="cmt">//dataSize，内存区大小</span>
+            passingSampleCounts.<span class="fn">data</span>(), <span class="cmt">//pData</span>
+            4                           <span class="cmt">//stride，每组查询结果在目标内存区中的间距，这里是uint32_t的大小，即是紧密排列</span>
+        );                              <span class="cmt">//使用该函数获取结果时应当有栅栏同步，无需注明VK_QUERY_RESULT_WAIT_BIT</span>
+    }
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            将查询结果获取为32位整数应该是足够了，除非你使用的硬件有夸张的运算性能（得绘制4096*4096大小的区域256次且没有采样点被丢弃，才能达到<span class="mcr">UINT32_MAX</span>）。
+        </p>
+    </il>
+</ul>
+<p>
+    考虑需要变更查询池容量，重建查询池的情况：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">Create</span>(<span class="type">uint32_t</span> <span class="par">capacity</span>) {
+    passingSampleCounts.<span class="fn">resize</span>(<span class="par">capacity</span>);
+    <span class="cmt">/*新增*/</span> passingSampleCounts.<span class="fn">shrink_to_fit</span>();
+    queryPool.<span class="fn">Create</span>(<span class="enum">VK_QUERY_TYPE_OCCLUSION</span>, <span class="fn">Capacity</span>()); <span class="cmt">//capacity变为Capacity()</span>
+}
+<span class="kw">void</span> <span class="fn">Recreate</span>(<span class="type">uint32_t</span> <span class="par">capacity</span>) {
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">WaitIdle</span>(); <span class="cmt">//重建查询池之前应确保物理设备没有在使用它</span>
+    queryPool.<span class="fn">~queryPool</span>();
+    <span class="fn">Create</span>(<span class="par">capacity</span>);
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            用std::<span class="type">vector</span>::<span class="fn">resize</span>(...)重设一个<span class="type">vector</span>容器的元素数时，即便重设到更小容量，容器底层的堆内存大小也不会减少。
+            <br>
+            重设<span class="type">vector</span>容器到更小容量后，用std::<span class="type">vector</span>::<span class="fn">shrink_to_fit</span>()可以将底层的堆内存重新分配，以节省多余的容量。
+        </p>
+    </li>
+</ul></section>
+<section id="id7">
+<h3>开始和结束遮挡查询<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<p>
+    若向<span class="fn">vkCmdBeginQuery</span>(...)的<span class="par">flags</span>参数填入<span class="enum">VK_QUERY_CONTROL_PRECISE_BIT</span>（值为1），则查询结果为最终保留下来的采样点个数的精确值（计数方法为实现特定，不同Vulkan实现提供的数值间可能略有偏差）。
+</p>
+<p>
     否则，应当将查询结果视为二值的：在有采样点被保留下来时的查询结果为非零值（对具体数值无要求），所有采样点皆不被保留时的查询结果为0。
     <br>
-    注明<span class="enum">VK_QUERY_CONTROL_PRECISE_BIT</span>时的开销很可能大于不注明该bit时的开销，在只需要知晓是否会渲染出内容，而不关注具体的采样点数量时，应当注明该bit。
-</p></section>
-</section>
-<section id="id7">
-<h2>管线统计查询<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h2>
+    注明<span class="enum">VK_QUERY_CONTROL_PRECISE_BIT</span>时的开销可能大于不注明该bit时的开销，在只需知晓是否会渲染出内容，而不关注具体的采样点数量时，<strong>不应</strong>注明该bit。
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">CmdBegin</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">uint32_t</span> <span class="par">queryIndex</span>, <span class="kw">bool</span> <span class="par">isPrecise</span> = <span class="kw">false</span>) <span class="kw">const</span> {
+    queryPool.<span class="fn">CmdBegin</span>(<span class="par">commandBuffer</span>, <span class="par">queryIndex</span>, <span class="par">isPrecise</span>);
+}
+<span class="kw">void</span> <span class="fn">CmdEnd</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">uint32_t</span> <span class="par">queryIndex</span>) <span class="kw">const</span> {
+    queryPool.<span class="fn">CmdEnd</span>(<span class="par">commandBuffer</span>, <span class="par">queryIndex</span>);
+}
+</pre></section>
+<section id="id8">
+<h3>封装<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
 <p>
-    可通过管线统计查询（pipeline statistics query）进行以下统计：
+    完成剩余封装：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">occlusionQueries</span> {
+<span class="kw">protected</span>:
+    <span class="type">queryPool</span> queryPool;
+    std::<span class="type">vector</span>&lt;<span class="type">uint32_t</span>&gt; passingSampleCounts;
+<span class="kw">public</span>:
+    <span class="fn">occlusionQueries</span>() = <span class="kw">default</span>;
+    <span class="fn">occlusionQueries</span>(<span class="type">uint32_t</span> <span class="par">capacity</span>) {
+        <span class="fn">Create</span>(<span class="par">capacity</span>);
+    }
+    <span class="cmt">//Getter</span>
+    <span class="kw">operator</span> <span class="type">VkQueryPool</span>() <span class="kw">const</span> { <span class="kw">return</span> queryPool; }
+    <span class="kw">const</span> <span class="type">VkQueryPool</span>* <span class="fn">Address</span>() <span class="kw">const</span> { <span class="kw">return</span> queryPool.<span class="fn">Address</span>(); }
+    <span class="type">uint32_t</span> <span class="fn">Capacity</span>() <span class="kw">const</span> { <span class="kw">return</span> passingSampleCounts.<span class="fn">size</span>(); }
+    <span class="type">uint32_t</span> <span class="fn">PassingSampleCount</span>(<span class="type">uint32_t</span> <span class="par">index</span>) <span class="kw">const</span> { <span class="kw">return</span> passingSampleCounts[<span class="par">index</span>]; }
+    <span class="cmt">//Const Function</span>
+    <span class="cmt">/*重置整个查询池*/</span>
+    <span class="kw">void</span> <span class="fn">CmdReset</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>) <span class="kw">const</span> {
+        queryPool.<span class="fn">CmdReset</span>(<span class="par">commandBuffer</span>, 0, <span class="fn">Capacity</span>());
+    }
+    <span class="kw">void</span> <span class="fn">CmdBegin</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">uint32_t</span> <span class="par">queryIndex</span>, <span class="kw">bool</span> <span class="par">isPrecise</span> = <span class="kw">false</span>) <span class="kw">const</span> {
+        queryPool.<span class="fn">CmdBegin</span>(<span class="par">commandBuffer</span>, <span class="par">queryIndex</span>, <span class="par">isPrecise</span>);
+    }
+    <span class="kw">void</span> <span class="fn">CmdEnd</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">uint32_t</span> <span class="par">queryIndex</span>) <span class="kw">const</span> {
+        queryPool.<span class="fn">CmdEnd</span>(<span class="par">commandBuffer</span>, <span class="par">queryIndex</span>);
+    }
+    <span class="cmt">/*常用于GPU-driven遮挡剔除*/</span>
+    <span class="kw">void</span> <span class="fn">CmdCopyResults</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">uint32_t</span> <span class="par">firstQueryIndex</span>, <span class="type">uint32_t</span> <span class="par">queryCount</span>,
+        <span class="type">VkBuffer</span> <span class="par">buffer_dst</span>, <span class="type">VkDeviceSize</span> <span class="par">offset_dst</span>, <span class="type">VkDeviceSize</span> <span class="par">stride</span>) <span class="kw">const</span> {
+        <span class="cmt">//需要等待查询结束以获取正确的数值，flags为VK_QUERY_RESULT_WAIT_BIT</span>
+        queryPool.<span class="fn">CmdCopyResults</span>(<span class="par">commandBuffer</span>, <span class="par">firstQueryIndex</span>, <span class="par">queryCount</span>, <span class="par">buffer_dst</span>, <span class="par">offset_dst</span>,<span class="par">stride</span>, <span class="enum">VK_QUERY_RESULT_WAIT_BIT</span>);
+    }
+    <span class="cmt">//Non-const Function</span>
+    <span class="kw">void</span> <span class="fn">Create</span>(<span class="type">uint32_t</span> <span class="par">capacity</span>) {
+        passingSampleCounts.<span class="fn">resize</span>(<span class="par">capacity</span>);
+        passingSampleCounts.<span class="fn">shrink_to_fit</span>();
+        queryPool.<span class="fn">Create</span>(<span class="enum">VK_QUERY_TYPE_OCCLUSION</span>, <span class="fn">Capacity</span>());
+    }
+    <span class="kw">void</span> <span class="fn">Recreate</span>(<span class="type">uint32_t</span> <span class="par">capacity</span>) {
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">WaitIdle</span>();
+        queryPool.<span class="fn">~queryPool</span>();
+        <span class="fn">Create</span>(<span class="par">capacity</span>);
+    }
+    <span class="type">result_t</span> <span class="fn">GetResults</span>() {
+        <span class="kw">return</span> queryPool.<span class="fn">GetResults</span>(<span class="par">Capacity</span>);
+    }
+    <span class="type">result_t</span> <span class="fn">GetResults</span>(<span class="type">uint32_t</span> <span class="par">queryCount</span>) {
+        <span class="kw">return</span> queryPool.<span class="fn">GetResults</span>(0, <span class="par">queryCount</span>, <span class="par">queryCount</span> * 4, timestamps.<span class="fn">data</span>(), 4);
+    }
+};
+</pre></section>
+</section>
+<section id="id9">
+<h2>管线统计查询<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h2>
+<p>
+    在Vulkan的核心功能中（即不涉及扩展的话），可通过管线统计查询（pipeline statistics query）进行以下统计：
 </p>
 <table class="docutils align-default">
     <colgroup>
@@ -676,7 +826,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap18.html#VkQueryPipelineStatisticFlagBits">VkQueryPipelineStatisticFlagBits</a> 的枚举值（省略与扩展相关的bit）</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap18.html#VkQueryPipelineStatisticFlagBits">VkQueryPipelineStatisticFlagBits</a> 的枚举项</p></th>
         </tr>
     </thead>
     <tbody>
@@ -747,46 +897,156 @@
     管线统计查询可以被用于debug。
     <br>
     比如，如果图元剪裁阶段输出的图元个数非0，而片段着色器执行次数为0，那么说明片段没有通过<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#early-fragment-test">早期片段测试</a>，进而检查相关参数来找出问题所在（注：对于这里所述的情况，如果开了深度测试，深度比较方式/深度清屏值的嫌疑很大）。
-</p><section id="id8">
-<h3>创建管线统计查询<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+</p><section id="id10">
+<h3>创建管线统计查询<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
 <p>
-    不涉及扩展，<span class="type">VkQueryPipelineStatisticFlagBits</span>的枚举值有11种，各个bit的总和是<code>(1 << 11) - 1</code>，即2047。
+    不涉及扩展，<span class="type">VkQueryPipelineStatisticFlagBits</span>的枚举项有11种，各个bit的总和是<code>(1 &lt;&lt; 11) - 1</code>，即2047。
     <br>
-    创建保存1组管线统计查询结果的查询池：
+    若要进行这11个枚举项对应的所有统计，创建保存1组统计结果的查询池的代码如下：
 </p>
 <pre class="code">
-<span class="kw">constexpr</span> <span class="type">uint32_t</span> statisticCount;
+<span class="kw">constexpr</span> <span class="type">uint32_t</span> statisticCount = 11;
 <span class="type">VkQueryPoolCreateInfo</span> createInfo = {
     .queryType = <span class="enum">VK_QUERY_TYPE_PIPELINE_STATISTICS</span>,
     .queryCount = 1,
-    .pipelineStatistics = (1 << statisticCount) - 1
+    .pipelineStatistics = (1 &lt;&lt; statisticCount) - 1
 };
 <span class="type">queryPool</span> queryPool(createInfo);
 </pre>
 <p>
-    管线统计查询的结果是整形，根据你向<span class="type">VkQueryPoolCreateInfo</span>::pipelineStatistics提供的数值，各项统计数值按照前述<span class="type">VkQueryPipelineStatisticFlagBits</span>枚举值表格中的顺序排列。
+    根据你向<span class="type">VkQueryPoolCreateInfo</span>::pipelineStatistics提供的数值，各项管线统计值依其对应的枚举项，按照前述<span class="type">VkQueryPipelineStatisticFlagBits</span>枚举项表格中的顺序排列。
     <br>
-
-    <span class="cmt">//TODO 施工中</span>
-
-</p></section>
+    特地去记忆哪个索引对应哪个统计值就太麻烦了，对于一个保存了全部11种统计值的数组，可用下述写法方便地进行访问：
+</p>
+<pre class="code">
+<span class="kw">enum</span> <span class="type">statisticName</span> {
+    <span class="cmt">//输入装配阶段</span>
+    <span class="enum">vertexCount_ia</span>,           <span class="cmt">0</span>
+    <span class="enum">primitiveCount_ia</span>,        <span class="cmt">1</span>
+    <span class="cmt">//顶点着色器阶段</span>
+    <span class="enum">invocationCount_vs</span>,       <span class="cmt">2</span>
+    <span class="cmt">//几何着色器阶段</span>
+    <span class="enum">invocationCount_gs</span>,       <span class="cmt">3</span>
+    <span class="enum">primitiveCount_gs</span>,        <span class="cmt">4</span>
+    <span class="cmt">//图元剔除阶段</span>
+    <span class="enum">invocationCount_clipping</span>, <span class="cmt">5</span>
+    <span class="enum">primitiveCount_clipping</span>,  <span class="cmt">6</span>
+    <span class="cmt">//片段着色器阶段</span>
+    <span class="enum">invocationCount_fs</span>,       <span class="cmt">7</span>
+    <span class="cmt">//细分控制着色器阶段</span>
+    <span class="enum">patchCount_tcs</span>,           <span class="cmt">8</span>
+    <span class="cmt">//细分求值着色器阶段</span>
+    <span class="enum">invocationCount_tes</span>,      <span class="cmt">9</span>
+    <span class="cmt">//计算着色器阶段</span>
+    <span class="enum">invocationCount_cs</span>,       <span class="cmt">10</span>
+    <span class="cmt">//上述枚举项的总数</span>
+    <span class="enum">statisticCount</span>            <span class="cmt">11</span>
+};
+<span class="type">uint32_t</span> statistics[<span class="enum">statisticCount</span>] = {};
+outStream &lt;&lt; statistics[<span class="enum">invocationCount_cs</span>] &lt;&lt; <span class="str">'\n'</span>; <span class="cmt">//输出计算着色器的执行次数</span>
+</pre>
+<ul>
+    <li>
+        <p>
+            这里使用了一个C++编程技巧：通过定义枚举，使用有意义的名称为索引来访问数组元素。在从0开始递增的枚举序列中，最后一个枚举项的数值会是先前所有枚举项的总数，因此还可以通过枚举来统计名称的个数。
+        </p>
+    </li>
+</ul></section>
+<section id="id11">
+<h3>封装<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>
+<p>
+    可对保存1组统计结果的查询池做如下封装以方便使用：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">pipelineStatisticQuery</span> {
+<span class="kw">protected</span>:
+    <span class="kw">enum</span> <span class="type">statisticName</span> {
+        <span class="cmt">//Input Assembly</span>
+        <span class="enum">vertexCount_ia</span>,
+        <span class="enum">primitiveCount_ia</span>,
+        <span class="cmt">//Vertex Shader</span>
+        <span class="enum">invocationCount_vs</span>,
+        <span class="cmt">//Geometry Shader</span>
+        <span class="enum">invocationCount_gs</span>,
+        <span class="enum">primitiveCount_gs</span>,
+        <span class="cmt">//Clipping</span>
+        <span class="enum">invocationCount_clipping</span>,
+        <span class="enum">primitiveCount_clipping</span>,
+        <span class="cmt">//Fragment Shader</span>
+        <span class="enum">invocationCount_fs</span>,
+        <span class="cmt">//Tessellation</span>
+        <span class="enum">patchCount_tcs</span>,
+        <span class="enum">invocationCount_tes</span>,
+        <span class="cmt">//Compute Shader</span>
+        <span class="enum">invocationCount_cs</span>,
+        <span class="enum">statisticCount</span>
+    };
+    <span class="cmt">//--------------------</span>
+    <span class="type">queryPool</span> queryPool;
+    <span class="type">uint32_t</span> statistics[<span class="enum">statisticCount</span>] = {};
+<span class="kw">public</span>:
+    <span class="fn">pipelineStatisticQuery</span>() {
+        <span class="fn">Create</span>();
+    }
+    <span class="cmt">//Getter</span>
+    <span class="kw">operator</span> <span class="type">VkQueryPool</span>() <span class="kw">const</span> { <span class="kw">return</span> queryPool; }
+    <span class="kw">const</span> <span class="type">VkQueryPool</span>* <span class="fn">Address</span>() <span class="kw">const</span> { <span class="kw">return</span> queryPool.<span class="fn">Address</span>(); }
+    <span class="type">uint32_t</span>     <span class="fn">VertexCount_Ia</span>() <span class="kw">const</span> { <span class="kw">return</span> statistics[<span class="enum">vertexCount_ia</span>]; }
+    <span class="type">uint32_t</span>  <span class="fn">PrimitiveCount_Ia</span>() <span class="kw">const</span> { <span class="kw">return</span> statistics[<span class="enum">primitiveCount_ia</span>]; }
+    <span class="type">uint32_t</span> <span class="fn">InvocationCount_Vs</span>() <span class="kw">const</span> { <span class="kw">return</span> statistics[<span class="enum">invocationCount_vs</span>]; }
+    <span class="type">uint32_t</span> <span class="fn">InvocationCount_Gs</span>() <span class="kw">const</span> { <span class="kw">return</span> statistics[<span class="enum">invocationCount_gs</span>]; }
+    <span class="type">uint32_t</span>  <span class="fn">PrimitiveCount_Gs</span>() <span class="kw">const</span> { <span class="kw">return</span> statistics[<span class="enum">primitiveCount_gs</span>]; }
+    <span class="type">uint32_t</span> <span class="fn">InvocationCount_Clipping</span>() <span class="kw">const</span> { <span class="kw">return</span> statistics[<span class="enum">invocationCount_clipping</span>]; }
+    <span class="type">uint32_t</span>  <span class="fn">PrimitiveCount_Clipping</span>() <span class="kw">const</span> { <span class="kw">return</span> statistics[<span class="enum">primitiveCount_clipping</span>]; }
+    <span class="type">uint32_t</span> <span class="fn">InvocationCount_Fs</span>() <span class="kw">const</span> { <span class="kw">return</span> statistics[<span class="enum">invocationCount_fs</span>]; }
+    <span class="type">uint32_t</span>      <span class="fn">PatchCount_Tcs</span>() <span class="kw">const</span> { <span class="kw">return</span> statistics[<span class="enum">patchCount_tcs</span>]; }
+    <span class="type">uint32_t</span> <span class="fn">InvocationCount_Tes</span>() <span class="kw">const</span> { <span class="kw">return</span> statistics[<span class="enum">invocationCount_tes</span>]; }
+    <span class="type">uint32_t</span> <span class="fn">InvocationCount_Cs</span>() <span class="kw">const</span> { <span class="kw">return</span> statistics[<span class="enum">invocationCount_cs</span>]; }
+    <span class="cmt">//Const Function</span>
+    <span class="kw">void</span> <span class="fn">CmdReset</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>) <span class="kw">const</span> {
+        queryPool.<span class="fn">CmdReset</span>(<span class="par">commandBuffer</span>, 0, 1);
+    }
+    <span class="kw">void</span> <span class="fn">CmdBegin</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>) <span class="kw">const</span> {
+        queryPool.<span class="fn">CmdBegin</span>(<span class="par">commandBuffer</span>, 0);
+    }
+    <span class="kw">void</span> <span class="fn">CmdEnd</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>) <span class="kw">const</span> {
+        queryPool.<span class="fn">CmdEnd</span>(<span class="par">commandBuffer</span>, 0);
+    }
+    <span class="kw">void</span> <span class="fn">CmdResetAndBegin</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>) <span class="kw">const</span> {
+        <span class="fn">CmdReset</span>(<span class="par">commandBuffer</span>);
+        <span class="fn">CmdBegin</span>(<span class="par">commandBuffer</span>);
+    }
+    <span class="cmt">//Non-const Function</span>
+    <span class="kw">void</span> <span class="fn">Create</span>() {
+        queryPool.<span class="fn">Create</span>(<span class="enum">VK_QUERY_TYPE_PIPELINE_STATISTICS</span>, 1, (1 &lt;&lt; <span class="enum">statisticCount</span>) - 1);
+    }
+    <span class="type">result_t</span> <span class="fn">GetResults</span>() {
+        <span class="kw">return</span> queryPool.<span class="fn">GetResults</span>(
+            0,                 <span class="cmt">//firstQuery</span>
+            1,                 <span class="cmt">//queryCount</span>
+            <span class="kw">sizeof</span> statistics, <span class="cmt">//dataSize，内存区大小</span>
+            statistics,        <span class="cmt">//pData</span>
+            <span class="kw">sizeof</span> statistics  <span class="cmt">//stride，每组查询结果在目标内存区中的间距，这里是紧密排列（因为就1组结果，可以写0）</span>
+        );
+    }
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            <span class="fn">VertexCount_Ia</span>()比<span class="fn">Statistic</span>(<span class="enum">vertexCount_ia</span>)短，所以就这么写了。
+        </p>
+    </li>
+</ul></section>
 </section>
-<section id="id9">
-<h2>时间戳查询<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h2>
+<section id="id12">
+<h2>时间戳查询<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h2>
 <p>
     在命令缓冲区的执行过程中，可写入时间戳到时间戳查询（timestamp query）。
     <br>
-    时间戳查询可用于性能测试：两个时间戳相减即为两次写入的间隔时间，即其间命令的执行耗时。
-</p>
-<p>
-    要创建时间戳查询，只需要指定查询类型和查询个数即可：
-</p>
-<pre class="code">
-
-<span class="cmt">//TODO 施工中</span>
-
-</pre><section id="id10">
-<h3>写入时间戳<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
+    时间戳查询可用于性能测试：两个时间戳相减即表明两次写入的间隔时间，即其间命令大致的执行耗时。
+</p><section id="id13">
+<h3>写入时间戳<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h3>
 <p>
     时间戳查询没有“开始”和“结束”，不对其使用<span class="fn">vkCmdBeginQuery</span>(...)和<span class="fn">vkCmdEndQuery</span>(...)。
     <br>
@@ -824,12 +1084,96 @@
 <ul>
     <li>
         <p>
-            该命令定义执行依赖：于该命令前的命令到达pipelineStage所注明的（但凡达到得了的）阶段后，写入时间戳。
+            该命令定义执行依赖：于该命令前的命令到达pipelineStage所注明的（但凡到达得了的）阶段后，写入时间戳。
             <br>
-            注意该函数不保证写入时间戳的最晚阶段，Vulkan的实现可能在pipelineStage所注明的阶段后的任何阶段写入时间戳。
+            注意该函数不保证写入时间戳的最晚阶段，Vulkan的实现可能在先前的命令到达pipelineStage所注明的阶段后的任何阶段写入时间戳。
         </p>
     </li>
-</ul></section>
+</ul>
+<p>
+    写入的时间戳的单位为一定量的纳秒，时间戳的数值间隔1，相当于时间上间隔<a href="https://renderdoc.org/vkspec_chunked/chap48.html#VkPhysicalDeviceLimits">VkPhysicalDeviceLimits</a>::timestampPeriod个纳秒。
+</p>
+<p>
+    写入的时间戳的有效位数由<a href="https://renderdoc.org/vkspec_chunked/chap5.html#VkQueueFamilyProperties">VkQueueFamilyProperties</a>::timestampValidBits决定，若支持写入时间戳，则至少会有36个有效位数。
+    <br>
+    虽然至少会有36个有效位数，不过查询结果通常是用于计算差值的，获取到的结果是32位就足够，就算数值溢出也能算得正确的差值（除非两个时间戳之间相差的时间很大，比如<a href="https://renderdoc.org/vkspec_chunked/chap48.html#VkPhysicalDeviceLimits">VkPhysicalDeviceLimits</a>::timestampPeriod为1且两个时间戳之间相差4秒以上的情况）。
+</p>
+<p>
+    两次写入之间存在隐式同步：对于两条<span class="fn">vkCmdWriteTimestamp</span>(...)命令，后录制的命令写入的数值所表明的时间，一定晚于先录制的命令（除非数值溢出）。
+</p></section>
+<section id="id14">
+<h3>封装<a class="headerlink" href="#id14" title="Permalink to this heading"></a></h3>
+<p>
+    每组时间戳查询的查询结果是一个整形数值，既然获取到32位就够用了，对其做如下封装：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">timestampQueries</span> {
+<span class="kw">protected</span>:
+    <span class="type">queryPool</span> queryPool;
+    std::<span class="type">vector</span>&lt;<span class="type">uint32_t</span>&gt; timestamps;
+<span class="kw">public</span>:
+    <span class="fn">timestampQueries</span>() = <span class="kw">default</span>;
+    <span class="fn">timestampQueries</span>(<span class="type">uint32_t</span> <span class="par">capacity</span>) {
+        <span class="fn">Create</span>(<span class="par">capacity</span>);
+    }
+    <span class="cmt">//Getter</span>
+    <span class="kw">operator</span> <span class="type">VkQueryPool</span>() <span class="kw">const</span> { <span class="kw">return</span> queryPool; }
+    <span class="kw">const</span> <span class="type">VkQueryPool</span>* <span class="fn">Address</span>() <span class="kw">const</span> { <span class="kw">return</span> queryPool.<span class="fn">Address</span>(); }
+    <span class="type">uint32_t</span> <span class="fn">Capacity</span>() <span class="kw">const</span> { <span class="kw">return</span> timestamps.<span class="fn">size</span>(); }
+    <span class="type">uint32_t</span> <span class="fn">Timestamp</span>(<span class="type">uint32_t</span> <span class="par">index</span>) <span class="kw">const</span> { <span class="kw">return</span> timestamp[<span class="par">index</span>]; }
+    <span class="cmt">/*计算两个时间戳之间的差值*/</span>
+    <span class="type">uint32_t</span> <span class="fn">Duration</span>(<span class="type">uint32_t</span> <span class="par">index</span>) <span class="kw">const</span> { <span class="kw">return</span> timestamp[<span class="par">index</span> + 1] - timestamp[<span class="par">index</span>]; }
+    <span class="cmt">//Const Function</span>
+    <span class="cmt">/*重置整个查询池*/</span>
+    <span class="kw">void</span> <span class="fn">CmdReset</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>) <span class="kw">const</span> {
+        queryPool.<span class="fn">CmdReset</span>(<span class="par">commandBuffer</span>, 0, <span class="fn">Capacity</span>());
+    }
+    <span class="kw">void</span> <span class="fn">CmdWriteTimestamp</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">VkPipelineStageFlagBits</span> <span class="par">pipelineStage</span>, <span class="type">uint32_t</span> <span class="par">queryIndex</span>) <span class="kw">const</span> {
+        queryPool.<span class="fn">CmdWriteTimestamp</span>(<span class="par">commandBuffer</span>, <span class="par">pipelineStage</span>, <span class="par">queryIndex</span>);
+    }
+    <span class="cmt">//Non-const Function</span>
+    <span class="kw">void</span> <span class="fn">Create</span>(<span class="type">uint32_t</span> <span class="par">capacity</span>) {
+        timestamps.<span class="fn">resize</span>(<span class="par">capacity</span>);
+        timestamps.<span class="fn">shrink_to_fit</span>();
+        queryPool.<span class="fn">Create</span>(<span class="enum">VK_QUERY_TYPE_TIMESTAMP</span>, <span class="fn">Capacity</span>());
+    }
+    <span class="kw">void</span> <span class="fn">Recreate</span>(<span class="type">uint32_t</span> <span class="par">capacity</span>) {
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">WaitIdle</span>();
+        queryPool.<span class="fn">~queryPool</span>();
+        <span class="fn">Create</span>(<span class="par">capacity</span>);
+    }
+    <span class="type">result_t</span> <span class="fn">GetResults</span>() {
+        <span class="kw">return</span> queryPool.<span class="fn">GetResults</span>(<span class="fn">Capacity</span>());
+    }
+    <span class="type">result_t</span> <span class="fn">GetResults</span>(<span class="type">uint32_t</span> <span class="par">queryCount</span>) {
+        <span class="kw">return</span> queryPool.<span class="fn">GetResults</span>(0, <span class="par">queryCount</span>, <span class="par">queryCount</span> * 4, timestamps.<span class="fn">data</span>(), 4);
+    }
+};
+</pre>
+<p>
+    使用方式，类似这样：
+</p>
+<pre class="code">
+<span class="type">uint32_t</span> timestampCounter = 0;
+commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
+
+timestampQueries.<span class="fn">CmdReset</span>(commandBuffer);
+timestampQueries.<span class="fn">CmdWriteTimestamp</span>(commandBuffer, <span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span>, timestampCounter++);
+<span class="cmt">/*某些命令A*/</span>
+timestampQueries.<span class="fn">CmdWriteTimestamp</span>(commandBuffer, <span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span>, timestampCounter++);
+<span class="cmt">/*某些命令B*/</span>
+timestampQueries.<span class="fn">CmdWriteTimestamp</span>(commandBuffer, <span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span>, timestampCounter++);
+
+commandBuffer.<span class="fn">End</span>();
+
+<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, fence);
+fence.<span class="fn">Wait</span>();
+
+timestampQueries.<span class="fn">GetResults</span>(timestampCounter);
+<span class="cmt">//以毫秒单位输出时间间隔</span>
+<span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; timestampCounter - 1; i++)
+    outStream &lt&lt; timestampQueries.<span class="fn">Duration</span>(i) * <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.timestampPeriod / 1000000.f &lt;&lt; <span class="str">'\n'</span>;
+</pre></section>
 </section>
 </section>
 

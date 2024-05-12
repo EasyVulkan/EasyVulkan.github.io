@@ -220,8 +220,7 @@ namespace vulkan {
 	class timelineSemaphore : semaphore {
 	public:
 		timelineSemaphore(uint64_t initialValue = 0) {
-			if (graphicsBase::Base().Device())
-				Create(initialValue);
+			Create(initialValue);
 		}
 		//Getter
 #ifndef NDEBUG
@@ -1367,7 +1366,7 @@ namespace vulkan {
 		//Getter
 		operator VkQueryPool() const { return queryPool; }
 		const VkQueryPool* Address() const { return queryPool.Address(); }
-		uint32_t Capacity() const { return passingSampleCounts.capacity(); }
+		uint32_t Capacity() const { return passingSampleCounts.size(); }
 		uint32_t PassingSampleCount(uint32_t index) const { return passingSampleCounts[index]; }
 		//Const Function
 		void CmdReset(VkCommandBuffer commandBuffer) const {
@@ -1402,6 +1401,7 @@ namespace vulkan {
 		}
 	};
 	class pipelineStatisticQuery {
+	protected:
 		enum statisticName {
 			//Input Assembly
 			vertexCount_ia,
@@ -1423,13 +1423,12 @@ namespace vulkan {
 			invocationCount_cs,
 			statisticCount
 		};
-	protected:
+		//--------------------
 		queryPool queryPool;
 		uint32_t statistics[statisticCount] = {};
 	public:
 		pipelineStatisticQuery() {
-			if (graphicsBase::Base().Device())
-				Create();
+			Create();
 		}
 		//Getter
 		operator VkQueryPool() const { return queryPool; }
@@ -1456,8 +1455,8 @@ namespace vulkan {
 			queryPool.CmdEnd(commandBuffer, 0);
 		}
 		void CmdResetAndBegin(VkCommandBuffer commandBuffer) const {
-			queryPool.CmdReset(commandBuffer, 0, 1);
-			queryPool.CmdBegin(commandBuffer, 0);
+			CmdReset(commandBuffer);
+			CmdBegin(commandBuffer);
 		}
 		//Non-const Function
 		void Create() {
@@ -1479,7 +1478,7 @@ namespace vulkan {
 		//Getter
 		operator VkQueryPool() const { return queryPool; }
 		const VkQueryPool* Address() const { return queryPool.Address(); }
-		uint32_t Capacity() const { return timestamps.capacity(); }
+		uint32_t Capacity() const { return timestamps.size(); }
 		uint32_t Timestamp(uint32_t index) const { return timestamps[index]; }
 		uint32_t Duration(uint32_t index) const { return timestamps[index + 1] - timestamps[index]; }
 		//Const Function

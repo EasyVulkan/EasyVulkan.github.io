@@ -436,7 +436,7 @@ rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase
     };
     CreateFramebuffers();
 
-    <span class="mcr" id="executeonce">ExecuteOnce</span>(rpwf); <span class="cmt">//防止再次调用本函数时，重复添加回调函数</span>
+    <span class="mcr" id="execute_once">ExecuteOnce</span>(rpwf); <span class="cmt">//防止再次调用本函数时，重复添加回调函数</span>
     <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>(CreateFramebuffers);
     <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroySwapchain</span>(DestroyFramebuffers);
     <span class="kw">return</span> rpwf;
@@ -445,7 +445,7 @@ rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase
 <ul>
     <li>
         <p>
-            如果你需要重建逻辑设备，那么需要一并重建与之相关的Vulkan对象，则重建逻辑设备后势必会再次调用<span class="fn">CreateRpwf_Screen</span>()，而添加回调函数的两条语句只应该被执行一次，用<a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html#executeonce">Ch2-0</a>中定义的宏<span class="mcr">ExecuteOnce</span>来确保这一点。
+            如果你需要重建逻辑设备，那么需要一并重建与之相关的Vulkan对象，则重建逻辑设备后势必会再次调用<span class="fn">CreateRpwf_Screen</span>()，而添加回调函数的两条语句只应该被执行一次，用<a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html#execute_once">Ch2-0</a>中定义的宏<span class="mcr">ExecuteOnce</span>来确保这一点。
         </p>
     </li>
 </ul></section>
@@ -464,7 +464,7 @@ rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase
 
     <span class="cmt">/*新增*/</span><span class="kw">const auto</span>&amp; [renderPass, framebuffers] = easyVulkan::<span class="fn">CreateRpwf_Screen</span>();
 
-    <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
+    <span class="type">fence</span> fence;
     <span class="type">semaphore</span> semaphore_imageIsAvailable;
     <span class="type">semaphore</span> semaphore_renderingIsOver;
 
@@ -477,14 +477,10 @@ rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
             <span class="fn">glfwWaitEvents</span>();
-        <span class="fn">TitleFps</span>();
 
-        fence.<span class="fn">WaitAndReset</span>();
         <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
         <span class="cmt">//因为帧缓冲与所获取的交换链图像一一对应，获取交换链图像索引</span>
         <span class="cmt">/*新增*/</span><span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
-
-        <span class="cmt">/*操作过程，本章中不会有键鼠操作*/</span>
 
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
         <span class="cmt">/*新增，开始渲染通道*/</span>renderPass.<span class="fn">CmdBegin</span>(commandBuffer, framebuffers[i], { {}, windowSize }, clearColor);
@@ -496,6 +492,9 @@ rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase
         <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
 
         <span class="fn">glfwPollEvents</span>();
+        <span class="fn">TitleFps</span>();
+
+        fence.<span class="fn">WaitAndReset</span>();
     }
     <span class="fn">TerminateWindow</span>();
     <span class="kw">return</span> 0;

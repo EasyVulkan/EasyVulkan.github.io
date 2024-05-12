@@ -68,11 +68,11 @@ void CreatePipeline(VkExtent2D canvasSize) {
 	pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_line;
 	pipeline_line.Create(pipelineCiPack);
 	//Screen
-	static shaderModule vert("shader/CanvasToScreen.vert.spv");
-	static shaderModule frag("shader/CanvasToScreen.frag.spv");
+	static shaderModule vert_screen("shader/CanvasToScreen.vert.spv");
+	static shaderModule frag_screen("shader/CanvasToScreen.frag.spv");
 	static VkPipelineShaderStageCreateInfo shaderStageCreateInfos_screen[2] = {
-		vert.StageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT),
-		frag.StageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT)
+		vert_screen.StageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT),
+		frag_screen.StageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT)
 	};
 	auto Create = [] {
 		graphicsPipelineCreateInfoPack pipelineCiPack;
@@ -106,7 +106,7 @@ int main() {
 	CreateLayout();
 	CreatePipeline(canvasSize);
 
-	fence fence(VK_FENCE_CREATE_SIGNALED_BIT);
+	fence fence;
 	semaphore semaphore_imageIsAvailable;
 	semaphore semaphore_renderingIsOver;
 
@@ -144,9 +144,7 @@ int main() {
 	while (!glfwWindowShouldClose(pWindow)) {
 		while (glfwGetWindowAttrib(pWindow, GLFW_ICONIFIED))
 			glfwWaitEvents();
-		TitleFps();
 
-		fence.WaitAndReset();
 		graphicsBase::Base().SwapImage(semaphore_imageIsAvailable);
 		auto i = graphicsBase::Base().CurrentImageIndex();
 
@@ -194,10 +192,12 @@ int main() {
 		graphicsBase::Base().PresentImage(semaphore_renderingIsOver);
 
 		glfwPollEvents();
-
 		glfwGetCursorPos(pWindow, &mouseX, &mouseY);
 		pushConstants_offscreen.offsets[index = !index] = { mouseX, mouseY };
 		clearCanvas = glfwGetMouseButton(pWindow, GLFW_MOUSE_BUTTON_LEFT);
+		TitleFps();
+
+		fence.WaitAndReset();
 	}
 	TerminateWindow();
 	return 0;

@@ -520,7 +520,7 @@
     <thead>
         <tr>
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkSwapchainCreateFlagBitsKHR">VkSwapchainCreateFlagBitsKHR</a> 的枚举值</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkSwapchainCreateFlagBitsKHR">VkSwapchainCreateFlagBitsKHR</a> 的枚举项</p></th>
             <th class="head"><p>对应的<a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkImageCreateFlagBits">VkImageCreateFlagBits</a></p></th>
         </tr>
     </thead>
@@ -628,7 +628,7 @@
     </span><span class="fn">CreateLayout</span>();
     </span><span class="fn">CreatePipeline</span>();
 
-    <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
+    <span class="type">fence</span> fence;
     <span class="type">semaphore</span> semaphore_imageIsAvailable;
     <span class="type">semaphore</span> semaphore_renderingIsOver;
 
@@ -641,9 +641,7 @@
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
             <span class="fn">glfwWaitEvents</span>();
-        <span class="fn">TitleFps</span>();
 
-        fence.<span class="fn">WaitAndReset</span>();
         <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
         <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
 
@@ -673,6 +671,9 @@
         <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
 
         <span class="fn">glfwPollEvents</span>();
+        <span class="fn">TitleFps</span>();
+
+        fence.<span class="fn">WaitAndReset</span>();
     }
     <span class="fn">TerminateWindow</span>();
     <span class="kw">return</span> 0;

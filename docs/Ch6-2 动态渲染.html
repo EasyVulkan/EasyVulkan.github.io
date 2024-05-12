@@ -585,7 +585,7 @@ vkCmdEndRendering(commandBuffer);
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkRenderingFlagBits">VkRenderingFlagBits</a> 的枚举值</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap8.html#VkRenderingFlagBits">VkRenderingFlagBits</a> 的枚举项</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1072,7 +1072,6 @@ commandPool1.<span class="fn">AllocateBuffers</span>(commandBuffers[1]);
 <pre class="code">
 <span class="cmt">/*...前面略*/</span>
 
-fence.<span class="fn">WaitAndReset</span>();
 <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
 colorAttachmentInfo.imageView = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageView</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CurrentImageIndex</span>());
 
@@ -1092,7 +1091,6 @@ queueThread.<span class="fn">Wait</span>();
     然后一次性提交两个缓冲区即可，<span class="var">commandBuffers[0]</span>对应的是到挂起为止，<span class="var">commandBuffers[1]</span>对应的是恢复之后，提交顺序上没有问题：
 </p>
 <pre class="code">
-fence.<span class="fn">WaitAndReset</span>();
 <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
 colorAttachmentInfo.imageView = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageView</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CurrentImageIndex</span>());
 

@@ -446,9 +446,11 @@ pWindow = <span class="par">fullScreen</span> ?
     <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
         <span class="kw">return</span> -1;<span class="cmt">//来个你讨厌的返回值</span>
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
-        <span class="fn">TitleFps</span>();
-        <span class="cmt">/*渲染及操作过程，待填充*/</span>
+
+        <span class="cmt">/*渲染过程，待填充*/</span>
+
         <span class="fn">glfwPollEvents</span>();
+        <span class="fn">TitleFps</span>();
     }
     <span class="fn">TerminateWindow</span>();
     <span class="kw">return</span> 0;

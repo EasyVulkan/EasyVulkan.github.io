@@ -690,7 +690,7 @@ indexBuffer.<span class="type">TransferData</span>(indices);
     </li>
     <li>
         <p>
-            depthWriteEnable为<span class="mcr">VK_TRUE</span>使得深度测试通过后写入深度，这个写入指将当前深度值用作与后续片段的深度进行比较的新基准值，仅影响通过该管线进行的绘制，不影响渲染通道结束时对深度附件的读写。
+            depthWriteEnable为<span class="mcr">VK_TRUE</span>使得深度测试通过后写入深度，这个写入指将当前深度值用作与后续片段的深度进行比较的新基准值，不影响渲染通道结束时对深度附件的读写。
         </p>
     </li>
     <li>
@@ -733,7 +733,7 @@ glm::<span class="type">mat4</span> proj = <span class="fn">FlipVertical</span>(
     <span class="fn">CreateLayout</span>();
     <span class="fn">CreatePipeline</span>();
 
-    <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
+    <span class="type">fence</span> fence;
     <span class="type">semaphore</span> semaphore_imageIsAvailable;
     <span class="type">semaphore</span> semaphore_renderingIsOver;
 
@@ -764,9 +764,7 @@ glm::<span class="type">mat4</span> proj = <span class="fn">FlipVertical</span>(
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
             <span class="fn">glfwWaitEvents</span>();
-        <span class="fn">TitleFps</span>();
 
-        fence.<span class="fn">WaitAndReset</span>();
         <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
         <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
@@ -787,6 +785,9 @@ glm::<span class="type">mat4</span> proj = <span class="fn">FlipVertical</span>(
         <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
 
         <span class="fn">glfwPollEvents</span>();
+        <span class="fn">TitleFps</span>();
+
+        fence.<span class="fn">WaitAndReset</span>();
     }
     <span class="fn">TerminateWindow</span>();
     <span class="kw">return</span> 0;

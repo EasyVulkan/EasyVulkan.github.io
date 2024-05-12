@@ -871,7 +871,7 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
 <ul>
     <li>
         <p>
-            虽然在正确书写函数名字符串的情况下应当不可能，如果无法取得<a href="https://renderdoc.org/vkspec_chunked/chap51.html#vkCreateDebugUtilsMessengerEXT">vkCreateDebugUtilsMessengerEXT</a>(...)，返回<span class="enum">VK_RESULT_MAX_ENUM</span>，其值为<span class="mcr">INT32_MAX</span>。这并不是个有效的错误代码，正是因此才使用这个数值，一来因为<a href="https://renderdoc.org/vkspec_chunked/chap3.html#VkResult">VkResult</a>的枚举值中没有任何符合该种情况的返回值，二来这个数值不会跟任何Vulkan函数的返回值重合。注意，不要使用<span class="enum">VK_ERROR_UNKNOWN</span>，一些函数在失败时能返回这个数值。<strong>因没有合适的错误代码而返回<span class="enum">VK_RESULT_MAX_ENUM</span>的情况在这套教程中还会出现很多次。</strong>
+            虽然在正确书写函数名字符串的情况下应当不可能，如果无法取得<a href="https://renderdoc.org/vkspec_chunked/chap51.html#vkCreateDebugUtilsMessengerEXT">vkCreateDebugUtilsMessengerEXT</a>(...)，返回<span class="enum">VK_RESULT_MAX_ENUM</span>，其值为<span class="mcr">INT32_MAX</span>。这并不是个有效的错误代码，正是因此才使用这个数值，一来因为<a href="https://renderdoc.org/vkspec_chunked/chap3.html#VkResult">VkResult</a>的枚举项中没有任何符合该种情况的返回值，二来这个数值不会跟任何Vulkan函数的返回值重合。注意，不要使用<span class="enum">VK_ERROR_UNKNOWN</span>，一些函数在失败时能返回这个数值。<strong>因没有合适的错误代码而返回<span class="enum">VK_RESULT_MAX_ENUM</span>的情况在这套教程中还会出现很多次。</strong>
         </p>
     </li>
 </ul></section>
@@ -1033,7 +1033,7 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
 }
 </pre>
 <p>
-    <a href="https://renderdoc.org/vkspec_chunked/chap5.html#VkQueueFamilyProperties">VkQueueFamilyProperties</a>::queueFlags与<a href="https://renderdoc.org/vkspec_chunked/chap5.html#VkQueueFlagBits">VkQueueFlagBits</a>的枚举值做位与，即可确定队列族支持的操作类型。
+    用<a href="https://renderdoc.org/vkspec_chunked/chap5.html#VkQueueFamilyProperties">VkQueueFamilyProperties</a>::queueFlags与<a href="https://renderdoc.org/vkspec_chunked/chap5.html#VkQueueFlagBits">VkQueueFlagBits</a>的枚举项做位与，即可确定队列族支持的操作类型。
 </p>
 <p>
     于是遍历所有队列族，从中找出符合条件的队列族的索引。
@@ -1136,7 +1136,7 @@ queueFamilyIndex_compute = ic;
     </li>
     <li>
         <p>
-            当图像或缓冲区要被另一个队列族的队列使用时，可能需要做资源的<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id8">队列族所有权转移</a>（所谓可能是因为并非所有硬件都有此要求），所以尽量使用相同的队列族来省去这一麻烦。而优先确保图形和计算的队列族相同，是因为无论程序多么复杂，资源的所有权在图形和呈现队列之间转移的情况至多只会在渲染循环中发生，但在图形和计算队列之间转移的情况可能发生在所有你想做间接渲染（此处姑且不解释）的场合，而且图形和计算队列不同的话，计算和图形命令也不得不在各自的命令缓冲区中完成（而不是在同一个命令缓冲区中），即，图形和计算的列族不同，比图形和呈现的队列族不同更费事。
+            当图像或缓冲区要被另一个队列族的队列使用时，可能需要做资源的<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id9">队列族所有权转移</a>（所谓可能是因为并非所有硬件都有此要求），所以尽量使用相同的队列族来省去这一麻烦。而优先确保图形和计算的队列族相同，是因为无论程序多么复杂，资源的所有权在图形和呈现队列之间转移的情况至多只会在渲染循环中发生，但在图形和计算队列之间转移的情况可能发生在所有你想做间接渲染（此处姑且不解释）的场合，而且图形和计算队列不同的话，计算和图形命令也不得不在各自的命令缓冲区中完成（而不是在同一个命令缓冲区中），即，图形和计算的列族不同，比图形和呈现的队列族不同更费事。
         </p>
     </li>
 </ul>
@@ -1421,7 +1421,7 @@ queueFamilyIndex_compute = ic;
         </p>
     </li>
 </ul>
-<p id="devicefeature">
+<p id="device_feature">
     接着用<a href="https://renderdoc.org/vkspec_chunked/chap47.html#vkGetPhysicalDeviceFeatures">vkGetPhysicalDeviceFeatures</a>(...)获取物理设备特性：
 </p>
 <pre class="code">
