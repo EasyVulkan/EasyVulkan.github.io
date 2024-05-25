@@ -255,12 +255,12 @@
     <span class="type">semaphore</span> semaphore_renderingIsOver;
 
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
-        <span class="cmt">/*假定这里有A部分代码*/</span>
+        <span class="cmt">/*假定这里有同步执行的A部分代码*/</span>
 
         <span class="cmt">//等待并重置fence</span>
         fence.<span class="fn">WaitAndReset</span>();
 
-        <span class="cmt">/*假定这里有B部分代码*//*待后续填充*/</span>
+        <span class="cmt">/*假定这里有异步执行的B部分代码*/</span>
 
         <span class="fn">glfwPollEvents</span>();
         <span class="fn">TitleFps</span>();
@@ -272,7 +272,7 @@
 <p>
     在CPU侧执行<code>fence.<span class="fn">WaitAndReset</span>();</code>前的A部分代码时，GPU侧可能正在做其后的B部分代码要求做的事。
     <br>
-    比如，执行<code><span class="fn">glfwWindowShouldClose</span>(pWindow)</code>时，GPU可能正在进行绘制。
+    比如，执行<code><span class="fn">glfwWindowShouldClose</span>(pWindow)</code>时，GPU可能正在执行B部分代码中的绘制命令。
     <br>
    （太啰嗦吗？虽然我想看这个教程的人大多知道什么是异步，姑且以防万一）
 </p></section>
@@ -423,7 +423,7 @@
         <span class="cmt">//等待并重置fence</span>
         fence.<span class="fn">WaitAndReset</span>();
         <span class="cmt">//获取交换链图像索引</span>
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
 
         <span class="cmt">/*待后续填充*/</span>
 
@@ -461,7 +461,7 @@
 
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         fence.<span class="fn">WaitAndReset</span>();
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
 
         <span class="cmt">/*待后续填充*/</span>
 
@@ -492,7 +492,7 @@
 
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         fence.<span class="fn">WaitAndReset</span>();
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
 
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
         <span class="cmt">/*渲染命令，待填充*/</span>
@@ -596,13 +596,13 @@
 
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         fence.<span class="fn">WaitAndReset</span>();
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
 
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
         <span class="cmt">/*渲染命令，待填充*/</span>
         commandBuffer.<span class="fn">End</span>();
 
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
         <span class="cmt">/*呈现图像，待填充*/</span>
 
         <span class="fn">glfwPollEvents</span>();
@@ -728,14 +728,14 @@
 <pre class="code">
 <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
     fence.<span class="fn">WaitAndReset</span>();
-    <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
 
     commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
     <span class="cmt">/*渲染命令，待填充*/</span>
     commandBuffer.<span class="fn">End</span>();
 
-    <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
-    <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
 
     <span class="fn">glfwPollEvents</span>();
     <span class="fn">TitleFps</span>();
@@ -759,14 +759,14 @@
     <span class="cmt">//----------------------------------------</span>
 
     fence.<span class="fn">WaitAndReset</span>();
-    <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
 
     commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
     <span class="cmt">/*渲染命令，待填充*/</span>
     commandBuffer.<span class="fn">End</span>();
 
-    <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
-    <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
 
     <span class="fn">glfwPollEvents</span>();
     <span class="fn">TitleFps</span>();
@@ -799,14 +799,14 @@
 
     <span class="cmt">/*在这里将上一帧的命令执行结果拷贝到CPU侧*/</span>
 
-    <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
 
     commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
     <span class="cmt">/*命令*/</span>
     commandBuffer.<span class="fn">End</span>();
 
-    <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
-    <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
 
     <span class="fn">glfwPollEvents</span>();
     <span class="fn">TitleFps</span>();
@@ -817,7 +817,7 @@
     <br>
     而在首次执行渲染循环时，若如上述代码这般在执行命令前进行拷贝，因为没有“上一帧”，要么无从拷贝，要么得在代码中对首次执行做特殊处理。
     <br>
-    因此把<code>fence.<span class="fn">WaitAndReset</span>();</code>和得在命令执行完后的干的事，统统移动到循环末尾比较合适。
+    因此把<code>fence.<span class="fn">WaitAndReset</span>();</code>和得在命令执行完后的干的事，统统移动到循环末尾，在代码逻辑上会比较省事（但未必总是合适，见后文即时帧）。
 </p>
 <p>
     于是，至此为止主函数为：
@@ -839,14 +839,14 @@
         <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
             <span class="fn">glfwWaitEvents</span>();
 
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
 
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
         <span class="cmt">/*渲染命令，待填充*/</span>
         commandBuffer.<span class="fn">End</span>();
 
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
 
         <span class="fn">glfwPollEvents</span>();
         <span class="fn">TitleFps</span>();
@@ -884,17 +884,16 @@
     <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
         <span class="kw">return</span> -1;
 
-    <span class="kw">struct</span> <span class="type">preFrameObjects_t</span> {
+    <span class="kw">struct</span> <span class="type">perFrameObjects_t</span> {
         <span class="type">fence</span> fence = { <span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span> }; <span class="cmt">//直接 = VK_FENCE_CREATE_SIGNALED_BIT也行，这里按照我的编程习惯在初始化类/结构体时保留花括号</span>
         <span class="type">semaphore</span> semaphore_imageIsAvailable;
         <span class="type">semaphore</span> semaphore_renderingIsOver;
         <span class="type">commandBuffer</span> commandBuffer;
     };
-    std::<span class="type">vector</span>&lt;<span class="type">preFrameObjects_t</span>&gt; preFrameObjects(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
+    std::<span class="type">vector</span>&lt;<span class="type">perFrameObjects_t</span>&gt; perFrameObjects(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
     <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
-    commandPool.<span class="type">AllocateBuffers</span>({ commandBuffers.<span class="fn">data</span>(), <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>() });
     <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : perFrameObjects)
-    commandPool.<span class="fn">AllocateBuffers</span>(i.commandBuffer);
+        commandPool.<span class="fn">AllocateBuffers</span>(i.commandBuffer);
     <span class="type">uint32_t</span> i = 0;
 
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
@@ -904,87 +903,37 @@
         <span class="kw">const auto</span>&amp; [fence, semaphore_imageIsAvailable, semaphore_renderingIsOver, commandBuffer] = perFrameObjects[i];
         i = (i + 1) % <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>();
 
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+        fence.<span class="fn">WaitAndReset</span>(); <span class="cmt">//在渲染循环开头等待与当前交换链图像配套的栅栏（在渲染循环末尾等待的话，下一帧必须等待当前帧渲染完，即时帧的做法便没了意义）</span>
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
 
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
         <span class="cmt">/*渲染命令*/</span>
         commandBuffer.<span class="fn">End</span>();
 
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
 
         <span class="fn">glfwPollEvents</span>();
         <span class="fn">TitleFps</span>();
-
-        fence.<span class="fn">WaitAndReset</span>();
     }
     <span class="fn">TerminateWindow</span>();
     <span class="kw">return</span> 0;
 }
 </pre>
 <p>
-    上述代码假定获取到的交换链图像索引在每个周期中有固定顺序，那么虽然这里的<span class="var">i</span>可能跟当前图像索引不同（如果获取到的交换链图像索引总是0、1、2依序而来，那么<span class="var">i</span>跟当前图像索引一致），但<span class="var">i</span>总是跟图像索引一一对应（也就是一种映射关系）。
-    <br>
-    但实际上交换链图像索引是否在每个周期中总是按固定顺序而来，还得在具体运行环境下做测试才可知。考虑交换链图像索引乱序的情况，上述代码修改为：
+    假定获取到的交换链图像索引在每个周期中有固定顺序，那么虽然这里的<span class="var">i</span>可能跟当前图像索引不同（如果获取到的交换链图像索引总是0、1、2依序而来，那么<span class="var">i</span>跟当前图像索引一致），但<span class="var">i</span>总是跟图像索引一一对应（也就是一种映射关系）。
 </p>
-<pre class="code">
-<span class="kw">int</span> <span class="fn">main</span>() {
-    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
-        <span class="kw">return</span> -1;
-
-    <span class="kw">struct</span> <span class="type">preFrameObjects_t</span> {
-        <span class="type">fence</span> fence = { <span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span> };
-        <span class="type">semaphore</span> semaphore_imageIsAvailable;
-        <span class="type">semaphore</span> semaphore_renderingIsOver;
-        <span class="type">commandBuffer</span> commandBuffer;
-    };
-    std::<span class="type">vector</span>&lt;<span class="type">preFrameObjects_t</span>&gt; preFrameObjects(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
-    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
-    commandPool.<span class="type">AllocateBuffers</span>({ commandBuffers.<span class="fn">data</span>(), <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>() });
-    <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : perFrameObjects)
-    commandPool.<span class="fn">AllocateBuffers</span>(i.commandBuffer);
-    <span class="type">uint32_t</span> i = 0;
-
-    <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
-        <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
-            <span class="fn">glfwWaitEvents</span>();
-
-        <span class="cmt">//先获取交换链图像索引</span>
-        <span class="type">semaphore</span> semaphore;
-        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore);
-        <span class="cmt">//再使用与索引对应的同步对象</span>
-        <span class="kw">auto</span>&amp; [fence, semaphore_imageIsAvailable, semaphore_renderingIsOver, commandBuffer] = perFrameObjects[i];
-        i = (i + 1) % <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>();
-        semaphore_imageIsAvailable = std::<span class="fn">move</span>(semaphore); <span class="cmt">//需给semaphore定义移动赋值函数</span>
-
-        commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
-        <span class="cmt">/*渲染命令*/</span>
-        commandBuffer.<span class="fn">End</span>();
-
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
-
-        <span class="fn">glfwPollEvents</span>();
-        <span class="fn">TitleFps</span>();
-
-        fence.<span class="fn">WaitAndReset</span>();
-    }
-    <span class="fn">TerminateWindow</span>();
-    <span class="kw">return</span> 0;
-}
-</pre>
-<ul>
-    <li>
-        <p>
-            因为我在<span class="type">semaphore</span>的默认构造器中使其在已创建逻辑设备的情况下自动完成创建，最初的那些<span class="var">semaphore_imageIsAvailable</span>没被使用过就被析构了。
-        </p>
-    </li>
-    <li>
-        <p>
-            在每个循环中创建和销毁信号量的开销可以忽略不计。
-        </p>
-    </li>
-</ul></section>
+<p>
+    如先前<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id2">获取交换链图像索引</a>所述，Vulkan标准对交换链图像索引在每个周期中的顺序并无要求。那么上述代码是否还能确保执行逻辑不出错呢？
+    <br>
+    考虑比较极端的情况：如果连续两次获取到索引为0的交换链图像，而你的同步对象按0、1的索引依序使用。既然是连续两次渲染到同一交换链图像，后一次得等待前一次命令执行完成，可前一次点亮的是0号栅栏，后一次等待的为1号栅栏，这么一来同步不就出问题了吗！？
+    <br>
+    上述情况没有什么值得你担心的：
+    <br>
+    <strong>只有在将图像交还给呈现引擎后（此时已通过信号量确保已完成了先前在该图像上的渲染），<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)才能获取到与该图像对应的索引。</strong>
+    <br>
+    因此，前文的代码在获取到的交换链图像索引是乱序时也不会有问题，只是也难以减少阻塞。
+</p></section>
 <section id="id9">
 <h2>队列族所有权转移<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h2>
 <p>
@@ -1015,16 +964,16 @@
     以下内存屏障录制在被提交到图形队列的命令缓冲区末尾，使得图形队列释放图像所有权：
 </p>
 <pre class="code">
-<span class="type">uint32_t</span> currentImageIndex = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
+<span class="type">uint32_t</span> currentImageIndex = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CurrentImageIndex</span>();
 <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier_g2p_release = {
     .sType = <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
     .srcAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
     .dstAccessMask = 0,<span class="cmt">//因为vkCmdPipelineBarrier(...)的参数中dstStage是BOTTOM_OF_PIPE，不需要dstAccessMask</span>
     .oldLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>,<span class="cmt">//内存布局已经在渲染通道结束时转换（这是下一节的内容），此处oldLayout和newLayout相同，不发生转变</span>
     .newLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>,
-    .srcQueueFamilyIndex = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">QueueFamilyIndex_Graphics</span>(),
-    .dstQueueFamilyIndex = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">QueueFamilyIndex_Presentation</span>(),
-    .image = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapchainImage</span>(currentImageIndex),
+    .srcQueueFamilyIndex = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(),
+    .dstQueueFamilyIndex = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>(),
+    .image = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImage</span>(currentImageIndex),
     .subresourceRange = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, 1 }
 };
 <span class="fn">vkCmdPipelineBarrier</span>(commandBuffer, <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>, <spanclass="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span>, 0,
@@ -1048,9 +997,9 @@
     <span class="cmt">//因为dstStage是VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT，不需要dstAccessMask</span>
     .oldLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>,
     .newLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>,
-    .srcQueueFamilyIndex = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">QueueFamilyIndex_Graphics</span>(),
-    .dstQueueFamilyIndex = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">QueueFamilyIndex_Presentation</span>(),
-    .image = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapchainImage</span>(currentImageIndex),
+    .srcQueueFamilyIndex = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(),
+    .dstQueueFamilyIndex = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>(),
+    .image = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImage</span>(currentImageIndex),
     .subresourceRange = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, 1 }
 };
 <span class="fn">vkCmdPipelineBarrier</span>(commandBuffer, <span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>, <span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span>, 0,
@@ -1089,7 +1038,7 @@
         <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
             <span class="fn">glfwWaitEvents</span>();
 
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
 
         <span class="cmt">//提交到图形队列的命令缓冲区</span>
         commandBuffer_graphics.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
@@ -1099,15 +1048,15 @@
             .srcAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
             .oldLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>,
             .newLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>,
-            .srcQueueFamilyIndex = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">QueueFamilyIndex_Graphics</span>(),
-            .dstQueueFamilyIndex = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">QueueFamilyIndex_Presentation</span>(),
-            .image = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapchainImage</span>(currentImageIndex),
+            .srcQueueFamilyIndex = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(),
+            .dstQueueFamilyIndex = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>(),
+            .image = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImage</span>(currentImageIndex),
             .subresourceRange = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, 1 }
         };
         <span class="fn">vkCmdPipelineBarrier</span>(commandBuffer, <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>, <spanclass="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span>, 0,
             0, <span class="kw">nullptr</span>, 0, <span class="kw">nullptr</span>, 1, &amp;imageMemoryBarrier_g2p_release);
         commandBuffer_graphics.<span class="fn">End</span>();
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer_graphics, semaphore_imageIsAvailable, semaphore_renderingIsOver);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer_graphics, semaphore_imageIsAvailable, semaphore_renderingIsOver);
 
         <span class="cmt">//提交到呈现队列的命令缓冲区</span>
         commandBuffer_presentation.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
@@ -1115,17 +1064,17 @@
             .sType = <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
             .oldLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>,
             .newLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>,
-            .srcQueueFamilyIndex = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">QueueFamilyIndex_Graphics</span>(),
-            .dstQueueFamilyIndex = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">QueueFamilyIndex_Presentation</span>(),
-            .image = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapchainImage</span>(currentImageIndex),
+            .srcQueueFamilyIndex = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(),
+            .dstQueueFamilyIndex = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>(),
+            .image = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImage</span>(currentImageIndex),
             .subresourceRange = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, 1 }
         };
         <span class="fn">vkCmdPipelineBarrier</span>(commandBuffer, <span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>, <span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT<span>, 0,
             0, <span class="kw">nullptr</span>, 0, <span class="kw">nullptr</span>, 1, &amp;imageMemoryBarrier_g2p_acquire);
         commandBuffer_presentation.<span class="fn">End</span>();
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Presentation</span>(commandBuffer_presentation, semaphore_renderingIsOver, semaphore_ownershipIsTransfered, fence);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Presentation</span>(commandBuffer_presentation, semaphore_renderingIsOver, semaphore_ownershipIsTransfered, fence);
 
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_ownershipIsTransfered);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PresentImage</span>(semaphore_ownershipIsTransfered);
 
         <span class="fn">glfwPollEvents</span>();
         <span class="fn">TitleFps</span>();
@@ -1215,22 +1164,22 @@
         <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
             <span class="fn">glfwWaitEvents</span>();
 
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
 
         <span class="cmt">//提交到图形队列的命令缓冲区</span>
         commandBuffer_graphics.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
         <span class="cmt">/*渲染命令，待填充*/</span>
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CmdTransferImageOwnership</span>(commandBuffer_graphics);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CmdTransferImageOwnership</span>(commandBuffer_graphics);
         commandBuffer_graphics.<span class="fn">End</span>();
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer_graphics, semaphore_imageIsAvailable);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer_graphics, semaphore_imageIsAvailable);
 
         <span class="cmt">//提交到呈现队列的命令缓冲区</span>
         commandBuffer_presentation.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CmdTransferImageOwnership</span>(commandBuffer_presentation);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CmdTransferImageOwnership</span>(commandBuffer_presentation);
         commandBuffer_presentation.<span class="fn">End</span>();
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Presentation</span>(commandBuffer_presentation, <span class="mcr">VK_NULL_HANDLE</span>, semaphore_ownershipIsTransfered, fence);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Presentation</span>(commandBuffer_presentation, <span class="mcr">VK_NULL_HANDLE</span>, semaphore_ownershipIsTransfered, fence);
 
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_ownershipIsTransfered);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PresentImage</span>(semaphore_ownershipIsTransfered);
 
         <span class="fn">glfwPollEvents</span>();
         <span class="fn">TitleFps</span>();
