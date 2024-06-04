@@ -1,7 +1,4 @@
 #include "VKBase.h"
-#include <windows.h>
-#include <vulkan/vulkan_win32.h>
-#pragma comment(lib, "vulkan-1.lib")
 #ifndef NDEBUG
 #pragma comment(linker, "/subsystem:console")
 #define Main main
@@ -115,15 +112,11 @@ auto PreInitialization_EnableSrgb() {
 	enableSrgb = true;
 	return [] { return enableSrgb; };
 }
-auto PreInitialization_TryEnableHdrByOrder(VkColorSpaceKHR colorSpace0, VkColorSpaceKHR colorSpace1 = {}, VkColorSpaceKHR colorSpace2 = {}) {
-	static VkColorSpaceKHR hdrColorSpaces[3];
-	if (colorSpace0 == VK_COLOR_SPACE_HDR10_ST2084_EXT || colorSpace0 == VK_COLOR_SPACE_DOLBYVISION_EXT || colorSpace0 == VK_COLOR_SPACE_HDR10_HLG_EXT)
-		hdrColorSpaces[0] = colorSpace0;
-	if (colorSpace1 == VK_COLOR_SPACE_HDR10_ST2084_EXT || colorSpace1 == VK_COLOR_SPACE_DOLBYVISION_EXT || colorSpace1 == VK_COLOR_SPACE_HDR10_HLG_EXT)
-		hdrColorSpaces[1] = colorSpace1;
-	if (colorSpace2 == VK_COLOR_SPACE_HDR10_ST2084_EXT || colorSpace2 == VK_COLOR_SPACE_DOLBYVISION_EXT || colorSpace2 == VK_COLOR_SPACE_HDR10_HLG_EXT)
-		hdrColorSpaces[2] = colorSpace2;
-	return []()->const auto& { return hdrColorSpaces; };
+auto PreInitialization_TrySetColorSpaceByOrder(arrayRef<const VkColorSpaceKHR> colorSpaces) {
+	static std::unique_ptr<VkColorSpaceKHR[]> pColorSpaces;
+	pColorSpaces = std::make_unique<VkColorSpaceKHR[]>(colorSpaces.Count() + 1);                    //Value-initialization
+	memcpy(pColorSpaces.get(), colorSpaces.Pointer(), sizeof VkColorSpaceKHR * colorSpaces.Count());//The last element remains zero
+	return []()->const VkColorSpaceKHR* { return pColorSpaces.get(); };
 }
 bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable = true, bool limitFrameRate = true) {
 	using namespace vulkan;
@@ -141,11 +134,12 @@ bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable
 	//Add extensions
 	graphicsBase::Base().AddInstanceExtension(VK_KHR_SURFACE_EXTENSION_NAME);
 	graphicsBase::Base().AddInstanceExtension(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
-	auto& hdrColorSpaces = decltype(PreInitialization_TryEnableHdrByOrder({})){}();
-	if (hdrColorSpaces[0])
+	const VkColorSpaceKHR* pColorSpaces = decltype(PreInitialization_TrySetColorSpaceByOrder({})){}();
+	if (pColorSpaces)
 		graphicsBase::Base().AddInstanceExtension(VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
 	graphicsBase::Base().AddDeviceExtension(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
 	//Create vulkan instance
+	graphicsBase::Base().UseLatestApiVersion();
 	if (graphicsBase::Base().CreateInstance())
 		return false;
 	//Create surface
@@ -169,13 +163,15 @@ bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable
 	//Set surface format if necessary
 	if (graphicsBase::Base().GetSurfaceFormats())
 		return false;
-	VkResult result_enableHdr = VK_SUCCESS;
-	true &&//Auto formatting alignment
-		hdrColorSpaces[0] && (result_enableHdr = graphicsBase::Base().SetSurfaceFormat({ VK_FORMAT_UNDEFINED, hdrColorSpaces[0] })) &&
-		hdrColorSpaces[1] && (result_enableHdr = graphicsBase::Base().SetSurfaceFormat({ VK_FORMAT_UNDEFINED, hdrColorSpaces[1] })) &&
-		hdrColorSpaces[2] && (result_enableHdr = graphicsBase::Base().SetSurfaceFormat({ VK_FORMAT_UNDEFINED, hdrColorSpaces[2] }));
-	if (result_enableHdr)
-		outStream << std::format("[ InitializeWindow ] WARNING\nFailed to enable HDR!\n");
+	if (pColorSpaces) {
+		VkResult result_setColorSpace = VK_SUCCESS;
+		while (*pColorSpaces)
+			if (result_setColorSpace = graphicsBase::Base().SetSurfaceFormat({ VK_FORMAT_UNDEFINED, *pColorSpaces++ });
+				result_setColorSpace == VK_SUCCESS)
+				break;
+		if (result_setColorSpace)
+			outStream << std::format("[ InitializeWindow ] WARNING\nFailed to satisfy the requirement of color space!\n");
+	}
 	if (!graphicsBase::Base().SwapchainCreateInfo().imageFormat &&
 		decltype(PreInitialization_EnableSrgb()){}())
 		if (graphicsBase::Base().SetSurfaceFormat({ VK_FORMAT_R8G8B8A8_SRGB, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR }) &&

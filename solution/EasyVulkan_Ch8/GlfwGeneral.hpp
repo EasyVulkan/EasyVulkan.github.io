@@ -7,6 +7,17 @@ GLFWwindow* pWindow;
 GLFWmonitor* pMonitor;
 const char* windowTitle = "EasyVK";
 
+auto PreInitialization_EnableSrgb() {
+	static bool enableSrgb;//Static object will be zero-initialized at launch
+	enableSrgb = true;
+	return [] { return enableSrgb; };
+}
+auto PreInitialization_TrySetColorSpaceByOrder(arrayRef<const VkColorSpaceKHR> colorSpaces) {
+	static std::unique_ptr<VkColorSpaceKHR[]> pColorSpaces;
+	pColorSpaces = std::make_unique<VkColorSpaceKHR[]>(colorSpaces.Count() + 1);                    //Value-initialization
+	memcpy(pColorSpaces.get(), colorSpaces.Pointer(), sizeof VkColorSpaceKHR * colorSpaces.Count());//The last element remains zero
+	return []()->const VkColorSpaceKHR* { return pColorSpaces.get(); };
+}
 bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable = true, bool limitFrameRate = true) {
 	using namespace vulkan;
 
@@ -29,7 +40,7 @@ bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable
 
 #ifdef _WIN32
 	graphicsBase::Base().AddInstanceExtension(VK_KHR_SURFACE_EXTENSION_NAME);
-	graphicsBase::Base().AddInstanceExtension("VK_KHR_win32_surface");
+	graphicsBase::Base().AddInstanceExtension(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
 #else
 	uint32_t extensionCount = 0;
 	const char** extensionNames;
@@ -42,6 +53,9 @@ bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable
 	for (size_t i = 0; i < extensionCount; i++)
 		graphicsBase::Base().AddInstanceExtension(extensionNames[i]);
 #endif
+	const VkColorSpaceKHR* pColorSpaces = decltype(PreInitialization_TrySetColorSpaceByOrder({})){}();
+	if (pColorSpaces)
+		graphicsBase::Base().AddInstanceExtension(VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
 	graphicsBase::Base().AddDeviceExtension(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
 
 	graphicsBase::Base().UseLatestApiVersion();
@@ -60,6 +74,23 @@ bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable
 		vulkan::graphicsBase::Base().DeterminePhysicalDevice(0, true, false) ||
 		vulkan::graphicsBase::Base().CreateDevice())
 		return false;
+
+	if (graphicsBase::Base().GetSurfaceFormats())
+		return false;
+	if (pColorSpaces) {
+		VkResult result_setColorSpace = VK_SUCCESS;
+		while (*pColorSpaces)
+			if (result_setColorSpace = graphicsBase::Base().SetSurfaceFormat({ VK_FORMAT_UNDEFINED, *pColorSpaces++ });
+				result_setColorSpace == VK_SUCCESS)
+				break;
+		if (result_setColorSpace)
+			outStream << std::format("[ InitializeWindow ] WARNING\nFailed to satisfy the requirement of color space!\n");
+	}
+	if (!graphicsBase::Base().SwapchainCreateInfo().imageFormat &&
+		decltype(PreInitialization_EnableSrgb()){}())
+		if (graphicsBase::Base().SetSurfaceFormat({ VK_FORMAT_R8G8B8A8_SRGB, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR }) &&
+			graphicsBase::Base().SetSurfaceFormat({ VK_FORMAT_B8G8R8A8_SRGB, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR }))
+			outStream << std::format("[ InitializeWindow ] WARNING\nFailed to enable sRGB!\n");
 
 	if (graphicsBase::Base().CreateSwapchain(limitFrameRate))
 		return false;

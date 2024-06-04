@@ -29,7 +29,7 @@ bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable
 
 #ifdef _WIN32
 	graphicsBase::Base().AddInstanceExtension(VK_KHR_SURFACE_EXTENSION_NAME);
-	graphicsBase::Base().AddInstanceExtension("VK_KHR_win32_surface");
+	graphicsBase::Base().AddInstanceExtension(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
 #else
 	uint32_t extensionCount = 0;
 	const char** extensionNames;

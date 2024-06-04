@@ -1,12 +1,12 @@
 # EasyVulkan.github.io
-面向懒人的Vulkan中文教程<br>
+入门级Vulkan中文教程<br>
 主页：https://easyvulkan.github.io/
 
 联系请：<br>
 1.捉虫/答疑，发Issue，开新的，或者发在[【长期】 捉虫/答疑集中贴](https://github.com/EasyVulkan/EasyVulkan.github.io/issues/7)。<br>
 2.反馈/交流/答疑，发Discussion。
 
-2024.05.12 [Ch3-8 查询](https://easyvulkan.github.io/Ch3-8%20%E6%9F%A5%E8%AF%A2.html)完成。<br>
+2024.06.25 [Ch8-5 sRGB色彩空间和开启HDR](https://easyvulkan.github.io/Ch8-5%20sRGB%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%BC%80%E5%90%AFHDR.html)完成。<br>
 2024.04.02 代码里加了CMakeLists.txt（我不确定Visual Studio之外是什么效果，谁愿意的话可以fork到私有仓库，帮我改一下然后pull request给我）
 
 ## 章节目录
@@ -36,6 +36,7 @@
 [Ch8-2 深度测试和深度可视化](https://easyvulkan.github.io/Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html)<br>
 [Ch8-3 输入附件示例：延迟渲染](https://easyvulkan.github.io/Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html)<br>
 [Ch8-4 预乘Alpha](https://easyvulkan.github.io/Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html)
+[Ch8-5 sRGB色彩空间和开启HDR](https://easyvulkan.github.io/Ch8-5%20sRGB%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%BC%80%E5%90%AFHDR.html)
 
 若要生成mipmap，请阅读Ch7-6和Ch7-7。
 
@@ -61,14 +62,20 @@
 
 [Ap1-1 运行期编译GLSL](https://easyvulkan.github.io/Ap1-1%20%E8%BF%90%E8%A1%8C%E6%9C%9F%E7%BC%96%E8%AF%91GLSL.html)
 
-## 更新计划（6月底前？）
+## 更新计划（猴年马月？）
 
-Ch8-5 sRGB色彩空间与开启HDR<br>
-Ch8-6 多重采样与超采样<br>
-Ch5-4 立方体贴图<br>
-Ch8-7 立方体贴图应用实例（暂定）<br>
+停...停更中。-_-||
+
+待更新的内容清单：<br>
 Ch4-4 几何着色器<br>
-Ch9-1 将ERP图像转到立方体贴图（暂定）<br>
+Ch4-5 细分着色器<br>
+Ch4-6 计算着色器<br>
+Ch5-4 立方体贴图（[封装代码见此](https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch7/VKBase+.h#L1234)，光看代码和我写的英语注释大概不太好懂...）<br>
+Ch7-8 多重采样与超采样（[创建多重采样的渲染通道的代码](https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch7/EasyVulkan.hpp#L177)）<br>
+Ch8-6 立方体贴图应用实例：天空盒（暂定，[以前随便写的示例代码见此](https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch8/Ch8-6.hpp)）<br>
+Ch8-7 曲面细分与置换贴图<br>
+Ch8-8 计算着色器和Storage缓冲区应用实例：2D粒子效果（暂定）<br>
+Ch9-1 几何着色器应用实例：将ERP图像转到立方体贴图（暂定）<br>
 
-细分和计算着色器相关内容放下半年。
-撰写顺序可能变卦。
+没动力写，有朝一日等我心血来潮了再更吧...<br>
+如果我写的都看完了，那你也应该已经比较熟悉Vulkan API了，可以找别的教程接着看！

@@ -24,5 +24,9 @@
 #include <stb_image.h>
 
 //Vulkan
-#include <vulkan/vulkan.h>
+#ifdef _WIN32
+#define VK_USE_PLATFORM_WIN32_KHR
+#define NOMINMAX
 #pragma comment(lib, "vulkan-1.lib")
+#endif
+#include <vulkan/vulkan.h>
