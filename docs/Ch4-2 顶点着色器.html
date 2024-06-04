@@ -110,6 +110,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html">Ch8-3 延迟渲染</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html">Ch8-4 预乘Alpha</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-5%20sRGB%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%BC%80%E5%90%AFHDR.html">Ch8-5 sRGB色彩空间与开启HDR</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">附录</span></p>
 <ul>
@@ -142,9 +143,12 @@
   <section id="ch4-2">
 <h1>Ch4-2 顶点着色器<a class="headerlink" href="#ch4-2" title="Permalink to this heading"></a></h1>
 <p>
-    顶点着色器（vertex shader）是图形管线中的一个着色器，用于处理和生成顶点。若非Task/Mesh管线，那么顶点着色器是图形管线中最初执行的着色器。
+    顶点着色器（vertex shader）是图形管线中的一个着色器，它可以处理来自顶点缓冲区的数据，或根据一定的规则直接生成顶点数据。
     <br>
-    顶点着色器对每个顶点执行一次。
+    若非Task/Mesh管线，那么顶点着色器是图形管线中最初执行的着色器。
+</p>
+<p>
+    顶点着色器逐顶点发生调用。
 </p><section id="id1">
 <h2>顶点着色器的内置输入<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
 <p>
@@ -244,7 +248,7 @@
 <p>
     gl_Position与片段渲染在屏幕上的位置及深度值的关系参见<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id4">NDC坐标</a>。
     <br>
-    如果顶点着色器之后只有一个片段着色器或没有任何着色器（因为不输出颜色，可以只输出深度值到片段所在位置），应当输出gl_Position（考虑到连gl_Position都不必输出的情形应当是纯粹的计算和数据存储，应当用计算着色器）。
+    如果顶点着色器之后只有一个片段着色器，或没有任何着色器（旨在不输出颜色，只输出深度值到片段所在位置），应当输出gl_Position（若是连gl_Position都不必输出的情形，必是纯粹的计算和数据存储，应使用//TODO Ch4-6 计算着色器）。
     <br>
     gl_Position在栅格化时发生插值，插值方式考虑透视（即相当于<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id11">插值修饰符</a>为<span class="kw">smooth</span>）。
 </p></section>

@@ -20,7 +20,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="Ap1-1 运行期编译GLSL" href="Ap1-1%20%E8%BF%90%E8%A1%8C%E6%9C%9F%E7%BC%96%E8%AF%91GLSL.html" />
+    <link rel="next" title="Ch8-5 sRGB色彩空间与开启HDR" href="Ch8-5%20sRGB%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%BC%80%E5%90%AFHDR.html" />
     <link rel="prev" title="Ch8-3 延迟渲染" href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html" /> 
 </head>
 
@@ -114,6 +114,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#operator">operator()</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-5%20sRGB%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%BC%80%E5%90%AFHDR.html">Ch8-5 sRGB色彩空间与开启HDR</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">附录</span></p>
 <ul>
@@ -262,7 +263,7 @@
 <ul>
     <li>
         <p>
-            使用预乘alpha的RGB通道值后，虽然线型滤波的结果在数值上确实是线性变化的，但显示出的渐变效果在视觉上可能仍显得不够柔和，将色调映射到sRGB色彩空间可以获得更好的效果，见//TODO Ch8-5 sRGB色调映射。
+            使用预乘alpha的RGB通道值后，虽然线型滤波的结果在数值上确实是线性变化的，但显示出的渐变效果在视觉上可能仍显得不够柔和，将色值映射到sRGB色彩空间可以获得更好的效果，见<a class="reference internal" href="Ch8-5%20sRGB%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%BC%80%E5%90%AFHDR.html">Ch8-5 sRGB色彩空间与开启HDR</a>。
         </p>
     </li>
 </ul>
@@ -277,7 +278,7 @@
     </li>
     <li>
         <p>
-            注意色彩空间：插值之前，应确保色值是线性色彩空间中的色值（TODO Ch8-5会有详细说明）。
+            注意色彩空间：插值之前，应确保色值是线性色彩空间中的色值（相关概念会在<a class="reference internal" href="Ch8-5%20sRGB%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%BC%80%E5%90%AFHDR.html">下一节</a>中进行讲解）。
         </p>
     </li>
 </ul></section>
@@ -399,7 +400,7 @@
 }
 </pre>
 <p>
-    顾名思义，<span class="type">fCreateTexture2d_multiplyAlpha</span>这个类用来创建预乘alpha的2D贴图，<span class="type">fCreateTexture2d_multiplyAlpha</span>::<span class="fn">operator()</span>说明该类的实例可以像函数一样使用。
+    顾名思义，<span class="type">fCreateTexture2d_multiplyAlpha</span>这个类用来创建预乘alpha的2D贴图，<span class="type">fCreateTexture2d_multiplyAlpha</span>::<span class="fn">operator()</span>说明该类的实例可以像函数一样被使用（这种类叫做“仿函数”）。
     <br>
     这个类不处理2D贴图数组，要处理2D贴图数组得把事情复杂化：要么为每个图层创建帧缓冲，要么使用多层帧缓冲和//TODO 几何着色器，要么用<a class="reference internal" href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html">动态渲染</a>省去帧缓冲。
     <br>
@@ -1272,7 +1273,7 @@ easyVulkan::<span class="type">fCreateTexture2d_multiplyAlpha</span> function(<s
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html" class="btn btn-neutral float-left" title="Ch8-3 延迟渲染" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
-        <a href="Ap1-1%20%E8%BF%90%E8%A1%8C%E6%9C%9F%E7%BC%96%E8%AF%91GLSL.html" class="btn btn-neutral float-right" title="Ap1-1 运行期编译GLSL" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Ch8-5%20sRGB%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%BC%80%E5%90%AFHDR.html" class="btn btn-neutral float-right" title="Ch8-5 sRGB色彩空间与开启HDR" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -204,21 +204,16 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch3-8%20%E6%9F%A5%E8%AF%A2.html">Ch3-8 查询</a></li>
 </ul>
 </div>
-<div class="line-block">
-<div class="line">Ch3-8 Query</div>
-</div>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+<li class="toctree-l1">Ch4-4 几何着色器</li>
+<li class="toctree-l1">Ch4-5 细分着色器</li>
+<li class="toctree-l1">Ch4-6 计算着色器</li>
 </ul>
-</div>
-<div class="line-block">
-<div class="line">Ch4-4 几何着色器</div>
-<div class="line">Ch4-5 细分着色器</div>
-<div class="line">Ch4-6 计算着色器</div>
 </div>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
@@ -250,10 +245,8 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-5 初识Uniform缓冲区</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a></li>
+<li class="toctree-l1">Ch7-8 多重采样与超采样</li>
 </ul>
-</div>
-<div class="line-block">
-<div class="line">Ch7-8 多重采样与超采样</div>
 </div>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">第八章 简单示例</span></p>
@@ -262,13 +255,11 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html">Ch8-3 延迟渲染</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html">Ch8-4 预乘Alpha</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-5%20sRGB%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%BC%80%E5%90%AFHDR.html">Ch8-5 sRGB色彩空间与开启HDR</a></li>
+<li class="toctree-l1">Ch8-6 立方体贴图应用实例</li>
+<li class="toctree-l1">Ch8-7 曲面细分与置换贴图</li>
+<li class="toctree-l1">Ch8-8 2D粒子效果</li>
 </ul>
-</div>
-<div class="line-block">
-<div class="line">Ch8-5 sRGB色调映射</div>
-<div class="line">Ch8-6 立方体贴图应用实例</div>
-<div class="line">Ch8-7 曲面细分与置换贴图</div>
-<div class="line">Ch8-8 2D粒子效果</div>
 </div>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">附录</span></p>
@@ -308,6 +299,17 @@
 <section id="id5" style="width:616px; float:left;">
 <h2>更新履历<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
 <ul>
+    <li>
+        <p>
+            24.06.04 <a class="reference internal" href="Ch8-5%20sRGB%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%BC%80%E5%90%AFHDR.html">Ch8-5 sRGB色彩空间与开启HDR</a>施工中。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.06.04 Ch1-3和Ch1-4页面上汇总的代码中，因复制粘贴错误漏了<code><span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_SWAPCHAIN_EXTENSION_NAME</span>);</code>，补上。
+        </p>
+    </li>
+<br>
     <li>
         <p>
             24.05.25 修正05.12更新的错误：<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id8">即时帧</a>中的<code>fence.<span class="fn">WaitAndReset</span>();</code>应该放渲染循环开头而非最后（批量修改需谨慎啊！），并修正获取到的交换链图像索引是乱序时的说明（总结：乱序的话就不必考虑即时帧了）。

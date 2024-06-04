@@ -108,6 +108,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html">Ch8-3 延迟渲染</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html">Ch8-4 预乘Alpha</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-5%20sRGB%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%BC%80%E5%90%AFHDR.html">Ch8-5 sRGB色彩空间与开启HDR</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">附录</span></p>
 <ul>
@@ -465,7 +466,7 @@ commandBuffer.<span class="fn">End</span>();
 <p>
     你用的Vulkan SDK肯定是1.3版本以上，所以必定定义了这两个符号，在Vulkan1.3中也不需要干任何额外的事。
     <br>
-    但是，如果Vulkan的运行版本是1.2，这两个函数不是核心功能的一部分，那么程序是无法在运行期找到这两个函数的实现的，跟<span class="type">PFN_vkCreateDebugUtilsMessengerEXT</span>的情况类似，需要手动获取这两个函数的指针，因为他们从属于设备扩展功能，通过<a href="https://renderdoc.org/vkspec_chunked/chap4.html#vkGetDeviceProcAddr">vkGetDeviceProcAddr</a>(...)来取得：
+    但是，如果Vulkan的运行版本是1.2，这两个函数不是核心功能的一部分，那么程序是无法在运行期找到这两个函数的实现的。跟<span class="type">PFN_vkCreateDebugUtilsMessengerEXT</span>的情况类似，需要手动获取这两个函数的指针，因为他们从属于设备扩展功能，通过<a href="https://renderdoc.org/vkspec_chunked/chap4.html#vkGetDeviceProcAddr">vkGetDeviceProcAddr</a>(...)来取得：
 </p>
 <pre class="code">
 <span class="type">PFN_vkCmdBeginRenderingKHR</span> vkCmdBeginRendering =
@@ -690,7 +691,7 @@ vkCmdEndRendering(commandBuffer);
 <ul>
     <li>
         <p>
-            resolveMode是个创建通常的渲染通道对象时没有的参数，但因为本节的重点不是多重渲染，在此不对<span class="type">VkResolveModeFlagBits</span>进行解说。
+            resolveMode是个创建通常的渲染通道对象时没有的参数，但因为本节的重点不是多重渲染，在此不对<span class="type">VkResolveModeFlagBits</span>进行解说（注：这套教程中不会对解析模式进行解说，有兴趣请自行了解）。
         </p>
     </li>
     <li>
@@ -818,7 +819,7 @@ vkCmdEndRendering(commandBuffer);
             !<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceVulkan13Features</span>().dynamicRendering)
             <span class="kw">return</span> -1;
 
-    <span class="fn">queueThread</span> queueThread;
+    <span class="type">queueThread</span> queueThread;
 
     <span class="cmt">/*...*/</span>
 }

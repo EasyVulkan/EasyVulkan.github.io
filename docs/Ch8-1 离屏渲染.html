@@ -115,6 +115,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html">Ch8-3 延迟渲染</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html">Ch8-4 预乘Alpha</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-5%20sRGB%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%BC%80%E5%90%AFHDR.html">Ch8-5 sRGB色彩空间与开启HDR</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">附录</span></p>
 <ul>
@@ -215,7 +216,7 @@
 <p>
     然后派生出两个类：颜色附件<span class="type">colorAttachment</span>、深度模板附件<span class="type">depthStencilAttachment</span>（这一节还用不着深度模板附件，算是为之后做准备）。
     <br>
-    输入附件不需要封装，输入附件是被后续子通道读取的图像附件，在创建颜色/深度模板附件时注明<span class="enum">VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT</span>即可。至于解析附件只不过是采样点数为1的颜色/模板附件罢了。
+    输入附件不需要封装，输入附件是被后续子通道读取的图像附件，在创建颜色/深度模板附件时注明<span class="enum">VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT</span>即可。至于解析附件只不过是采样点数为1的颜色/深度模板附件罢了。
 </p>
 <pre class="code">
 <span class="kw">class</span> <span class="type">colorAttachment</span> :<span class="kw">public</span> <span class="type">attachment</span> {
@@ -320,7 +321,7 @@
     </li>
 </ul>
 <p>
-    相比之下，<span class="type">depthStencilAttachment</span>::<span class="fn">Create</span>(...)多出一段根据图像格式判断<span class="type">VkImageSubresourceRange</span>::aspectMask的逻辑：
+    相比之下，<span class="type">depthStencilAttachment</span>::<span class="fn">Create</span>(...)多出一段根据图像格式确定<span class="type">VkImageSubresourceRange</span>::aspectMask的逻辑：
 </p>
 <pre class="code">
 <span class="kw">void</span> <span class="type">depthStencilAttachment</span>::<span class="fn">Create</span>(<span class="type">VkFormat</span> format, <span class="type">VkExtent2D</span> extent, <span class="type">uint32_t</span> layerCount = 1,
@@ -337,20 +338,19 @@
     imageMemory.<span class="fn">Create</span>(
         imageCreateInfo,
         <span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span> | <span class="kw">bool</span>(otherUsages &amp; <span class="enum">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</span>) * <span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>);
-    <span class="cmt">//</span>
+    <span class="cmt">//确定aspcet mask-------------------------</span>
     <span class="type">VkImageAspectFlags</span> aspectMask = (!stencilOnly) * <span class="enum">VK_IMAGE_ASPECT_DEPTH_BIT</span>;
     <span class="kw">if</span> (format &gt; <span class="enum">VK_FORMAT_S8_UINT</span>)
         aspectMask |= <span class="enum">VK_IMAGE_ASPECT_STENCIL_BIT</span>;
     <span class="kw">else if</span> (format == <span class="enum">VK_FORMAT_S8_UINT</span>)
         aspectMask = <span class="enum">VK_IMAGE_ASPECT_STENCIL_BIT</span>;
-    <span class="cmt">//</span>
+    <span class="cmt">//----------------------------------------</span>
     imageView.<span class="fn">Create</span>(
         imageMemory.<span class="fn">Image</span>(),
         layerCount > 1 ? <span class="enum">VK_IMAGE_VIEW_TYPE_2D_ARRAY</span> : <span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>,
         format,
         { aspectMask, 0, 1, 0, layerCount });
 }
-</pre>
 </pre>
 <ul>
     <li>
@@ -376,7 +376,7 @@
 <section id="createrpwf-canvas">
 <h2>CreateRpwf_Canvas<a class="headerlink" href="#createrpwf-canvas" title="Permalink to this heading"></a></h2>
 <p>
-    于是，向<span class="path">EasyVulkan.hpp</span>，easyVulkan命名空间中，定义<span class="type">renderPassWithFramebuffer</span>结构体，及用来创建渲染通道和帧缓冲的函数<span class="fn">CreateRpwf_Canvas</span>(...)：
+    于是，向<span class="path">EasyVulkan.hpp</span>，easyVulkan命名空间中，定义<span class="type">renderPassWithFramebuffer</span>结构体，及用来创建图像附件、渲染通道、帧缓冲的函数<span class="fn">CreateRpwf_Canvas</span>(...)：
 </p>
 <pre class="code">
 <span class="kw">namespace</span> easyVulkan {
@@ -1124,15 +1124,15 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
         <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
             <span class="fn">glfwWaitEvents</span>();
 
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
-        <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+        <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CurrentImageIndex</span>();
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
 
         <span class="cmt">/*待填充*/</span>
 
         commandBuffer.<span class="fn">End</span>();
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
 
         <span class="fn">glfwPollEvents</span>();
 
@@ -1170,8 +1170,8 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
         <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
             <span class="fn">glfwWaitEvents</span>();
 
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
-        <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+        <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CurrentImageIndex</span>();
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
 
         <span class="kw">if</span> (clearCanvas)
@@ -1181,8 +1181,8 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
         <span class="cmt">/*待填充*/</span>
 
         commandBuffer.<span class="fn">End</span>();
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
 
         <span class="fn">glfwPollEvents</span>();
 
@@ -1213,8 +1213,8 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
         <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
             <span class="fn">glfwWaitEvents</span>();
 
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
-        <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+        <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CurrentImageIndex</span>();
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
 
         <span class="kw">if</span> (clearCanvas)
@@ -1224,8 +1224,8 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
         <span class="cmt">/*待填充*/</span>
 
         commandBuffer.<span class="fn">End</span>();
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
 
         <span class="fn">glfwPollEvents</span>();
 
@@ -1320,8 +1320,8 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
         <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
             <span class="fn">glfwWaitEvents</span>();
 
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
-        <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">CurrentImageIndex</span>();
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
+        <span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CurrentImageIndex</span>();
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
 
         <span class="kw">if</span> (clearCanvas)
@@ -1338,8 +1338,8 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
         <span class="cmt">/*采样到屏幕，待填充*/</span>
 
         commandBuffer.<span class="fn">End</span>();
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
-        <span class="type">graphicsBase</span>::<span class="fn">Base()</span>.<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
 
         <span class="fn">glfwPollEvents</span>();
         <span class="fn">glfwGetCursorPos</span>(pWindow, &amp;mouseX, &amp;mouseY);

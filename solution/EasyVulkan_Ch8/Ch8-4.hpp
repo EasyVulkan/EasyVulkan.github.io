@@ -95,7 +95,7 @@ int main() {
 
 	//Load image
 	VkExtent2D imageExtent;
-	auto pImageData = texture::LoadFile("texture/testImage.png", imageExtent, FormatInfo(VK_FORMAT_R8G8B8A8_UNORM));
+	auto pImageData = texture::LoadFile("image/testImage.png", imageExtent, FormatInfo(VK_FORMAT_R8G8B8A8_UNORM));
 	texture2d texture_straightAlpha(pImageData.get(), imageExtent, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_R8G8B8A8_UNORM);
 	easyVulkan::fCreateTexture2d_multiplyAlpha function(VK_FORMAT_R8G8B8A8_UNORM, true, nullptr);
 	texture2d texture_premultipliedAlpha = function(pImageData.get(), imageExtent, VK_FORMAT_R8G8B8A8_UNORM);
@@ -148,7 +148,7 @@ int main() {
 		vkCmdDraw(commandBuffer, 4, 1, 0, 0);
 		//Premultiplied alpha
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_premultipliedAlpha);
-		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,pipelineLayout_texture, 0, 1, descriptorSet_premultipliedAlpha.Address(), 0, nullptr);
+		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout_texture, 0, 1, descriptorSet_premultipliedAlpha.Address(), 0, nullptr);
 		vkCmdDraw(commandBuffer, 4, 1, 4, 0);
 		renderPass.CmdEnd(commandBuffer);
 		commandBuffer.End();

@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch8-5 sRGB色彩空间与开启HDR &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ap1-1 运行期编译GLSL" href="Ap1-1%20%E8%BF%90%E8%A1%8C%E6%9C%9F%E7%BC%96%E8%AF%91GLSL.html" />
+    <link rel="prev" title="Ch8-4 预乘Alpha" href="Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html">Ch3-7 采样器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-8%20%E6%9F%A5%E8%AF%A2.html">Ch3-8 查询</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VKBase%2B.h.html">Ch5-0 VKBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch6-1 无图像帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html">Ch6-2 动态渲染</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%BB%98%E5%88%B6.html">Ch7-3 初识实例化绘制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-4 初识Push Constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-5 初识Uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第八章 简单示例</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html">Ch8-3 延迟渲染</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html">Ch8-4 预乘Alpha</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch8-5 sRGB色彩空间与开启HDR</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#srgb">sRGB色彩空间</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">sRGB传递函数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">SRGB后缀格式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">启用SRGB格式的交换链</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#hdr">开启HDR</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bt2020">BT2020色彩空间</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">选择色彩空间</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pq-eotf">应用PQ EOTF的逆映射</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">附录</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ap1-1%20%E8%BF%90%E8%A1%8C%E6%9C%9F%E7%BC%96%E8%AF%91GLSL.html">Ap1-1 运行期编译GLSL</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch8-5 sRGB色彩空间与开启HDR</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch8-5-srgbhdr">
+<h1>Ch8-5 sRGB色彩空间与开启HDR<a class="headerlink" href="#ch8-5-srgbhdr" title="Permalink to this heading"></a></h1>
+<p>
+    这一节更多的是概念而非代码，因为在混色和预乘alpha之后讲比较合适，故写在第八章。
+</p><section id="srgb">
+<h2>sRGB色彩空间<a class="headerlink" href="#srgb" title="Permalink to this heading"></a></h2>
+<p>
+    比较下面两张图，哪一边的线性滤波更“线性”呢？
+</p>
+<img alt="_images/ch8-5-1.png" src="_images/ch8-5-1.png">
+<p>
+    要是无法判断，再看看下面的图像，哪边的亮度更加均匀？
+    <br>
+    （图中各顶点的红/绿/蓝色浮点数值均为1.f）
+</p>
+<img alt="_images/ch8-5-2.png" src="_images/ch8-5-2.png">
+<p>
+    请看下图，确保你看到的是没有放缩的原图，应该可以看到中央是全黑和全白的2x2方块构成的棋盘格图案，中央的平均亮度更接近左边还是右边呢？
+</p>
+<img alt="_images/ch8-5-3.png" src="_images/ch8-5-3.png">
+<ul>
+    <li>
+        <p>
+            摘下近视眼镜或调整双眼焦距，中央黑白相间的棋盘格的颜色会看着更接近较亮的左侧（前提是你没有把显示器的对比度和Gamma调得比较奇怪的话）。
+        </p>
+    </li>
+</ul>
+<p>
+    你可以打开Windows自带的画图软件，对上图进行取色，看看右侧的8位整形色值是否确实是128。
+    <br>
+    中间全黑全白相间的棋盘格的平均亮度理应是全白的一半，那么与灰度128对应的亮度应该一致吧？然而图中却呈现出了反直觉的结果。
+</p>
+<p>
+    <strong>显示器默认的色彩空间是sRGB色彩空间，sRGB色彩空间的色值到显示器亮度的转换，是一个非线性的映射。</strong>
+    <br>
+    正是这个非线性的映射，导致了本该是全白一半亮度的128这个值，只显示出了其应有亮度的约29%。
+</p>
+<p>
+    可能你会觉得188的数值对应的亮度太亮，不像是全白和全黑的一半，这很正常，物理亮度到人的感知亦是一个非线性的映射。
+</p><section id="id1">
+<h3>sRGB传递函数<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<p>
+    要解决sRGB色值到显示器亮度的非线性映射，方法很简单：如果显示器收到188这个数值才能显示出全白的一半亮度，那么把128映射到188不就好了吗！
+</p>
+<p>
+    <strong>色彩空间</strong>这一概念不光包含对色域的定义，也包含颜色的数值表达方式的定义，还可能会定义传递函数（transfer function）。
+    <br>
+    信号到显示器线性亮度的转换函数，叫作电光传递函数（electro-optical transfer function），简称EOTF。sRGB色彩空间的色值到线性亮度的转换函数，便叫作sRGB EOTF。
+    <br>
+    <a href="https://registry.khronos.org/DataFormat/specs/1.3/dataformat.1.3.html#TRANSFER_SRGB">Khronos关于数据格式的标准</a>中规定了sRGB EOTF的数学表达式，其对应的GLSL代码为：
+</p>
+<pre class="code">
+<span class="kw">float</span> <span class="fn">Eotf_sRGB</span>(<span class="kw">float</span> <span class="par">v</span>) {
+    <span class="kw">if</span> (<span class="par">v</span> &lt;= 0.04045f)
+        <span class="kw">return</span> <span class="par">v</span> / 12.92f;
+    <span class="kw">return</span> <span class="fn">pow</span>((<span class="par">v</span> + 0.055f) / 1.055f, 2.4f);
+}
+<span class="type">vec3</span> <span class="fn">Eotf_sRGB</span>(<span class="type">vec3</span> <span class="par">v</span>) {
+    <span class="kw">return</span> <span class="type">vec3</span>(<span class="fn">Eotf_sRGB</span>(<span class="par">v</span>.x), <span class="fn">Eotf_sRGB</span>(<span class="par">v</span>.y), <span class="fn">Eotf_sRGB</span>(<span class="par">v</span>.z));
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            函数的输入输出皆为[0, 1]区间内的标准化数值。
+        </p>
+    </li>
+</ul>
+<p>
+    于是，sRGB EOTF的逆映射对应的GLSL代码为：
+</p>
+<pre class="code">
+<span class="kw">float</span> <span class="fn">InverseEotf_sRGB</span>(<span class="kw">float</span> <span class="par">v</span>) {
+    <span class="kw">if</span> (<span class="par">v</span> &lt;= 0.0031308f)
+        <span class="kw">return</span> <span class="par">v</span> * 12.92f;
+    <span class="kw">return</span>  1.055f * <span class="fn">pow</span>(<span class="par">v</span>, 1 / 2.4f) - 0.055f;
+}
+<span class="type">vec3</span> <span class="fn">InverseEotf_sRGB</span>(<span class="type">vec3</span> <span class="par">v</span>) {
+    <span class="kw">return</span> <span class="type">vec3</span>(<span class="fn">InverseEotf_sRGB</span>(<span class="par">v</span>.x), <span class="fn">InverseEotf_sRGB</span>(<span class="par">v</span>.y), <span class="fn">InverseEotf_sRGB</span>(<span class="par">v</span>.z));
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            注意，EOTF的逆映射就叫逆EOTF（Inverse EOTF），跟将（相机等设备捕捉到的）场景线性亮度映射到非线性数值的OETF是不一样的概念。
+        </p>
+    </li>
+</ul>
+<p>
+    通常来讲，你是不需要手动做这个逆映射的，使用SRGB后缀的图像格式即可。
+</p></section>
+<section id="id2">
+<h3>SRGB后缀格式<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<p>
+    先前在Ch1-4中创建交换链时，向创建信息提供的色彩空间枚举项是<span class="enum">VK_COLOR_SPACE_SRGB_NONLINEAR_KHR</span>，其值为0，说明这个枚举项对应的是默认的、最理所当然的色彩空间。
+    <br>
+    其中的SRGB字样表示sRGB色彩空间，NONLINEAR字样即表明了非线性映射。
+    <br>
+    使用该色彩空间枚举项，交换链图像的数据会被<strong>视作</strong>是sRGB色彩空间中的数值。但这并不代表交换链图像得是SRGB后缀的格式，在同一色彩空间下，无论交换链图像是什么格式，只要底层数据一致，显示效果便是相同的。
+</p>
+<p>
+    前文最后一句的重点在于“底层数据一致”。
+    <br>
+    <strong>图形管线输出同样的数值，根据图像附件的格式，会被存储为不同的结果。</strong>比如：
+    <br>
+    将色值输出到UNORM后缀格式的图像附件，不计精度损失，则RGBA各通道的数值仅仅是从[0, 1]区间内的标准化数值线性映射到整形数值。
+    <br>
+    若使用SRGB后缀格式的图像附件，则在向其输出色值时，会对RGB通道自动应用sRGB EOTF的逆映射。
+    <br>
+    下图中比对了，将从黑到白的线性渐变渲染到不同格式的交换链图像的效果：
+</p>
+<img alt="_images/ch8-5-4.png" src="_images/ch8-5-4.png" style="background-color: #d0d0d0">
+<p>
+    对sRGB色彩空间的数值应用<strong>sRGB EOTF</strong>，即是<strong>将sRGB色彩空间的数值还原到线性色彩空间的数值</strong>。
+    <br>
+    对线性色彩空间的数值应用<strong>sRGB EOTF的逆映射</strong>，即是<strong>将线性色彩空间的数值映射到sRGB色彩空间的数值</strong>。
+    <br>
+    使用SRGB后缀的图像格式正是为了自动应用这两个映射，这里将会发生映射的情况总结如下：
+    <br>
+    （下文中贴图/图像附件的格式指<span class="type">VkImageView</span>的格式，它们底层的<span class="type">VkImage</span>的格式与是否发生映射无关）
+</p>
+<ul>
+    <li>
+        <p>
+            对于SRGB后缀格式的贴图，在着色器中，包括采样在内的各种读取图像的操作均会应用<strong>sRGB EOTF</strong>，这是在标准中由<a href="https://renderdoc.org/vkspec_chunked/chap16.html#_texel_input_operations">16.3. Texel Input Operations</a>和<a href="https://renderdoc.org/vkspec_chunked/chap16.html#textures-format-conversion">16.3.2. Format Conversion</a>所规定的。
+        </p>
+    </li>
+    <li>
+        <p>
+            混色时，对于SRGB后缀格式的颜色附件，从附件中读取dstColor时，会应用<strong>sRGB EOTF</strong>。
+        </p>
+    </li>
+    <li>
+        <p>
+            将色值输出到SRGB后缀格式的颜色附件时，对于RGB通道，会应用<strong>sRGB EOTF的逆映射</strong>。
+        </p>
+    </li>
+    <li>
+        <p>
+            blit图像数据时，若发生线性滤波，若源图像为SRGB后缀格式，在滤波前应用<strong>sRGB EOTF</strong>。
+        </p>
+    </li>
+    <li>
+        <p>
+            blit图像数据时，若目标图像为SRGB后缀格式，对滤波结果应用<strong>sRGB EOTF的逆映射</strong>。
+        </p>
+    </li>
+    <li>
+        <p>
+            Vulkan标准（截至撰写本文时的1.3.285）中对解析SRGB格式的多重采样附件到SRGB格式的解析附件，解析模式是平均时，是否会在线性色彩空间中做平均没有规定。实验结论表明会在线性空间中做平均。（注：这里考虑<span class="type">VkImage</span>的格式与<span class="type">VkImageView</span>的格式一致的情况。当图像与view的格式不同时，我无法确定不同的显卡驱动是否有一致的行为。）
+        </p>
+    </li>
+</ul>
+<p>
+    总结地讲，可归纳为以下两条原则：
+    <br>
+    1.涉及混色、插值、平均等运算的命令，及着色器里的运算，皆应基于线性色彩空间发生，因此需要读取SRGB格式的图像时，会将数据从sRGB数值还原到线性数值。
+    <br>
+    2.存储到SRGB格式的图像时，会将数据从线性数值映射到sRGB数值。
+    <br>
+    推论可得：将一张不透明图片渲染到屏幕，不管流程中间发生多少sRGB EOTF的映射或逆映射，只要最初的贴图和交换链图像都是/都不是SRGB格式，那（不计精度损失的话）就相当于没有色调映射。
+</p>
+<p>
+    <strong>注意精度损失</strong>
+    <br>
+    考虑以下情形：
+    <br>
+    将一张<span class="enum">VK_FORMAT_R8G8B8A8_SRGB</span>格式的贴图渲染到<span class="enum">VK_FORMAT_R8G8B8A8_UNORM</span>格式的离屏图像附件，再将离屏附件渲染到<span class="enum">VK_FORMAT_R8G8B8A8_SRGB</span>格式的交换链图像。
+    <br>
+    着色器中采样贴图时，对8位整数标准化后应用sRGB EOTF，这个过程的精度损失可以忽略。然后片段着色器将结果输出到离屏附件时，结果被转为8位整形，考虑舍入，则原本贴图中在[0, 6]区间内的8位整数值，映射结果都是0。之后将离屏附件渲染到交换链时，0经过sRGB EOTF的逆映射，还是0。
+    <br>
+    也就是说：考虑到存储精度，整数值之间的非线性映射必然会导致不可逆的精度损失。应当尽量避免从8位整形映射到8位整形的情况。
+</p>
+<p>
+    <strong>什么情况下该使用SRGB格式的图像附件？</strong>
+    <br>
+    任何需要让色值线性地对应到亮度的情况，典型的情形比如进行光照计算的3D场景。
+    <br>
+    当你需要以颜色的形式可视化法线/深度等几何信息，并在图像处理软件中取色来获取数值时，应当避免使用SRGB格式。
+</p>
+<p>
+    <strong>什么情况下该使用SRGB格式的贴图？</strong>
+    <br>
+    1.若你仅仅是想在Vulkan程序中渲染一张贴图，让渲染结果与操作系统自带的图片查看器的显示效果一致，那么你并不需要做任何色调映射，则在图像附件为SRGB格式时采样SRGB格式的贴图，图像附件非SRGB格式时采样非SRGB格式的贴图即可。
+    <br>
+    2.法线贴图、置换贴图等，这些几何信息的贴图包含的应当总是线性空间中的数值，因此该是非SRGB格式的。
+    <br>
+    3.用于光照计算的反照率贴图（或者称基本色贴图）及自发光贴图的格式，取于文件格式标准。<a href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#metallic-roughness-material">GLTF标准中规定的基本色和自发光贴图</a>是sRGB色彩空间下的数值，光照计算前需要对它们应用sRGB EOTF的逆映射，因此Vulkan中应将它们读取为SRGB格式的贴图。
+</p></section>
+<section id="id3">
+<h3>启用SRGB格式的交换链<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<p>
+    如前文所言，如果在渲染贴图时不需要色调映射（这一般是做2D/UI渲染的情况），贴图应该与图像附件同为/同不为SRGB格式。
+    <br>
+    就这一点而言，你应当尽量避免在程序运行途中更改交换链图像的格式，否则可能需要一并重建贴图的view。
+    <br>
+    于是这里就只考虑在创建交换链前指定图像格式。
+</p>
+<p>
+    我不想在函数参数中指定是否使用SRGB格式的交换链（要是每次加个选项都要给函数要加参数，那参数列表岂不是越来越臃肿！），姑且先用一个全局变量来指定吧。
+    <br>
+    对<span class="path">GlfwGeneral.hpp</span>中的<span class="fn">InitializeWindow</span>(...)做如下修改：
+</p>
+<pre class="code">
+<span class="kw">bool</span> preInitialization_enableSrgb; <span class="cmt">//全局变量，默认false</span>
+<span class="kw">bool</span> <span class="fn">InitializeWindow</span>(<span class="type">VkExtent2D</span> <span class="par">size</span>, <span class="kw">bool</span> <span class="par">fullScreen</span> = <span class="kw">false</span>, <span class="kw">bool</span> <span class="par">isResizable</span> = <span class="kw">true</span>, <span class="kw">bool</span> <span class="par">limitFrameRate</span> = <span class="kw">true</span>) {
+    <span class="cmt">/*...前面略*/</span>
+
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">GetPhysicalDevices</span>() ||
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">DeterminePhysicalDevice</span>(0, <span class="kw">true</span>, <span class="kw">false</span>) ||
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">CreateDevice</span>())
+        <span class="kw">return false</span>;
+
+    <span class="cmt">//本节新增--------------------------------</span>
+    <span class="cmt">//获取surface支持的色彩空间和图像格式列表</span>
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">GetSurfaceFormats</span>())
+        <span class="kw">return false</span>;
+    <span class="kw">if</span> (preInitialization_enableSrgb)
+    <span class="cmt">//设置格式为VK_FORMAT_R8G8B8A8_SRGB或VK_FORMAT_B8G8R8A8_SRGB</span>
+        <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">SetSurfaceFormat</span>({ <span class="enum">VK_FORMAT_R8G8B8A8_SRGB</span>, <span class="enum">VK_COLOR_SPACE_SRGB_NONLINEAR_KHR</span> }) &amp;&amp;
+            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">SetSurfaceFormat</span>({ <span class="enum">VK_FORMAT_B8G8R8A8_SRGB</span>, <span class="enum">VK_COLOR_SPACE_SRGB_NONLINEAR_KHR</span> }))
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ] WARNING\nFailed to enable sRGB!\n&quot;</span>);
+    <span class="cmt">//----------------------------------------</span>
+
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CreateSwapchain</span>(<span class="par">limitFrameRate</span>))
+        <span class="kw">return false</span>;
+
+    <span class="kw">return true</span>;
+}
+</pre>
+<p>
+    嗯，这就完了。
+    <br>
+    之后你可以通过对<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat进行判定来确认是否使用的是SRGB格式的交换链图像。
+</p>
+<p>
+    接着我说说库作者可能会考虑的事，跟Vulkan无关。
+    <br>
+    <span class="var">preInitialization_enableSrgb</span>这个全局变量有点煞风景，它算是一个功能开关，而这个开关只影响初始化，初始化之后无论怎么调节这个开关都没意义。
+    <br>
+    并且，既然它是二值的且只有对其赋值<span class="kw">true</span>的时候才能达成“开”的作用，那么<span class="kw">true</span>这一参数便不重要，可以使用一个无参的函数来替代其功能：
+</p>
+<pre class="code">
+<span class="kw">auto</span> <span class="fn">PreInitialization_EnableSrgb</span>() {
+    <span class="kw">static bool</span> enableSrgb; <span class="cmt">//静态变量，程序启动时自动零初始化</span>
+    enableSrgb = <span class="kw">true</span>;
+    <span class="kw">return</span> [] { <span class="kw">return</span> enableSrgb; };
+}
+<span class="kw">bool</span> <span class="fn">InitializeWindow</span>(<span class="type">VkExtent2D</span> <span class="par">size</span>, <span class="kw">bool</span> <span class="par">fullScreen</span> = <span class="kw">false</span>, <span class="kw">bool</span> <span class="par">isResizable</span> = <span class="kw">true</span>, <span class="kw">bool</span> <span class="par">limitFrameRate</span> = <span class="kw">true</span>) {
+    <span class="cmt">/*...前面略*/</span>
+
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">GetPhysicalDevices</span>() ||
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">DeterminePhysicalDevice</span>(0, <span class="kw">true</span>, <span class="kw">false</span>) ||
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">CreateDevice</span>())
+        <span class="kw">return false</span>;
+
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">GetSurfaceFormats</span>())
+        <span class="kw">return false</span>;
+    <span class="kw">if</span> (<span class="kw">decltype</span>(<span class="fn">PreInitialization_EnableSrgb</span>()){}()) <span class="cmt">/*变更*/</span>
+        <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">SetSurfaceFormat</span>({ <span class="enum">VK_FORMAT_R8G8B8A8_SRGB</span>, <span class="enum">VK_COLOR_SPACE_SRGB_NONLINEAR_KHR</span> }) &amp;&amp;
+            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">SetSurfaceFormat</span>({ <span class="enum">VK_FORMAT_B8G8R8A8_SRGB</span>, <span class="enum">VK_COLOR_SPACE_SRGB_NONLINEAR_KHR</span> }))
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ] WARNING\nFailed to enable sRGB!\n&quot;</span>);
+
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CreateSwapchain</span>(<span class="par">limitFrameRate</span>))
+        <span class="kw">return false</span>;
+
+    <span class="kw">return true</span>;
+}
+</pre>
+<p>
+    按上述代码的写法，是否要在初始化时创建SRGB格式的交换链图像，仅取决于是否调用<span class="fn">PreInitialization_EnableSrgb</span>()。一旦调用该函数，该函数内部保有的<span class="var">enableSrgb</span>便只能一直是<span class="kw">true</span>。这就地表达了“这是个一次性的开关”这层意思。
+</p>
+<p>
+    <span class="fn">PreInitialization_EnableSrgb</span>()返回的是一个lambda，调用该lambda可取得函数内部保有的<span class="var">enableSrgb</span>的值。
+    <br>
+    <span class="kw">decltype</span>(...)的实参是不求值的，这意味着<code><span class="kw">decltype</span>(<span class="fn">PreInitialization_EnableSrgb</span>())</code>仅取得<span class="fn">PreInitialization_EnableSrgb</span>()的返回类型，而不会调用该函数。然后通过大括号<code>{}</code>来构造该lambda类型的实例（lambda类型非函数指针类型，其实例具有特定的函数实现），再加上括号<code>()</code>来调用该lambda实例。
+    <br>
+    用类似的方法可以包装任意初始值为0的全局变量，为其书写getter和setter函数：
+</p>
+<pre class="code">
+<span class="kw">auto</span> <span class="fn">SetValue</span>(<span class="type">uint32_t</span> <span class="par">value</span>) {
+    <span class="kw">static</span> <span class="type">uint32_t</span> _value;
+    <span class="cmt">/*
+        这里写赋值的逻辑
+    */</span>
+    <span class="kw">return</span> [] { <span class="kw">return</span> _value; };
+}
+<span class="type">uint32_t</span> <span class="fn">GetValue</span>() {
+    <span class="kw">return decltype</span>(<span class="fn">SetValue</span>({})){}();
+}
+</pre></section>
+</section>
+<section id="hdr">
+<h2>开启HDR<a class="headerlink" href="#hdr" title="Permalink to this heading"></a></h2>
+<p>
+    HDR，即高动态范围，关于其具体概念请自行查阅相关资料。
+    <br>
+    下文对于使用Vulkan做HDR图形程序，做个简单入门。
+</p>
+<p>
+    编写支持HDR的图形程序前，确保你的硬件环境支持HDR：显示器支持HDR，且硬件接口和线材有足够带宽。
+    <br>
+    如果硬件接口或线材的带宽不够，即便软件层面上使用了正确的色彩空间和图像格式，显示效果也可能会形同SDR，或可能造成花屏。
+</p><section id="bt2020">
+<h3>BT2020色彩空间<a class="headerlink" href="#bt2020" title="Permalink to this heading"></a></h3>
+<p>
+    <a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkColorSpaceKHR">VkColorSpaceKHR</a>的枚举项中，下列四个对应HDR：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col>
+        <col>
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>版本要求</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkColorSpaceKHR">VkColorSpaceKHR</a> 对应HDR的枚举项</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><p>1.0 + VK_EXT_swapchain_colorspace</p></td>
+            <td><p><span class="enum">VK_COLOR_SPACE_BT2020_LINEAR_EXT </span>表示使用BT2020色彩空间和线性EOTF</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0 + VK_EXT_swapchain_colorspace</p></td>
+            <td><p><span class="enum">VK_COLOR_SPACE_HDR10_ST2084_EXT  </span>表示使用BT2020色彩空间和SMPTE ST2084 EOTF</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0 + VK_EXT_swapchain_colorspace</p></td>
+            <td><p><span class="enum">VK_COLOR_SPACE_DOLBYVISION_EXT   </span>表示使用BT2020色彩空间（采用杜比视界专属颜色编码）和SMPTE ST2084 EOTF</p></td>
+        </tr>
+        <tr>
+            <td><p>1.0 + VK_EXT_swapchain_colorspace</p></td>
+            <td><p><span class="enum">VK_COLOR_SPACE_HDR10_HLG_EXT     </span>表示使用BT2020色彩空间和HLG EOTF</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    这里四个枚举项使用的都是BT2020色彩空间，该色彩空间定义了HDR所需的的广色域，它本身并不定义EOTF。
+    <br>
+    笔者没了解过杜比视界的专属编码（似乎是用的是12位色？），直接跳过。
+</p>
+<p>
+    SMPTE ST2084 EOTF，又称感官量化（perceptual quantizer）EOTF，简称PQ EOTF，你可以在<a href="https://registry.khronos.org/DataFormat/specs/1.3/dataformat.1.3.inline.html#TRANSFER_PQ">Khronos关于数据格式的标准</a>中查到其表达式。
+    <br>
+    PQ EOTF和其逆映射对应的GLSL代码为：
+</p>
+<pre class="code">
+<span class="kw">float</span> <span class="fn">Eotf_PQ</span>(<span class="kw">float</span> <span class="par">v</span>) {
+    <span class="kw">const float</span> m1 = 2610.f / 16384;
+    <span class="kw">const float</span> m2 = 2523.f / 4096 * 128;
+    <span class="kw">const float</span> c1 = 3424.f / 4096;
+    <span class="kw">const float</span> c2 = 2413.f / 4096 * 32;
+    <span class="kw">const float</span> c3 = 2392.f / 4096 * 32;
+    <span class="par">v</span> = <span class="fn">pow</span>(<span class="par">v</span>, 1 / m2);
+    <span class="kw">if</span> (<span class="par">v</span> &lt;= c1)
+        <span class="kw">return</span> 0;
+    <span class="kw">return</span> <span class="fn">pow</span>((<span class="par">v</span> - c1) / (c2 - c3 * <span class="par">v</span>), 1 / m1);
+}
+<span class="type">vec3</span> <span class="fn">Eotf_PQ</span>(<span class="type">vec3</span> <span class="par">v</span>) {
+    <span class="kw">return</span> <span class="type">vec3</span>(<span class="fn">Eotf_PQ</span>(<span class="par">v</span>.x), <span class="fn">Eotf_PQ</span>(<span class="par">v</span>.y), <span class="fn">Eotf_PQ</span>(<span class="par">v</span>.z));
+}
+<span class="kw">float</span> <span class="fn">InverseEotf_PQ</span>(<span class="kw">float</span> <span class="par">v</span>) {
+    <span class="kw">const float</span> m1 = 2610.f / 16384;
+    <span class="kw">const float</span> m2 = 2523.f / 4096 * 128;
+    <span class="kw">const float</span> c1 = 3424.f / 4096;
+    <span class="kw">const float</span> c2 = 2413.f / 4096 * 32;
+    <span class="kw">const float</span> c3 = 2392.f / 4096 * 32;
+    <span class="par">v</span> = <span class="fn">pow</span>(<span class="par">v</span>, m1);
+    <span class="kw">return</span> <span class="fn">pow</span>((c1 + c2 * <span class="par">v</span>) / (1 + c3 * <span class="par">v</span>), m2);
+}
+<span class="type">vec3</span> <span class="fn">InverseEotf_PQ</span>(<span class="type">vec3</span> <span class="par">v</span>) {
+    <span class="kw">return</span> <span class="type">vec3</span>(<span class="fn">InverseEotf_PQ</span>(<span class="par">v</span>.x), <span class="fn">InverseEotf_PQ</span>(<span class="par">v</span>.y), <span class="fn">InverseEotf_PQ</span>(<span class="par">v</span>.z));
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            以上各函数输入、输出的都是[0, 1]区间内的标准化数值。对于线性亮度，即<span class="fn">Eotf_PQ</span>(...)输出的数值或输入到<span class="fn">InverseEotf_PQ</span>(...)的数值，1.f对应10000尼特的亮度。
+        </p>
+    </li>
+</ul>
+<p>
+    HLG是hybrid log-gamma（混合对数伽马）的缩写，你同样可以在<a href="https://registry.khronos.org/DataFormat/specs/1.3/dataformat.1.3.inline.html#TRANSFER_HLG">Khronos关于数据格式的标准</a>中查到其表达式。
+    <br>
+    HLG颜色编码一般用于广播和电视，你如果要写个支持HDR的视频播放器，可能需要处理相关问题。不过这套教程的读者估计大都是想写用于游戏/GUI的渲染器，所以就按下不表了吧。
+</p>
+<p>
+    给游戏玩家的提醒：有些显示器/电视有调节EOTF的功能，用HLG EOTF玩游戏可能会获得更高对比度，但画面效果当然是失真的。
+</p></section>
+<section id="id4">
+<h3>选择色彩空间<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<p>
+    与先前启用SRGB格式的交换链类似，用一个函数来实现“指定色彩空间”这一初始化选项：
+</p>
+<pre class="code">
+<span class="kw">auto</span> <span class="fn">PreInitialization_TrySetColorSpaceByOrder</span>(<span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">VkColorSpaceKHR</span>&gt; <span class="par">colorSpaces</span>) {
+    <span class="kw">static</span> std::<span class="type">unique_ptr</span>&lt;<span class="type">VkColorSpaceKHR</span>[]&gt; pColorSpaces;
+    pColorSpaces = std::<span class="fn">make_unique</span>&lt;<span class="type">VkColorSpaceKHR</span>[]&gt;(<span class="par">colorSpaces</span>.<span class="fn">Count</span>() + 1);
+    <span class="fn">memcpy</span>(pColorSpaces.<span class="fn">get</span>(), <span class="par">colorSpaces</span>.<span class="fn">Pointer</span>(), <span class="kw">sizeof</span> <span class="type">VkColorSpaceKHR</span> * <span class="par">colorSpaces</span>.<span class="fn">Count</span>());
+    <span class="kw">return</span> []()-&gt;<span class="kw">const</span> <span class="type">VkColorSpaceKHR</span>* { <span class="kw">return</span> pColorSpaces.<span class="fn">get</span>(); };
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            std::<span class="fn">make_unique</span>(...)会进行值初始化，对于<span class="type">VkColorSpaceKHR</span>这样的非类类型，其效果为零初始化。这里<span class="fn">memcpy</span>(...)只覆写了<span class="par">colorSpaces</span>.<span class="fn">Count</span>()个数组元素，因此<span class="var">pColorSpaces</span>所指的是一个以0结尾的数组。
+        </p>
+    </li>
+</ul>
+<p>
+    该函数仅指定色彩空间，不指定图像格式。
+    <br>
+    在你要开启HDR的情况下，surface支持的相应的图像格式可能都没几种，既然可能没得选，这里就不把问题复杂化了。
+</p>
+<p>
+    <span class="type">VkColorSpaceKHR</span>的枚举项中的零值是<span class="enum">VK_COLOR_SPACE_SRGB_NONLINEAR_KHR</span>，不过若是要指定色彩空间为sRGB，那也没必要调用这个函数。
+    <br>
+    除<span class="enum">VK_COLOR_SPACE_SRGB_NONLINEAR_KHR</span>之外<span class="type">VkColorSpaceKHR</span>的所有枚举项都是由<span class="string">&quot;VK_EXT_swapchain_colorspace&quot;</span>这个实例级别扩展提供的，在<span class="fn">InitializeWindow</span>(...)中视情况启用该扩展：
+</p>
+<pre class="code">
+<span class="kw">bool</span> <span class="fn">InitializeWindow</span>(<span class="type">VkExtent2D</span> <span class="par">size</span>, <span class="kw">bool</span> <span class="par">fullScreen</span> = <span class="kw">false</span>, <span class="kw">bool</span> <span class="par">isResizable</span> = <span class="kw">true</span>, <span class="kw">bool</span> <span class="par">limitFrameRate</span> = <span class="kw">true</span>) {
+    <span class="cmt">/*...前面略*/</span>
+
+    <span class="pragma">#ifdef</span> <span class="mcr">_WIN32</span>
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(<span class="mcr">VK_KHR_SURFACE_EXTENSION_NAME</span>);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(<span class="str">&quot;VK_KHR_win32_surface&quot;</span>);
+    <span class="pragma">#else</span>
+        <span class="type">uint32_t</span> extensionCount = 0;
+        <span class="kw">const char</span>** extensionNames;
+        extensionNames = <span class="type">glfwGetRequiredInstanceExtensions</span>(&amp;extensionCount);
+        <span class="kw">if</span> (!extensionNames) {
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ]\nVulkan is not available on this machine!\n&quot;</span>);
+            <span class="fn">glfwTerminate</span>();
+            <span class="kw">return false</span>;
+        }
+        <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; extensionCount; i++)
+            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(extensionNames[i]);
+    <span class="pragma">#endif</span>
+        <span class="cmt">/*New*/</span> <span class="kw">const</span> <span class="type">VkColorSpaceKHR</span>* pColorSpaces = <span class="kw">decltype</span>(<span class="fn">PreInitialization_TrySetColorSpaceByOrder</span>({})){}();
+        <span class="cmt">/*New*/</span> <span class="kw">if</span> (pColorSpaces)
+        <span class="cmt">/*New*/</span>     <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(<span class="mcr">VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME</span>);
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_SWAPCHAIN_EXTENSION_NAME</span>);
+
+    <span class="cmt">/*...后面略*/</span>
+}
+</pre>
+<p>
+    然后在获取到surface支持的图像格式列表后，试着依序设置色彩空间：
+</p>
+<pre class="code">
+<span class="kw">bool</span> <span class="fn">InitializeWindow</span>(<span class="type">VkExtent2D</span> <span class="par">size</span>, <span class="kw">bool</span> <span class="par">fullScreen</span> = <span class="kw">false</span>, <span class="kw">bool</span> <span class="par">isResizable</span> = <span class="kw">true</span>, <span class="kw">bool</span> <span class="par">limitFrameRate</span> = <span class="kw">true</span>) {
+    <span class="cmt">/*...前面略*/</span>
+
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">GetSurfaceFormats</span>())
+        <span class="kw">return false</span>;
+    <span class="kw">if</span> (pColorSpaces) {
+        <span class="type">VkResult</span> result_setColorSpace = <span class="enum">VK_SUCCESS</span>;
+        <span class="kw">while</span> (*pColorSpaces) {
+            result_setColorSpace = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">SetSurfaceFormats</span>({ <span class="enum">VK_FORMAT_UNDEFINED</span>, *pColorSpaces });
+            <span class="kw">if</span> (result_setColorSpace == <span class="enum">VK_SUCCESS</span>)
+                <span class="kw">break</span>;
+            pColorSpaces++;
+        }
+        <span class="kw">if</span> (result_setColorSpace)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ] WARNING\nFailed to satisfy the requirement of color space!\n&quot;</span>);
+    }
+
+    <span class="cmt">/*...后面略*/</span>
+}
+</pre>
+<p>
+    考虑运算符优先级和<span class="kw">if</span>语句的语法，上述代码中的<span class="kw">while</span>循环可被写成：
+</p>
+<pre class="code">
+<span class="kw">while</span> (*pColorSpaces)
+    <span class="kw">if</span> (result_setColorSpace = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">SetSurfaceFormats</span>({ <span class="enum">VK_FORMAT_UNDEFINED</span>, *pColorSpaces++ });
+        result_setColorSpace == <span class="enum">VK_SUCCESS</span>)
+        <span class="kw">break</span>;
+</pre>
+<p>
+    最后是对先前写的启用SRGB格式交换链的逻辑略作修改，考虑到其他任何色彩空间都比sRGB色彩空间更特殊，如果设置其他色彩空间成功，就不要将交换链指定为SRGB格式了：
+</p>
+<pre class="code">
+<span class="kw">bool</span> <span class="fn">InitializeWindow</span>(<span class="type">VkExtent2D</span> <span class="par">size</span>, <span class="kw">bool</span> <span class="par">fullScreen</span> = <span class="kw">false</span>, <span class="kw">bool</span> <span class="par">isResizable</span> = <span class="kw">true</span>, <span class="kw">bool</span> <span class="par">limitFrameRate</span> = <span class="kw">true</span>) {
+    <span class="cmt">/*...前面略*/</span>
+
+    <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">GetSurfaceFormats</span>())
+        <span class="kw">return false</span>;
+    <span class="kw">if</span> (pColorSpaces) {
+        <span class="type">VkResult</span> result_setColorSpace = <span class="enum">VK_SUCCESS</span>;
+        <span class="kw">while</span> (*pColorSpaces)
+            <span class="kw">if</span> (result_setColorSpace = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">SetSurfaceFormats</span>({ <span class="enum">VK_FORMAT_UNDEFINED</span>, *pColorSpaces++ });
+                result_setColorSpace == <span class="enum">VK_SUCCESS</span>)
+                <span class="kw">break</span>;
+        <span class="kw">if</span> (result_setColorSpace)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ] WARNING\nFailed to satisfy the requirement of color space!\n&quot;</span>);
+    }
+    <span class="kw">if</span> (!<span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">SwapchainCreateInfo</span>().imageFormat &amp;&amp; <span class="cmt">/*变更*/</span>
+        <span class="kw">decltype</span>(<span class="fn">PreInitialization_EnableSrgb</span>()){}()) <span class="cmt">/*变更*/</span>
+        <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">SetSurfaceFormat</span>({ <span class="enum">VK_FORMAT_R8G8B8A8_SRGB</span>, <span class="enum">VK_COLOR_SPACE_SRGB_NONLINEAR_KHR</span> }) &amp;&amp;
+            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">SetSurfaceFormat</span>({ <span class="enum">VK_FORMAT_B8G8R8A8_SRGB</span>, <span class="enum">VK_COLOR_SPACE_SRGB_NONLINEAR_KHR</span> }))
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ] WARNING\nFailed to enable sRGB!\n&quot;</span>);
+
+    <span class="cmt">/*...后面略*/</span>
+}
+</pre>
+<p>
+    接着在主函数中，在<span class="fn">InitializeWindow</span>(...)前调用<span class="fn">PreInitialization_TrySetColorSpaceByOrder</span>(...)。
+    <br>
+    出于演示目的，这里试着指定交换链的色彩空间为<span class="enum">VK_COLOR_SPACE_HDR10_ST2084_EXT</span>或<span class="enum">VK_COLOR_SPACE_DOLBYVISION_EXT</span>：
+</p>
+<pre class="code">
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="type">VkColorSpaceKHR</span> colorSpaces[] = { <span class="enum">VK_COLOR_SPACE_HDR10_ST2084_EXT</span>, <span class="enum">VK_COLOR_SPACE_DOLBYVISION_EXT</span> };
+    <span class="fn">PreInitialization_TrySetColorSpaceByOrder</span>(colorSpaces);
+    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }))
+        <span class="kw">return</span> -1;
+
+    <span class="cmt">/*...后面略*/</span>
+}
+</pre></section>
+<section id="pq-eotf">
+<h3>应用PQ EOTF的逆映射<a class="headerlink" href="#pq-eotf" title="Permalink to this heading"></a></h3>
+<p>
+    因为没有任何图像格式会自动应用PQ EOTF或其逆映射，所以得自行实现PQ EOTF的逆映射。
+    <br>
+    基于<a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a>中的<span class="path">Texture.frag.shader</span>进行修改，其对应HDR的版本可以写成：
+    <br>
+    <br>
+    <br>
+    <br>
+    TODO 后续施工中
+</p></section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html" class="btn btn-neutral float-left" title="Ch8-4 预乘Alpha" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ap1-1%20%E8%BF%90%E8%A1%8C%E6%9C%9F%E7%BC%96%E8%AF%91GLSL.html" class="btn btn-neutral float-right" title="Ap1-1 运行期编译GLSL" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021-2024, Qiao YeCheng.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
