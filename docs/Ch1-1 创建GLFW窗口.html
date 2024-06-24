@@ -181,8 +181,12 @@
 <span class="pragma">#include</span> <span class="str">&lt;stb_image.h&gt;</span>
 
 <span class="cmt">//Vulkan</span>
+<span class="pragma">#ifdef</span> <span class="mcr">_WIN32</span>                        <span class="cmt">//考虑平台是Windows的情况（请自行解决其他平台上的差异）</span>
+<span class="pragma">#define</span> <span class="mcr">VK_USE_PLATFORM_WIN32_KHR</span>    <span class="cmt">//在包含vulkan.h前定义该宏，会一并包含vulkan_win32.h和windows.h</span>
+<span class="pragma">#define</span> <span class="mcr">NOMINMAX</span>                     <span class="cmt">//定义该宏可避免windows.h中的min和max两个宏与标准库中的函数名冲突</span>
+<span class="pragma">#pragma comment</span>(<span class="pragma">lib</span>, <span class="str">&quot;vulkan-1.lib&quot;</span>) <span class="cmt">//链接编译所需的静态存根库</span>
+<span class="pragma">#endif</span>
 <span class="pragma">#include</span> <span class="str">&lt;vulkan/vulkan.h&gt;</span>
-<span class="pragma">#pragma comment</span>(<span class="pragma">lib</span>, <span class="str">&quot;vulkan-1.lib&quot;</span>)
 </pre>
 <ul>
     <li>
@@ -216,7 +220,7 @@
 <span class="pragma">#include</span> <span class="str">&quot;VKBase.h&quot;</span>
 <span class="pragma">#define</span> <span class="mcr">GLFW_INCLUDE_VULKAN</span>
 <span class="pragma">#include</span> <span class="str">&lt;GLFW/glfw3.h&gt;</span>
-<span class="pragma">#pragma comment</span>(<span class="pragma">lib</span>, <span class="str">&quot;glfw3.lib&quot;</span>)
+<span class="pragma">#pragma comment</span>(<span class="pragma">lib</span>, <span class="str">&quot;glfw3.lib&quot;</span>) <span class="cmt">//链接编译所需的静态库</span>
 </pre>
 <ul>
     <li>

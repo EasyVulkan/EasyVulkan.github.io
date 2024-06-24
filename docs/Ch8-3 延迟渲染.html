@@ -230,7 +230,7 @@
         <p>
             如右图所示，而若一束漫反射光垂直打在观察面上，则观察面与物体表面的夹角等于出射角，出射光打在观察面上的面积为<code>S'的面积 * cos(出射角)</code>。
             <br>
-            对于特定方向的漫反射光，在与物体表面平行的平面上，其辐照度与出射角的余弦成正比，则S'上的辐射通量为<code>S'的面积 * S'上的辐照度 * cos(出射角)</code>，与前面的式子约分后可知，观察面上的辐照度等于S'上的辐照度，即说明观察到的漫反射亮度与出射角无关。
+            对于特定方向的漫反射光，在与物体表面平行的平面上，其辐照度与出射角的余弦成正比，则S'上特定方向出射光的辐射通量为<code>S'的面积 * S'上的辐照度 * cos(出射角)</code>，与前面的式子约分后可知，观察面上的辐照度等于S'上的辐照度，即说明观察到的漫反射亮度与出射角无关。
         </p>
     </li>
     <li>
@@ -242,7 +242,7 @@
     </li>
 </ul>
 <p>
-    冯氏光照模型不考虑入射光与出射光之间的能量守恒，因此关于辐照度的推理就到此为止了。
+    冯氏光照模型不考虑入射光与所有方向的出射光之间的能量守恒，因此关于辐照度的推理就到此为止了。
     <br>
     用物体的反照率（albedo，即一般认知中的“物体本身固有的颜色”）乘以光在物体表面的辐照度，求取漫反射的数值：
     <br>
@@ -1053,7 +1053,7 @@ o_Color.rgb += specular * lightIntensity * <span class="fn">pow</span>(<span cla
     创建管线：
 </p>
 <pre class="code">
-<span class="kw">auto</span> <span class="fn">Create</span> = [] {
+<span class="kw">auto</span> Create = [] {
     <span class="cmt">//G-buffer</span>
     <span class="type">graphicsPipelineCreateInfoPack</span> pipelineCiPack;
     pipelineCiPack.createInfo.layout = pipelineLayout_gBuffer;
@@ -1091,7 +1091,7 @@ o_Color.rgb += specular * lightIntensity * <span class="fn">pow</span>(<span cla
     pipelineCiPack.colorBlendStateCi.attachmentCount = 1;
     pipeline_composition.<span class="fn">Create</span>(pipelineCiPack);
 };
-<span class="kw">auto</span> <span class="fn">Destroy</span> = [] {
+<span class="kw">auto</span> Destroy = [] {
     pipeline_gBuffer.<span class="fn">~pipeline</span>();
     pipeline_composition.<span class="fn">~pipeline</span>();
 };

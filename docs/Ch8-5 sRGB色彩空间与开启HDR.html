@@ -109,9 +109,16 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#hdr">开启HDR</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#bt2020">BT2020色彩空间</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id4">选择色彩空间</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#pq-eotf">应用PQ EOTF的逆映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">对应HDR的色彩空间</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bt2020pq">BT2020色彩空间和PQ传递函数</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#scrgb">scRGB色彩空间</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">选择色彩空间</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">亮度校准</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#hdrsdr">在HDR下显示SDR内容</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -149,6 +156,8 @@
 <h1>Ch8-5 sRGB色彩空间与开启HDR<a class="headerlink" href="#ch8-5-srgbhdr" title="Permalink to this heading"></a></h1>
 <p>
     这一节更多的是概念而非代码，因为在混色和预乘alpha之后讲比较合适，故写在第八章。
+    <br>
+    这一节没有示例代码文件，所有相关代码都在本页面上。
 </p><section id="srgb">
 <h2>sRGB色彩空间<a class="headerlink" href="#srgb" title="Permalink to this heading"></a></h2>
 <p>
@@ -256,7 +265,7 @@
     <br>
     下图中比对了，将从黑到白的线性渐变渲染到不同格式的交换链图像的效果：
 </p>
-<img alt="_images/ch8-5-4.png" src="_images/ch8-5-4.png" style="background-color: #d0d0d0">
+<img alt="_images/ch8-5-4.png" src="_images/ch8-5-4.png" style="background-color: #eef3fa">
 <p>
     对sRGB色彩空间的数值应用<strong>sRGB EOTF</strong>，即是<strong>将sRGB色彩空间的数值还原到线性色彩空间的数值</strong>。
     <br>
@@ -305,7 +314,7 @@
     <br>
     2.存储到SRGB格式的图像时，会将数据从线性数值映射到sRGB数值。
     <br>
-    推论可得：将一张不透明图片渲染到屏幕，不管流程中间发生多少sRGB EOTF的映射或逆映射，只要最初的贴图和交换链图像都是/都不是SRGB格式，那（不计精度损失的话）就相当于没有色调映射。
+    推论可得：将一张不透明图片渲染到屏幕，不管流程中间发生多少sRGB EOTF的映射或逆映射，只要最初的贴图和交换链图像都是/都不是SRGB格式，那（不计精度损失的话）就相当于没有映射。
 </p>
 <p>
     <strong>注意精度损失</strong>
@@ -332,14 +341,14 @@
     <br>
     2.法线贴图、置换贴图等，这些几何信息的贴图包含的应当总是线性空间中的数值，因此该是非SRGB格式的。
     <br>
-    3.用于光照计算的反照率贴图（或者称基本色贴图）及自发光贴图的格式，取于文件格式标准。<a href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#metallic-roughness-material">GLTF标准中规定的基本色和自发光贴图</a>是sRGB色彩空间下的数值，光照计算前需要对它们应用sRGB EOTF的逆映射，因此Vulkan中应将它们读取为SRGB格式的贴图。
+    3.用于光照计算的反照率贴图（或者称基本色贴图）及自发光贴图的格式，取决于文件格式标准。<a href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#metallic-roughness-material">GLTF标准中规定的基本色和自发光贴图</a>是sRGB色彩空间下的数值，光照计算前需要对它们应用sRGB EOTF的逆映射，因此Vulkan中应将它们读取为SRGB格式的贴图。
 </p></section>
 <section id="id3">
 <h3>启用SRGB格式的交换链<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
 <p>
-    如前文所言，如果在渲染贴图时不需要色调映射（这一般是做2D/UI渲染的情况），贴图应该与图像附件同为/同不为SRGB格式。
+    通常而言，我推荐你总是在SDR下使用SRGB后缀格式的交换链图像，并将不需要做色调映射的贴图也创建为SRGB格式。不过，考虑到可能需要用图像处理软件的取色器查看渲染结果的线性数值，或者可能你需要避免混色过程中存读色值时的精度损失，可能你会希望使用UNORM后缀的图像格式。
     <br>
-    就这一点而言，你应当尽量避免在程序运行途中更改交换链图像的格式，否则可能需要一并重建贴图的view。
+    而如前文所言，如果在渲染贴图时不需要色调映射，贴图应该与图像附件同为/同不为SRGB格式。就这一点而言，你应当尽量避免在程序运行途中更改交换链图像的格式，否则可能需要一并重建贴图的view。
     <br>
     于是这里就只考虑在创建交换链前指定图像格式。
 </p>
@@ -381,7 +390,7 @@
     之后你可以通过对<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat进行判定来确认是否使用的是SRGB格式的交换链图像。
 </p>
 <p>
-    接着我说说库作者可能会考虑的事，跟Vulkan无关。
+    接着我顺便说说库作者可能会考虑的事，跟Vulkan无关。
     <br>
     <span class="var">preInitialization_enableSrgb</span>这个全局变量有点煞风景，它算是一个功能开关，而这个开关只影响初始化，初始化之后无论怎么调节这个开关都没意义。
     <br>
@@ -420,7 +429,7 @@
 <p>
     <span class="fn">PreInitialization_EnableSrgb</span>()返回的是一个lambda，调用该lambda可取得函数内部保有的<span class="var">enableSrgb</span>的值。
     <br>
-    <span class="kw">decltype</span>(...)的实参是不求值的，这意味着<code><span class="kw">decltype</span>(<span class="fn">PreInitialization_EnableSrgb</span>())</code>仅取得<span class="fn">PreInitialization_EnableSrgb</span>()的返回类型，而不会调用该函数。然后通过大括号<code>{}</code>来构造该lambda类型的实例（lambda类型非函数指针类型，其实例具有特定的函数实现），再加上括号<code>()</code>来调用该lambda实例。
+    <span class="kw">decltype</span>(...)的实参是不求值的，这意味着<code><span class="kw">decltype</span>(<span class="fn">PreInitialization_EnableSrgb</span>())</code>仅取得<span class="fn">PreInitialization_EnableSrgb</span>()的返回类型，而不会调用该函数。然后通过大括号<code>{}</code>来构造该lambda类型的实例，再加上括号<code>()</code>来调用该lambda实例。
     <br>
     用类似的方法可以包装任意初始值为0的全局变量，为其书写getter和setter函数：
 </p>
@@ -448,10 +457,18 @@
     编写支持HDR的图形程序前，确保你的硬件环境支持HDR：显示器支持HDR，且硬件接口和线材有足够带宽。
     <br>
     如果硬件接口或线材的带宽不够，即便软件层面上使用了正确的色彩空间和图像格式，显示效果也可能会形同SDR，或可能造成花屏。
-</p><section id="bt2020">
-<h3>BT2020色彩空间<a class="headerlink" href="#bt2020" title="Permalink to this heading"></a></h3>
+    <br>
+    此外，也别忘了在操作系统的显示设置中开启HDR。
+</p><section id="id4">
+<h3>对应HDR的色彩空间<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
 <p>
-    <a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkColorSpaceKHR">VkColorSpaceKHR</a>的枚举项中，下列四个对应HDR：
+    HDR图形程序通常使用BT2020色彩空间，Windows上也可以使用scRGB色彩空间。
+</p><section id="bt2020pq">
+<h4>BT2020色彩空间和PQ传递函数<a class="headerlink" href="#bt2020pq" title="Permalink to this heading"></a></h4>
+<p>
+    BT2020该色彩空间定义了HDR所需的的广色域，它本身并不定义EOTF。
+    <br>
+    <a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkColorSpaceKHR">VkColorSpaceKHR</a>的枚举项中，下列四个对应的色彩空间基于BT2020色彩空间：
 </p>
 <table class="docutils align-default">
     <colgroup>
@@ -461,7 +478,7 @@
     <thead>
         <tr class="row-odd">
             <th class="head"><p>版本要求</p></th>
-            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkColorSpaceKHR">VkColorSpaceKHR</a> 对应HDR的枚举项</p></th>
+            <th class="head"><p><a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkColorSpaceKHR">VkColorSpaceKHR</a> 对应BT2020色域的枚举项</p></th>
         </tr>
     </thead>
     <tbody>
@@ -483,11 +500,6 @@
         </tr>
     </tbody>
 </table>
-<p>
-    这里四个枚举项使用的都是BT2020色彩空间，该色彩空间定义了HDR所需的的广色域，它本身并不定义EOTF。
-    <br>
-    笔者没了解过杜比视界的专属编码（似乎是用的是12位色？），直接跳过。
-</p>
 <p>
     SMPTE ST2084 EOTF，又称感官量化（perceptual quantizer）EOTF，简称PQ EOTF，你可以在<a href="https://registry.khronos.org/DataFormat/specs/1.3/dataformat.1.3.inline.html#TRANSFER_PQ">Khronos关于数据格式的标准</a>中查到其表达式。
     <br>
@@ -529,15 +541,49 @@
     </li>
 </ul>
 <p>
-    HLG是hybrid log-gamma（混合对数伽马）的缩写，你同样可以在<a href="https://registry.khronos.org/DataFormat/specs/1.3/dataformat.1.3.inline.html#TRANSFER_HLG">Khronos关于数据格式的标准</a>中查到其表达式。
+    PQ是一套不依赖于显示器的颜色编码方式，换言之，只要显示器的亮度范围支持，就能大差不差地呈现出创作者期望的画面亮度（还得考虑显示器色域、光控、是否向显示器提供HDR元数据及显示器如何处理元数据，等）。
+</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>
+    如果指定的交换链图像色彩空间为<span class="enum">VK_COLOR_SPACE_HDR10_ST2084_EXT</span>，那么图像格式很可能是<span class="enum">VK_FORMAT_A2R10G10B10_UNORM_PACK32</span>或<span class="enum">VK_FORMAT_A2B10G10R10_UNORM_PACK32</span>。
     <br>
-    HLG颜色编码一般用于广播和电视，你如果要写个支持HDR的视频播放器，可能需要处理相关问题。不过这套教程的读者估计大都是想写用于游戏/GUI的渲染器，所以就按下不表了吧。
+    <br>
+    与sRGB的情况不同，没有任何图像格式会自动应用PQ EOTF或其逆映射。并且上述两种图像格式的A通道只有2个比特，不适合用来做基于透明度的混色。
+    <br>
+    所以，无论你是否需要做额外的色调映射或后处理，你应该在离屏图像附件上渲染完场景（图像格式建议为<span class="enum">VK_FORMAT_R16G16B16A16_SFLOAT</span>，该格式可存储大于1.f的数值，且Vulkan标准规定实现必定支持该格式的颜色附件并支持混色），然后在将离屏渲染结果渲染到屏幕时应用<span class="fn">InverseEotf_PQ</span>(...)。
+</p>
+</div>
+<p>
+    笔者没了解过杜比视界的专属编码（似乎用的是12位色？），直接跳过。
 </p>
 <p>
-    给游戏玩家的提醒：有些显示器/电视有调节EOTF的功能，用HLG EOTF玩游戏可能会获得更高对比度，但画面效果当然是失真的。
+    HLG是hybrid log-gamma（混合对数伽马）的缩写，你可以在<a href="https://registry.khronos.org/DataFormat/specs/1.3/dataformat.1.3.inline.html#TRANSFER_HLG">Khronos关于数据格式的标准</a>中查到其OETF和OOTF的表达式。
+    <br>
+    HLG的光光传递函数（OOTF）中使用的伽马值应显示器峰值亮度而异，即便没有HDR元数据亦不进行亮度校准，也可以在不同的显示器上呈现出较为适当的效果。由于游戏软件可以让用户进行亮度校准，因此游戏通常不会使用HLG颜色编码，HLG颜色编码一般用于广播和电视。你如果要写个支持HDR的视频播放器，可能需要处理HLG相关的问题。不过这套教程的读者估计大都是想写用于游戏/GUI的渲染器，所以就按下不表了吧。
+</p>
+<p>
+    给游戏玩家的提醒：有些显示器/电视有调节EOTF的功能，用HLG EOTF玩游戏可能会获得更高对比度，但游戏机输出的通常不会是HLG颜色编码的数据，所以HLG EOTF下的画面效果当然是不符合创作者意图的。
 </p></section>
-<section id="id4">
-<h3>选择色彩空间<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<section id="scrgb">
+<h4>scRGB色彩空间<a class="headerlink" href="#scrgb" title="Permalink to this heading"></a></h4>
+<p>
+    确切地说，是使用线性颜色编码的scRGB色彩空间，对应的<a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkColorSpaceKHR">VkColorSpaceKHR</a>的枚举项是<span class="enum">VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT</span>。
+</p>
+<p>
+    scRGB对应的图像格式应当会是<span class="enum">VK_FORMAT_R16G16B16A16_SFLOAT</span>，该格式容许数值超过[0, 1]的范围，线性颜色编码的1.f对应的亮度为80尼特，12.5f对应1000尼特（见微软官方的<a href="https://learn.microsoft.com/en-us/windows/win32/direct3darticles/high-dynamic-range#option-1-use-fp16-pixel-format-and-scrgb-color-space">使用DirectX编写HDR程序的教程</a>）。
+</p>
+<p>
+    Windows的桌面窗口管理器是在线性颜色编码的scRGB色彩空间下进行混色的，所以微软在前述链接的文章中推荐让一般的DirectX程序用scRGB，不过scRGB的平台支持不够广泛（它是微软搞出来的，基本是Windows在使用）。
+    <br>
+    此外，窗口处于独占全屏模式时<strong>可能</strong>可以不经过Windows混色器，将信号直接输出到显示器，但是显示器的HDR模式并不支持线性编码的信号，因此scRGB色彩空间的窗口即便在全屏模式下也必须由Windows对其色值做非线性映射后才能输出。
+    <br>
+    此外，至少在我的运行环境下，当色值对应的亮度超出显示器的最高亮度时，颜色会看着比较奇怪（过饱和的红色会偏黄偏白），可能需要自己对数值做钳制。
+    <br>
+    基于上述原因，至少在Vulkan中，我推荐你使用基于BT2020色域的色彩空间。
+</p></section>
+<section id="id5">
+<h4>选择色彩空间<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h4>
 <p>
     与先前启用SRGB格式的交换链类似，用一个函数来实现“指定色彩空间”这一初始化选项：
 </p>
@@ -564,31 +610,31 @@
 <p>
     <span class="type">VkColorSpaceKHR</span>的枚举项中的零值是<span class="enum">VK_COLOR_SPACE_SRGB_NONLINEAR_KHR</span>，不过若是要指定色彩空间为sRGB，那也没必要调用这个函数。
     <br>
-    除<span class="enum">VK_COLOR_SPACE_SRGB_NONLINEAR_KHR</span>之外<span class="type">VkColorSpaceKHR</span>的所有枚举项都是由<span class="string">&quot;VK_EXT_swapchain_colorspace&quot;</span>这个实例级别扩展提供的，在<span class="fn">InitializeWindow</span>(...)中视情况启用该扩展：
+    除<span class="enum">VK_COLOR_SPACE_SRGB_NONLINEAR_KHR</span>之外<span class="type">VkColorSpaceKHR</span>的所有枚举项都是由<span class="str">&quot;VK_EXT_swapchain_colorspace&quot;</span>这个实例级别扩展提供的，在<span class="fn">InitializeWindow</span>(...)中视情况启用该扩展：
 </p>
 <pre class="code">
 <span class="kw">bool</span> <span class="fn">InitializeWindow</span>(<span class="type">VkExtent2D</span> <span class="par">size</span>, <span class="kw">bool</span> <span class="par">fullScreen</span> = <span class="kw">false</span>, <span class="kw">bool</span> <span class="par">isResizable</span> = <span class="kw">true</span>, <span class="kw">bool</span> <span class="par">limitFrameRate</span> = <span class="kw">true</span>) {
     <span class="cmt">/*...前面略*/</span>
 
-    <span class="pragma">#ifdef</span> <span class="mcr">_WIN32</span>
-        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(<span class="mcr">VK_KHR_SURFACE_EXTENSION_NAME</span>);
-        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(<span class="str">&quot;VK_KHR_win32_surface&quot;</span>);
-    <span class="pragma">#else</span>
-        <span class="type">uint32_t</span> extensionCount = 0;
-        <span class="kw">const char</span>** extensionNames;
-        extensionNames = <span class="type">glfwGetRequiredInstanceExtensions</span>(&amp;extensionCount);
-        <span class="kw">if</span> (!extensionNames) {
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ]\nVulkan is not available on this machine!\n&quot;</span>);
-            <span class="fn">glfwTerminate</span>();
-            <span class="kw">return false</span>;
-        }
-        <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; extensionCount; i++)
-            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(extensionNames[i]);
-    <span class="pragma">#endif</span>
-        <span class="cmt">/*New*/</span> <span class="kw">const</span> <span class="type">VkColorSpaceKHR</span>* pColorSpaces = <span class="kw">decltype</span>(<span class="fn">PreInitialization_TrySetColorSpaceByOrder</span>({})){}();
-        <span class="cmt">/*New*/</span> <span class="kw">if</span> (pColorSpaces)
-        <span class="cmt">/*New*/</span>     <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(<span class="mcr">VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME</span>);
-        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_SWAPCHAIN_EXTENSION_NAME</span>);
+<span class="pragma">#ifdef</span> <span class="mcr">_WIN32</span>
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(<span class="mcr">VK_KHR_SURFACE_EXTENSION_NAME</span>);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(<span class="mcr">VK_KHR_WIN32_SURFACE_EXTENSION_NAME</span>);
+<span class="pragma">#else</span>
+    <span class="type">uint32_t</span> extensionCount = 0;
+    <span class="kw">const char</span>** extensionNames;
+    extensionNames = <span class="type">glfwGetRequiredInstanceExtensions</span>(&amp;extensionCount);
+    <span class="kw">if</span> (!extensionNames) {
+        outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ]\nVulkan is not available on this machine!\n&quot;</span>);
+        <span class="fn">glfwTerminate</span>();
+        <span class="kw">return false</span>;
+    }
+    <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; extensionCount; i++)
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(extensionNames[i]);
+<span class="pragma">#endif</span>
+    <span class="cmt">/*New*/</span> <span class="kw">const</span> <span class="type">VkColorSpaceKHR</span>* pColorSpaces = <span class="kw">decltype</span>(<span class="fn">PreInitialization_TrySetColorSpaceByOrder</span>({})){}();
+    <span class="cmt">/*New*/</span> <span class="kw">if</span> (pColorSpaces)
+    <span class="cmt">/*New*/</span>     <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddInstanceExtension</span>(<span class="mcr">VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME</span>);
+    <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_SWAPCHAIN_EXTENSION_NAME</span>);
 
     <span class="cmt">/*...后面略*/</span>
 }
@@ -645,41 +691,120 @@
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ] WARNING\nFailed to satisfy the requirement of color space!\n&quot;</span>);
     }
     <span class="kw">if</span> (!<span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">SwapchainCreateInfo</span>().imageFormat &amp;&amp; <span class="cmt">/*变更*/</span>
-        <span class="kw">decltype</span>(<span class="fn">PreInitialization_EnableSrgb</span>()){}()) <span class="cmt">/*变更*/</span>
+        <span class="kw">decltype</span>(<span class="fn">PreInitialization_EnableSrgb</span>()){}())            <span class="cmt">/*变更*/</span>
         <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">SetSurfaceFormat</span>({ <span class="enum">VK_FORMAT_R8G8B8A8_SRGB</span>, <span class="enum">VK_COLOR_SPACE_SRGB_NONLINEAR_KHR</span> }) &amp;&amp;
             <span class="type">graphicsBase</span>::<span class="sfn">Base</span>.<span class="fn">SetSurfaceFormat</span>({ <span class="enum">VK_FORMAT_B8G8R8A8_SRGB</span>, <span class="enum">VK_COLOR_SPACE_SRGB_NONLINEAR_KHR</span> }))
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ] WARNING\nFailed to enable sRGB!\n&quot;</span>);
 
     <span class="cmt">/*...后面略*/</span>
 }
-</pre>
+</pre></section>
+</section>
+<section id="id6">
+<h3>亮度校准<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
 <p>
-    接着在主函数中，在<span class="fn">InitializeWindow</span>(...)前调用<span class="fn">PreInitialization_TrySetColorSpaceByOrder</span>(...)。
+    如前文所述，输入到<span class="fn">InverseEotf_PQ</span>(...)的数值，和该函数输出的数值，是[0, 1]区间内的标准化数值。输入到<span class="fn">InverseEotf_PQ</span>(...)的数值若为1.f，其对应的亮度为10000尼特。市面上。。。还真能有这么亮的！（TCL X11H Max）
     <br>
-    出于演示目的，这里试着指定交换链的色彩空间为<span class="enum">VK_COLOR_SPACE_HDR10_ST2084_EXT</span>或<span class="enum">VK_COLOR_SPACE_DOLBYVISION_EXT</span>：
+    不过像我的桌面显示器只有大约450尼特的峰值亮度，除以10000只有0.045，输入到<span class="fn">InverseEotf_PQ</span>(...)的值一旦超过该值，显示出的颜色都会饱和，<code>{ 0.05f, 0.5f, 1.f }</code>就已经跟纯白别无二致了。
+</p>
+<p>
+    为了防止超过显示器峰值亮度的细节丢失，有必要将高亮度的范围映射到较低亮度。
+    <br>
+    该如何确定显示器的峰值亮度呢？对于特定硬件（AMD显卡搭配支持FreeSync的显示器），似乎可以在Vulkan中取得显示器的HDR参数（硬件条件符合的话可以看<a href="https://gpuopen.com/learn/using-amd-freesync-premium-pro-hdr-code-samples/">AMD官方示例</a>）。不过当然是得要有通用解决方法啦，如果你有一台支持HDR的游戏机，那你肯定不会陌生：让用户自己调就好了。
+</p>
+<p>
+    用来确定显示器峰值亮度的片段着色器很好写，基于<a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a>中的<span class="path">Texture.frag.shader</span>进行修改：
 </p>
 <pre class="code">
-<span class="kw">int</span> <span class="fn">main</span>() {
-    <span class="type">VkColorSpaceKHR</span> colorSpaces[] = { <span class="enum">VK_COLOR_SPACE_HDR10_ST2084_EXT</span>, <span class="enum">VK_COLOR_SPACE_DOLBYVISION_EXT</span> };
-    <span class="fn">PreInitialization_TrySetColorSpaceByOrder</span>(colorSpaces);
-    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }))
-        <span class="kw">return</span> -1;
+<span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(fragment)
 
-    <span class="cmt">/*...后面略*/</span>
+<span class="kw">layout</span>(location = 0) <span class="kw">in</span> <span class="type">vec4</span> i_TexCoord;
+<span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec4</span> o_Color;
+<span class="kw">layout</span>(binding = 0) <span class="kw">uniform</span> <span class="type">sampler2D</span> u_Texture;
+<span class="kw">layout</span>(push_constant) <span class="kw">uniform</span> pushConstants {
+    <span class="kw">float</span> brightnessScale;
+};
+
+<span class="kw">float</span> <span class="fn">InverseEotf_PQ</span>(<span class="kw">float</span> <span class="par">v</span>) {
+    <span class="kw">const float</span> m1 = 2610.f / 16384;
+    <span class="kw">const float</span> m2 = 2523.f / 4096 * 128;
+    <span class="kw">const float</span> c1 = 3424.f / 4096;
+    <span class="kw">const float</span> c2 = 2413.f / 4096 * 32;
+    <span class="kw">const float</span> c3 = 2392.f / 4096 * 32;
+    <span class="par">v</span> = <span class="fn">pow</span>(<span class="par">v</span>, m1);
+    <span class="kw">return</span> <span class="fn">pow</span>((c1 + c2 * <span class="par">v</span>) / (1 + c3 * <span class="par">v</span>), m2);
 }
-</pre></section>
-<section id="pq-eotf">
-<h3>应用PQ EOTF的逆映射<a class="headerlink" href="#pq-eotf" title="Permalink to this heading"></a></h3>
+<span class="type">vec3</span> <span class="fn">InverseEotf_PQ</span>(<span class="type">vec3</span> <span class="par">v</span>) {
+    <span class="kw">return</span> <span class="type">vec3</span>(<span class="fn">InverseEotf_PQ</span>(<span class="par">v</span>.x), <span class="fn">InverseEotf_PQ</span>(<span class="par">v</span>.y), <span class="fn">InverseEotf_PQ</span>(<span class="par">v</span>.z));
+}
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    o_Color = <span class="fn">texture</span>(u_Texture, i_TexCoord);
+    <span class="kw">if</span> (o_Color.r < 1)
+        o_Color.rgb = <span class="fn">InverseEotf_PQ</span>(o_Color.rgb * brightnessScale);
+}
+</pre>
 <p>
-    因为没有任何图像格式会自动应用PQ EOTF或其逆映射，所以得自行实现PQ EOTF的逆映射。
+    上述代码主函数中的内容稍后解释。
     <br>
-    基于<a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a>中的<span class="path">Texture.frag.shader</span>进行修改，其对应HDR的版本可以写成：
+    <span class="var">brightnessScale</span>是个由用户调节的数值，如果要用鼠标滚轮调节，可在初始化GLFW后，使用以下代码设置鼠标滚轮事件的回调函数：
+</p>
+<pre class="code">
+<span class="kw">static float</span> brightnessScale = 100.f / 10000;
+<span class="fn">glfwSetScrollCallback</span>(pWindow,
+    [] (<span class="type">GLFWwindow</span>*, <span class="cmt">/*pWindow，用不着，省略参数名*/</span>
+        <span class="kw">double</span>,      <span class="cmt">/*横向滚动，大部分鼠标不支持*/</span>
+        <span class="kw">double</span> <span class="par">dy</span>) { <span class="cmt">/*纵向滚动*/</span>
+        brightnessScale = <span class="par">dy</span> &gt; 0 ?
+            std::<span class="fn">min</span>(brightnessScale + <span class="par">dy</span> * 10.f / 10000, 1.0) :
+            std::<span class="fn">max</span>(brightnessScale + <span class="par">dy</span> * 10.f / 10000, 0.0);
+
+        <span class="cmt">//上式也可以写成（需要#include &lt;algorithm&gt;）：</span>
+        <span class="cmt">//brightnessScale = std::clamp(brightnessScale + dy * 10.f / 10000, 0.0, 1.0);</span>
+    });
+</pre>
+<p>
+    被采样的图像大致长这样。为了能让你看清，调了下对比度，图中的灰字原本是很接近白色的颜色（8位灰度值为252）。
+</p>
+<img alt="_images/ch8-5-5.png" src="_images/ch8-5-5.png" width="640px" style="background-color: #eef3fa">
+<p>
+    于是乎，先前片段着色器中的主函数应该也不难理解了：
     <br>
+    图片的纯白背景部分保持采样后得到的1.0不变，除非你的显示器能显示超过10000尼特的亮度，否则PQ编码下的1.0对应的亮度应当是饱和的，将其当做显示器最高亮度的参考效果。低于1.0的灰度值则会乘以<span class="var">brightnessScale</span>，再应用逆EOTF。显然，纯黑背景对应的0值仍旧是0。
+</p>
+<p>
+    我在<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch8/Ch8-5_Hdr.hpp">Ch8-5_Hdr.hpp</a>中提供了一个非常省事的简易程序供参考。
     <br>
+    运行程序，尽可能放大窗口（最好占满整个屏幕），滑动滚轮使得这个理应几乎是纯白的文字几乎不可见，此时<span class="var">brightnessScale</span>的值即为显示器的峰值亮度除以10000尼特的数值。
+</p>
+<p>
+    考虑到光控，显示器可能只能在屏幕中的高光区域较少时达到峰值亮度，当整个屏幕都是饱和亮度的纯白时，只能达到最大全屏平均亮度（maximum frame average light level）。用与上文类似的方法可以大致确定显示器的最大全屏平均亮度：在整个屏幕是纯白背景的情况下，使理应几乎是白色的图案，在白色背景上几乎不可见，则此时的<span class="var">brightnessScale</span>即为最大全屏平均亮度。
     <br>
+    一般这类HDR亮度校准程序里还有第三个步骤：在整个屏幕是纯黑背景的情况下，使几乎是黑色的图案，在黑色背景上几乎不可见，由此确定最低亮度。
+</p>
+<p>
+    确定了峰值、最低、最大全屏平均亮度后，你可以根据这三个数值书写一个映射函数，来对饱和的高光细节，或太暗的暗部细节的数值进行重新映射。
     <br>
-    TODO 后续施工中
+    注：不要指望<a href="https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/vkSetHdrMetadataEXT.html">vkSetHdrMetadataEXT</a>(...)，这个函数可以让你把上述三个数值填入HDR元数据发送给显示器（以让显示器基于HDR元数据对色调和亮度进行调整），但完全无从知晓该函数是否执行成功（函数返回类型是<span class="kw">void</span>），且硬件环境未必支持向显示器发送HDR元数据。
+</p><section id="hdrsdr">
+<h4>在HDR下显示SDR内容<a class="headerlink" href="#hdrsdr" title="Permalink to this heading"></a></h4>
+<p>
+    最后一个问题：同时显示HDR和SDR内容，如何决定SDR内容的亮度？
+</p>
+<p>
+    操作系统可能记录有SDR内容对应的亮度级别。
+    <br>
+    比如Win10或Win11中，“Windows HD Color设置”下有“HDR/SDR亮度平衡”的选项，允许用户调节HDR显示环境下SDR内容的亮度。
+    <br>
+    若程序运行环境为Win10 Ver.1709之后的版本或Win11，可以用<a href="https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-displayconfiggetdeviceinfo">DisplayConfigGetDeviceInfo</a>(...)来获取用户设置的SDR亮度级别，解说略，有需要的话可以直接抄示例代码：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch8/Ch8-5_Hdr.hpp#L83">Ch8-5_Hdr.hpp</a>
+</p>
+<p>
+    如果程序运行环境并没有设置SDR对应的亮度级别，你可以将SDR的峰值白映射到<strong>HDR参考白</strong>。
+    <br>
+    HDR参考白是HDR场景中漫反射纯白的亮度，HDR场景中大部分区域的亮度应当低于该亮度，其数值对应HLG编码下的0.75（对于满足HDR1000标准的显示器，为203尼特；对于HDR400，是101尼特）。
 </p></section>
+</section>
 </section>
 </section>
 

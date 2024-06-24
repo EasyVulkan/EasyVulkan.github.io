@@ -89,7 +89,7 @@ int main() {
 	//Synchronization object
 	semaphore semaphore_imageIsAvailable;
 	semaphore semaphore_renderingIsOver;
-	fence fence(true);
+	fence fence;
 	//Command object
 	commandBuffer commandBuffer_graphics;
 	commandBuffer commandBuffer_transfer;
@@ -117,6 +117,7 @@ int main() {
 		glm::scale(glm::mat4(1), glm::vec3(0.5f, 0.5f, 0.5f))
 	};
 	uniformBuffer uniformBuffer_pvm(sizeof pvm);
+	uniformBuffer_pvm.TransferData(pvm);
 
 	//Descriptor
 	VkDescriptorPoolSize descriptorPoolSizes[2] = {
@@ -159,17 +160,9 @@ int main() {
 	};
 
 	while (!glfwWindowShouldClose(pWindow)) {
-		TitleFps();
+		while (glfwGetWindowAttrib(pWindow, GLFW_ICONIFIED))
+			glfwWaitEvents();
 
-		//Update
-		fence.WaitAndReset();
-		commandBuffer_transfer.Begin(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
-		uniformBuffer_pvm.CmdUpdateBuffer(commandBuffer_transfer, pvm);
-		commandBuffer_transfer.End();
-		graphicsBase::Base().SubmitCommandBuffer_Graphics(commandBuffer_transfer, fence);
-
-		//Render
-		fence.WaitAndReset();
 		graphicsBase::Base().SwapImage(semaphore_imageIsAvailable);
 		auto i = graphicsBase::Base().CurrentImageIndex();
 
@@ -188,9 +181,12 @@ int main() {
 		commandBuffer_graphics.End();
 
 		graphicsBase::Base().SubmitCommandBuffer_Graphics(commandBuffer_graphics, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
-
 		graphicsBase::Base().PresentImage(semaphore_renderingIsOver);
+
 		glfwPollEvents();
+		TitleFps();
+
+		fence.WaitAndReset();
 	}
 	TerminateWindow();
 	return 0;
