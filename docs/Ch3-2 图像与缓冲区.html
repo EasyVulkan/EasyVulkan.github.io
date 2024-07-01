@@ -342,11 +342,11 @@
 </p>
 <pre class="code">
 <span class="kw">const</span> <span class="type">VkDeviceSize</span>&amp; nonCoherentAtomSize = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.nonCoherentAtomSize;
-size = size + offset;
-offset = (offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCoherentAtomSize;
-size = (size - offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCoherentAtomSize;
-<span class="kw">if</span> (size + offset &gt; allocationSize)
-    size = allocationSize - offset;
+<span class="par">size</span> = <span class="par">size</span> + <span class="par">offset</span>;
+<span class="par">offset</span> = (<span class="par">offset</span> + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCoherentAtomSize;
+<span class="par">size</span> = (<span class="par">size</span> - <span class="par">offset</span> + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCoherentAtomSize;
+<span class="kw">if</span> (<span class="par">size</span> + <span class="par">offset</span> &gt; allocationSize)
+    <span class="par">size</span> = allocationSize - <span class="par">offset</span>;
 </pre>
 <p>
     2.使用<a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkInvalidateMappedMemoryRanges">vkInvalidateMappedMemoryRanges</a>(...)确保物理设备对该片内存的写入结果可以被CPU侧正确读取：
@@ -479,17 +479,17 @@ size = (size - offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCohe
 <pre class="code">
 <span class="kw">class</span> <span class="type">deviceMemory</span> {
     <span class="type">VkDeviceMemory</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
-    <span class="type">VkDeviceSize</span> allocationSize = 0;<span class="cmt">//实际分配的内存大小</span>
-    <span class="type">VkMemoryPropertyFlags</span> memoryProperties = 0;<span class="cmt">//内存属性</span>
+    <span class="type">VkDeviceSize</span> allocationSize = 0; <span class="cmt">//实际分配的内存大小</span>
+    <span class="type">VkMemoryPropertyFlags</span> memoryProperties = 0; <span class="cmt">//内存属性</span>
     <span class="cmt">//--------------------</span>
     <span class="cmt">//该函数用于在映射内存区时，调整非host coherent的内存区域的范围</span>
-    <span class="kw">void</span> <span class="fn">AdjustNonCoherentMemoryRange</span>(<span class="type">VkDeviceSize</span>&amp; size, <span class="type">VkDeviceSize</span>&amp; offset) <span class="kw">const</span> {
+    <span class="kw">void</span> <span class="fn">AdjustNonCoherentMemoryRange</span>(<span class="type">VkDeviceSize</span>&amp; <span class="par">size</span>, <span class="type">VkDeviceSize</span>&amp; <span class="par">offset</span>) <span class="kw">const</span> {
         <span class="kw">const</span> <span class="type">VkDeviceSize</span>&amp; nonCoherentAtomSize = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.nonCoherentAtomSize;
-        size = size + offset;
-        offset = (offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCoherentAtomSize;
-        size = (size - offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCoherentAtomSize;
-        <span class="kw">if</span> (size + offset &gt; allocationSize)
-            size = allocationSize - offset;
+        <span class="par">size</span> = <span class="par">size</span> + <span class="par">offset</span>;
+        <span class="par">offset</span> = (<span class="par">offset</span> + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCoherentAtomSize;
+        <span class="par">size</span> = (<span class="par">size</span> - <span class="par">offset</span> + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCoherentAtomSize;
+        <span class="kw">if</span> (<span class="par">size</span> + <span class="par">offset</span> &gt; allocationSize)
+            <span class="par">size</span> = allocationSize - <span class="par">offset</span>;
     }
 <span class="kw">protected</span>:
     <span class="cmt">//用于bufferMemory或imageMemory，定义于此以节省8个字节</span>
@@ -498,19 +498,19 @@ size = (size - offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCohe
         <span class="kw">friend class</span> <span class="type">imageMemory</span>;
         <span class="kw">bool</span> value = <span class="kw">false</span>;
         <span class="kw">operator bool</span>() <span class="kw">const</span> { <span class="kw">return</span> value; }
-        <span class="kw">auto</span>&amp; <span class="kw">operator</span>=(<span class="kw">bool</span> value) { <span class="kw">this</span>-&gt;value = value; <span class="kw">return</span> *<span class="kw">this</span>; }
+        <span class="kw">auto</span>&amp; <span class="kw">operator</span>=(<span class="kw">bool</span> <span class="par">value</span>) { <span class="kw">this</span>-&gt;value = <span class="par">value</span>; <span class="kw">return</span> *<span class="kw">this</span>; }
     } areBound;
 <span class="kw">public</span>:
     <span class="fn">deviceMemory</span>() = <span class="kw">default</span>;
-    <span class="fn">deviceMemory</span>(<span class="type">VkMemoryAllocateInfo</span>&amp; allocateInfo) {
-        <span class="fn">Allocate</span>(allocateInfo);
+    <span class="fn">deviceMemory</span>(<span class="type">VkMemoryAllocateInfo</span>&amp; <span class="par">allocateInfo</span>) {
+        <span class="fn">Allocate</span>(<span class="par">allocateInfo</span>);
     }
-    <span class="fn">deviceMemory</span>(<span class="type">deviceMemory</span>&amp;&amp; other) <span class="kw">noexcept</span> {
+    <span class="fn">deviceMemory</span>(<span class="type">deviceMemory</span>&amp;&amp; <span class="par">other</span>) <span class="kw">noexcept</span> {
         <span class="mcr">MoveHandle</span>;
-        allocationSize = other.allocationSize;
-        memoryProperties = other.memoryProperties;
-        other.allocationSize = 0;
-        other.memoryProperties = 0;
+        allocationSize = <span class="par">other</span>.allocationSize;
+        memoryProperties = <span class="par">other</span>.memoryProperties;
+        <span class="par">other</span>.allocationSize = 0;
+        <span class="par">other</span>.memoryProperties = 0;
     }
     <span class="fn">~deviceMemory</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkFreeMemory</span>); allocationSize = 0; memoryProperties = 0; }
     <span class="cmt">//Getter</span>
@@ -520,10 +520,10 @@ size = (size - offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCohe
     <span class="type">VkMemoryPropertyFlags</span> <span class="fn">MemoryProperties</span>() <span class="kw">const</span> { <span class="kw">return</span> memoryProperties; }
     <span class="cmt">//Const Function</span>
     <span class="cmt">//映射host visible的内存区</span>
-    <span class="type">result_t</span> <span class="fn">MapMemory</span>(<span class="kw">void</span>*&amp; pData, <span class="type">VkDeviceSize</span> size, <span class="type">VkDeviceSize</span> offset = 0) <span class="kw">const</span> {
+    <span class="type">result_t</span> <span class="fn">MapMemory</span>(<span class="kw">void</span>*&amp; <span class="par">pData</span>, <span class="type">VkDeviceSize</span> <span class="par">size</span>, <span class="type">VkDeviceSize</span> <span class="par">offset</span> = 0) <span class="kw">const</span> {
         <span class="kw">if</span> (!(memoryProperties &amp; <span class="enum">VK_MEMORY_PROPERTY_HOST_COHERENT_BIT</span>))
-            <span class="fn">AdjustNonCoherentMemoryRange</span>(size, offset);
-        <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkMapMemory</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, offset, size, 0, &amp;pData)) {
+            <span class="fn">AdjustNonCoherentMemoryRange</span>(<span class="par">size</span>, <span class="par">offset</span>);
+        <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkMapMemory</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, <span class="par">offset</span>, <span class="par">size</span>, 0, &amp;<span class="par">pData</span>)) {
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ deviceMemory ] ERROR\nFailed to map the memory!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
             <span class="kw">return</span> result;
         }
@@ -531,8 +531,8 @@ size = (size - offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCohe
             <span class="type">VkMappedMemoryRange</span> mappedMemoryRange = {
                 .sType = <span class="enum">VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE</span>,
                 .memory = handle,
-                .offset = offset,
-                .size = size
+                .offset = <span class="par">offset</span>,
+                .size = <span class="par">size</span>
             };
             <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkInvalidateMappedMemoryRanges</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), 1, &amp;mappedMemoryRange)) {
                 outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ deviceMemory ] ERROR\nFailed to flush the memory!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
@@ -542,14 +542,14 @@ size = (size - offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCohe
         <span class="kw">return</span> <span class="mcr">VK_SUCCESS</span>;
     }
     <span class="cmt">//取消映射host visible的内存区</span>
-    <span class="type">result_t</span> <span class="fn">UnmapMemory</span>(<span class="type">VkDeviceSize</span> size, <span class="type">VkDeviceSize</span> offset = 0) <span class="kw">const</span> {
+    <span class="type">result_t</span> <span class="fn">UnmapMemory</span>(<span class="type">VkDeviceSize</span> <span class="par">size</span>, <span class="type">VkDeviceSize</span> <span class="par">offset</span> = 0) <span class="kw">const</span> {
         <span class="kw">if</span> (!(memoryProperties &amp; <span class="enum">VK_MEMORY_PROPERTY_HOST_COHERENT_BIT</span>)) {
-            <span class="fn">AdjustNonCoherentMemoryRange</span>(size, offset);
+            <span class="fn">AdjustNonCoherentMemoryRange</span>(<span class="par">size</span>, <span class="par">offset</span>);
             <span class="type">VkMappedMemoryRange</span> mappedMemoryRange = {
                 .sType = <span class="enum">VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE</span>,
                 .memory = handle,
-                .offset = offset,
-                .size = size
+                .offset = <span class="par">offset</span>,
+                .size = <span class="par">size</span>
             };
             <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkFlushMappedMemoryRanges</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), 1, &amp;mappedMemoryRange)) {
                 outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ deviceMemory ] ERROR\nFailed to flush the memory!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
@@ -560,39 +560,39 @@ size = (size - offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCohe
         <span class="kw">return</span> <span class="mcr">VK_SUCCESS</span>;
     }
     <span class="cmt">//BufferData(...)用于方便地更新设备内存区，适用于用memcpy(...)向内存区写入数据后立刻取消映射的情况</span>
-    <span class="type">result_t</span> <span class="fn">BufferData</span>(<span class="kw">const void</span>* pData_src, <span class="type">VkDeviceSize</span> size, <span class="type">VkDeviceSize</span> offset = 0) <span class="kw">const</span> {
+    <span class="type">result_t</span> <span class="fn">BufferData</span>(<span class="kw">const void</span>* <span class="par">pData_src</span>, <span class="type">VkDeviceSize</span> <span class="par">size</span>, <span class="type">VkDeviceSize</span> <span class="par">offset</span> = 0) <span class="kw">const</span> {
         <span class="kw">void</span>* pData_dst;
-        <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">MapMemory</span>(pData_dst, size, offset))
+        <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">MapMemory</span>(pData_dst, <span class="par">size</span>, <span class="par">offset</span>))
             <span class="kw">return</span> result;
-        <span class="fn">memcpy</span>(pData_dst, pData_src, <span class="type">size_t</span>(size));
-        <span class="kw">return</span> <span class="fn">UnmapMemory</span>(size, offset);
+        <span class="fn">memcpy</span>(pData_dst, <span class="par">pData_src</span>, <span class="type">size_t</span>(<span class="par">size</span>));
+        <span class="kw">return</span> <span class="fn">UnmapMemory</span>(<span class="par">size</span>, <span class="par">offset</span>);
     }
-    <span class="type">result_t</span> <span class="fn">BufferData</span>(<span class="kw">const auto</span>&amp; data_src) <span class="kw">const</span> {
-        <span class="kw">return</span> <span class="fn">BufferData</span>(&amp;data_src, <span class="kw">sizeof</span> data_src);
+    <span class="type">result_t</span> <span class="fn">BufferData</span>(<span class="kw">const auto</span>&amp; <span class="par">data_src</span>) <span class="kw">const</span> {
+        <span class="kw">return</span> <span class="fn">BufferData</span>(&amp;<span class="par">data_src</span>, <span class="kw">sizeof</span> <span class="par">data_src</span>);
     }
     <span class="cmt">//RetrieveData(...)用于方便地从设备内存区取回数据，适用于用memcpy(...)从内存区取得数据后立刻取消映射的情况</span>
-    <span class="type">result_t</span> <span class="fn">RetrieveData</span>(<span class="kw">void</span>* pData_dst, <span class="type">VkDeviceSize</span> size, <span class="type">VkDeviceSize</span> offset = 0) <span class="kw">const</span> {
+    <span class="type">result_t</span> <span class="fn">RetrieveData</span>(<span class="kw">void</span>* <span class="par">pData_dst</span>, <span class="type">VkDeviceSize</span> <span class="par">size</span>, <span class="type">VkDeviceSize</span> <span class="par">offset</span> = 0) <span class="kw">const</span> {
         <span class="kw">void</span>* pData_src;
-        <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">MapMemory</span>(pData_src, size, offset))
+        <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">MapMemory</span>(pData_src, <span class="par">size</span>, <span class="par">offset</span>))
             <span class="kw">return</span> result;
-            <span class="fn">memcpy</span>(pData_dst, pData_src, <span class="type">size_t</span>(size));
-        <span class="kw">return</span> <span class="fn">UnmapMemory</span>(size, offset);
+        <span class="fn">memcpy</span>(<span class="par">pData_dst</span>, pData_src, <span class="type">size_t</span>(<span class="par">size</span>));
+        <span class="kw">return</span> <span class="fn">UnmapMemory</span>(<span class="par">size</span>, <span class="par">offset</span>);
     }
     <span class="cmt">//Non-const Function</span>
-    <span class="type">result_t</span> <span class="fn">Allocate</span>(<span class="type">VkMemoryAllocateInfo</span>&amp; allocateInfo) {
-        <span class="kw">if</span> (allocateInfo.memoryTypeIndex &gt;= <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceMemoryProperties</span>().memoryTypeCount) {
+    <span class="type">result_t</span> <span class="fn">Allocate</span>(<span class="type">VkMemoryAllocateInfo</span>&amp; <span class="par">allocateInfo</span>) {
+        <span class="kw">if</span> (<span class="par">allocateInfo</span>.memoryTypeIndex &gt;= <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceMemoryProperties</span>().memoryTypeCount) {
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ deviceMemory ] ERROR\nInvalid memory type index!\n&quot;</span>);
-            <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;<span class="cmt">//没有合适的错误代码，别用VK_ERROR_UNKNOWN</span>
+            <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>; <span class="cmt">//没有合适的错误代码，别用VK_ERROR_UNKNOWN</span>
         }
-        allocateInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO</span>;
-        <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkAllocateMemory</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;allocateInfo, <span class="kw">nullptr</span>, &amp;handle)) {
+        <span class="par">allocateInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO</span>;
+        <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkAllocateMemory</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">allocateInfo</span>, <span class="kw">nullptr</span>, &amp;handle)) {
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ deviceMemory ] ERROR\nFailed to allocate memory!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
             <span class="kw">return</span> result;
         }
         <span class="cmt">//记录实际分配的内存大小</span>
-        allocationSize = allocateInfo.allocationSize;
+        allocationSize = <span class="par">allocateInfo</span>.allocationSize;
         <span class="cmt">//取得内存属性</span>
-        memoryProperties = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceMemoryProperties</span>().memoryTypes[allocateInfo.memoryTypeIndex].propertyFlags;
+        memoryProperties = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceMemoryProperties</span>().memoryTypes[<span class="par">allocateInfo</span>.memoryTypeIndex].propertyFlags;
         <span class="kw">return</span> <span class="mcr">VK_SUCCESS</span>;
     }
 };
@@ -844,7 +844,7 @@ size = (size - offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCohe
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkMemoryRequirements">VkMemoryAllocateInfo</a> 的成员说明</p></th>
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap12.html#VkMemoryRequirements">VkMemoryRequirements</a> 的成员说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -863,7 +863,7 @@ size = (size - offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCohe
     </tbody>
 </table>
 <p>
-    可用以下代码确定<a href="https://renderdoc.org/vkspec_chunked/chap11.html#VkMemoryAllocateInfo">VkMemoryAllocateInfo</a>::memoryTypeIndex，其中<span class="var">desiredMemoryProperties</span>是你所需的物理设备内存属性：
+    可用以下代码确定<a href="https://renderdoc.org/vkspec_chunked/chap11.html#VkMemoryAllocateInfo">VkMemoryAllocateInfo</a>::memoryTypeIndex，其中<span class="par">desiredMemoryProperties</span>是你所需的物理设备内存属性：
 </p>
 <pre class="code">
 <span class="type">VkMemoryAllocateInfo</span> memoryAllocateInfo = {
@@ -871,14 +871,14 @@ size = (size - offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCohe
 };
 <span class="type">VkMemoryRequirements</span> memoryRequirements;
 <span class="fn">vkGetBufferMemoryRequirements</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, &amp;memoryRequirements);
-memoryAllocateInfo.allocationSize = memoryRequirements.size;<span class="cmt">//取得所需的内存分配大小</span>
+memoryAllocateInfo.allocationSize = memoryRequirements.size; <span class="cmt">//取得所需的内存分配大小</span>
 memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
 <span class="kw">auto</span>&amp; physicalDeviceMemoryProperties = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceMemoryProperties</span>();
-<span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; physicalDeviceMemoryProperties.memoryTypeCount; i++)<span class="cmt">//遍历所有设备内存类型</span>
-    <span class="kw">if</span> (<span class="cmt">//如果相应设备内存类型支持该缓冲区/图像，则继续执行后续判断，否则短路</span>
+<span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; physicalDeviceMemoryProperties.memoryTypeCount; i++) <span class="cmt">//遍历所有设备内存类型</span>
+    <span class="kw">if</span> ( <span class="cmt">//如果相应设备内存类型支持该缓冲区/图像，则继续执行后续判断，否则短路</span>
         memoryRequirements.memoryTypeBits &amp; 1 &lt;&lt; i &amp;&amp;
         <span class="cmt">//如果相应设备内存类型支持所需的内存属性，覆写memoryAllocateInfo.memoryTypeIndex</span>
-        (physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags &amp; desiredMemoryProperties) == desiredMemoryProperties) {
+        (physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags &amp; <span class="par">desiredMemoryProperties</span>) == <span class="par">desiredMemoryProperties</span>) {
         memoryAllocateInfo.memoryTypeIndex = i;
         <span class="kw">break</span>;
     }
@@ -934,16 +934,16 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
     <span class="type">VkBuffer</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
 <span class="kw">public</span>:
     <span class="fn">buffer</span>() = <span class="kw">default</span>;
-    <span class="fn">buffer</span>(<span class="type">VkBufferCreateInfo</span>&amp; createInfo) {
-        <span class="fn">Create</span>(createInfo);
+    <span class="fn">buffer</span>(<span class="type">VkBufferCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="fn">Create</span>(<span class="par">createInfo</span>);
     }
-    <span class="fn">buffer</span>(<span class="type">buffer</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    <span class="fn">buffer</span>(<span class="type">buffer</span>&amp;&amp; <span class="par">other</span>) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
     <span class="fn">~buffer</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyBuffer</span>); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
     <span class="cmt">//Const Function</span>
-    <span class="type">VkMemoryAllocateInfo</span> <span class="fn">MemoryAllocateInfo</span>(<span class="type">VkMemoryPropertyFlags</span> desiredMemoryProperties) <span class="kw">const</span> {
+    <span class="type">VkMemoryAllocateInfo</span> <span class="fn">MemoryAllocateInfo</span>(<span class="type">VkMemoryPropertyFlags</span> <span class="par">desiredMemoryProperties</span>) <span class="kw">const</span> {
         <span class="type">VkMemoryAllocateInfo</span> memoryAllocateInfo = {
             .sType = <span class="enum">VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO</span>
         };
@@ -954,7 +954,7 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
         <span class="kw">auto</span>&amp; physicalDeviceMemoryProperties = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceMemoryProperties</span>();
         <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; physicalDeviceMemoryProperties.memoryTypeCount; i++)
             <span class="kw">if</span> (memoryRequirements.memoryTypeBits &amp; 1 &lt;&lt; i &amp;&amp;
-                (physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags &amp; desiredMemoryProperties) == desiredMemoryProperties) {
+                (physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags &amp; <span class="par">desiredMemoryProperties</span>) == <span class="par">desiredMemoryProperties</span>) {
                 memoryAllocateInfo.memoryTypeIndex = i;
                 <span class="kw">break</span>;
             }
@@ -963,16 +963,16 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
         <span class="cmt">//    outStream &lt;&lt; std::format(&quot;[ buffer ] ERROR\nFailed to find any memory type satisfies all desired memory properties!\n&quot;);</span>
         <span class="kw">return</span> memoryAllocateInfo;
     }
-    <span class="type">result_t</span> <span class="fn">BindMemory</span>(<span class="type">VkDeviceMemory</span> deviceMemory, <span class="type">VkDeviceSize</span> memoryOffset = 0) <span class="kw">const</span> {
-        <span class="type">VkResult</span> result = <span class="fn">vkBindBufferMemory</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, deviceMemory, memoryOffset);
+    <span class="type">result_t</span> <span class="fn">BindMemory</span>(<span class="type">VkDeviceMemory</span> <span class="par">deviceMemory</span>, <span class="type">VkDeviceSize</span> <span class="par">memoryOffset</span> = 0) <span class="kw">const</span> {
+        <span class="type">VkResult</span> result = <span class="fn">vkBindBufferMemory</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, <span class="par">deviceMemory</span>, <span class="par">memoryOffset</span>);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ buffer ] ERROR\nFailed to attach the memory!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="cmt">//Non-const Function</span>
-    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkBufferCreateInfo</span>&amp; createInfo) {
-        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO</span>;
-        <span class="type">VkResult</span> result = vkCreateBuffer(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkBufferCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = vkCreateBuffer(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ buffer ] ERROR\nFailed to create a buffer!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
@@ -988,13 +988,13 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
 <span class="kw">class</span> <span class="type">bufferMemory</span> :<span class="type">buffer</span>, <span class="type">deviceMemory</span> {
 <span class="kw">public</span>:
     <span class="fn">bufferMemory</span>() = <span class="kw">default</span>;
-    <span class="fn">bufferMemory</span>(<span class="type">VkBufferCreateInfo</span>&amp; createInfo, <span class="type">VkMemoryPropertyFlags</span> desiredMemoryProperties) {
-        <span class="fn">Create</span>(createInfo, desiredMemoryProperties);
+    <span class="fn">bufferMemory</span>(<span class="type">VkBufferCreateInfo</span>&amp; <span class="par">createInfo</span>, <span class="type">VkMemoryPropertyFlags</span> <span class="par">desiredMemoryProperties</span>) {
+        <span class="fn">Create</span>(<span class="par">createInfo</span>, <span class="par">desiredMemoryProperties</span>);
     }
-    <span class="fn">bufferMemory</span>(<span class="type">bufferMemory</span>&amp;&amp; other) <span class="kw">noexcept</span> :
-        <span class="type">buffer</span>(std::<span class="fn">move</span>(other)), <span class="type">deviceMemory</span>(std::<span class="fn">move</span>(other)) {
-        areBound = other.areBound;
-        other.areBound = <span class="kw">false</span>;
+    <span class="fn">bufferMemory</span>(<span class="type">bufferMemory</span>&amp;&amp; <span class="par">other</span>) <span class="kw">noexcept</span> :
+        <span class="type">buffer</span>(std::<span class="fn">move</span>(<span class="par">other</span>)), <span class="type">deviceMemory</span>(std::<span class="fn">move</span>(<span class="par">other</span>)) {
+        areBound = <span class="par">other</span>.areBound;
+        <span class="par">other</span>.areBound = <span class="kw">false</span>;
     }
     <span class="fn">~bufferMemory</span>() { areBound = <span class="kw">false</span>; }
     <span class="cmt">//Getter</span>
@@ -1002,7 +1002,7 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
     <span class="type">VkBuffer</span> <span class="fn">Buffer</span>() <span class="kw">const</span> { <span class="kw">return</span> <span class="kw">static_cast</span>&lt;<span class="kw">const</span> <span class="type">buffer</span>&amp;&gt;(*<span class="kw">this</span>); }
     <span class="kw">const</span> <span class="type">VkBuffer</span>* <span class="fn">AddressOfBuffer</span>() <span class="kw">const</span> { <span class="kw">return</span> <span class="type">buffer</span>::<span class="fn">Address</span>(); }
     <span class="type">VkDeviceMemory</span> <span class="fn">Memory</span>() <span class="kw">const</span> { <span class="kw">return</span> <span class="kw">static_cast</span>&lt;<span class="kw">const</span> <span class="type">deviceMemory</span>&amp;&gt;(*<span class="kw">this</span>); }
-    <span class="kw">const</span> <span class="type">VkDeviceMemory</span>* <span class="fn">AddressOfMemory</span>() <span class="kw">const</span> { <span class="kw">return</span> <span class="type">deviceMemory</span>::<span class="kw">Address</span>(); }
+    <span class="kw">const</span> <span class="type">VkDeviceMemory</span>* <span class="fn">AddressOfMemory</span>() <span class="kw">const</span> { <span class="kw">return</span> <span class="type">deviceMemory</span>::<span class="fn">Address</span>(); }
     <span class="cmt">//若areBond为true，则成功分配了设备内存、创建了缓冲区，且成功绑定在一起</span>
     <span class="kw">bool</span> <span class="fn">AreBound</span>() <span class="kw">const</span> { <span class="kw">return</span> areBound; }
     <span class="kw">using</span> <span class="type">deviceMemory</span>::<span class="fn">AllocationSize</span>;
@@ -1014,13 +1014,13 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
     <span class="kw">using</span> <span class="type">deviceMemory</span>::<span class="fn">RetrieveData</span>;
     <span class="cmt">//Non-const Function</span>
     <span class="cmt">//以下三个函数仅用于Create(...)可能执行失败的情况</span>
-    <span class="type">result_t</span> <span class="fn">CreateBuffer</span>(<span class="type">VkBufferCreateInfo</span>&amp; createInfo) {
-        <span class="kw">return</span> <span class="type">buffer</span>::<span class="fn">Create</span>(createInfo);
+    <span class="type">result_t</span> <span class="fn">CreateBuffer</span>(<span class="type">VkBufferCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="kw">return</span> <span class="type">buffer</span>::<span class="fn">Create</span>(<span class="par">createInfo</span>);
     }
-    <span class="type">result_t</span> <span class="fn">AllocateMemory</span>(<span class="type">VkMemoryPropertyFlags</span> desiredMemoryProperties) {
-        <span class="type">VkMemoryAllocateInfo</span> allocateInfo = <span class="fn">MemoryAllocateInfo</span>(desiredMemoryProperties);
+    <span class="type">result_t</span> <span class="fn">AllocateMemory</span>(<span class="type">VkMemoryPropertyFlags</span> <span class="par">desiredMemoryProperties</span>) {
+        <span class="type">VkMemoryAllocateInfo</span> allocateInfo = <span class="fn">MemoryAllocateInfo</span>(<span class="par">desiredMemoryProperties</span>);
         <span class="kw">if</span> (allocateInfo.memoryTypeIndex &gt;= <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceMemoryProperties</span>().memoryTypeCount)
-            <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;<span class="cmt">//没有合适的错误代码，别用VK_ERROR_UNKNOWN</span>
+            <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>; <span class="cmt">//没有合适的错误代码，别用VK_ERROR_UNKNOWN</span>
         <span class="kw">return</span> <span class="fn">Allocate</span>(allocateInfo);
     }
     <span class="type">result_t</span> <span class="fn">BindMemory</span>() {
@@ -1030,11 +1030,11 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
         <span class="kw">return</span> <span class="mcr">VK_SUCCESS</span>;
     }
     <span class="cmt">//分配设备内存、创建缓冲、绑定</span>
-    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkBufferCreateInfo</span>&amp; createInfo, <span class="type">VkMemoryPropertyFlags</span> desiredMemoryProperties) {
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkBufferCreateInfo</span>&amp; <span class="par">createInfo</span>, <span class="type">VkMemoryPropertyFlags</span> <span class="par">desiredMemoryProperties</span>) {
         <span class="type">VkResult</span> result;
-        <span class="kw">false</span> ||<span class="cmt">//这行用来应对Visual Studio中代码的对齐</span>
-            (result = <span class="fn">CreateBuffer</span>(createInfo)) ||<span class="cmt">//用||短路执行</span>
-            (result = <span class="fn">AllocateMemory</span>(desiredMemoryProperties)) ||
+        <span class="kw">false</span> || <span class="cmt">//这行用来应对Visual Studio中代码的对齐</span>
+            (result = <span class="fn">CreateBuffer</span>(<span class="par">createInfo</span>)) || <span class="cmt">//用||短路执行</span>
+            (result = <span class="fn">AllocateMemory</span>(<span class="par">desiredMemoryProperties</span>)) ||
             (result = <span class="fn">BindMemory</span>());
         <span class="kw">return</span> result;
     }
@@ -1130,31 +1130,31 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
     <span class="type">VkBufferView</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
 <span class="kw">public</span>:
     <span class="fn">bufferView</span>() = <span class="kw">default</span>;
-    <span class="fn">bufferView</span>(<span class="type">VkBufferViewCreateInfo</span>&amp; createInfo) {
-        <span class="fn">Create</span>(createInfo);
+    <span class="fn">bufferView</span>(<span class="type">VkBufferViewCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="fn">Create</span>(<span class="par">createInfo</span>);
     }
-    <span class="fn">bufferView</span>(<span class="type">VkBuffer</span> buffer, <span class="type">VkFormat</span> format, <span class="type">VkDeviceSize</span> offset = 0, <span class="type">VkDeviceSize</span> range = 0 <span class="cmt">/*VkBufferViewCreateFlags flags*/</span>) {
-        <span class="fn">Create</span>(buffer, format, offset, range);
+    <span class="fn">bufferView</span>(<span class="type">VkBuffer</span> <span class="par">buffer</span>, <span class="type">VkFormat</span> <span class="par">format</span>, <span class="type">VkDeviceSize</span> <span class="par">offset</span> = 0, <span class="type">VkDeviceSize</span> <span class="par">range</span> = 0 <span class="cmt">/*VkBufferViewCreateFlags flags*/</span>) {
+        <span class="fn">Create</span>(<span class="par">buffer</span>, <span class="par">format</span>, <span class="par">offset</span>, <span class="par">range</span>);
     }
-    <span class="fn">bufferView</span>(<span class="type">bufferView</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    <span class="fn">bufferView</span>(<span class="type">bufferView</span>&amp;&amp; <span class="par">other</span>) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
     <span class="fn">~bufferView</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyBufferView</span>); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
     <span class="cmt">//Non-const Function</span>
-    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkBufferViewCreateInfo</span>&amp; createInfo) {
-        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO</span>;
-        <span class="type">VkResult</span> result = <span class="fn">vkCreateBufferView</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkBufferViewCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateBufferView</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ bufferView ] ERROR\nFailed to create a buffer view!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
-    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkBuffer</span> buffer, <span class="type">VkFormat</span> format, <span class="type">VkDeviceSize</span> offset = 0, <span class="type">VkDeviceSize</span> range = 0 <span class="cmt">/*VkBufferViewCreateFlags flags*/</span>) {
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkBuffer</span> <span class="par">buffer</span>, <span class="type">VkFormat</span> <span class="par">format</span>, <span class="type">VkDeviceSize</span> <span class="par">offset</span> = 0, <span class="type">VkDeviceSize</span> <span class="par">range</span> = 0 <span class="cmt">/*VkBufferViewCreateFlags flags*/</span>) {
         <span class="type">VkBufferViewCreateInfo</span> createInfo = {
-            .buffer = buffer,
-            .format = format,
-            .offset = offset,
-            .range = range
+            .buffer = <span class="par">buffer</span>,
+            .format = <span class="par">format</span>,
+            .offset = <span class="par">offset</span>,
+            .range = <span class="par">range</span>
         };
         <span class="kw">return</span> <span class="fn">Create</span>(createInfo);
     }
@@ -1437,25 +1437,21 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
     .sType = <span class="enum">VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO</span>
 };
 <span class="type">VkMemoryRequirements</span> memoryRequirements;
-<span class="fn">vkGetBufferMemoryRequirements</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, &amp;memoryRequirements);
-memoryAllocateInfo.allocationSize = memoryRequirements.size;<span class="cmt">//取得所需的内存分配大小</span>
-<span class="cmt">//将可能会多次执行的部分包装为lambda表达式</span>
-<span class="kw">auto</span> GetMemoryTypeIndex = [](<span class="type">uint32_t</span> memoryTypeBits, <span class="type">VkMemoryPropertyFlags</span> desiredMemoryProperties) {
+<span class="fn">vkGetImageMemoryRequirements</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, &amp;memoryRequirements);
+memoryAllocateInfo.allocationSize = memoryRequirements.size;
+<span class="kw">auto</span> GetMemoryTypeIndex = [](<span class="type">uint32_t</span> <span class="par">memoryTypeBits</span>, <span class="type">VkMemoryPropertyFlags</span> <span class="par">desiredMemoryProperties</span>) {
     <span class="kw">auto</span>&amp; physicalDeviceMemoryProperties = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceMemoryProperties</span>();
-    <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; physicalDeviceMemoryProperties.memoryTypeCount; i++)<span class="cmt">//遍历所有设备内存类型</span>
-        <span class="kw">if</span> (<span class="cmt">//如果相应设备内存类型支持该缓冲区/图像，则继续执行后续判断，否则短路</span>
-            memoryTypeBits &amp; 1 &lt;&lt; i &amp;&amp;
-            <span class="cmt">//如果相应设备内存类型支持所需的内存属性，返回该设备内存类型的索引</span>
-            (physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags &amp; desiredMemoryProperties) == desiredMemoryProperties)
+    <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; physicalDeviceMemoryProperties.memoryTypeCount; i++)
+        <span class="kw">if</span> (<span class="par">memoryTypeBits</span> &amp; 1 &lt;&lt; i &amp;&amp;
+            (physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags &amp; <span class="par">desiredMemoryProperties</span>) == <span class="par">desiredMemoryProperties</span>)
             <span class="kw">return</span> i;
-    <span class="cmt">//如果找不到符合要求的设备内存类型，返回UINT32_MAX</span>
     <span class="kw">return</span> <span class="mcr">UINT32_MAX</span>;
 };
-memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memoryTypeBits, desiredMemoryProperties);
+memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memoryTypeBits, <span class="par">desiredMemoryProperties</span>);
 <span class="cmt">//如果没能获取有效的memoryTypeIndex，试着从desiredMemoryProperties中除去VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT后再次调用GetMemoryTypeIndex(...)</span>
 <span class="kw">if</span> (memoryAllocateInfo.memoryTypeIndex == <span class="mcr">UINT32_MAX</span> &amp;&amp;
-    desiredMemoryProperties &amp; <span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>)
-    memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memoryTypeBits, desiredMemoryProperties &amp; ~<span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>);
+    <span class="par">desiredMemoryProperties</span> &amp; <span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>)
+    memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memoryTypeBits, <span class="par">desiredMemoryProperties</span> &amp; ~<span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>);
 </pre></section>
 <section id="id12">
 <h3>将设备内存绑定到图像<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h3>
@@ -1501,49 +1497,49 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
     <span class="type">VkImage</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
 <span class="kw">public</span>:
     <span class="fn">image</span>() = <span class="kw">default</span>;
-    <span class="fn">image</span>(<span class="type">VkImageCreateInfo</span>&amp; createInfo) {
-        <span class="fn">Create</span>(createInfo);
+    <span class="fn">image</span>(<span class="type">VkImageCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="fn">Create</span>(<span class="par">createInfo</span>);
     }
-    <span class="fn">image</span>(<span class="type">image</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    <span class="fn">image</span>(<span class="type">image</span>&amp;&amp; <span class="par">other</span>) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
     <span class="fn">~image</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyImage</span>); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
     <span class="cmt">//Const Function</span>
-    <span class="type">VkMemoryAllocateInfo</span> <span class="fn">MemoryAllocateInfo</span>(<span class="type">VkMemoryPropertyFlags</span> desiredMemoryProperties) <span class="kw">const</span> {
+    <span class="type">VkMemoryAllocateInfo</span> <span class="fn">MemoryAllocateInfo</span>(<span class="type">VkMemoryPropertyFlags</span> <span class="par">desiredMemoryProperties</span>) <span class="kw">const</span> {
         <span class="type">VkMemoryAllocateInfo</span> memoryAllocateInfo = {
             .sType = <span class="enum">VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO</span>
         };
         <span class="type">VkMemoryRequirements</span> memoryRequirements;
-        <span class="fn">vkGetBufferMemoryRequirements</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, &amp;memoryRequirements);
+        <span class="fn">vkGetImageMemoryRequirements</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, &amp;memoryRequirements);
         memoryAllocateInfo.allocationSize = memoryRequirements.size;
-        <span class="kw">auto</span> GetMemoryTypeIndex = [](<span class="type">uint32_t</span> memoryTypeBits, <span class="type">VkMemoryPropertyFlags</span> desiredMemoryProperties) {
+        <span class="kw">auto</span> GetMemoryTypeIndex = [](<span class="type">uint32_t</span> <span class="par">memoryTypeBits</span>, <span class="type">VkMemoryPropertyFlags</span> <span class="par">desiredMemoryProperties</span>) {
             <span class="kw">auto</span>&amp; physicalDeviceMemoryProperties = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceMemoryProperties</span>();
             <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; physicalDeviceMemoryProperties.memoryTypeCount; i++)
-                <span class="kw">if</span> (memoryTypeBits &amp; 1 &lt;&lt; i &amp;&amp;
-                    (physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags &amp; desiredMemoryProperties) == desiredMemoryProperties)
+                <span class="kw">if</span> (<span class="par">memoryTypeBits</span> &amp; 1 &lt;&lt; i &amp;&amp;
+                    (physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags &amp; <span class="par">desiredMemoryProperties</span>) == <span class="par">desiredMemoryProperties</span>)
                     <span class="kw">return</span> i;
             <span class="kw">return</span> <span class="mcr">UINT32_MAX</span>;
         };
-        memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memoryTypeBits, desiredMemoryProperties);
+        memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memoryTypeBits, <span class="par">desiredMemoryProperties</span>);
         <span class="kw">if</span> (memoryAllocateInfo.memoryTypeIndex == <span class="mcr">UINT32_MAX</span> &amp;&amp;
-            desiredMemoryProperties &amp; <span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>)
-            memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memoryTypeBits, desiredMemoryProperties &amp; ~<span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>);
+            <span class="par">desiredMemoryProperties</span> &amp; <span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>)
+            memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memoryTypeBits, <span class="par">desiredMemoryProperties</span> &amp; ~<span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>);
         <span class="cmt">//不在此检查是否成功取得内存类型索引，因为会把memoryAllocateInfo返回出去，交由外部检查</span>
         <span class="cmt">//if (memoryAllocateInfo.memoryTypeIndex == -1)</span>
         <span class="cmt">//    outStream << std::format("[ image ] ERROR\nFailed to find any memory type satisfies all desired memory properties!\n");</span>
         <span class="kw">return</span> memoryAllocateInfo;
     }
-    <span class="type">result_t</span> <span class="fn">BindMemory</span>(<span class="type">VkDeviceMemory</span> deviceMemory, <span class="type">VkDeviceSize</span> memoryOffset = 0) const {
-        <span class="type">VkResult</span> result = <span class="fn">vkBindImageMemory</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, deviceMemory, memoryOffset);
+    <span class="type">result_t</span> <span class="fn">BindMemory</span>(<span class="type">VkDeviceMemory</span> <span class="par">deviceMemory</span>, <span class="type">VkDeviceSize</span> <span class="par">memoryOffset</span> = 0) <span class="par">const</span> {
+        <span class="type">VkResult</span> result = <span class="fn">vkBindImageMemory</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, <span class="par">deviceMemory</span>, <span class="par">memoryOffset</span>);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ image ] ERROR\nFailed to attach the memory!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="cmt">//Non-const Function</span>
-    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkImageCreateInfo</span>&amp; createInfo) {
-        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO</span>;
-        <span class="type">VkResult</span> result = vkCreateImage(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkImageCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = vkCreateImage(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ image ] ERROR\nFailed to create an image!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
@@ -1559,13 +1555,13 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
 <span class="kw">class</span> <span class="type">imageMemory</span> :<span class="type">image</span>, <span class="type">deviceMemory</span> {
 <span class="kw">public</span>:
     <span class="fn">imageMemory</span>() = <span class="kw">default</span>;
-    <span class="fn">imageMemory</span>(<span class="type">VkImageCreateInfo</span>&amp; createInfo, <span class="type">VkMemoryPropertyFlags</span> desiredMemoryProperties) {
-        <span class="fn">Create</span>(createInfo, desiredMemoryProperties);
+    <span class="fn">imageMemory</span>(<span class="type">VkImageCreateInfo</span>&amp; <span class="par">createInfo</span>, <span class="type">VkMemoryPropertyFlags</span> <span class="par">desiredMemoryProperties</span>) {
+        <span class="fn">Create</span>(<span class="par">createInfo</span>, <span class="par">desiredMemoryProperties</span>);
     }
-    <span class="fn">imageMemory</span>(<span class="type">imageMemory</span>&amp;&amp; other) <span class="kw">noexcept</span> :
-        <span class="type">image</span>(std::<span class="fn">move</span>(other)), <span class="type">deviceMemory</span>(std::<span class="fn">move</span>(other)) {
-        areBound = other.areBound;
-        other.areBound = <span class="kw">false</span>;
+    <span class="fn">imageMemory</span>(<span class="type">imageMemory</span>&amp;&amp; <span class="par">other</span>) <span class="kw">noexcept</span> :
+        <span class="type">image</span>(std::<span class="fn">move</span>(<span class="par">other</span>)), <span class="type">deviceMemory</span>(std::<span class="fn">move</span>(<span class="par">other</span>)) {
+        areBound = <span class="par">other</span>.areBound;
+        <span class="par">other</span>.areBound = <span class="kw">false</span>;
     }
     <span class="fn">~imageMemory</span>() { areBound = <span class="kw">false</span>; }
     <span class="cmt">//Getter</span>
@@ -1578,13 +1574,13 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
     <span class="kw">using</span> <span class="type">deviceMemory</span>::<span class="fn">MemoryProperties</span>;
     <span class="cmt">//Non-const Function</span>
     <span class="cmt">//以下三个函数仅用于Create(...)可能执行失败的情况</span>
-    <span class="type">result_t</span> <span class="fn">CreateImage</span>(<span class="type">VkImageCreateInfo</span>&amp; createInfo) {
-        <span class="kw">return</span> <span class="type">image</span>::<span class="fn">Create</span>(createInfo);
+    <span class="type">result_t</span> <span class="fn">CreateImage</span>(<span class="type">VkImageCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="kw">return</span> <span class="type">image</span>::<span class="fn">Create</span>(<span class="par">createInfo</span>);
     }
-    <span class="type">result_t</span> <span class="fn">AllocateMemory</span>(<span class="type">VkMemoryPropertyFlags</span> desiredMemoryProperties) {
-        <span class="type">VkMemoryAllocateInfo</span> allocateInfo = <span class="fn">MemoryAllocateInfo</span>(desiredMemoryProperties);
+    <span class="type">result_t</span> <span class="fn">AllocateMemory</span>(<span class="type">VkMemoryPropertyFlags</span> <span class="par">desiredMemoryProperties</span>) {
+        <span class="type">VkMemoryAllocateInfo</span> allocateInfo = <span class="fn">MemoryAllocateInfo</span>(<span class="par">desiredMemoryProperties</span>);
         <span class="kw">if</span> (allocateInfo.memoryTypeIndex &gt;= <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceMemoryProperties</span>().memoryTypeCount)
-            <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;<span class="cmt">//没有合适的错误代码，别用VK_ERROR_UNKNOWN</span>
+            <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>; <span class="cmt">//没有合适的错误代码，别用VK_ERROR_UNKNOWN</span>
         <span class="kw">return</span> <span class="fn">Allocate</span>(allocateInfo);
     }
     <span class="type">result_t</span> <span class="fn">BindMemory</span>() {
@@ -1594,11 +1590,11 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
         <span class="kw">return</span> <span class="mcr">VK_SUCCESS</span>;
     }
     <span class="cmt">//分配设备内存、创建图像、绑定</span>
-    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkImageCreateInfo</span>&amp; createInfo, <span class="type">VkMemoryPropertyFlags</span> desiredMemoryProperties) {
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkImageCreateInfo</span>&amp; <span class="par">createInfo</span>, <span class="type">VkMemoryPropertyFlags</span> <span class="par">desiredMemoryProperties</span>) {
         <span class="type">VkResult</span> result;
-        <span class="kw">false</span> ||<span class="cmt">//这行用来应对Visual Studio中代码的对齐</span>
-            (result = <span class="type">CreateImage</span>(createInfo)) ||<span class="cmt">//用||短路执行</span>
-            (result = <span class="type">AllocateMemory</span>(desiredMemoryProperties)) ||
+        <span class="kw">false</span> || <span class="cmt">//这行用来应对Visual Studio中代码的对齐</span>
+            (result = <span class="type">CreateImage</span>(<span class="par">createInfo</span>)) || <span class="cmt">//用||短路执行</span>
+            (result = <span class="type">AllocateMemory</span>(<span class="par">desiredMemoryProperties</span>)) ||
             (result = <span class="type">BindMemory</span>());
         <span class="kw">return</span> result;
     }
@@ -1865,7 +1861,7 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
     </li>
 </ul>
 <p>
-    baseMipLevel和levelCount应用于有mipmap（见//TODO 生成Mipmap）的图像。在着色器中以0为LOD（level of detail）进行采样时，采样得到的是图像中mip等级为baseMipLevel的mipmap，有效的采样范围对应图像中mip范围在闭区间 [baseMipLevel, baseMipLevel + levelCount - 1] 内的mipmap。
+    baseMipLevel和levelCount应用于有mipmap（见<a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html#mipmap">生成Mipmap</a>）的图像。在着色器中以0为LOD（level of detail）进行采样时，采样得到的是图像中mip等级为baseMipLevel的mipmap，有效的采样范围对应图像中mip范围在闭区间 [baseMipLevel, baseMipLevel + levelCount - 1] 内的mipmap。
 </p>
 <p>
     baseArrayLayer和layerCount应用于贴图数组。此处图层的概念并非是类似Photoshop中的图层，一个图层指代数组中的一张图像。在着色器中以0为w坐标（w是采样坐标的第三个分量）进行采样时，采样得到的是图像中索引为baseArrayLayer的图层，有效的采样范围对应原image中索引范围在闭区间 [baseArrayLayer, baseArrayLayer + layerCount - 1] 内的图层。
@@ -1880,32 +1876,32 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
     <span class="type">VkImageView</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
 <span class="kw">public</span>:
     <span class="fn">imageView</span>() = <span class="kw">default</span>;
-    <span class="fn">imageView</span>(<span class="type">VkImageViewCreateInfo</span>&amp; createInfo) {
-        <span class="fn">Create</span>(createInfo);
+    <span class="fn">imageView</span>(<span class="type">VkImageViewCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="fn">Create</span>(<span class="par">createInfo</span>);
     }
-    <span class="fn">imageView</span>(<span class="type">VkImage</span> image, <span class="type">VkImageViewType</span> viewType, <span class="type">VkFormat</span> format, <span class="kw">const</span> <span class="type">VkImageSubresourceRange</span>&amp; subresourceRange, <span class="fn">VkImageViewCreateFlags</span> flags = 0) {
-        <span class="fn">Create</span>(image, viewType, format, subresourceRange, flags);
+    <span class="fn">imageView</span>(<span class="type">VkImage</span> <span class="par">image</span>, <span class="type">VkImageViewType</span> <span class="par">viewType</span>, <span class="type">VkFormat</span> <span class="par">format</span>, <span class="kw">const</span> <span class="type">VkImageSubresourceRange</span>&amp; <span class="par">subresourceRange</span>, <span class="fn">VkImageViewCreateFlags</span> <span class="par">flags</span> = 0) {
+        <span class="fn">Create</span>(<span class="par">image</span>, <span class="par">viewType</span>, <span class="par">format</span>, <span class="par">subresourceRange</span>, <span class="par">flags</span>);
     }
-    <span class="fn">imageView</span>(<span class="type">imageView</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    <span class="fn">imageView</span>(<span class="type">imageView</span>&amp;&amp; <span class="par">other</span>) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
     <span class="fn">~imageView</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyImageView</span>); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
     <span class="cmt">//Non-const Function</span>
-    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkImageViewCreateInfo</span>&amp; createInfo) {
-        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO</span>;
-        <span class="type">VkResult</span> result = <span class="fn">vkCreateImageView</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkImageViewCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateImageView</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ imageView ] ERROR\nFailed to create an image view!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
-    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkImage</span> image, <span class="type">VkImageViewType</span> viewType, <span class="type">VkFormat</span> format, <span class="kw">const</span> <span class="type">VkImageSubresourceRange</span>&amp; subresourceRange, <span class="fn">VkImageViewCreateFlags</span> flags = 0) {
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkImage</span> <span class="par">image</span>, <span class="type">VkImageViewType</span> <span class="par">viewType</span>, <span class="type">VkFormat</span> <span class="par">format</span>, <span class="kw">const</span> <span class="type">VkImageSubresourceRange</span>&amp; <span class="par">subresourceRange</span>, <span class="fn">VkImageViewCreateFlags</span> <span class="par">flags</span> = 0) {
         <span class="type">VkImageViewCreateInfo</span> createInfo = {
-            .flags = flags,
-            .image = image,
-            .viewType = viewType,
-            .format = format,
-            .subresourceRange = subresourceRange
+            .flags = <span class="par">flags</span>,
+            .image = <span class="par">image</span>,
+            .viewType = <span class="par">viewType</span>,
+            .format = <span class="par">format</span>,
+            .subresourceRange = <span class="par">subresourceRange</span>
         };
         <span class="kw">return</span> <span class="fn">Create</span>(createInfo);
     }
@@ -1960,7 +1956,7 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
         <tr class="row-even">
             <td><p>UINT</p></td>
             <td><p>无符号整型</p></td>
-            <td><p><span class="kw">int</span></p></td>
+            <td><p><span class="kw">uint</span></p></td>
             <td><p>在着色器中数值不变，数值范围为[0, 2^N-1]</p></td>
         </tr>
         <tr class="row-odd">
@@ -1985,7 +1981,7 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
             <td><p>SRGB</p></td>
             <td><p>无符号整型</p></td>
             <td><p><span class="kw">float</span></p></td>
-            <td><p>在着色器中被标准化到[ 0, 1]的范围，通过渲染等方式写入该格式的图像时，RGB通道发生//TODO sRGB色调映射</p></td>
+            <td><p>在着色器中被标准化到[ 0, 1]的范围，通过渲染等方式写入该格式的图像时，对RGB通道应用<a class="reference internal" href="Ch8-5%20sRGB%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%BC%80%E5%90%AFHDR.html#srgb">sRGB EOTF</a></p></td>
         </tr>
     </tbody>
 </table>
