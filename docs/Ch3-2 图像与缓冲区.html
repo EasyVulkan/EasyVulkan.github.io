@@ -295,7 +295,8 @@
 <h3>映射内存区<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
 <p>
     对于具有<span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>内存属性的设备内存区（关于取得内存属性的方法见后文的封装代码），在对其进行映射（map）后，可以由CPU侧对其进行直接读写。
-    <br>
+</p>
+<p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkMapMemory">vkMapMemory</a>(...)映射内存区：
 </p>
 <table class="docutils align-default">
@@ -331,22 +332,43 @@
         </tr>
         <tr class="row-odd">
             <td><p><span class="kw">void</span>** ppData</p></td>
-            <td><p>若执行成功，将用于访问内存区域的指针写入*pData</p></td>
+            <td><p>若执行成功，将用于访问内存区域的指针写入*ppData</p></td>
         </tr>
     </tbody>
 </table>
 <p>
     注意，如果内存属性中不具有<span class="enum">VK_MEMORY_PROPERTY_HOST_COHERENT_BIT</span>，那么你需要做两件事：
     <br>
-    1.调整被映射缓冲区的offset和size，使offset为<a href="https://renderdoc.org/vkspec_chunked/chap5.html#VkPhysicalDeviceProperties">VkPhysicalDeviceProperties</a>::limits::nonCoherentAtomSize的整数倍，size同为<a href="https://renderdoc.org/vkspec_chunked/chap5.html#VkPhysicalDeviceProperties">VkPhysicalDeviceProperties</a>::limits::nonCoherentAtomSize的整数倍或offset到内存块末尾的距离，这可以用如下代码计算：
+    1.调整被映射内存区的offset和size，使offset为<a href="https://renderdoc.org/vkspec_chunked/chap5.html#VkPhysicalDeviceProperties">VkPhysicalDeviceProperties</a>::limits::nonCoherentAtomSize的整数倍，size同为<a href="https://renderdoc.org/vkspec_chunked/chap5.html#VkPhysicalDeviceProperties">VkPhysicalDeviceProperties</a>::limits::nonCoherentAtomSize的整数倍或offset到内存块末尾的距离，这可以用如下函数计算：
 </p>
 <pre class="code">
-<span class="kw">const</span> <span class="type">VkDeviceSize</span>&amp; nonCoherentAtomSize = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.nonCoherentAtomSize;
-<span class="par">size</span> = <span class="par">size</span> + <span class="par">offset</span>;
-<span class="par">offset</span> = (<span class="par">offset</span> + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCoherentAtomSize;
-<span class="par">size</span> = (<span class="par">size</span> - <span class="par">offset</span> + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCoherentAtomSize;
-<span class="kw">if</span> (<span class="par">size</span> + <span class="par">offset</span> &gt; allocationSize)
-    <span class="par">size</span> = allocationSize - <span class="par">offset</span>;
+<span class="type">VkDeviceSize</span> <span class="fn">AdjustNonCoherentMemoryRange</span>(<span class="type">VkDeviceSize</span>&amp; <span class="par">size</span>, <span class="type">VkDeviceSize</span>&amp; <span class="par">offset</span>) <span class="kw">const</span> {
+    <span class="kw">const</span> <span class="type">VkDeviceSize</span>&amp; nonCoherentAtomSize = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.nonCoherentAtomSize;
+    <span class="cmt">//记录offset的初值备用</span>
+    <span class="type">VkDeviceSize</span> _offset = <span class="par">offset</span>;
+    <span class="cmt">//记录映射范围的尾部位置</span>
+    <span class="type">VkDeviceSize</span> rangeEnd = <span class="par">size</span> + <span class="par">offset</span>;
+    <span class="cmt">//将offset向下凑整到nonCoherentAtomSize的整数倍</span>
+    <span class="par">offset</span> = <span class="par">offset</span> / nonCoherentAtomSize * nonCoherentAtomSize;
+    <span class="cmt">//将映射范围向上凑整到nonCoherentAtomSize的整数倍</span>
+    rangeEnd = (rangeEnd + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCoherentAtomSize;
+    <span class="cmt">//钳制映射范围</span>
+    rangeEnd = std::<span class="fn">min</span>(rangeEnd, allocationSize);
+    <span class="cmt">//既然rangeEnd是nonCoherentAtomSize的整数倍或内存区尾端位置，offset是nonCoherentAtomSize的整数倍，两者作差即可求得满足条件的size</span>
+    <span class="par">size</span> = rangeEnd - <span class="par">offset</span>;
+    <span class="cmt">//将offset的变化量（确切来说是变化量的相反数，我这里写的是初值减末值）返回出去</span>
+    <span class="kw">return</span> _offset - <span class="par">offset</span>;
+}
+</pre>
+<p>
+    上述代码确保调整后的映射范围涵盖原先的范围。
+    <br>
+    由于映射时所指定的<span class="par">offset</span>变了，需要对映射得到的指针的值进行修正：
+</p>
+<pre class="code">
+<span class="type">VkDeviceSize</span> inverseDeltaOffset = <span class="fn">AdjustNonCoherentMemoryRange</span>(<span class="par">size</span>, <span class="par">offset</span>);
+<span class="fn">vkMapMemory</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, <span class="par">offset</span>, <span class="par">size</span>, 0, &amp;<span class="par">pData</span>);
+<span class="par">pData</span> = <span class="kw">static_cast</span>&lt;<span class="type">uint8_t</span>*&gt;(<span class="par">pData</span>) + inverseDeltaOffset; <span class="cmt">//void*类型指针不能进行加减，须将其转型</span>
 </pre>
 <p>
     2.使用<a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkInvalidateMappedMemoryRanges">vkInvalidateMappedMemoryRanges</a>(...)确保物理设备对该片内存的写入结果可以被CPU侧正确读取：
@@ -483,13 +505,12 @@
     <span class="type">VkMemoryPropertyFlags</span> memoryProperties = 0; <span class="cmt">//内存属性</span>
     <span class="cmt">//--------------------</span>
     <span class="cmt">//该函数用于在映射内存区时，调整非host coherent的内存区域的范围</span>
-    <span class="kw">void</span> <span class="fn">AdjustNonCoherentMemoryRange</span>(<span class="type">VkDeviceSize</span>&amp; <span class="par">size</span>, <span class="type">VkDeviceSize</span>&amp; <span class="par">offset</span>) <span class="kw">const</span> {
+    <span class="type">VkDeviceSize</span> <span class="fn">AdjustNonCoherentMemoryRange</span>(<span class="type">VkDeviceSize</span>&amp; <span class="par">size</span>, <span class="type">VkDeviceSize</span>&amp; <span class="par">offset</span>) <span class="kw">const</span> {
         <span class="kw">const</span> <span class="type">VkDeviceSize</span>&amp; nonCoherentAtomSize = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.nonCoherentAtomSize;
-        <span class="par">size</span> = <span class="par">size</span> + <span class="par">offset</span>;
-        <span class="par">offset</span> = (<span class="par">offset</span> + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCoherentAtomSize;
-        <span class="par">size</span> = (<span class="par">size</span> - <span class="par">offset</span> + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCoherentAtomSize;
-        <span class="kw">if</span> (<span class="par">size</span> + <span class="par">offset</span> &gt; allocationSize)
-            <span class="par">size</span> = allocationSize - <span class="par">offset</span>;
+        <span class="type">VkDeviceSize</span> _offset = <span class="par">offset</span>;
+        <span class="par">offset</span> = <span class="par">offset</span> / nonCoherentAtomSize * nonCoherentAtomSize;
+        <span class="par">size</span> = std::<span class="fn">min</span>((<span class="par">size</span> + _offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCoherentAtomSize, allocationSize) - <span class="par">offset</span>;
+        <span class="kw">return</span> _offset - <span class="par">offset</span>;
     }
 <span class="kw">protected</span>:
     <span class="cmt">//用于bufferMemory或imageMemory，定义于此以节省8个字节</span>
@@ -521,13 +542,15 @@
     <span class="cmt">//Const Function</span>
     <span class="cmt">//映射host visible的内存区</span>
     <span class="type">result_t</span> <span class="fn">MapMemory</span>(<span class="kw">void</span>*&amp; <span class="par">pData</span>, <span class="type">VkDeviceSize</span> <span class="par">size</span>, <span class="type">VkDeviceSize</span> <span class="par">offset</span> = 0) <span class="kw">const</span> {
+        <span class="type">VkDeviceSize</span> inverseDeltaOffset;
         <span class="kw">if</span> (!(memoryProperties &amp; <span class="enum">VK_MEMORY_PROPERTY_HOST_COHERENT_BIT</span>))
-            <span class="fn">AdjustNonCoherentMemoryRange</span>(<span class="par">size</span>, <span class="par">offset</span>);
+            inverseDeltaOffset = <span class="fn">AdjustNonCoherentMemoryRange</span>(<span class="par">size</span>, <span class="par">offset</span>);
         <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkMapMemory</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, <span class="par">offset</span>, <span class="par">size</span>, 0, &amp;<span class="par">pData</span>)) {
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ deviceMemory ] ERROR\nFailed to map the memory!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
             <span class="kw">return</span> result;
         }
         <span class="kw">if</span> (!(memoryProperties &amp; <span class="enum">VK_MEMORY_PROPERTY_HOST_COHERENT_BIT</span>)) {
+            <span class="par">pData</span> = <span class="kw">static_cast</span>&lt;<span class="type">uint8_t</span>*&gt;(<span class="par">pData</span>) + inverseDeltaOffset;
             <span class="type">VkMappedMemoryRange</span> mappedMemoryRange = {
                 .sType = <span class="enum">VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE</span>,
                 .memory = handle,

@@ -1192,13 +1192,12 @@ namespace vulkan {
 		VkDeviceSize allocationSize = 0;
 		VkMemoryPropertyFlags memoryProperties = 0;
 		//--------------------
-		void AdjustNonCoherentMemoryRange(VkDeviceSize& size, VkDeviceSize& offset) const {
+		VkDeviceSize AdjustNonCoherentMemoryRange(VkDeviceSize& size, VkDeviceSize& offset) const {
 			const VkDeviceSize& nonCoherentAtomSize = graphicsBase::Base().PhysicalDeviceProperties().limits.nonCoherentAtomSize;
-			size = size + offset;
-			offset = (offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCoherentAtomSize;
-			size = (size - offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCoherentAtomSize;
-			if (size + offset > allocationSize)
-				size = allocationSize - offset;
+			VkDeviceSize _offset = offset;
+			offset = offset / nonCoherentAtomSize * nonCoherentAtomSize;
+			size = std::min((size + _offset + nonCoherentAtomSize - 1) / nonCoherentAtomSize * nonCoherentAtomSize, allocationSize) - offset;
+			return _offset - offset;
 		}
 	protected:
 		class {
@@ -1228,13 +1227,15 @@ namespace vulkan {
 		VkMemoryPropertyFlags MemoryProperties() const { return memoryProperties; }
 		//Const Function
 		result_t MapMemory(void*& pData, VkDeviceSize size, VkDeviceSize offset = 0) const {
+			VkDeviceSize inverseDeltaOffset;
 			if (!(memoryProperties & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT))
-				AdjustNonCoherentMemoryRange(size, offset);
+				inverseDeltaOffset = AdjustNonCoherentMemoryRange(size, offset);
 			if (VkResult result = vkMapMemory(graphicsBase::Base().Device(), handle, offset, size, 0, &pData)) {
 				outStream << std::format("[ deviceMemory ] ERROR\nFailed to map the memory!\nError code: {}\n", int32_t(result));
 				return result;
 			}
 			if (!(memoryProperties & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)) {
+				pData = static_cast<uint8_t*>(pData) + inverseDeltaOffset;
 				VkMappedMemoryRange mappedMemoryRange = {
 					.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
 					.memory = handle,
