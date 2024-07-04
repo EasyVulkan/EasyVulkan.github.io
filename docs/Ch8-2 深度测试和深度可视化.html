@@ -650,7 +650,7 @@ indexBuffer.<span class="type">TransferData</span>(indices);
         pipelineCiPack.createInfo.layout = pipelineLayout_into3d;
         pipelineCiPack.createInfo.renderPass = <span class="fn">RenderPassAndFramebuffers</span>().renderPass;
         pipelineCiPack.vertexInputBindings.<span class="fn">emplace_back</span>(0, <span class="kw">sizeof</span>(vertex), <span class="enum">VK_VERTEX_INPUT_RATE_VERTEX</span>);
-        pipelineCiPack.vertexInputBindings.<span class="fn">emplace_back</span>(0, <span class="kw">sizeof</span>(glm::<span class="type">vec3</span>), <span class="enum">VK_VERTEX_INPUT_RATE_INSTANCE</span>);
+        pipelineCiPack.vertexInputBindings.<span class="fn">emplace_back</span>(1, <span class="kw">sizeof</span>(glm::<span class="type">vec3</span>), <span class="enum">VK_VERTEX_INPUT_RATE_INSTANCE</span>);
         pipelineCiPack.vertexInputAttributes.<span class="fn">emplace_back</span>(0, 0, <span class="enum">VK_FORMAT_R32G32B32_SFLOAT</span>, <span class="mcr">offsetof</span>(<span class="type">vertex</span>, position));
         pipelineCiPack.vertexInputAttributes.<span class="fn">emplace_back</span>(1, 0, <span class="enum">VK_FORMAT_R32G32B32A32_SFLOAT</span>, <span class="mcr">offsetof</span>(<span class="type">vertex</span>, color));
         pipelineCiPack.vertexInputAttributes.<span class="fn">emplace_back</span>(2, 1, <span class="enum">VK_FORMAT_R32G32B32_SFLOAT</span>, 0);

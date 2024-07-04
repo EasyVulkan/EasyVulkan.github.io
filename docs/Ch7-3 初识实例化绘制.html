@@ -239,7 +239,7 @@ pipelineCiPack.vertexInputAttributes.<span class="fn">emplace_back</span>(0, 0, 
 pipelineCiPack.vertexInputAttributes.<span class="fn">emplace_back</span>(1, 0, <span class="enum">VK_FORMAT_R32G32B32A32_SFLOAT</span>, <span class="mcr">offsetof</span>(<span class="type">vertex</span>, color));
 
 <span class="cmt">//数据来自1号顶点缓冲区，输入频率是逐实例输入</span>
-pipelineCiPack.vertexInputBindings.<span class="fn">emplace_back</span>(0, <span class="kw">sizeof</span>(glm::<span class="type">vec2</span>), <span class="enum">VK_VERTEX_INPUT_RATE_INSTANCE</span>);
+pipelineCiPack.vertexInputBindings.<span class="fn">emplace_back</span>(1, <span class="kw">sizeof</span>(glm::<span class="type">vec2</span>), <span class="enum">VK_VERTEX_INPUT_RATE_INSTANCE</span>);
 <span class="cmt">//location为2，数据来自1号顶点缓冲区，vec2对应VK_FORMAT_R32G32_SFLOAT</span>
 pipelineCiPack.vertexInputAttributes.<span class="fn">emplace_back</span>(2, 1, <span class="enum">VK_FORMAT_R32G32_SFLOAT</span>, 0);
 </pre></section>
