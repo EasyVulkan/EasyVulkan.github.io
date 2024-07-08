@@ -31,7 +31,7 @@ namespace vulkan {
 		std::vector<const char*> instanceExtensions;
 		std::vector<const char*> deviceExtensions;
 
-		VkDebugUtilsMessengerEXT debugUtilsMessenger;
+		VkDebugUtilsMessengerEXT debugMessenger;
 
 		std::vector<void(*)()> callbacks_createSwapchain;
 		std::vector<void(*)()> callbacks_destroySwapchain;
@@ -61,11 +61,11 @@ namespace vulkan {
 			}
 			if (surface)
 				vkDestroySurfaceKHR(instance, surface, nullptr);
-			if (debugUtilsMessenger) {
+			if (debugMessenger) {
 				PFN_vkDestroyDebugUtilsMessengerEXT DestroyDebugUtilsMessenger =
 					reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT"));
 				if (DestroyDebugUtilsMessenger)
-					DestroyDebugUtilsMessenger(instance, debugUtilsMessenger, nullptr);
+					DestroyDebugUtilsMessenger(instance, debugMessenger, nullptr);
 			}
 			vkDestroyInstance(instance, nullptr);
 		}
@@ -176,7 +176,7 @@ namespace vulkan {
 			PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessenger =
 				reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT"));
 			if (vkCreateDebugUtilsMessenger) {
-				VkResult result = vkCreateDebugUtilsMessenger(instance, &debugUtilsMessengerCreateInfo, nullptr, &debugUtilsMessenger);
+				VkResult result = vkCreateDebugUtilsMessenger(instance, &debugUtilsMessengerCreateInfo, nullptr, &debugMessenger);
 				if (result)
 					std::cout << std::format("[ graphicsBase ] ERROR\nFailed to create a debug messenger!\nError code: {}\n", int32_t(result));
 				return result;
@@ -664,7 +664,7 @@ namespace vulkan {
 			swapchainImages.resize(0);
 			swapchainImageViews.resize(0);
 			swapchainCreateInfo = {};
-			debugUtilsMessenger = VK_NULL_HANDLE;
+			debugMessenger = VK_NULL_HANDLE;
 		}
 		VkResult RecreateDevice(VkDeviceCreateFlags flags = 0) {
 			if (VkResult result = WaitIdle())

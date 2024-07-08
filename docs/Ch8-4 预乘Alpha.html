@@ -934,13 +934,13 @@ pTexture = <span class="kw">static_cast</span>&lt;<span class="type">texture2d_l
 <p>
     将图像的大小写入到<span class="var">texture.extent</span>：
 </p>
-<pre class="code" id="using">
+<pre class="code">
 pTexture->extent = <span class="par">extent</span>;
 </pre>
 <p>
     创建<span class="var">texture.imageMemory</span>：
 </p>
-<pre class="code" id="using">
+<pre class="code">
 <span class="type">uint32_t</span> mipLevelCount = <span class="par">generateMipmap</span> ? <span class="type">texture</span>::<span class="sfn">CalculateMipLevelCount</span>(<span class="par">extent</span>) : 1;
 <span class="type">VkImageCreateInfo</span> imageCreateInfo = {
     .imageType = <span class="enum">VK_IMAGE_TYPE_2D</span>,

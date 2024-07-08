@@ -1331,11 +1331,11 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
     <a href="https://renderdoc.org/vkspec_chunked/chap51.html#vkCreateDebugUtilsMessengerEXT">vkCreateDebugUtilsMessengerEXT</a>(...)一样，都需要用<a href="https://renderdoc.org/vkspec_chunked/chap4.html#vkGetInstanceProcAddr">vkGetInstanceProcAddr</a>(...)取得，<a href="https://renderdoc.org/vkspec_chunked/chap51.html#vkDestroyDebugUtilsMessengerEXT">vkDestroyDebugUtilsMessengerEXT</a>(...)用法与<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkDestroySurfaceKHR">vkDestroySurfaceKHR</a>(...)类似，不做赘述：
 </p>
 <pre class="code">
-<span class="kw">if</span> (debugUtilsMessenger) {
+<span class="kw">if</span> (debugMessenger) {
     <span class="type">PFN_vkDestroyDebugUtilsMessengerEXT</span> DestroyDebugUtilsMessenger =
         <span class="kw">reinterpret_cast</span>&lt;<span class="type">PFN_vkDestroyDebugUtilsMessengerEXT</span>&gt;(<span class="fn">vkGetInstanceProcAddr</span>(instance, <span class="str">&quot;vkDestroyDebugUtilsMessengerEXT&quot;</span>));
     <span class="kw">if</span> (DestroyDebugUtilsMessenger)
-        DestroyDebugUtilsMessenger(instance, debugUtilsMessenger, <span class="kw">nullptr</span>);
+        DestroyDebugUtilsMessenger(instance, debugMessenger, <span class="kw">nullptr</span>);
 }
 </pre>
 <p>
@@ -1361,11 +1361,11 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
     }
     <span class="kw">if</span> (surface)
         <span class="fn">vkDestroySurfaceKHR</span>(instance, surface, <span class="kw">nullptr</span>);
-    <span class="kw">if</span> (debugUtilsMessenger) {
+    <span class="kw">if</span> (debugMessenger) {
         <span class="type">PFN_vkDestroyDebugUtilsMessengerEXT</span> DestroyDebugUtilsMessenger =
             <span class="kw">reinterpret_cast</span>&lt;<span class="type">PFN_vkDestroyDebugUtilsMessengerEXT</span>&gt;(<span class="fn">vkGetInstanceProcAddr</span>(instance, <span class="str">&quot;vkDestroyDebugUtilsMessengerEXT&quot;</span>));
         <span class="kw">if</span> (DestroyDebugUtilsMessenger)
-            DestroyDebugUtilsMessenger(instance, debugUtilsMessenger, <span class="kw">nullptr</span>);
+            DestroyDebugUtilsMessenger(instance, debugMessenger, <span class="kw">nullptr</span>);
     }
     <span class="fn">vkDestroyInstance</span>(instance, <span class="kw">nullptr</span>);
 }
@@ -1387,7 +1387,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
     swapchainImages.<span class="fn">resize</span>(0);
     swapchainImageViews.<span class="fn">resize</span>(0);
     swapchainCreateInfo = {};
-    debugUtilsMessenger = <span class="mcr">VK_NULL_HANDLE</span>;
+    debugMessenger = <span class="mcr">VK_NULL_HANDLE</span>;
 }
 </pre>
 <p>

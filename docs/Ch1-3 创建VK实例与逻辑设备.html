@@ -860,7 +860,7 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
     <span class="type">PFN_vkCreateDebugUtilsMessengerEXT</span> vkCreateDebugUtilsMessenger =
         <span class="kw">reinterpret_cast</span>&lt;<span class="type">PFN_vkCreateDebugUtilsMessengerEXT</span>&gt;(<span class="fn">vkGetInstanceProcAddr</span>(instance, <span class="str">&quot;vkCreateDebugUtilsMessengerEXT&quot;</span>));
     <span class="kw">if</span> (vkCreateDebugUtilsMessenger) {
-        <span class="type">VkResult</span> result = vkCreateDebugUtilsMessenger(instance, &amp;debugUtilsMessengerCreateInfo, <span class="kw">nullptr</span>, &amp;debugUtilsMessenger);
+        <span class="type">VkResult</span> result = vkCreateDebugUtilsMessenger(instance, &amp;debugUtilsMessengerCreateInfo, <span class="kw">nullptr</span>, &amp;debugMessenger);
         <span class="kw">if</span> (result)
             std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a debug messenger!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
@@ -875,7 +875,15 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
             虽然在正确书写函数名字符串的情况下应当不可能，如果无法取得<a href="https://renderdoc.org/vkspec_chunked/chap51.html#vkCreateDebugUtilsMessengerEXT">vkCreateDebugUtilsMessengerEXT</a>(...)，返回<span class="enum">VK_RESULT_MAX_ENUM</span>，其值为<span class="mcr">INT32_MAX</span>。这并不是个有效的错误代码，正是因此才使用这个数值，一来因为<a href="https://renderdoc.org/vkspec_chunked/chap3.html#VkResult">VkResult</a>的枚举项中没有任何符合该种情况的返回值，二来这个数值不会跟任何Vulkan函数的返回值重合。注意，不要使用<span class="enum">VK_ERROR_UNKNOWN</span>，一些函数在失败时能返回这个数值。<strong>因没有合适的错误代码而返回<span class="enum">VK_RESULT_MAX_ENUM</span>的情况在这套教程中还会出现很多次。</strong>
         </p>
     </li>
-</ul></section>
+</ul>
+<div class="admonition note" id="vkcreateinstance_debugmessage">
+    <p class="admonition-title">Note</p>
+    <p>
+        若你需要获取Vulkan实例创建过程中的debug信息：
+        <br>
+        让<span class="type">VkInstanceCreateInfo</span>::pNext（或其<a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html#pnext">pNext链</a>中的其它结构体的pNext成员）指向一个<span class="type">VkDebugUtilsMessengerCreateInfoEXT</span>结构体，如此一来相当于创建一个只在Vulkan实例的创建过程中起作用的、临时的debug messenger。
+    </p>
+</div></section>
 <section id="window-surface">
 <h2>创建Window Surface<a class="headerlink" href="#window-surface" title="Permalink to this heading"></a></h2>
 <p>

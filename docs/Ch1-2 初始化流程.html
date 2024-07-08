@@ -206,7 +206,7 @@
 <p>
     <strong>什么是debug messenger？</strong>
     <br>
-    Debug messenger用来输出验证层所捕捉到的debug信息。若没有这东西，Vulkan编程可谓寸步难行。
+    Debug messenger用于获取验证层所捕捉到的debug信息。若没有这东西，Vulkan编程可谓寸步难行。
 </p>
 <p>
     <strong>什么是window surface？</strong>
@@ -342,7 +342,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;
 </p>
 <pre class="code">
 <span class="kw">private</span>:
-<span class="type">VkDebugUtilsMessengerEXT</span> debugUtilsMessenger;
+<span class="type">VkDebugUtilsMessengerEXT</span> debugMessenger;
 <span class="cmt">//以下函数用于创建debug messenger</span>
 <span class="type">VkResult</span> <span class="fn">CreateDebugMessenger</span>() {
     <span class="cmt">/*待Ch1-3填充*/</span>
@@ -697,7 +697,7 @@ std::<span class="type">vector</span> &lt;<span class="type">VkImageView&gt;</sp
     std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt; instanceExtensions;
     std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt; deviceExtensions;
 
-    <span class="type">VkDebugUtilsMessengerEXT</span> debugUtilsMessenger;
+    <span class="type">VkDebugUtilsMessengerEXT</span> debugMessenger;
 
     <span class="cmt">//静态变量</span>
     <span class="kw">static</span> <span class="type">graphicsBase</span> singleton;
