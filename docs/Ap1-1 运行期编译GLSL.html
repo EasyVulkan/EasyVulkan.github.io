@@ -586,25 +586,25 @@ filepath.<span class="fn">replace</span>(pos + 1 + filepath.<span class="fn">beg
     填写<span class="var">result</span>开头的<span class="type">shaderc_include_result</span>部分，整个<span class="type">includer</span>::<span class="fn">GetInclude</span>(...)如下：
 </p>
 <pre class="code">
-    <span class="type">shaderc_include_result</span>* <span class="fn">GetInclude</span>(<span class="kw">const char</span>* <span class="par">requested_source</span>, <span class="type">shaderc_include_result</span>, <span class="kw">const char</span>* <span class="par">requesting_source</span>, <span class="type">size_t</span>) <span class="kw">override</span> {
-        <span class="kw">auto</span>&amp; result = *(<span class="kw">new</span> <span class="type">result_t</span>);
-        <span class="kw">auto</span>&amp; filepath = result.filepath;
-        <span class="kw">auto</span>&amp; code = result.code;
-        filepath = <span class="par">requesting_source</span>;
-        <span class="type">size_t</span> pos = filepath.<span class="fn">rfind</span>(<span class="str">'/'</span>);
-        <span class="kw">if</span> (pos == -1)
-            pos = filepath.<span class="fn">rfind</span>(<span class="str">'\\'</span>);
-        filepath.<span class="fn">replace</span>(pos + 1 + filepath.<span class="fn">begin</span>(), filepath.<span class="fn">end</span>(), <span class="par">requested_source</span>);
-        <span class="sfn">LoadFile</span>(filepath.<span class="fn">c_str</span>(), code);
-        <span class="kw">static_cast</span>&lt;<span class="type">shaderc_include_result</span>&amp;&gt;(result) = {
-            filepath.<span class="fn">c_str</span>(),
-            filepath.<span class="fn">length</span>(),
-            code.<span class="fn">data</span>(),
-            code.<span class="fn">size</span>(),
-            <span class="kw">this</span>
-        };
-        <span class="kw">return</span> &amp;result;
-    }
+<span class="type">shaderc_include_result</span>* <span class="fn">GetInclude</span>(<span class="kw">const char</span>* <span class="par">requested_source</span>, <span class="type">shaderc_include_result</span>, <span class="kw">const char</span>* <span class="par">requesting_source</span>, <span class="type">size_t</span>) <span class="kw">override</span> {
+    <span class="kw">auto</span>&amp; result = *(<span class="kw">new</span> <span class="type">result_t</span>);
+    <span class="kw">auto</span>&amp; filepath = result.filepath;
+    <span class="kw">auto</span>&amp; code = result.code;
+    filepath = <span class="par">requesting_source</span>;
+    <span class="type">size_t</span> pos = filepath.<span class="fn">rfind</span>(<span class="str">'/'</span>);
+    <span class="kw">if</span> (pos == -1)
+        pos = filepath.<span class="fn">rfind</span>(<span class="str">'\\'</span>);
+    filepath.<span class="fn">replace</span>(pos + 1 + filepath.<span class="fn">begin</span>(), filepath.<span class="fn">end</span>(), <span class="par">requested_source</span>);
+    <span class="sfn">LoadFile</span>(filepath.<span class="fn">c_str</span>(), code);
+    <span class="kw">static_cast</span>&lt;<span class="type">shaderc_include_result</span>&amp;&gt;(result) = {
+        filepath.<span class="fn">c_str</span>(),
+        filepath.<span class="fn">length</span>(),
+        code.<span class="fn">data</span>(),
+        code.<span class="fn">size</span>(),
+        <span class="kw">this</span>
+    };
+    <span class="kw">return</span> &amp;result;
+}
 </pre>
 <p>
     最后将<span class="type">includer</span>设置到编译选项：

@@ -160,7 +160,7 @@
 <p>
     先前在<span class="type">graphicsBase</span>::<span class="fn">CreateDevice</span>(...)中获取了物理设备特性<span class="type">VkPhysicalDeviceFeatures</span>，但并没有保存到成员变量。考虑到可能会有需要检验物理设备特性的情况，需要将其保存下来。
     <br>
-    <span class="type">VkPhysicalDeviceFeatures</span>没有可扩展性，在Vulkan1.0以上版本，使用<a href="https://renderdoc.org/vkspec_chunked/chap47.html#VkPhysicalDeviceFeatures2">VkPhysicalDeviceFeatures2</a>结构体，它包含原有的<span class="type">VkPhysicalDeviceFeatures</span>，并包含一个pNext指针：
+    <span class="type">VkPhysicalDeviceFeatures</span>没有可扩展性，在Vulkan1.0以上版本，使用<a href="https://renderdoc.org/vkspec_chunked/chap46.html#VkPhysicalDeviceFeatures2">VkPhysicalDeviceFeatures2</a>结构体，它包含原有的<span class="type">VkPhysicalDeviceFeatures</span>，并包含一个pNext指针：
 </p>
 <table class="docutils align-default">
     <colgroup>
@@ -169,7 +169,7 @@
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap47.html#VkPhysicalDeviceFeatures2">VkPhysicalDeviceFeatures2</a> 的成员说明</p></th>
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap46.html#VkPhysicalDeviceFeatures2">VkPhysicalDeviceFeatures2</a> 的成员说明</p></th>
         </tr>
     </thead>
     <tbody>

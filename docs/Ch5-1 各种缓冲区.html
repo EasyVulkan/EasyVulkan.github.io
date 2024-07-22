@@ -269,7 +269,7 @@
     <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;
 </pre>
 <p>
-    然后用<a href="https://renderdoc.org/vkspec_chunked/chap50.html#vkGetPhysicalDeviceImageFormatProperties">vkGetPhysicalDeviceImageFormatProperties</a>(...)取得对于特定参数组合创建的图像，所容许的图像尺寸等参数<a href="https://renderdoc.org/vkspec_chunked/chap50.html#VkImageFormatProperties">VkImageFormatProperties</a>：
+    然后用<a href="https://renderdoc.org/vkspec_chunked/chap49.html#vkGetPhysicalDeviceImageFormatProperties">vkGetPhysicalDeviceImageFormatProperties</a>(...)取得对于特定参数组合创建的图像，所容许的图像尺寸等参数<a href="https://renderdoc.org/vkspec_chunked/chap49.html#VkImageFormatProperties">VkImageFormatProperties</a>：
 </p>
 <table class="docutils align-default">
     <colgroup>
@@ -278,7 +278,7 @@
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap50.html#vkGetPhysicalDeviceImageFormatProperties">vkGetPhysicalDeviceImageFormatProperties</a>(...) 的参数说明</p></th>
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap49.html#vkGetPhysicalDeviceImageFormatProperties">vkGetPhysicalDeviceImageFormatProperties</a>(...) 的参数说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -319,7 +319,7 @@
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap50.html#VkImageFormatProperties">VkImageFormatProperties</a> 的成员说明</p></th>
+            <th class="head" colspan="2"><p><span class="kw">struct</span> <a href="https://renderdoc.org/vkspec_chunked/chap49.html#VkImageFormatProperties">VkImageFormatProperties</a> 的成员说明</p></th>
         </tr>
     </thead>
     <tbody>
@@ -1084,7 +1084,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
     若将多个uniform缓冲区放在单个缓冲区里，这称为动态uniform缓冲区（dynamic uniform buffer），之后将缓冲区绑定到着色器中的uniform块时，可以通过改变offset绑定到动态uniform缓冲区中不同的部分。
 </p>
 <p>
-    <span class="fn">CalculateAlignedSize</span>(...)基于动态uniform缓冲区中，各个uniform缓冲区的最小间隔（<a href="https://renderdoc.org/vkspec_chunked/chap48.html#VkPhysicalDeviceLimits">VkPhysicalDeviceLimits</a>::minUniformBufferOffsetAlignment，动态uniform缓冲区中每个单独的uniform缓冲区的占用大小都必须是该值的整数倍，该值必定为2的乘方），计算对于<span class="par">dataSize</span>大小的数据，需要分配多少设备内存。
+    <span class="fn">CalculateAlignedSize</span>(...)基于动态uniform缓冲区中，各个uniform缓冲区的最小间隔（<a href="https://renderdoc.org/vkspec_chunked/chap47.html#VkPhysicalDeviceLimits">VkPhysicalDeviceLimits</a>::minUniformBufferOffsetAlignment，动态uniform缓冲区中每个单独的uniform缓冲区的占用大小都必须是该值的整数倍，该值必定为2的乘方），计算对于<span class="par">dataSize</span>大小的数据，需要分配多少设备内存。
     <br>
     由于<span class="var">alignment</span>必定为2的乘方，<code><span class="par">dataSize</span> + alignment - 1 &amp; ~(alignment - 1)</code>的计算结果等同于<code>(<span class="par">dataSize</span> + alignment - 1) / alignment * alignment</code>。
 </p></section>

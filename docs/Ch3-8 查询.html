@@ -1092,12 +1092,12 @@ outStream &lt;&lt; statistics[<span class="enum">invocationCount_cs</span>] &lt;
     </li>
 </ul>
 <p>
-    写入的时间戳的单位为一定量的纳秒，时间戳的数值间隔1，相当于时间上间隔<a href="https://renderdoc.org/vkspec_chunked/chap48.html#VkPhysicalDeviceLimits">VkPhysicalDeviceLimits</a>::timestampPeriod个纳秒。
+    写入的时间戳的单位为一定量的纳秒，时间戳的数值间隔1，相当于时间上间隔<a href="https://renderdoc.org/vkspec_chunked/chap47.html#VkPhysicalDeviceLimits">VkPhysicalDeviceLimits</a>::timestampPeriod个纳秒。
 </p>
 <p>
     写入的时间戳的有效位数由<a href="https://renderdoc.org/vkspec_chunked/chap5.html#VkQueueFamilyProperties">VkQueueFamilyProperties</a>::timestampValidBits决定，若支持写入时间戳，则至少会有36个有效位数。
     <br>
-    虽然至少会有36个有效位数，不过查询结果通常是用于计算差值的，获取到的结果是32位就足够，就算数值溢出也能算得正确的差值（除非两个时间戳之间相差的时间很大，比如<a href="https://renderdoc.org/vkspec_chunked/chap48.html#VkPhysicalDeviceLimits">VkPhysicalDeviceLimits</a>::timestampPeriod为1且两个时间戳之间相差4秒以上的情况）。
+    虽然至少会有36个有效位数，不过查询结果通常是用于计算差值的，获取到的结果是32位就足够，就算数值溢出也能算得正确的差值（除非两个时间戳之间相差的时间很大，比如<a href="https://renderdoc.org/vkspec_chunked/chap47.html#VkPhysicalDeviceLimits">VkPhysicalDeviceLimits</a>::timestampPeriod为1且两个时间戳之间相差4秒以上的情况）。
 </p>
 <p>
     两次写入之间存在隐式同步：对于两条<span class="fn">vkCmdWriteTimestamp</span>(...)命令，后录制的命令写入的数值所表明的时间，一定晚于先录制的命令（除非数值溢出）。

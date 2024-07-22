@@ -877,7 +877,7 @@
         </tr>
         <tr class="row-odd">
             <td><p><span class="type">VkDeviceSize</span> alignment</p></td>
-            <td><p>内存的对齐要求，一定是2的次方，除了dynamic uniform缓冲区等情况外，通常不必理会这个成员</p></td>
+            <td><p>内存的对齐要求，一定是2的乘方，除了dynamic uniform缓冲区等情况外，通常不必理会这个成员</p></td>
         </tr>
         <tr class="row-even">
             <td><p><span class="type">uint32_t</span> memoryTypeBits</p></td>
@@ -1934,9 +1934,9 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
 <section id="id15">
 <h2>图像及数据的格式<a class="headerlink" href="#id15" title="Permalink to this heading"></a></h2>
 <p>
-    Vulkan中的<a href="https://renderdoc.org/vkspec_chunked/chap49.html#VkFormat">VkFormat</a>即适用于图像格式，也适用于描述数据格式（比如顶点属性）。
+    Vulkan中的<a href="https://renderdoc.org/vkspec_chunked/chap48.html#VkFormat">VkFormat</a>即适用于图像格式，也适用于描述数据格式（比如顶点属性）。
     <br>
-    由于<a href="https://renderdoc.org/vkspec_chunked/chap49.html#VkFormat">VkFormat</a>的枚举项过多，这里不一一解释，仅对非压缩颜色格式和深度格式做简单提要。
+    由于<a href="https://renderdoc.org/vkspec_chunked/chap48.html#VkFormat">VkFormat</a>的枚举项过多，这里不一一解释，仅对非压缩颜色格式和深度格式做简单提要。
 </p><section id="id16">
 <h3>非压缩颜色格式<a class="headerlink" href="#id16" title="Permalink to this heading"></a></h3>
 <p>
