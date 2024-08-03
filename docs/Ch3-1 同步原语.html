@@ -706,7 +706,7 @@
     <tbody>
         <tr>
             <td><p>1.3</p></td>
-            <td><p><span class="enum">VK_PIPELINE_STAGE_NONE                               </span>不表示任何阶段</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_NONE                               </span>不表示任何阶段（值为0，作用见后文），要使该值有效，须开启硬件特性中的synchronization2</p></td>
         </tr>
         <tr>
             <td><p>1.0</p></td>
@@ -783,14 +783,19 @@
         <p>
             在srcStageMask使用<span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span>为在先前的命令完成前，阻止后续的所有命令达到dstStageMask所示阶段。
             <br>
-            在dstStageMask使用<span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span>为不阻塞后续的命令。
+            在dstStageMask使用<span class="enum">VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</span>或<span class="enum">VK_PIPELINE_STAGE_NONE</span>为不阻塞后续的命令。
         </p>
     </li>
     <li>
         <p>
-            在srcStageMask使用<span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>为不阻塞先前的命令。
+            在srcStageMask使用<span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>或<span class="enum">VK_PIPELINE_STAGE_NONE</span>为不等待先前的命令。
             <br>
             在dstStageMask使用<span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>为在先前的命令完成srcStageMask所示阶段前，阻塞后续的所有命令。
+        </p>
+    </li>
+    <li>
+        <p>
+            前文所谓的“不阻塞后续的命令”和“不等待先前的命令”并不意味管线屏障无意义，srcStageMask和dstStageMask限定了队列族所有权转移和图像内存布局转换的时机（相关概念见后文）。
         </p>
     </li>
 </ul>
@@ -835,7 +840,7 @@
     你能在<a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕</a>找到解说较为详细的使用例。
 </p>
 <p>
-    在渲染通道中使用管线屏障时，必须在一个自依赖的子通道中使用，且由srcStageMask、dstStageMask（见后文内存屏障）和srcAccessMask、dstAccessMask指定的同步范围必须是子通道自依赖中同步范围的子集，framebuffer-local和view-local与否（由dependencyFlags注明）也必须与子通道依赖一致（<a href="https://renderdoc.org/vkspec_chunked/chap7.html#VUID-vkCmdPipelineBarrier-None-07889">官方标准出处见此</a>，如我阅读理解有误请指出）。
+    在渲染通道中使用管线屏障时，必须在一个自依赖的子通道中使用，且由srcStageMask、dstStageMask和srcAccessMask、dstAccessMask（见后文内存屏障）指定的同步范围必须是子通道自依赖中同步范围的子集，framebuffer-local和view-local与否（由dependencyFlags注明）也必须与子通道依赖一致（<a href="https://renderdoc.org/vkspec_chunked/chap7.html#VUID-vkCmdPipelineBarrier-None-07889">官方标准出处见此</a>，如我阅读理解有误请指出）。
 </p><section id="id10">
 <h3>内存屏障的作用<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
 <p>
