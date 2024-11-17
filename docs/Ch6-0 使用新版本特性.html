@@ -420,7 +420,7 @@
     </li>
 </ul>
 <p>
-    以引用传递的<span class="var">pBegin</span>是向<span class="sfn">SetPNext</span>(...)提供的pNext链中的首个指针。
+    以引用传递的<span class="var">pBegin</span>是向<span class="sfn">SetPNext</span>(...)提供的pNext链中的首个指针，参数<span class="var">pNext</span>指向要被加入该pNext链的结构体。
     <br>
     <span class="sfn">SetPNext</span>(...)的返回类型是<span class="kw">void</span>**，这个无法一上来就解释清楚，但我打算让函数在给定的<span class="var">pNext</span>参数无法被接到以<span class="var">pBegin</span>起始的pNext链时，返回<span class="kw">nullptr</span>。
 </p>
@@ -677,7 +677,7 @@
     <span class="fn">GetPhysicalDeviceFeatures</span>();
     <span class="type">VkDeviceCreateInfo</span> deviceCreateInfo = {
         .sType = <span class="enum">VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO</span>,
-        <span class="cmt">//.pNext = pNext_deviceCreateInfo, //若pNext_deviceCreateInfo为nullptr，在此赋值没有意义，到执行SetPNext(...)后再赋值pNext</span>
+        <span class="cmt">//.pNext = pNext_deviceCreateInfo, //若pNext_deviceCreateInfo为nullptr，在此赋值没有意义，到执行SetPNext(...)后再赋值</span>
         .flags = flags,
         .queueCreateInfoCount = queueCreateInfoCount,
         .pQueueCreateInfos = queueCreateInfos,
