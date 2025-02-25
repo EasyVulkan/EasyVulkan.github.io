@@ -670,7 +670,7 @@
         <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : writes)
             i.sType = <span class="enum">VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET</span>;
         <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : copies)
-            i.sType = <span class="enum">VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET</span>;
+            i.sType = <span class="enum">VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET</span>;
         <span class="fn">vkUpdateDescriptorSets</span>(
             <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), writes.<span class="fn">Count</span>(), writes.<span class="fn">Pointer</span>(), copies.<span class="fn">Count</span>(), copies.<span class="fn">Pointer</span>());
     }
