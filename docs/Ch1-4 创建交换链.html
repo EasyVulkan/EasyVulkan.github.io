@@ -407,7 +407,7 @@ swapchainCreateInfo.minImageCount = surfaceCapabilities.minImageCount + (surface
 </p>
 <pre class="code">
 swapchainCreateInfo.imageArrayLayers = 1;
-swapchainCreateInfo.preTransform = = surfaceCapabilities.currentTransform;
+swapchainCreateInfo.preTransform = surfaceCapabilities.currentTransform;
 </pre>
 <p>
     接着指定处理交换链图像透明通道的方式，先来看一下可选值：
