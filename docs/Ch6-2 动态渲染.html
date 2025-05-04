@@ -267,7 +267,7 @@ pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
         </tr>
         <tr class="row-even">
             <td><p><span class="type">uint32_t</span> viewMask</p></td>
-            <td><p>若开启了多视口，指定在哪些视口对应的图层上进行渲染，各个bit对应多层帧缓冲相应索引的图层</p></td>
+            <td><p>若开启了多视点（multiview），指定在哪些视点对应的图层上进行渲染，各个bit对应多层帧缓冲相应索引的图层</p></td>
         </tr>
         <tr class="row-odd">
             <td><p><span class="type">uint32_t</span> colorAttachmentCount</p></td>
@@ -558,7 +558,7 @@ vkCmdEndRendering(commandBuffer);
         </tr>
         <tr class="row-odd">
             <td><p><span class="type">uint32_t</span> viewMask</p></td>
-            <td><p>若开启了多视口，指定在哪些视口对应的图层上进行渲染，各个bit对应多层帧缓冲相应索引的图层</p></td>
+            <td><p>若开启了多视点（multiview），指定在哪些视点对应的图层上进行渲染，各个bit对应多层帧缓冲相应索引的图层</p></td>
         </tr>
         <tr class="row-even">
             <td><p><span class="type">uint32_t</span> colorAttachmentCount</p></td>
@@ -1133,7 +1133,7 @@ queueThread.<span class="fn">Wait</span>();
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; 版权所有 2021-2024, Qiao YeCheng.</p>
+    <p>&#169; 版权所有 2021-2025, 葉橙.</p>
   </div>
 
   利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
