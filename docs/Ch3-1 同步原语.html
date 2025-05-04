@@ -210,7 +210,7 @@
     <br>
     如果每一条绘制命令都需要同步，那还得了！
     <br>
-    事实是，在同一渲染通道中，无论你的绘制命令何时结束，深度模板测试和混色仍旧按照你提交命令的顺序而来 —— 所以画家算法（从后往前绘制，前面的物体覆盖后面的）依旧有效！
+    事实是，在同一渲染通道中，无论你的绘制命令何时结束，深度模板测试和混色仍旧按照你提交命令的顺序（submission order）和绘制图元的顺序（primitive order）而来 —— 所以画家算法（指在没有深度测试时区分远近的2D渲染办法：从后往前绘制，前面的物体覆盖后面的）依旧有效！
 </p></section>
 <section id="fence">
 <h2>Fence<a class="headerlink" href="#fence" title="Permalink to this heading"></a></h2>
@@ -742,11 +742,11 @@
         </tr>
         <tr>
             <td><p>1.0</p></td>
-            <td><p><span class="enum">VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT           </span>表示图形管线中的前期片段测试阶段（发生在片段着色器阶段前），此阶段可读取深度模板值</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT           </span>表示图形管线中的早期片段测试阶段（发生在片段着色器阶段前），此阶段可读取深度模板值</p></td>
         </tr>
         <tr>
             <td><p>1.0</p></td>
-            <td><p><span class="enum">VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT            </span>表示图形管线中的后期片段测试阶段（发生在片段着色器阶段后），此阶段可写入深度模板值</p></td>
+            <td><p><span class="enum">VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT            </span>表示图形管线中的晚期片段测试阶段（发生在片段着色器阶段后），此阶段可写入深度模板值</p></td>
         </tr>
         <tr>
             <td><p>1.0</p></td>

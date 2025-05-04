@@ -662,7 +662,7 @@
     遮挡查询（occlusion query）可以统计绘制出的采样点的数量。
 </p>
 <p>
-    没有通过深度测试和模板测试等早期/后期片段测试的、覆盖率（见<a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html#vkpipelinemultisamplestatecreateinfo">多重采样</a>和<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#gl-samplemaskin">gl_SampleMaskIn</a>、<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#gl-samplemask">gl_SampleMask</a>）为0的、在片段着色器中被<span class="kw">discard</span>的，这些采样点都算是“被遮挡”，不计入查询结果。
+    没有通过深度测试和模板测试等早期/晚期片段测试的、覆盖率（见<a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html#vkpipelinemultisamplestatecreateinfo">多重采样</a>和<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#gl-samplemaskin">gl_SampleMaskIn</a>、<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#gl-samplemask">gl_SampleMask</a>）为0的、在片段着色器中被<span class="kw">discard</span>的，这些采样点都算是“被遮挡”，不计入查询结果。
     <br>
     另外，管线混色状态中，若将<a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html#vkpipelinecolorblendattachmentstate">VkPipelineColorBlendAttachmentState</a>::colorWriteMask指定为0（即关闭对RGBA四通道的颜色写入），则查询结果的计数不会增加。
     <br>
