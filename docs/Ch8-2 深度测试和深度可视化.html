@@ -942,7 +942,7 @@ pipelineCiPack.viewports.<span class="fn">emplace_back</span>(0.f, 0.f, <span cl
 }
 </pre>
 <p>
-    然后创建<span class="var">pipeline_into3d</span>，开启深度边界测试：
+    然后创建<span class="var">pipeline_into3d</span>，开启深度边界测试，并修改深度比较方式变为相等：
 </p>
 <pre class="code">
 <span class="kw">void</span> <span class="fn">CreateLayout</span>() {

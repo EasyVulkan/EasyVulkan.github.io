@@ -165,6 +165,25 @@
 <p>
     用GLSL编写的片段着色器有以下内置输入：
 </p>
+<pre class="code">
+<span class="type">vec4</span> gl_FragCoord;
+<span class="kw">bool</span> gl_FrontFacing;
+<span class="kw">float</span> gl_ClipDistance[];
+<span class="kw">float</span> gl_CullDistance[];
+
+<span class="type">vec2</span> gl_PointCoord;
+
+<span class="kw">int</span> gl_SampleID;
+<span class="type">vec2</span> gl_SamplePosition;
+<span class="kw">int</span> gl_SampleMaskIn[];
+
+<span class="kw">int</span> gl_PrimitiveID;
+
+<span class="kw">int</span> gl_Layer;
+<span class="kw">int</span> gl_ViewportIndex;
+
+<span class="kw">bool</span> gl_HelperInvocation;
+</pre>
 <table class="docutils align-default">
     <colgroup>
         <col style="width: 30%" />
@@ -185,6 +204,14 @@
             <td><p>表示生成当前片段的图元是正面还是还反面</p></td>
         </tr>
         <tr class="row-even">
+            <td><p><span class="kw">float</span> gl_ClipDistance[]</p></td>
+            <td><p>自定义剪裁参数</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">float</span> gl_CullDistance[]</p></td>
+            <td><p>自定义剔除参数</p></td>
+        </tr>
+        <tr class="row-even">
             <td><p><span class="type">vec2</span> gl_PointCoord</p></td>
             <td><p>若生成当前片段的图元是点，表示该片段在点内的标准化坐标（点是有大小的）</p></td>
         </tr>
@@ -201,28 +228,20 @@
             <td><p>当前采样点的位遮罩</p></td>
         </tr>
         <tr class="row-even">
-            <td><p><span class="type">vec2</span> gl_PrimitiveID</p></td>
+            <td><p><span class="kw">int</span> gl_PrimitiveID</p></td>
             <td><p>生成当前片段的图元的索引</p></td>
         </tr>
         <tr class="row-odd">
-            <td><p><span class="kw">float</span> gl_ClipDistance[]</p></td>
-            <td><p>自定义剪裁参数</p></td>
+            <td><p><span class="kw">int</span> gl_Layer</p></td>
+            <td><p>当前片段所在的图层索引（用于使用了多层帧缓冲的情况）</p></td>
         </tr>
         <tr class="row-even">
-            <td><p><span class="kw">float</span> gl_CullDistance[]</p></td>
-            <td><p>自定义剔除参数</p></td>
+            <td><p><span class="kw">int</span> gl_ViewportIndex</p></td>
+            <td><p>当前片段所在的视口索引（用于开启了多视口（multiViewport）的情况）</p></td>
         </tr>
         <tr class="row-odd">
             <td><p><span class="kw">bool</span> gl_HelperInvocation</p></td>
             <td><p>说明本次对片段着色器的调用是否是一次辅助调用</p></td>
-        </tr>
-        <tr class="row-even">
-            <td><p><span class="kw">int</span> gl_Layer</p></td>
-            <td><p>当前片段所在的图层索引（用于使用了多层帧缓冲的情况）</p></td>
-        </tr>
-        <tr class="row-odd">
-            <td><p><span class="kw">int</span> gl_ViewportIndex</p></td>
-            <td><p>当前片段所在的视口索引（用于开启了多视口（multiViewport）的情况）</p></td>
         </tr>
     </tbody>
 </table>
@@ -286,6 +305,10 @@
 <p>
     用GLSL编写的片段着色器有以下内置输出：
 </p>
+<pre class="code">
+<span class="kw">float</span> gl_FragDepth;
+<span class="kw">int</span> gl_SampleMask[];
+</pre>
 <table class="docutils align-default">
     <colgroup>
         <col style="width: 30%" />

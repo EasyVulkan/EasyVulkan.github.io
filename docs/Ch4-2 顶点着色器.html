@@ -154,6 +154,13 @@
 <p>
     用GLSL编写的顶点着色器有以下内置输入：
 </p>
+<pre class="code">
+<span class="kw">int</span> gl_VertexIndex;
+<span class="kw">int</span> gl_InstanceIndex;
+<span class="kw">int</span> gl_DrawID;
+<span class="kw">int</span> gl_BaseVertex;
+<span class="kw">int</span> gl_BaseInstance;
+</pre>
 <table class="docutils align-default">
     <colgroup>
         <col style="width: 30%" />
@@ -190,7 +197,7 @@
 <p>
     对于非索引绘制命令，比如<code><a href="https://renderdoc.org/vkspec_chunked/chap21.html#vkCmdDraw">vkCmdDraw</a>(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance)</code>，gl_BaseVertex值为firstVertex，gl_VertexIndex必然不小于该值，类似地，gl_BaseInstance值为firstInstance，gl_InstanceIndex必然不小于该值。
 <p>
-</p>
+<p>
     对于索引绘制命令，比如<code><a href="https://renderdoc.org/vkspec_chunked/chap21.html#vkCmdDrawIndexed">vkCmdDrawIndexed</a>(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance)</code>，gl_BaseVertex值为vertexOffset，gl_VertexIndex为命令缓冲区中的与firstIndex相应的索引值加上vertexOffset。
 </p>
 <p>
@@ -203,6 +210,14 @@
 <p>
     用GLSL编写的顶点着色器有以下内置输出：
 </p>
+<pre class="code">
+<span class="type">gl_PerVertex</span> {
+    <span class="type">vec4</span> gl_Position;
+    <span class="kw">float</span> gl_PointSize;
+    <span class="kw">float</span> gl_ClipDistance[];
+    <span class="kw">float</span> gl_CullDistance[];
+};
+</pre>
 <table class="docutils align-default">
     <colgroup>
         <col style="width: 30%" />
@@ -210,7 +225,7 @@
     </colgroup>
     <thead>
         <tr class="row-odd">
-            <th class="head" colspan="2"><p>预定义块gl_PerVertex 的成员</p></th>
+            <th class="head" colspan="2"><p>预定义块<span class="type">gl_PerVertex</span> 的成员</p></th>
         </tr>
     </thead>
     <tbody>
@@ -240,7 +255,7 @@
     </li>
     <li>
         <p>
-            gl_PerVertex意味着这些输出是相对于每个顶点而言的，gl_PerVertex是没有实例名称的预定义块，意味着你不需要使用任何前缀就可以直接使用它的成员，即直接写<code>gl_Position</code>而不是写<code>gl_PerVertex.gl_Position</code>。
+            <span class="type">gl_PerVertex</span>意味着这些输出是相对于每个顶点而言的，<span class="type">gl_PerVertex</span>是没有实例名称的预定义块，意味着你不需要使用任何前缀就可以直接使用它的成员，即直接写<code>gl_Position</code>而不是写<code>gl_PerVertex.gl_Position</code>。
         </p>
     </li>
 </ul><section id="gl-position">
