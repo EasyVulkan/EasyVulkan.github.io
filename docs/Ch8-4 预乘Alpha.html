@@ -71,6 +71,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-4%20%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-4 几何着色器</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
 <ul>
@@ -273,7 +274,7 @@
 <ul>
     <li>
         <p>
-            若有色值被插值后输入到片段着色器，先前的着色器中应当输出预乘alpha的色值。
+            若有色值被插值后输入到片段着色器，则片段着色器前的着色器阶段应当输出预乘alpha的色值。
         </p>
     </li>
     <li>
@@ -895,7 +896,7 @@ pipelineCiPack.colorBlendAttachmentStates.<span class="fn">emplace_back</span>(
         <p>
             该函数将创建的<span class="type">texture2d</span>对象返回出去，在不开启NRVO（具名返回值优化）时可能会调用移动构造器。
             <br>
-            注：如今很多编译器（比如VS2022 17.4之后的版本）即便在Debug Build下也会默认开启NRVO。
+            注：如今很多IDE的编译器（比如VS2022 17.4之后的版本）即便在Debug Build下也会默认开启NRVO。
         </p>
     </li>
 </ul>

@@ -103,6 +103,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-4%20%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-4 几何着色器</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
 <ul>
@@ -1252,7 +1253,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
     如前文所述，用以下语法声明可特化的常量：
 </p>
 <pre class="code">
-<span class="kw">layout</span>(constant_id = ID编号) <span class="kw">const</span> 类型 常量名称;
+<span class="kw">layout</span>(constant_id = ID编号) <span class="kw">const</span> 类型 常量名称 = 默认初始值;
 </pre>
 <p>
     需要注意的是，若在uniform块中声明数组时，应当只有一个数组的大小被可特化常量指定，且该数组应该位于块的最后：
@@ -1276,7 +1277,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
 <ul>
     <li>
         <p>
-            各个块成员的offset是被静态计算的，也就是说，Case 2这种情况，<span class="var">cameraPosition</span>在缓冲区中的位置是根据<span class="var">maxLightCount</span>的默认值进行计算的。假设可以在创建管线时改变<span class="var">maxLightCount</span>（所谓假设，是因为这种情况下创建管线时Vulkan的验证层会报错），<span class="var">cameraPosition</span>也总是在32个<span class="type">light</span>的大小之后的位置。
+            各个块成员的offset是被静态计算的，也就是说，Case 2这种情况，<span class="var">cameraPosition</span>在缓冲区中的位置是根据<span class="var">maxLightCount</span>的默认值进行计算的。假设可以在创建管线时改变<span class="var">maxLightCount</span>（所谓假设，是因为这种情况下创建管线时Vulkan的验证层会报错），<span class="var">cameraPosition</span>也只能是在32个<span class="type">light</span>的大小之后的位置。
         </p>
     </li>
 </ul></section>

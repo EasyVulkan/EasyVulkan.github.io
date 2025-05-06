@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch4-4 几何着色器 &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Ch5-0 VKBase+.h" href="Ch5-0%20VKBase%2B.h.html" />
+    <link rel="prev" title="Ch4-3 片段着色器" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html">Ch3-7 采样器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-8%20%E6%9F%A5%E8%AF%A2.html">Ch3-8 查询</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch4-4 几何着色器</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">几何着色器的内置输入</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#gl-primitiveidin">gl_PrimitiveIDIn</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">几何着色器的内置输出</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#gl-primitiveid">gl_PrimitiveID</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">几何着色器的特殊语法</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">指定输入的图元类型</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">指定输出的图元类型</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">生成图元</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">几何着色器实例化</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">示例</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VKBase%2B.h.html">Ch5-0 VKBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch6-1 无图像帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html">Ch6-2 动态渲染</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%BB%98%E5%88%B6.html">Ch7-3 初识实例化绘制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-4 初识Push Constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-5 初识Uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第八章 简单示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html">Ch8-3 延迟渲染</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html">Ch8-4 预乘Alpha</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-5%20sRGB%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%BC%80%E5%90%AFHDR.html">Ch8-5 sRGB色彩空间与开启HDR</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">附录</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ap1-1%20%E8%BF%90%E8%A1%8C%E6%9C%9F%E7%BC%96%E8%AF%91GLSL.html">Ap1-1 运行期编译GLSL</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ch4-4 几何着色器</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ch4-4">
+<h1>Ch4-4 几何着色器<a class="headerlink" href="#ch4-4" title="Permalink to this heading"></a></h1>
+<p>
+    几何着色器（geometry shader）是图形管线中的一个着色器，它可以基于所输入图元的顶点数据，或在没有输入图元的情况下根据一定的规则，生成新图元的顶点数据。
+    <br>
+    几何着色器亦可用来在开启多视口时指定渲染到的视口，或在多层渲染（layered rendering）中指定渲染到的图层。
+    <br>
+    对于一个有几何着色器的图形管线，几何着色器在管线中的执行晚于顶点着色器，或细分求值着色器（若使用细分），早于片段着色器。
+</p><section id="id1">
+<h2>几何着色器的内置输入<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>
+    用GLSL编写的几何着色器有以下内置输入：
+</p>
+<pre class="code">
+<span class="type">gl_PerVertex</span> {
+    <span class="type">vec4</span> gl_Position;
+    <span class="kw">float</span> gl_PointSize;
+    <span class="kw">float</span> gl_ClipDistance[];
+    <span class="kw">float</span> gl_CullDistance[];
+} gl_in[];
+
+<span class="kw">int</span> gl_PrimitiveIDIn;
+<span class="kw">int</span> gl_InvocationID;
+</pre>
+<ul>
+    <li>
+        <p>
+            <span class="type">gl_PerVertex</span>的语义见<a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html#id2">顶点着色器的内置输出</a>。
+        </p>
+    </li>
+    <li>
+        <p>
+            <span class="type">gl_PerVertex</span>的数据是以具名数组gl_in的形式输入的，即必须通过形如<code>gl_in[i].gl_Position</code>的形式访问内置输入的顶点数据，关于gl_in的数组长度见后文。
+        </p>
+    </li>
+</ul>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p>全局变量</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="kw">int</span> gl_PrimitiveIDIn</p></td>
+            <td><p>当前输入的图元，在当前绘制命令生成的图元序列中的索引</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">int</span> gl_InvocationID</p></td>
+            <td><p>当前的几何着色器实例化调用索引，关于几何着色器实例化，见后文的语法讲解</p></td>
+        </tr>
+    </tbody>
+</table><section id="gl-primitiveidin">
+<h3>gl_PrimitiveIDIn<a class="headerlink" href="#gl-primitiveidin" title="Permalink to this heading"></a></h3>
+<p>
+    若管线有执行细分，gl_PrimitiveIDIn的数值为先前在细分求值着色器中写入的值。
+    <br>
+    若管线没有执行细分，gl_PrimitiveIDIn的数值为本次绘制命令中，顶点着色器依序生成的图元序列中的索引，<strong>且不受实例化绘制的影响</strong>（即同一图元的不同实例具有相同的gl_PrimitiveIDIn）。若想要在实例化绘制中区分所有输入到几何着色器的图元，可以将顶点着色器中的gl_InstanceIndex输出到几何着色器。
+</p></section>
+</section>
+<section id="id2">
+<h2>几何着色器的内置输出<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<p>
+    用GLSL编写的顶点着色器有以下内置输出：
+</p>
+<pre class="code">
+<span class="type">gl_PerVertex</span> {
+    <span class="type">vec4</span> gl_Position;
+    <span class="kw">float</span> gl_PointSize;
+    <span class="kw">float</span> gl_ClipDistance[];
+    <span class="kw">float</span> gl_CullDistance[];
+};
+
+<span class="kw">int</span> gl_PrimitiveID;
+<span class="kw">int</span> gl_Layer;
+<span class="kw">int</span> gl_ViewportIndex;
+</pre>
+<ul>
+    <li>
+        <p>
+            作为内置输出的<span class="type">gl_PerVertex</span>块是不具名的实例，其使用同在<a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html#id2">顶点着色器</a>中一致（当全局变量用即可）。
+        </p>
+    </li>
+</ul>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p>全局变量</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="kw">int</span> gl_PrimitiveID</p></td>
+            <td><p>图元的索引</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">int</span> gl_Layer</p></td>
+            <td><p>若进行多层渲染，指定要渲染到多层帧缓冲的哪个图层</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="kw">int</span> gl_ViewportIndex</p></td>
+            <td><p>若开启了多视口，指定要渲染到哪个视口</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    虽然gl_PrimitiveID、gl_Layer、gl_ViewportIndex不在<span class="type">gl_PerVertex</span>块中，但每一个顶点相应的数据也都具有各自的值。
+    <br>
+    若同一图元的不同顶点具有不同的gl_Layer或gl_ViewportIndex数值，采用哪个顶点的数值为实现特定，因此应确保同一图元各顶点具有相同的gl_Layer或gl_ViewportIndex。
+</p><section id="gl-primitiveid">
+<h3>gl_PrimitiveID<a class="headerlink" href="#gl-primitiveid" title="Permalink to this heading"></a></h3>
+<p>
+    对于一个有几何着色器的管线，若片段着色器中需要使用gl_PrimitiveID，则必须在几何着色器中写入gl_PrimitiveID（即它不会自动取得某个数值）。
+    <br>
+    之后片段着色器中接收到的gl_PrimitiveID为激发顶点所具有的数值，即，即便给同一图元的不同顶点指定不同的gl_PrimitiveID，也只有激发顶点具有的数值有意义。关于激发顶点，请自行参阅<a href="https://renderdoc.org/vkspec_chunked/chap21.html#drawing-line-lists">Vulkan官方标准中的图示</a>。
+</p></section>
+</section>
+<section id="id3">
+<h2>几何着色器的特殊语法<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<p>
+    下面给出对于Vulkan默认可使用的几何着色器特有的GLSL语法（略去如今已不推荐使用的transform feedback相关语法）。
+</p><section id="id4">
+<h3>指定输入的图元类型<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<pre class="code">
+<span class="kw">layout</span>(图元类型) <span class="kw">in</span>;
+</pre>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 40%">
+        <col style="width: 60%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>填写的图元类型</p></th>
+            <th class="head"><p>相当于何种<a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html#vkpipelineinputassemblystatecreateinfo">图元拓扑类型</a>（省略<span class="enum">VK_PRIMITIVE_TOPOLOGY_</span>前缀）</p></th>
+            <th class="head"><p>顶点数</span></p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p>points</p></td>
+            <td><p><span class="enum">POINT_LIST</span></p></td>
+            <td><p>1</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p>lines</p></td>
+            <td><p><span class="enum">LINE_LIST</span>、<span class="enum">LINE_STRIP</span></p></td>
+            <td><p>2</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p>lines_adjacency</p></td>
+            <td><p><span class="enum">LINE_LIST_WITH_ADJACENCY</span>、<span class="enum">LINE_STRIP_WITH_ADJACENCY</span></p></td>
+            <td><p>4</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p>triangles</p></td>
+            <td><p><span class="enum">TRIANGLE_LIST</span>、<span class="enum">TRIANGLE_STRIP</span>、<span class="enum">TRIANGLE_FAN</span></p></td>
+            <td><p>3</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p>triangles_adjacency</p></td>
+            <td><p><span class="enum">TRIANGLE_LIST_WITH_ADJACENCY</span>、<span class="enum">TRIANGLE_STRIP_WITH_ADJACENCY</span></p></td>
+            <td><p>6</p></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    先前的着色器阶段输出的顶点数据会按照上表的顶点数被变为定长数组，输入到几何着色器。
+    <br>
+    因此内置输入gl_in是数组，而自定义输入的数据也必须定义为数组（就算图元类型为点使得顶点数为1也是如此），在定义时数组长度缺省。
+    <br>
+    例：
+</p>
+<pre class="code">
+<span class="cmt">//指定输入的图元类型为三角形</span>
+<span class="kw">layout</span>(triangles) <span class="kw">in</span>;
+
+<span class="cmt">//则这里的i_Colors是包含三个元素的数组，由先前的顶点/细分求值着色器传递而来，对应一个三角形图元中的三个顶点的数据</span>
+<span class="kw">layout</span>(location = 0) <span class="kw">in</span> <span class="type">vec4</span> i_Colors[];
+</pre></section>
+<section id="id5">
+<h3>指定输出的图元类型<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<pre class="code">
+<span class="kw">layout</span>(图元类型, max_vertices = 最大顶点数) <span class="kw">out</span>;
+</pre>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 40%">
+        <col style="width: 60%">
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head"><p>填写的图元类型</p></th>
+            <th class="head"><p>相当于何种<a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html#vkpipelineinputassemblystatecreateinfo">图元拓扑类型</a>（省略<span class="enum">VK_PRIMITIVE_TOPOLOGY_</span>前缀）</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p>points</p></td>
+            <td><p><span class="enum">POINT_LIST</span></p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p>line_strip</p></td>
+            <td><p><span class="enum">LINE_STRIP</span></p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p>triangle_strip</p></td>
+            <td><p><span class="enum">TRIANGLE_STRIP</span></td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li>
+        <p>
+            这里指定的是最大顶点数，实际在一次几何着色器调用中生成的顶点数量可以小于该值。
+        </p>
+    </li>
+    <li>
+        <p>
+            最大顶点数必须是几何着色器内的编译期常数（不得为<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id16">可特化常量</a>），且不得超过<a href="https://renderdoc.org/vkspec_chunked/chap47.html#VkPhysicalDeviceLimits">VkPhysicalDeviceLimits</a>::maxGeometryOutputVertices（标准规定该值至少为256）。
+        </p>
+    </li>
+    <li>
+        <p>
+            注意到这里的拓扑类型line_strip和triangle_strip会使得连续的线/三角形共用顶点。如果你有必要使用gl_PrimitiveID，注意区分激发顶点；至于gl_Layer和gl_ViewportIndex，建议同一几何着色器调用中不要把图元渲染到不同图层或视口上（似乎也不存在这么干的必要）。
+        </p>
+    </li>
+</li></section>
+<section id="id6">
+<h3>生成图元<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<p>
+    使用GLSL的内置函数<span class="fn">EmitVertex</span>()提交一个顶点的顶点数据。
+    <br>
+    使用GLSL的内置函数<span class="fn">EndPrimitive</span>()结束当前图元。
+    <br>
+    使用细则见后文示例。
+</p></section>
+<section id="id7">
+<h3>几何着色器实例化<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<p>
+    可以在几何着色器中对同一图元的顶点数据重复执行多次着色器调用，在不同的调用中可以根据gl_InvocationID输出不同的顶点数据，这一做法称之为几何着色器的实例化。
+</p>
+<p>
+    指定调用次数的语法为：
+</p>
+<pre class="code">
+<span class="kw">layout</span>(invocations = 调用次数) <span class="kw">in</span>;
+</pre>
+<p>
+    图元类型和实例化调用次数可以写在一个<span class="kw">layout</span>中：
+</p>
+<pre class="code">
+<span class="kw">layout</span>(图元类型, invocations = 调用次数) <span class="kw">in</span>;
+</pre>
+<p>
+    这与<a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%BB%98%E5%88%B6.html">实例化绘制</a>是各自独立的功能，在图元绘制数量上能与实例化绘制产生相乘效果。
+    <br>
+    由于这里的调用次数是几何着色器内的编译期常数，且不得超过<a href="https://renderdoc.org/vkspec_chunked/chap47.html#VkPhysicalDeviceLimits">VkPhysicalDeviceLimits</a>::maxGeometryShaderInvocations（至少为32），因此如果你仅仅是想要绘制同一图元多次而没有什么更复杂的要求的话，实例化绘制更加灵活。
+</p></section>
+</section>
+<section id="id8">
+<h2>示例<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h2>
+<p>
+    下面修改自一组我用于烘焙立方体贴图的顶点着色器和几何着色器，略去片段着色器。
+    <br>
+    绘制时使用的图元拓扑类型为<span class="enum">VK_PRIMITIVE_TOPOLOGY_POINT_LIST</span>，对应的绘制命令为<code><span class="fn">vkCmdDraw</span>(commandBuffer, 1, 6, 0, 0)</code>。
+</p>
+<pre class="code">
+<span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(vertex)
+
+<span class="cmt">//无输入，只输出</span>
+<span class="kw">layout</span>(location = 0) <span class="kw">out int</span> i_Layer;
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    i_Layer = gl_InstanceIndex; <span class="cmt">//由于片段着色器中获取不到gl_InstanceIndex，由顶点着色器获取后传入几何着色器</span>
+}
+</pre>
+<pre class="code">
+<span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(geometry)
+
+<span class="type">vec2</span> positions[4] = {
+    { -1, -1 },
+    { -1,  1 },
+    {  1, -1 },
+    {  1,  1 }
+};
+<span class="type">vec3</span> texCoords[24] = {
+    <span class="cmt">/*...*/</span>
+};
+
+<span class="cmt">//指定输入点</span>
+<span class="kw">layout</span>(points) <span class="kw">in</span>;
+<span class="cmt">//指定输出由四个顶点构成的triangle_strip，旨在绘制占满一整个图像的正方形</span>
+<span class="kw">layout</span>(triangle_strip, max_vertices = 4) <span class="kw">out</span>;
+
+<span class="cmt">//输入数据，由顶点着色器传递而来，因为输入图元类型为点，i_Layers的实际数组长度为1</span>
+<span class="kw">layout</span>(location = 0) <span class="kw">in int</span> i_Layers[];
+<span class="cmt">//输出采样贴图用的坐标（涉及采样天空盒，故类型为vec3，不明白的话不必在意）</span>
+<span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec3</span> o_UVS;
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    <span class="kw">for</span> (<span class="kw">uint</span> i = 0; i < 4; i++) {
+        gl_Position = <span class="type">vec4</span>(positions[i], 0, 1);
+        gl_Layer = i_Layers[0];
+        o_UVS = texCoords[i + gl_Layer * 4];
+        <span class="fn">EmitVertex</span>();
+    }
+    <span class="fn">EndPrimitive</span>();
+}
+</pre>
+<p>
+    关于输入输出的语法都讲解过了，重点看下几何着色器的主函数，循环部分：
+</p>
+<pre class="code">
+<span class="kw">for</span> (<span class="kw">uint</span> i = 0; i < 4; i++) {
+    gl_Position = <span class="type">vec4</span>(positions[i], 0, 1);
+    gl_Layer = i_Layers[0];
+    o_UVS = texCoords[i + gl_Layer * 4];
+    <span class="fn">EmitVertex</span>();
+}
+</pre>
+<p>
+    可以看到，在调用<span class="fn">EmitVertex</span>()提交单个顶点的顶点数据之前，写入的三个变量gl_Position、gl_Layer、<span class="var">o_UVS</span>都不是数组，也就是说这些输出变量是不同的顶点共用的。
+    <br>
+    留意到<code>gl_Layer = i_Layers[0];</code>，由于<span class="var">i_Layers</span>[0]是定值，你大概会疑惑“这岂不是重复赋值了吗！？”，注意：
+    <br>
+    对使用<span class="fn">EmitVertex</span>()提交的<strong>每一个顶点的数据都要进行赋值</strong>，即调用<span class="fn">EmitVertex</span>()后，不保证保留先前赋值给任何输出变量的数据。
+</p>
+<p>
+    接下来<span class="fn">EndPrimitive</span>()没什么好说的，只不过在调用<span class="fn">EndPrimitive</span>()之后，主函数仍没有结束，你可以接着干别的事：
+</p>
+<pre class="code">
+<span class="kw">void</span> <span class="fn">main</span>() {
+    <span class="kw">for</span> (<span class="kw">uint</span> i = 0; i < 4; i++) {
+        <span class="cmt">/*...*/</span>
+    }
+    <span class="fn">EndPrimitive</span>();
+    <span class="cmt">/*这里可以接着写东西，比如写入storage缓冲区等*/</span>
+}
+</pre>
+<p>
+    上面的代码为了演示在几何着色器中获取实例索引gl_InstanceIndex的方法而刻意多写了几行。
+    <br>
+    如果你比较敏锐的话，可能意识到了，上述两个着色器的代码能被进一步简化：
+</p>
+<pre class="code">
+<span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(vertex)
+
+<span class="cmt">//不干任何事的顶点着色器，滅茶苦茶sexy！</span>
+<span class="kw">void</span> <span class="fn">main</span>() {}
+</pre>
+<pre class="code">
+<span class="pragma">#version</span> 460
+<span class="pragma">#pragma shader_stage</span>(geometry)
+
+<span class="type">vec2</span> positions[4] = {
+    <span class="cmt">/*...*/</span>
+};
+<span class="type">vec3</span> texCoords[24] = {
+    <span class="cmt">/*...*/</span>
+};
+
+<span class="kw">layout</span>(points) <span class="kw">in</span>;
+<span class="kw">layout</span>(triangle_strip, max_vertices = 4) <span class="kw">out</span>;
+<span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec3</span> o_UVS;
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+    <span class="kw">for</span> (<span class="kw">uint</span> i = 0; i < 4; i++) {
+        gl_Position = <span class="type">vec4</span>(positions[i], 0, 1);
+
+        <span class="cmt">/*变更*/</span>gl_Layer = gl_PrimitiveIDIn;
+
+        o_UVS = texCoords[i + gl_Layer * 4];
+        <span class="fn">EmitVertex</span>();
+    }
+    <span class="fn">EndPrimitive</span>();
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            对应的绘制命令为<code><span class="fn">vkCmdDraw</span>(commandBuffer, 6, 1, 0, 0)</code>。
+        </p>
+    </li>
+</ul>
+<p>
+    使用几何着色器进行多层渲染的具体用例见//TODO Ch9-1 将ERP图像转到立方体贴图。
+</p></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html" class="btn btn-neutral float-left" title="Ch4-3 片段着色器" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="Ch5-0%20VKBase%2B.h.html" class="btn btn-neutral float-right" title="Ch5-0 VKBase+.h" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021-2025, 葉橙.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -70,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-4%20%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-4 几何着色器</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
 <ul>
@@ -583,7 +584,7 @@ filepath.<span class="fn">replace</span>(pos + 1 + filepath.<span class="fn">beg
     </p>
 </ul>
 <p>
-    填写<span class="var">result</span>开头的<span class="type">shaderc_include_result</span>部分，整个<span class="type">includer</span>::<span class="fn">GetInclude</span>(...)如下：
+    填写<span class="var">result</span>中位于开头的<span class="type">shaderc_include_result</span>部分，整个<span class="type">includer</span>::<span class="fn">GetInclude</span>(...)如下：
 </p>
 <pre class="code">
 <span class="type">shaderc_include_result</span>* <span class="fn">GetInclude</span>(<span class="kw">const char</span>* <span class="par">requested_source</span>, <span class="type">shaderc_include_result</span>, <span class="kw">const char</span>* <span class="par">requesting_source</span>, <span class="type">size_t</span>) <span class="kw">override</span> {

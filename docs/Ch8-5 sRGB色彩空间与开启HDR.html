@@ -71,6 +71,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-4%20%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-4 几何着色器</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
 <ul>
@@ -576,7 +577,7 @@
 <p>
     Windows的桌面窗口管理器是在线性颜色编码的scRGB色彩空间下进行混色的，所以微软在前述链接的文章中推荐让一般的DirectX程序用scRGB，不过scRGB的平台支持不够广泛（它是微软搞出来的，基本是Windows在使用）。
     <br>
-    此外，窗口处于独占全屏模式时<strong>可能</strong>可以不经过Windows混色器，将信号直接输出到显示器，但是显示器的HDR模式并不支持线性编码的信号，因此scRGB色彩空间的窗口即便在全屏模式下也必须由Windows对其色值做非线性映射后才能输出。
+    此外，窗口处于独占全屏模式时，其画面内容<strong>可能</strong>可以不经过Windows混色器，但是显示器的HDR模式并不支持线性编码的信号，因此scRGB色彩空间的窗口即便在全屏模式下也必须由Windows对其色值做非线性映射后才能输出。
     <br>
     此外，至少在我的运行环境下，当色值对应的亮度超出显示器的最高亮度时，颜色会看着比较奇怪（过饱和的红色会偏黄偏白），可能需要自己对数值做钳制。
     <br>
@@ -598,7 +599,7 @@
 <ul>
     <li>
         <p>
-            std::<span class="fn">make_unique</span>(...)会进行值初始化，对于<span class="type">VkColorSpaceKHR</span>这样的非类类型，其效果为零初始化。这里<span class="fn">memcpy</span>(...)只覆写了<span class="par">colorSpaces</span>.<span class="fn">Count</span>()个数组元素，因此<span class="var">pColorSpaces</span>所指的是一个以0结尾的数组。
+            std::<span class="fn">make_unique</span>(...)会进行值初始化，对于<span class="type">VkColorSpaceKHR</span>这样的非类类型，其效果为零初始化。这里<span class="fn">memcpy</span>(...)只覆写了<span class="par">colorSpaces</span>.<span class="fn">Count</span>()个数组元素，因此<span class="var">pColorSpaces</span>所指的是一个以0结尾的数组，可以基于这一点判断数组的结尾而不必记录数组长度。
         </p>
     </li>
 </ul>

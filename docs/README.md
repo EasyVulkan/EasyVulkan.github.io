@@ -6,7 +6,8 @@
 1.捉虫/答疑，发Issue，开新的，或者发在[【长期】 捉虫/答疑集中贴](https://github.com/EasyVulkan/EasyVulkan.github.io/issues/7)。<br>
 2.反馈/交流/答疑，发Discussion。
 
-2024.06.25 [Ch8-5 sRGB色彩空间和开启HDR](https://easyvulkan.github.io/Ch8-5%20sRGB%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%BC%80%E5%90%AFHDR.html)完成。<br>
+2025.05.07 [Ch4-4 几何着色器](https://easyvulkan.github.io/Ch4-4%20%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8.html)完成。<br>
+2025.05.07 首页上的留言板似乎已可以正常使用。<br>
 2024.04.02 代码里加了CMakeLists.txt（我不确定Visual Studio之外是什么效果，谁愿意的话可以fork到私有仓库，帮我改一下然后pull request给我）
 
 ## 章节目录
@@ -55,7 +56,7 @@
 ### Vulkan1.1后的新增核心功能（按需阅读）
 
 [Ch6-0 使用新版本功能](https://easyvulkan.github.io/Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html)<br>
-[Ch6-1 无图像帧缓冲](https://easyvulkan.github.io/Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html)<br>
+[Ch6-1 无图像帧缓冲（没啥用）](https://easyvulkan.github.io/Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html)<br>
 [Ch6-2 动态渲染](https://easyvulkan.github.io/Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html)
 
 ### 附录
@@ -64,12 +65,11 @@
 
 ## 更新计划（猴年马月？）
 
-停...停更中。-_-||
+绝赞停更中。-_-||
 
 如果我目前写的都看完了，那你也应该已经比较熟悉Vulkan API了，可以找别的教程接着看！
 
 待更新的内容清单：<br>
-Ch4-4 几何着色器<br>
 Ch4-5 细分着色器<br>
 Ch4-6 计算着色器<br>
 Ch5-4 立方体贴图（[封装代码见此](https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch7/VKBase+.h#L1234)，光看代码和我写的英语注释大概不太好懂...）<br>
@@ -81,8 +81,8 @@ Ch9-1 几何着色器应用实例：将ERP图像转到立方体贴图（暂定�
 
 ### 何故停更？
 
-**Reason 1:** 越写越颓<br>
-我当初开坑这套教程的时间是21年，其实是挺想写个类似LearnOpenGL一样的网站的，顺带再以自己写的内容为课件出一套视频教程。<br>
+**Reason 1:** 颓<br>
+我当初开坑这套教程的时间是21年4月，本是想写个类似LearnOpenGL一样的网站。<br>
 不过我属实是高估自己的耐心和实际写一整套网页的工程量了。<br>
 由于我想实现令自己满意的网页格式，这套教程除了目录和标题外，都是直接写的HTML代码而非简单的RST语法。<br>
 而这种枯燥而耗时的撰文过程自然无法给我良性的正反馈。

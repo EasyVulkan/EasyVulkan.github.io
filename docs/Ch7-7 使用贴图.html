@@ -71,6 +71,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-4%20%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-4 几何着色器</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
 <ul>
@@ -407,7 +408,21 @@ pipelineCiPack.inputAssemblyStateCi.topology = <span class="enum">VK_PRIMITIVE_T
 </pre>
 <p>
     <span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP</span>意味着按照0,1,2、1,2,3、2,3,4、...这样的顶点顺序来绘制三角形，每个点和其前两个点构成三角形。这里的编号对应最终读取到的顶点，即，如果你绑定了索引缓冲区并使用<span class="fn">vkCmdDrawIndexed</span>(...)进行索引绘制，那么前文所说的规则应用于根据索引读取到的顶点序列。
-    <br>
+<p>
+<div class="admonition important">
+    <p class="admonition-title">Important</p>
+    <p>
+        使用<span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP</span>绘制时，顶点的读取顺序会被算作是0,1,2、2,1,3、2,3,4、...，奇数索引和偶数索引的三角形图元的顶点顺序不同，或说相邻的两个三角形的顶点顺序不同。
+        <br>
+        这使得在使用该图元拓扑绘制正方形时，被正方形对角线切开的两个三角形具有同样的正背面属性（涉及面剔除，之后<a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html#cullmode">Ch8-2</a>中会进行具体说明）。
+        <br>
+        <br>
+        不过使用这一图元拓扑时通常不需要关心正背面属性，因为通常只有渲染2D多边形才会采用这一图元拓扑，而面剔除通常服务于3D渲染。
+        <br>
+        在特定情况下3D立体图形也可以采用这一图元拓扑，比方说，利用该图元拓扑可以只用14个顶点绘制一个立方体（<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch8/shader/Cube.vert.shader">示例代码中的顶点着色器</a>）。
+    </p>
+</div>
+</p>
     最后整个<span class="fn">CreatePipeline</span>()如下：
 </p>
 <pre class="code">

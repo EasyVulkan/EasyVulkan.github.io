@@ -75,6 +75,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-4%20%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-4 几何着色器</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
 <ul>
@@ -215,7 +216,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
-<li class="toctree-l1">Ch4-4 几何着色器</li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-4%20%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-4 几何着色器</a></li>
 <li class="toctree-l1">Ch4-5 细分着色器</li>
 <li class="toctree-l1">Ch4-6 计算着色器</li>
 </ul>
@@ -284,6 +285,8 @@
     1.捉虫/答疑，发Issue，开新的，或者发在<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/issues/7">issue#7</a>。
     <br>
     2.反馈/交流/答疑，发Discussion。
+    <br>
+    3.本页面底下可发表简短留言（须有Github账号+建议科学上网）。
 </p>
 <p>
     欢迎以下形式的捉虫：
@@ -304,7 +307,17 @@
 <ul>
     <li>
         <p>
-            25.05.06 在首页上新增基于gitalk的留言板（存在问题，已关闭）。
+            25.05.07 <a class="reference internal" href="Ch4-4%20%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-4 几何着色器</a>姑且算完成。
+        </p>
+    </li>
+    <li>
+        <p>
+            25.05.07 <a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html#id5">Ch7-7</a>中增加一小段关于绘制triangle strip时背面剔除机制的说明。
+        </p>
+    </li>
+    <li>
+        <p>
+            25.05.07 在首页上新增基于gitalk的留言板（如遇无法登录的情况请反馈）。
         </p>
     </li>
 <br>
@@ -681,6 +694,21 @@
         </p>
     </li>
 </ul></section>
+
+<div id="gitalk-container" style="clear: both;"></div>
+<script>
+const gitalk = new Gitalk({
+  clientID: 'Ov23limjEuL0CuPSjB2W',
+  clientSecret: '0f75379cb423f0a1fab900350f938665afb40b83',
+  repo: 'EasyVulkan.github.io',
+  owner: 'EasyVulkan',
+  admin: ['EasyVulkan'],
+  id: '/',
+  language:'zh-CN'
+})
+gitalk.render('gitalk-container')
+</script>
+
 </section>
 
            </div>
