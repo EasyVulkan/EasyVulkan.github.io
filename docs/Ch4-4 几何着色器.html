@@ -153,7 +153,7 @@
   <section id="ch4-4">
 <h1>Ch4-4 几何着色器<a class="headerlink" href="#ch4-4" title="Permalink to this heading"></a></h1>
 <p>
-    几何着色器（geometry shader）是图形管线中的一个着色器，它可以基于所输入图元的顶点数据，或在没有输入图元的情况下根据一定的规则，生成新图元的顶点数据。
+    几何着色器（geometry shader）是图形管线中的一个着色器，它可以基于所输入图元的顶点数据，或在没有输入顶点数据的情况下根据一定的规则，生成新图元的顶点数据。
     <br>
     几何着色器亦可用来在开启多视口时指定渲染到的视口，或在多层渲染（layered rendering）中指定渲染到的图层。
     <br>
@@ -470,6 +470,13 @@
     <span class="fn">EndPrimitive</span>();
 }
 </pre>
+<ul>
+    <li>
+        <p>
+            这是一组进行多层渲染的着色器，将gl_InstanceIndex的值赋值给gl_Layer以确定渲染到的帧缓冲图层。
+        </p>
+    </li>
+</ul>
 <p>
     关于输入输出的语法都讲解过了，重点看下几何着色器的主函数，循环部分：
 </p>
@@ -542,10 +549,13 @@
 <ul>
     <li>
         <p>
-            对应的绘制命令为<code><span class="fn">vkCmdDraw</span>(commandBuffer, 6, 1, 0, 0)</code>。
+            对应的绘制命令为<code><span class="fn">vkCmdDraw</span>(commandBuffer, 6, 1, 0, 0)</code>，相应地将图元索引gl_PrimitiveIDIn赋值给gl_Layer以确定渲染到的帧缓冲图层。
         </p>
     </li>
 </ul>
+<p>
+    其实对于上述这种不需要输入任何顶点数据的多层渲染，还有一种确定gl_Layer的方法，对应的绘制命令亦有所不同，这里就留作一道简单的思考题了。
+</p>
 <p>
     使用几何着色器进行多层渲染的具体用例见//TODO Ch9-1 将ERP图像转到立方体贴图。
 </p></section>
