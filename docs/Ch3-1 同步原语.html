@@ -168,6 +168,15 @@
   <section id="ch3-1">
 <h1>Ch3-1 同步原语<a class="headerlink" href="#ch3-1" title="Permalink to this heading"></a></h1>
 <p>
+    对于Vulkan中的同步，你需要关心这两个层面：
+    <br>
+    1.执行顺序：确保执行顺序恰如其分（在你学习到<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#pipeline-barrier">Pipeline Barrier</a>之前，你只需要关心这个）
+    <br>
+    2.数据同步：确保数据能被正确读写（见后文<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#id10">内存屏障的作用</a>）
+    <br>
+    若语境中不涉及“内存”、“数据”等字样，则下文的“同步”默认指代“确保执行顺序”。
+</p>
+<p>
     除去隐式同步外，Vulkan中一共有六种同步方式：
     <br>
     1.等待物理设备/队列闲置
@@ -605,14 +614,14 @@
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
     <span class="cmt">//Non-const Function</span>
-    <span class="type">result_t</span> Create(<span class="type">VkSemaphoreCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkSemaphoreCreateInfo</span>&amp; <span class="par">createInfo</span>) {
         <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO</span>;
         <span class="type">VkResult</span> result = <span class="fn">vkCreateSemaphore</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ semaphore ] ERROR\nFailed to create a semaphore!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
-    <span class="type">result_t</span> Create(<span class="cmt">/*VkSemaphoreCreateFlags flags*/</span>) {
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="cmt">/*VkSemaphoreCreateFlags flags*/</span>) {
         <span class="type">VkSemaphoreCreateInfo</span> createInfo = {};
         <span class="kw">return</span> <span class="fn">Create</span>(createInfo);
     }
@@ -859,7 +868,7 @@
     <br>
     这其实是一个并发访问的问题。无论GPU还是CPU都不是只有单个构造简单的缓存，处理器具有多级存储结构，每个处理单元都可以有其专用的高速缓存。数据被更新后要在多级结构中传递，而且很可能是一块块而不是逐个字节依次更新的，也就是说，写入也是要看基于什么来写的。
     <br>
-    Vulkan的官方标准中并没有提及数据是被如何传递的（它只是个API标准，底层的事情取决于物理设备的具体构造）。确保可获性和可见性，是显式地告诉物理设备你将要如何使用资源，确保可获性可能意味着数据被复制到更远离处理单元的存储中，这跟单纯的执行依赖存在差别。
+    Vulkan的官方标准中并没有提及数据是被如何传递的（它只是个API标准，底层的事情取决于物理设备的具体构造）。确保可获性和可见性，是显式地告诉物理设备你将要如何使用资源，确保可获性可能意味着数据被复制到更远离处理单元的存储中，确保可见性可能意味着无效化缓存中旧有的内容，这跟单纯的执行依赖存在差别。
 </p>
 <p>
     <strong>为什么不把可获性和可见性合并成一个概念？</strong>

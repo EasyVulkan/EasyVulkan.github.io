@@ -346,7 +346,7 @@
     <br>
     值得注意的是，如果你打算使用线性插值，且被渲染的图像有透明区域，那么被渲染的图像是否为预乘透明度会导致不同的结果（这在白色背景上尤为明显），具体参见<a class="reference internal" href="Ch8-4%20%E9%A2%84%E4%B9%98%E9%80%8F%E6%98%8E%E5%BA%A6.html">Ch8-4 预乘Alpha</a>。
     <br>
-    图中右下角的效果可能显得仍旧不够平滑，这可以通过使用sRGB格式的颜色附件解决，具体参见//TODO Ch8-7 HDR与sRGB色彩空间。
+    图中右下角的效果可能显得仍旧不够平滑，这可以通过使用sRGB格式的颜色附件解决，具体参见<a class="reference internal" href="Ch8-5%20sRGB%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%BC%80%E5%90%AFHDR.html">Ch8-5 sRGB色彩空间与开启HDR</a>。
 </p>
 <table class="docutils align-default">
     <colgroup>
@@ -530,6 +530,8 @@
     <li>
         <p>
             “OPAQUE”和“WHITE”仅说明a和rgb分量上的数值是否为1，而数值为1不代表100%不透明或颜色饱和。通常而言，如果你的图像附件为UNORM/SRGB格式，那么你的片段着色器输出的浮点数色值的有效范围在0.f~1.f之间，因此，处理整数格式色值的时候，会在着色器中除以255.f，这种情况下，上文的<span class="enum">VK_BORDER_COLOR_INT_OPAQUE_WHITE</span>对应的色值就是<code>{ 1/255.f, 1/255.f, 1/255.f, 1/255.f }</code>。基于这一点而言，如果图像的image view的格式中带有UINT或SINT字样，你<strong>难以</strong>通过<span class="enum">VK_BORDER_COLOR_INT_OPAQUE_BLACK</span>或<span class="enum">VK_BORDER_COLOR_INT_OPAQUE_WHITE</span>实现黑色或白色边框色（而带FLOAT字样的因底层数据非整形同样不必考虑）。
+            <br>
+            （官方标准中对此的说明：<a href="https://renderdoc.org/vkspec_chunked/chap16.html#textures-texel-replacement">Texel Replacement</a>）
         </p>
     </li>
 </ul>

@@ -215,10 +215,10 @@ uniformBuffer.<span class="fn">TransferData</span>(uniform_positions);
 </p>
 <pre class="code">
 <span class="type">VkDescriptorSetLayoutBinding</span> descriptorSetLayoutBinding_trianglePosition = {
-    .binding = 0,                                       <span class="cmt">//描述符被绑定到0号binding</span>
-    .descriptorType = <span class="enum">VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER</span>,<span class="cmt">//类型为uniform缓冲区</span>
-    .descriptorCount = 1,                               <span class="cmt">//个数是1个</span>
-    .stageFlags = <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>            <span class="cmt">//在顶点着色器阶段读取uniform缓冲区</span>
+    .binding = 0,                                        <span class="cmt">//描述符被绑定到0号binding</span>
+    .descriptorType = <span class="enum">VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER</span>, <span class="cmt">//类型为uniform缓冲区</span>
+    .descriptorCount = 1,                                <span class="cmt">//个数是1个</span>
+    .stageFlags = <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>             <span class="cmt">//在顶点着色器阶段读取uniform缓冲区</span>
 };
 <span class="type">VkDescriptorSetLayoutCreateInfo</span> descriptorSetLayoutCreateInfo_triangle = {
     .bindingCount = 1,
@@ -234,10 +234,10 @@ descriptorSetLayout_triangle.<span class="fn">Create</span>(descriptorSetLayoutC
 <pre class="code">
 <span class="kw">void</span> <span class="fn">CreateLayout</span>() {
     <span class="type">VkDescriptorSetLayoutBinding</span> descriptorSetLayoutBinding_trianglePosition = {
-        .binding = 0,                                       <span class="cmt">//描述符被绑定到0号binding</span>
-        .descriptorType = <span class="enum">VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER</span>,<span class="cmt">//类型为uniform缓冲区</span>
-        .descriptorCount = 1,                               <span class="cmt">//个数是1个</span>
-        .stageFlags = <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>            <span class="cmt">//在顶点着色器阶段读取uniform缓冲区</span>
+        .binding = 0,                                        <span class="cmt">//描述符被绑定到0号binding</span>
+        .descriptorType = <span class="enum">VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER</span>, <span class="cmt">//类型为uniform缓冲区</span>
+        .descriptorCount = 1,                                <span class="cmt">//个数是1个</span>
+        .stageFlags = <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>             <span class="cmt">//在顶点着色器阶段读取uniform缓冲区</span>
     };
     <span class="type">VkDescriptorSetLayoutCreateInfo</span> descriptorSetLayoutCreateInfo_triangle = {
         .bindingCount = 1,
@@ -278,7 +278,7 @@ descriptorPool.<span class="fn">AllocateSets</span>(descriptorSet_trianglePositi
 <span class="type">VkDescriptorBufferInfo</span> bufferInfo = {
     .buffer = uniformBuffer,
     .offset = 0,
-    .range = <span class="kw">sizeof</span> uniform_positions<span class="cmt">//或VK_WHOLE_SIZE</span>
+    .range = <span class="kw">sizeof</span> uniform_positions <span class="cmt">//或VK_WHOLE_SIZE</span>
 };
 descriptorSet_trianglePosition.<span class="fn">Write</span>(bufferInfo, <span class="enum">VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER</span>);
 </pre></section>
@@ -317,7 +317,7 @@ descriptorSet_trianglePosition.<span class="fn">Write</span>(bufferInfo, <span c
 <pre class="code">
 <span class="kw">void</span> <span class="fn">CreatePipeline</span>() {
     <span class="kw">static</span> <span class="type">shaderModule</span> vert(<span class="str">"shader/UniformBuffer.vert.spv"</span>);
-    <span class="cmt">//省略后续代码</span>
+    <span class="cmt">/*...省略后续代码*/</span>
 }
 </pre></section>
 <section id="id4">
@@ -427,7 +427,7 @@ descriptorSet_trianglePosition.<span class="fn">Write</span>(bufferInfo, <span c
 <pre class="code">
 <span class="type">VkDescriptorSetLayoutBinding</span> descriptorSetLayoutBinding_trianglePosition = {
     .binding = 0,
-    .descriptorType = <span class="enum">VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC</span>,<span class="cmt">//类型为动态uniform缓冲区</span>
+    .descriptorType = <span class="enum">VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC</span>, <span class="cmt">//类型为动态uniform缓冲区</span>
     .descriptorCount = 1,
     .stageFlags = <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>
 };

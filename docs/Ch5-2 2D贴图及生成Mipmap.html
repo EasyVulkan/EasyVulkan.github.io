@@ -226,7 +226,7 @@
     </li>
     <li>
         <p>
-            贴图的采样点个数当然是<span class="enum">VK_SAMPLE_COUNT_1_BIT</span>，多重采样图像不能被用作各种传输命令的源和目标，而且指定事先准备好的贴图为多重采样也没有意义（注：GLSL中的<span class="type">texture2DMS</span>等类型，用于需要在着色器中读取多重采样的图像附件的情况，与一般的贴图无关）。
+            贴图的采样点个数当然是<span class="enum">VK_SAMPLE_COUNT_1_BIT</span>，多重采样图像不能被用作各种传输命令的源和目标，而且指定事先准备好的贴图为多重采样也没有意义（注：GLSL中的<span class="type">sampler2DMS</span>、<span class="type">texture2DMS</span>等类型，用于需要在着色器中读取多重采样的图像附件的情况，与一般的贴图无关）。
         </p>
     </li>
     <li>

@@ -947,8 +947,8 @@
 <span class="pragma">#version</span> 460
 <span class="pragma">#pragma shader_stage</span>(vertex)
 
-<span class="kw">layout</span>(location = 0) <span class="kw">in</span> <span class="type">vec2</span> i_VertexPosition;<span class="cmt">//逐顶点</span>
-<span class="kw">layout</span>(location = 1) <span class="kw">in</span> <span class="type">vec2</span> i_InstancePosition;<span class="cmt">//逐实例</span>
+<span class="kw">layout</span>(location = 0) <span class="kw">in</span> <span class="type">vec2</span> i_VertexPosition; <span class="cmt">//逐顶点</span>
+<span class="kw">layout</span>(location = 1) <span class="kw">in</span> <span class="type">vec2</span> i_InstancePosition; <span class="cmt">//逐实例</span>
 
 <span class="kw">void</span> <span class="fn">main</span>() {
     gl_Position = <span class="type">vec4</span>(i_VertexPosition + i_InstancePosition, 1);
@@ -961,9 +961,9 @@
 <span class="pragma">#version</span> 460
 <span class="pragma">#pragma shader_stage</span>(vertex)
 
-<span class="kw">layout</span>(location = 0) <span class="kw">in</span> <span class="type">vec2</span> i_VertexPosition;<span class="cmt">//逐顶点</span>
-<span class="kw">layout</span>(location = 1) <span class="kw">in</span> <span class="type">vec2</span> i_VertexTexCoord;<span class="cmt">//逐顶点</span>
-<span class="kw">layout</span>(location = 2) <span class="kw">in</span> <span class="type">vec2</span> i_InstancePosition;<span class="cmt">//逐实例</span>
+<span class="kw">layout</span>(location = 0) <span class="kw">in</span> <span class="type">vec2</span> i_VertexPosition; <span class="cmt">//逐顶点</span>
+<span class="kw">layout</span>(location = 1) <span class="kw">in</span> <span class="type">vec2</span> i_VertexTexCoord; <span class="cmt">//逐顶点</span>
+<span class="kw">layout</span>(location = 2) <span class="kw">in</span> <span class="type">vec2</span> i_InstancePosition; <span class="cmt">//逐实例</span>
 <span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec2</span> o_UV;
 
 <span class="kw">void</span> <span class="fn">main</span>() {
@@ -2295,7 +2295,7 @@
     { <span class="enum">VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO</span> };
     std::<span class="type">vector</span>&lt;<span class="type">VkViewport</span>&gt; viewports;
     std::<span class="type">vector</span>&lt;<span class="type">VkRect2D</span>&gt; scissors;
-    <span class="type">uint32_t</span> dynamicViewportCount = 1;<span class="cmt">//动态视口/剪裁不会用到上述的vector，因此动态视口和剪裁的个数向这俩变量手动指定</span>
+    <span class="type">uint32_t</span> dynamicViewportCount = 1; <span class="cmt">//动态视口/剪裁不会用到上述的vector，因此动态视口和剪裁的个数向这俩变量手动指定</span>
     <span class="type">uint32_t</span> dynamicScissorCount = 1;
     <span class="cmt">//Rasterization</span>
     <span class="type">VkPipelineRasterizationStateCreateInfo</span> rasterizationStateCi =
@@ -2496,14 +2496,14 @@
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
     <span class="cmt">//Non-const Function</span>
-    <span class="type">result_t</span> Create(<span class="type">VkGraphicsPipelineCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkGraphicsPipelineCreateInfo</span>&amp; <span class="par">createInfo</span>) {
         <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO</span>;
         <span class="type">VkResult</span> result = <span class="fn">vkCreateGraphicsPipelines</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), <span class="mcr">VK_NULL_HANDLE</span>, 1, &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ pipeline ] ERROR\nFailed to create a graphics pipeline!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
-    <span class="type">result_t</span> Create(<span class="type">VkComputePipelineCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkComputePipelineCreateInfo</span>&amp; <span class="par">createInfo</span>) {
         <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO</span>;
         <span class="type">VkResult</span> result = <span class="fn">vkCreateComputePipelines</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), <span class="mcr">VK_NULL_HANDLE</span>, 1, &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)

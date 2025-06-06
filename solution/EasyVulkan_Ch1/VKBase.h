@@ -62,10 +62,10 @@ namespace vulkan {
 			if (surface)
 				vkDestroySurfaceKHR(instance, surface, nullptr);
 			if (debugMessenger) {
-				PFN_vkDestroyDebugUtilsMessengerEXT DestroyDebugUtilsMessenger =
+				PFN_vkDestroyDebugUtilsMessengerEXT vkDestroyDebugUtilsMessenger =
 					reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT"));
-				if (DestroyDebugUtilsMessenger)
-					DestroyDebugUtilsMessenger(instance, debugMessenger, nullptr);
+				if (vkDestroyDebugUtilsMessenger)
+					vkDestroyDebugUtilsMessenger(instance, debugMessenger, nullptr);
 			}
 			vkDestroyInstance(instance, nullptr);
 		}
@@ -191,6 +191,12 @@ namespace vulkan {
 					return;
 			container.push_back(name);
 		}
+		static void ExecuteCallbacks(std::vector<void(*)()>& callbacks) {
+			for (size_t size = callbacks.size(), i = 0; i < size; i++)
+				callbacks[i]();
+			//for (auto& i : callbacks) i();                               //Not safe
+			//for (size_t i = 0; i < callbacks.size(); i++) callbacks[i]();//Not safe
+		}
 	public:
 		//Getter
 		uint32_t ApiVersion() const {
@@ -276,15 +282,7 @@ namespace vulkan {
 			return deviceExtensions;
 		}
 
-		//Const Function
-		VkResult WaitIdle() const {
-			VkResult result = vkDeviceWaitIdle(device);
-			if (result)
-				std::cout << std::format("[ graphicsBase ] ERROR\nFailed to wait for the device to be idle!\nError code: {}\n", int32_t(result));
-			return result;
-		}
-
-		//Non-const Function
+		//Const & Non-const Function
 		void AddCallback_CreateSwapchain(void(*function)()) {
 			callbacks_createSwapchain.push_back(function);
 		}
@@ -653,7 +651,7 @@ namespace vulkan {
 			return VK_SUCCESS;
 		}
 
-		//                    After initialization
+		//                    After Initialization
 		void Terminate() {
 			this->~graphicsBase();
 			instance = VK_NULL_HANDLE;
@@ -667,24 +665,25 @@ namespace vulkan {
 			debugMessenger = VK_NULL_HANDLE;
 		}
 		VkResult RecreateDevice(VkDeviceCreateFlags flags = 0) {
-			if (VkResult result = WaitIdle())
-				return result;
-			if (swapchain) {
-				for (auto& i : callbacks_destroySwapchain)
-					i();
-				for (auto& i : swapchainImageViews)
-					if (i)
-						vkDestroyImageView(device, i, nullptr);
-				swapchainImageViews.resize(0);
-				vkDestroySwapchainKHR(device, swapchain, nullptr);
-				swapchain = VK_NULL_HANDLE;
-				swapchainCreateInfo = {};
-			}
-			for (auto& i : callbacks_destroyDevice)
-				i();
-			if (device)
-				vkDestroyDevice(device, nullptr),
+			if (device) {
+				if (VkResult result = WaitIdle();
+					result != VK_SUCCESS &&
+					result != VK_ERROR_DEVICE_LOST)
+					return result;
+				if (swapchain) {
+					ExecuteCallbacks(callbacks_destroySwapchain);
+					for (auto& i : swapchainImageViews)
+						if (i)
+							vkDestroyImageView(device, i, nullptr);
+					swapchainImageViews.resize(0);
+					vkDestroySwapchainKHR(device, swapchain, nullptr);
+					swapchain = VK_NULL_HANDLE;
+					swapchainCreateInfo = {};
+				}
+				ExecuteCallbacks(callbacks_destroyDevice);
+				vkDestroyDevice(device, nullptr);
 				device = VK_NULL_HANDLE;
+			}
 			return CreateDevice(flags);
 		}
 		VkResult RecreateSwapchain() {
@@ -718,6 +717,12 @@ namespace vulkan {
 			for (auto& i : callbacks_createSwapchain)
 				i();
 			return VK_SUCCESS;
+		}
+		VkResult WaitIdle() const {
+			VkResult result = vkDeviceWaitIdle(device);
+			if (result)
+				std::cout << std::format("[ graphicsBase ] ERROR\nFailed to wait for the device to be idle!\nError code: {}\n", int32_t(result));
+			return result;
 		}
 
 		//Static Function

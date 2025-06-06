@@ -754,9 +754,9 @@
 <pre class="code">
 <span class="kw">static float</span> brightnessScale = 100.f / 10000;
 <span class="fn">glfwSetScrollCallback</span>(pWindow,
-    [] (<span class="type">GLFWwindow</span>*, <span class="cmt">/*pWindow，用不着，省略参数名*/</span>
-        <span class="kw">double</span>,      <span class="cmt">/*横向滚动，大部分鼠标不支持*/</span>
-        <span class="kw">double</span> <span class="par">dy</span>) { <span class="cmt">/*纵向滚动*/</span>
+    [] (<span class="type">GLFWwindow</span>*, <span class="cmt">//pWindow，用不着，省略参数名</span>
+        <span class="kw">double</span>,      <span class="cmt">//横向滚动，大部分鼠标不支持</span>
+        <span class="kw">double</span> <span class="par">dy</span>) { <span class="cmt">//纵向滚动</span>
         brightnessScale = <span class="par">dy</span> &gt; 0 ?
             std::<span class="fn">min</span>(brightnessScale + <span class="par">dy</span> * 10.f / 10000, 1.0) :
             std::<span class="fn">max</span>(brightnessScale + <span class="par">dy</span> * 10.f / 10000, 0.0);

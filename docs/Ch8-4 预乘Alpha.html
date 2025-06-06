@@ -403,7 +403,7 @@
 <p>
     顾名思义，<span class="type">fCreateTexture2d_multiplyAlpha</span>这个类用来创建预乘alpha的2D贴图，<span class="type">fCreateTexture2d_multiplyAlpha</span>::<span class="fn">operator()</span>说明该类的实例可以像函数一样被使用（这种类叫做“仿函数”）。
     <br>
-    这个类不处理2D贴图数组，要处理2D贴图数组得把事情复杂化：要么为每个图层创建帧缓冲，要么使用多层帧缓冲和//TODO 几何着色器，要么用<a class="reference internal" href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html">动态渲染</a>省去帧缓冲。
+    这个类不处理2D贴图数组，要处理2D贴图数组得把事情复杂化：要么为每个图层创建帧缓冲，要么使用多层帧缓冲和<a class="reference internal" href="Ch4-4%20%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8.html">几何着色器</a>，要么用<a class="reference internal" href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html">动态渲染</a>省去帧缓冲。
     <br>
     传入<span class="fn">Instantiate</span>(...)的参数<span class="par">callback_copyMipLevel0</span>被保存到成员变量callback_copyData，它是一个回调函数的指针，方便你获取预乘后的图像数据。
     <br>

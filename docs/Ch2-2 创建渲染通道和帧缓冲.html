@@ -461,7 +461,7 @@ rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase
 <span class="pragma">#include</span> <span class="str">&quot;EasyVulkan.hpp&quot;</span>
 
 <span class="kw">int</span> <span class="fn">main</span>() {
-    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
+    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }))
         <span class="kw">return</span> -1;
 
     <span class="cmt">/*新增*/</span><span class="kw">const auto</span>&amp; [renderPass, framebuffers] = easyVulkan::<span class="fn">CreateRpwf_Screen</span>();

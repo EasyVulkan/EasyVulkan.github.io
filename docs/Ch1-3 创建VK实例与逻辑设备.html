@@ -158,7 +158,7 @@
 </p><section id="id1">
 <h2>指定所需的层和扩展<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
 <p>
-    首先来获取实例级别扩展。之前在<a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html#id2">Ch1-1</a>书写了<span class="fn">InitializeWindow</span>(...)，现在其中，在<code><span class="fn">glfwWindowHint</span>(<span class="mcr">GLFW_RESIZABLE</span>, isResizable);</code>后加入以下代码：
+    首先来获取实例级别扩展。之前在<a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html#id2">Ch1-1</a>书写了<span class="fn">InitializeWindow</span>(...)，现在其中，在<code><span class="fn">glfwWindowHint</span>(<span class="mcr">GLFW_RESIZABLE</span>, <span class="par">isResizable</span>);</code>后加入以下代码：
 </p>
 <pre class="code">
 <span class="type">uint32_t</span> extensionCount = 0;
@@ -229,7 +229,7 @@ extensionNames = <span class="type">glfwGetRequiredInstanceExtensions</span>(&am
     除此之外仅需要验证层及debug messenger的扩展，来填充前一节中定义在<span class="path">VKBase.h</span>中的<span class="type">graphicsBase</span>::<span class="fn">CreateInstance</span>(...)：
 </p>
 <pre class="code">
-<span class="type">VkResult</span> <span class="fn">CreateInstance</span>(<span class="type">VkInstanceCreateFlags</span> flags = 0) {
+<span class="type">VkResult</span> <span class="fn">CreateInstance</span>(<span class="type">VkInstanceCreateFlags</span> <span class="par">flags</span> = 0) {
 <span class="pragma">#ifndef</span> <span class="mcr">NDEBUG</span>
     <span class="fn">AddInstanceLayer</span>(<span class="str">&quot;VK_LAYER_KHRONOS_validation&quot;</span>);
     <span class="fn">AddInstanceExtension</span>(<span class="mcr">VK_EXT_DEBUG_UTILS_EXTENSION_NAME</span>);
@@ -250,12 +250,12 @@ extensionNames = <span class="type">glfwGetRequiredInstanceExtensions</span>(&am
     </li>
 </ul>
 <p>
-    这段代码说明仅在编译选项为DEBUG时，在<span class="var">instanceLayers</span>和<span class="var">instanceExtensions</span>尾部加上所需的名称。
+    这段代码意为：仅在编译选项为DEBUG时，在instanceLayers和instanceExtensions尾部加上所需的名称。
 </p></section>
 <section id="vulkan">
 <h2>使用Vulkan的最新版本<a class="headerlink" href="#vulkan" title="Permalink to this heading"></a></h2>
 <p>
-    如果你想使用Vulkan的最新版本，须在创建Vulkan实例前，用<a href="https://renderdoc.org/vkspec_chunked/chap4.html#vkEnumerateInstanceVersion">vkEnumerateInstanceVersion</a>(...)取得取得当前运行环境所支持的最新Vulkan版本，然而，Vulkan1.0版本中是不支持这个函数的（尽管你下的SDK是新版本，程序在用户电脑上运行时连接的dll可能是Vulkan1.0的），所以要先用<a href="https://renderdoc.org/vkspec_chunked/chap4.html#vkGetInstanceProcAddr">vkGetInstanceProcAddr</a>(...)尝试取得该函数的指针，若返回非空指针，则说明可以执行该函数且Vulkan版本至少为1.1，否则说明当前运行环境中Vulkan的最高版本为1.0。
+    如果你想使用Vulkan的最新版本，须在创建Vulkan实例前，用<a href="https://renderdoc.org/vkspec_chunked/chap4.html#vkEnumerateInstanceVersion">vkEnumerateInstanceVersion</a>(...)取得取得当前运行环境所支持的最新Vulkan版本，然而，Vulkan1.0版本中是不支持这个函数的（尽管你下的SDK是新版本，程序在用户电脑上运行时链接的dll可能是Vulkan1.0的），所以要先用<a href="https://renderdoc.org/vkspec_chunked/chap4.html#vkGetInstanceProcAddr">vkGetInstanceProcAddr</a>(...)尝试取得该函数的指针，若返回非空指针，则说明可以执行该函数且Vulkan版本至少为1.1，否则说明当前运行环境中Vulkan的最高版本为1.0。
 </p>
 <table class="docutils align-default">
     <colgroup>
@@ -450,7 +450,7 @@ extensionNames = <span class="type">glfwGetRequiredInstanceExtensions</span>(&am
     于是继续填充<span class="type">graphicsBase</span>::<span class="fn">CreateInstance</span>(...)，最后整个函数如下：
 </p>
 <pre class="code">
-<span class="type">VkResult</span> <span class="fn">CreateInstance</span>(<span class="type">VkInstanceCreateFlags</span> flags = 0) {
+<span class="type">VkResult</span> <span class="fn">CreateInstance</span>(<span class="type">VkInstanceCreateFlags</span> <span class="par">flags</span> = 0) {
 <span class="pragma">#ifndef</span> <span class="mcr">NDEBUG</span>
     <span class="fn">AddInstanceLayer</span>(<span class="str">&quot;VK_LAYER_KHRONOS_validation&quot;</span>);
     <span class="fn">AddInstanceExtension</span>(<span class="mcr">VK_EXT_DEBUG_UTILS_EXTENSION_NAME</span>);
@@ -461,7 +461,7 @@ extensionNames = <span class="type">glfwGetRequiredInstanceExtensions</span>(&am
     };
     <span class="type">VkInstanceCreateInfo</span> instanceCreateInfo = {
         .sType = <span class="enum">VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO</span>,
-        .flags = flags,
+        .flags = <span class="par">flags</span>,
         .pApplicationInfo = &amp;applicatianInfo,
         .enabledLayerCount = <span class="type">uint32_t</span>(instanceLayers.<span class="fn">size</span>()),
         .ppEnabledLayerNames = instanceLayers.data(),
@@ -552,14 +552,14 @@ extensionNames = <span class="type">glfwGetRequiredInstanceExtensions</span>(&am
 </p>
 <pre class="code">
 <span class="type">uint32_t</span> layerCount;
-std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
+std::<span class="type">vector</span>&lt;<span class="type">VkLayerProperties</span>&gt; availableLayers;
 <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkEnumerateInstanceLayerProperties</span>(&amp;layerCount, <span class="kw">nullptr</span>)) {
     std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of instance layers!\n&quot;</span>);
     <span class="kw">return</span> result;
 }
 </pre>
 <p>
-    接着，若<span class="var">layerCount</span>为0，则说明没有任何可用层（虽然没这个可能），否则嵌套循环逐个比较字符串，若没有找到某个层的名称，将<span class="var">layersToCheck</span>中对应的字符串指针设置为<span class="kw">nullptr</span>：
+    接着，若<span class="var">layerCount</span>为0，则说明没有任何可用层（虽然没这个可能），否则嵌套循环逐个比较字符串，若没有找到某个层的名称，将<span class="par">layersToCheck</span>中对应的字符串指针设置为<span class="kw">nullptr</span>：
 </p>
 <pre class="code">
 <span class="kw">if</span> (layerCount) {
@@ -568,7 +568,7 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
         std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to enumerate instance layer properties!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
-    <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : layersToCheck) {
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : <span class="par">layersToCheck</span>) {
         <span class="kw">bool</span> found = <span class="kw">false</span>;
         <span class="kw">for</span> (<span class="kw">auto</span>&amp; j : availableLayers)
             <span class="kw">if</span> (!<span class="fn">strcmp</span>(i, j.layerName)) {
@@ -580,15 +580,15 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
     }
 }
 <span class="kw">else</span>
-    <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : layersToCheck)
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : <span class="par">layersToCheck</span>)
         i = <span class="kw">nullptr</span>;
-<span class="cmt">//一切顺利则返回<span class="enum">VK_SUCCESS</span></span>
+<span class="cmt">//一切顺利则返回VK_SUCCESS</span>
 <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
 </pre>
 <ul>
     <li>
         <p>
-            两次调用<a href="https://renderdoc.org/vkspec_chunked/chap45.html#vkEnumerateInstanceLayerProperties">vkEnumerateInstanceLayerProperties</a>(...)，第一次取得layerCount，第二次取得layerCount个<span class="type">VkLayerProperties</span>，因此第二次调用该函数时若执行成功，必然只可能返回<span class="enum">VK_SUCCESS</span>，于是这里就只需要验证<span class="var">result</span>是否为<span class="enum">VK_SUCCESS</span>而不需要验证是否为<span class="enum">VK_INCOMPLETE</span>了。
+            两次调用<a href="https://renderdoc.org/vkspec_chunked/chap45.html#vkEnumerateInstanceLayerProperties">vkEnumerateInstanceLayerProperties</a>(...)，第一次取得<span class="var">layerCount</span>，第二次取得<span class="var">layerCount</span>个<span class="type">VkLayerProperties</span>，因此第二次调用该函数时若执行成功，必然只可能返回<span class="enum">VK_SUCCESS</span>，于是这里就只需要验证<span class="var">result</span>是否为<span class="enum">VK_SUCCESS</span>而不需要验证是否为<span class="enum">VK_INCOMPLETE</span>了。
         </p>
     </li>
 </ul></section>
@@ -626,22 +626,22 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
     用几乎换汤不换药的写法填充<span class="type">graphicsBase</span>::<span class="fn">CheckInstanceExtensions</span>(...)：
 </p>
 <pre class="code">
-<span class="type">VkResult</span> <span class="fn">CheckInstanceExtensions</span>(std::<span class="type">span</span>&lt;<span class="kw">const char</span>*&gt; extensionsToCheck, <span    class="kw">const char</span>* layerName) <span class="kw">const</span> {
+<span class="type">VkResult</span> <span class="fn">CheckInstanceExtensions</span>(std::<span class="type">span</span>&lt;<span class="kw">const char</span>*&gt; <span class="par">extensionsToCheck</span>, <span class="kw">const char</span>* <span class="par">layerName</span>) <span class="kw">const</span> {
     <span class="type">uint32_t</span> extensionCount;
-    std::<span class="type">vector</span>&lt;VkExtensionProperties&gt; availableExtensions;
-    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkEnumerateInstanceExtensionProperties</span>(layerName, &amp;extensionCount, <span class="kw">nullptr</span>)) {
-        layerName ?
-        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of instance extensions!\nLayer name:{}\n&quot;</span>, layerName) :
+    std::<span class="type">vector</span>&lt;<span class="type">VkExtensionProperties</span>&gt; availableExtensions;
+    <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkEnumerateInstanceExtensionProperties</span>(<span class="par">layerName</span>, &amp;extensionCount, <span class="kw">nullptr</span>)) {
+        <span class="par">layerName</span> ?
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of instance extensions!\nLayer name:{}\n&quot;</span>, <span class="par">layerName</span>) :
         std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of instance extensions!\n&quot;</span>);
         <span class="kw">return</span> result;
     }
     <span class="kw">if</span> (extensionCount) {
         availableExtensions.<span class="fn">resize</span>(extensionCount);
-        <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkEnumerateInstanceExtensionProperties</span>(layerName, &amp;extensionCount, availableExtensions.<span class="fn">data</span>())) {
+        <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkEnumerateInstanceExtensionProperties</span>(<span class="par">layerName</span>, &amp;extensionCount, availableExtensions.<span class="fn">data</span>())) {
             std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to enumerate instance extension properties!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
             <span class="kw">return</span> result;
         }
-        <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : extensionsToCheck) {
+        <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : <span class="par">extensionsToCheck</span>) {
             <span class="kw">bool</span> found = <span class="kw">false</span>;
             <span class="kw">for</span> (<span class="kw">auto</span>&amp; j : availableExtensions)
                 <span class="kw">if</span> (!<span class="fn">strcmp</span>(i, j.extensionName)) {
@@ -653,7 +653,7 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
         }
     }
     <span class="kw">else</span>
-        <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : extensionsToCheck)
+        <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : <span class="par">extensionsToCheck</span>)
             i = <span class="kw">nullptr</span>;
     <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
 }
@@ -803,11 +803,11 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
 </p>
 <pre class="code">
 <span class="kw">static</span> <span class="type">PFN_vkDebugUtilsMessengerCallbackEXT</span> DebugUtilsMessengerCallback = [](
-    <span class="type">VkDebugUtilsMessageSeverityFlagBitsEXT</span> messageSeverity,
-    <span class="type">VkDebugUtilsMessageTypeFlagsEXT</span> messageTypes,
-    <span class="kw">const</span> <span class="type">VkDebugUtilsMessengerCallbackDataEXT</span>* pCallbackData,
-    <span class="kw">void</span>* pUserData)-&gt;<span class="type">VkBool32</span> {
-        std::cout &lt;&lt; std::<span class="type">format</span>(<span class="str">&quot;{}\n\n&quot;</span>, pCallbackData-&gt;pMessage);
+    <span class="type">VkDebugUtilsMessageSeverityFlagBitsEXT</span> <span class="par">messageSeverity</span>,
+    <span class="type">VkDebugUtilsMessageTypeFlagsEXT</span> <span class="par">messageTypes</span>,
+    <span class="kw">const</span> <span class="type">VkDebugUtilsMessengerCallbackDataEXT</span>* <span class="par">pCallbackData</span>,
+    <span class="kw">void</span>* <span class="par">pUserData</span>)-&gt;<span class="type">VkBool32</span> {
+        std::cout &lt;&lt; std::<span class="type">format</span>(<span class="str">&quot;{}\n\n&quot;</span>, <span class="par">pCallbackData</span>-&gt;pMessage);
         <span class="kw">return</span> <span class="mcr">VK_FALSE</span>;
 };
 </pre>
@@ -840,11 +840,11 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
 <pre class="code">
 <span class="type">VkResult</span> <span class="fn">CreateDebugMessenger</span>() {
     <span class="kw">static</span> <span class="type">PFN_vkDebugUtilsMessengerCallbackEXT</span> DebugUtilsMessengerCallback = [](
-        <span class="type">VkDebugUtilsMessageSeverityFlagBitsEXT</span> messageSeverity,
-        <span class="type">VkDebugUtilsMessageTypeFlagsEXT</span> messageTypes,
-        <span class="kw">const</span> <span class="type">VkDebugUtilsMessengerCallbackDataEXT</span>* pCallbackData,
-        <span class="kw">void</span>* pUserData)-&gt;<span class="type">VkBool32</span> {
-            std::cout &lt;&lt; std::<span class="type">format</span>(<span class="str">&quot;{}\n\n&quot;</span>, pCallbackData-&gt;pMessage);
+        <span class="type">VkDebugUtilsMessageSeverityFlagBitsEXT</span> <span class="par">messageSeverity</span>,
+        <span class="type">VkDebugUtilsMessageTypeFlagsEXT</span> <span class="par">messageTypes</span>,
+        <span class="kw">const</span> <span class="type">VkDebugUtilsMessengerCallbackDataEXT</span>* <span class="par">pCallbackData</span>,
+        <span class="kw">void</span>* <span class="par">pUserData</span>)-&gt;<span class="type">VkBool32</span> {
+            std::cout &lt;&lt; std::<span class="type">format</span>(<span class="str">&quot;{}\n\n&quot;</span>, <span class="par">pCallbackData</span>-&gt;pMessage);
             <span class="kw">return</span> <span class="mcr">VK_FALSE</span>;
     };
     <span class="type">VkDebugUtilsMessengerCreateInfoEXT</span> debugUtilsMessengerCreateInfo = {
@@ -1032,13 +1032,13 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
     于是填充<span class="type">graphicsBase</span>::<span class="fn">GetQueueFamilyIndices</span>(...)，依旧是换汤不换药的写法：
 </p>
 <pre class="code">
-<span class="type">VkResult</span> <span class="fn">GetQueueFamilyIndices</span>(<span class="type">VkPhysicalDevice</span> physicalDevice, <span class="kw">bool</span> enableGraphicsQueue, <span class="kw">bool</span> enableComputeQueue, <span class="type">uint32_t</span> (&queueFamilyIndices)[3]) {
+<span class="type">VkResult</span> <span class="fn">GetQueueFamilyIndices</span>(<span class="type">VkPhysicalDevice</span> <span class="par">physicalDevice</span>, <span class="kw">bool</span> <span class="par">enableGraphicsQueue</span>, <span class="kw">bool</span> <span class="par">enableComputeQueue</span>, <span class="type">uint32_t</span> (&<span class="par">queueFamilyIndices</span>)[3]) {
     <span class="type">uint32_t</span> queueFamilyCount = 0;
-    <span class="fn">vkGetPhysicalDeviceQueueFamilyProperties</span>(physicalDevice, &amp;queueFamilyCount, <span class="kw">nullptr</span>);
+    <span class="fn">vkGetPhysicalDeviceQueueFamilyProperties</span>(<span class="par">physicalDevice</span>, &amp;queueFamilyCount, <span class="kw">nullptr</span>);
     <span class="kw">if</span> (!queueFamilyCount)
         <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;
     std::<span class="type">vector</span>&lt;<span class="type">VkQueueFamilyProperties</span>&gt; queueFamilyPropertieses(queueFamilyCount);
-    <span class="fn">vkGetPhysicalDeviceQueueFamilyProperties</span>(physicalDevice, &amp;queueFamilyCount, queueFamilyPropertieses.<span class="fn">data</span>());
+    <span class="fn">vkGetPhysicalDeviceQueueFamilyProperties</span>(<span class="par">physicalDevice</span>, &amp;queueFamilyCount, queueFamilyPropertieses.<span class="fn">data</span>());
     <span class="cmt">/*待后续填充*/</span>
 }
 </pre>
@@ -1048,19 +1048,19 @@ std::<span class="type">vector</span>&lt;VkLayerProperties&gt; availableLayers;
 <p>
     于是遍历所有队列族，从中找出符合条件的队列族的索引。
     <br>
-    遍历过程中将所找到的队列族索引存到<span class="var">queueFamilyIndices</span>中（传入这个引用变量的原因见后文的<span class="fn">DeterminePhysicalDevice</span>(...)），仅在所需的队列族被全部找齐时，覆写<span class="type">graphicsBase</span>成员变量中的<span class="var">queueFamilyIndex_graphics</span>、<span class="var">queueFamilyIndex_presentation</span>、<span class="var">queueFamilyIndex_compute</span>：
+    遍历过程中将所找到的队列族索引存到<span class="par">queueFamilyIndices</span>中（传入这个引用变量的原因见后文的<span class="fn">DeterminePhysicalDevice</span>(...)），仅在所需的队列族被全部找齐时，覆写<span class="type">graphicsBase</span>成员变量中的queueFamilyIndex_graphics、queueFamilyIndex_presentation、queueFamilyIndex_compute：
 </p>
 <pre class="code">
-<span class="kw">auto</span>& [ig, ip, ic] = queueFamilyIndices;<span class="cmt">//分别对应图形、呈现、计算</span>
+<span class="kw">auto</span>& [ig, ip, ic] = <span class="par">queueFamilyIndices</span>; <span class="cmt">//分别对应图形、呈现、计算</span>
 ig = ip = ic = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>;
 <span class="cmt">//遍历所有队列族的索引</span>
 <span class="kw">for</span> (<span class="type">uint32_t</span> i = 0; i &lt; queueFamilyCount; i++) {
     <span class="cmt">/*待后续填充*/</span>
 }
 <span class="cmt">//若任何需要被取得的队列族索引尚未被取得，则函数执行失败</span>
-<span class="kw">if</span> (ig == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp; enableGraphicsQueue ||
+<span class="kw">if</span> (ig == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp; <span class="par">enableGraphicsQueue</span> ||
     ip == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp; surface ||
-    ic == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span></span> &amp;&amp; enableComputeQueue)
+    ic == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span></span> &amp;&amp; <span class="par">enableComputeQueue</span>)
     <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;
 <span class="cmt">//函数执行成功时，将所取得的队列族索引写入到成员变量</span>
 queueFamilyIndex_graphics = ig;
@@ -1079,26 +1079,26 @@ queueFamilyIndex_compute = ic;
     继续填充<span class="type">graphicsBase</span>::<span class="fn">GetQueueFamilyIndices</span>(...)，整个函数如下：
 </p>
 <pre class="code">
-<span class="type">VkResult</span> <span class="fn">GetQueueFamilyIndices</span>(<span class="type">VkPhysicalDevice</span> physicalDevice, <span class="kw">bool</span> enableGraphicsQueue, <span class="kw">bool</span> enableComputeQueue, <span class="type">uint32_t</span> (&queueFamilyIndices)[3]) {
+<span class="type">VkResult</span> <span class="fn">GetQueueFamilyIndices</span>(<span class="type">VkPhysicalDevice</span> <span class="par">physicalDevice</span>, <span class="kw">bool</span> <span class="par">enableGraphicsQueue</span>, <span class="kw">bool</span> <span class="par">enableComputeQueue</span>, <span class="type">uint32_t</span> (&<span class="par">queueFamilyIndices</span>)[3]) {
     <span class="type">uint32_t</span> queueFamilyCount = 0;
-    <span class="fn">vkGetPhysicalDeviceQueueFamilyProperties</span>(physicalDevice, &amp;queueFamilyCount, <span class="kw">nullptr</span>);
+    <span class="fn">vkGetPhysicalDeviceQueueFamilyProperties</span>(<span class="par">physicalDevice</span>, &amp;queueFamilyCount, <span class="kw">nullptr</span>);
     <span class="kw">if</span> (!queueFamilyCount)
         <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;
     std::<span class="type">vector</span>&lt;<span class="type">VkQueueFamilyProperties</span>&gt; queueFamilyPropertieses(queueFamilyCount);
-    <span class="fn">vkGetPhysicalDeviceQueueFamilyProperties</span>(physicalDevice, &amp;queueFamilyCount, queueFamilyPropertieses.<span class="fn">data</span>());
-    <span class="kw">auto</span>& [ig, ip, ic] = queueFamilyIndices;
+    <span class="fn">vkGetPhysicalDeviceQueueFamilyProperties</span>(<span class="par">physicalDevice</span>, &amp;queueFamilyCount, queueFamilyPropertieses.<span class="fn">data</span>());
+    <span class="kw">auto</span>& [ig, ip, ic] = <span class="par">queueFamilyIndices</span>;
     ig = ip = ic = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>;
     <span class="kw">for</span> (<span class="type">uint32_t</span> i = 0; i &lt; queueFamilyCount; i++) {
         <span class="cmt">//这三个VkBool32变量指示是否可获取（指应该被获取且能获取）相应队列族索引</span>
         <span class="type">VkBool32</span>
             <span class="cmt">//只在enableGraphicsQueue为true时获取支持图形操作的队列族的索引</span>
-            supportGraphics = enableGraphicsQueue &amp;&amp; queueFamilyPropertieses[i].queueFlags &amp; <span class="enum">VK_QUEUE_GRAPHICS_BIT</span>,
+            supportGraphics = <span class="par">enableGraphicsQueue</span> &amp;&amp; queueFamilyPropertieses[i].queueFlags &amp; <span class="enum">VK_QUEUE_GRAPHICS_BIT</span>,
             supportPresentation = <span class="kw">false</span>,
             <span class="cmt">//只在enableComputeQueue为true时获取支持计算的队列族的索引</span>
-            supportCompute = enableComputeQueue &amp;&amp; queueFamilyPropertieses[i].queueFlags &amp; <span class="enum">VK_QUEUE_COMPUTE_BIT</span>;
+            supportCompute = <span class="par">enableComputeQueue</span> &amp;&amp; queueFamilyPropertieses[i].queueFlags &amp; <span class="enum">VK_QUEUE_COMPUTE_BIT</span>;
             <span class="cmt">//只在创建了window surface时获取支持呈现的队列族的索引</span>
         <span class="kw">if</span> (surface)
-            <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfaceSupportKHR</span>(physicalDevice, i, surface, &amp;supportPresentation)) {
+            <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfaceSupportKHR</span>(<span class="par">physicalDevice</span>, i, surface, &amp;supportPresentation)) {
                 std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to determine if the queue family supports presentation!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
                 <span class="kw">return</span> result;
             }
@@ -1128,9 +1128,9 @@ queueFamilyIndex_compute = ic;
             ic == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
             ic = i;
     }
-    <span class="kw">if</span> (ig == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp; enableGraphicsQueue ||
+    <span class="kw">if</span> (ig == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp; <span class="par">enableGraphicsQueue</span> ||
         ip == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp; surface ||
-        ic == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span></span> &amp;&amp; enableComputeQueue)
+        ic == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span></span> &amp;&amp; <span class="par">enableComputeQueue</span>)
         <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;
     queueFamilyIndex_graphics = ig;
     queueFamilyIndex_presentation = ip;
@@ -1156,9 +1156,9 @@ queueFamilyIndex_compute = ic;
     然后填充<span class="type">graphicsBase</span>::<span class="fn">DeterminePhysicalDevice</span>(...)，在该函数中对<span class="fn">GetQueueFamilyIndices</span>(...)做进一步包装，为每个物理设备保存一份所需队列族索引的组合：
 </p>
 <pre class="code">
-<span class="type">VkResult</span> <span class="fn">DeterminePhysicalDevice</span>(<span class="type">uint32_t</span> deviceIndex = 0, <span class="kw"></span>bool</span> enableGraphicsQueue = <span class="kw">true</span>, <span class="kw">bool</span> enableComputeQueue = <span class="kw">true</span>) {
+<span class="type">VkResult</span> <span class="fn">DeterminePhysicalDevice</span>(<span class="type">uint32_t</span> <span class="par">deviceIndex</span> = 0, <span class="kw"></span>bool</span> <span class="par">enableGraphicsQueue</span> = <span class="kw">true</span>, <span class="kw">bool</span> <span class="par">enableComputeQueue</span> = <span class="kw">true</span>) {
     <span class="cmt">//定义一个特殊值用于标记一个队列族索引已被找过但未找到</span>
-    <span class="kw">static constexpr</span> <span class="type">uint32_t</span> notFound = <span class="mcr">INT32_MAX</span>;<span class="cmt">//== VK_QUEUE_FAMILY_IGNORED & INT32_MAX</span>
+    <span class="kw">static constexpr</span> <span class="type">uint32_t</span> notFound = <span class="mcr">INT32_MAX</span>; <span class="cmt">//== VK_QUEUE_FAMILY_IGNORED & INT32_MAX</span>
     <span class="cmt">//定义队列族索引组合的结构体</span>
     <span class="kw">struct</span> queueFamilyIndexCombination {
         <span class="type">uint32_t</span> graphics = <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>;
@@ -1167,30 +1167,30 @@ queueFamilyIndex_compute = ic;
     };
     <span class="cmt">//queueFamilyIndexCombinations用于为各个物理设备保存一份队列族索引组合</span>
     <span class="kw">static</span> std::<span class="type">vector</span>&lt;<span class="type">queueFamilyIndexCombination</span>&gt; queueFamilyIndexCombinations(availablePhysicalDevices.<span class="fn">size</span>());
-    <span class="kw">auto</span>&amp; [ig, ip, ic] = queueFamilyIndexCombinations[deviceIndex];
+    <span class="kw">auto</span>&amp; [ig, ip, ic] = queueFamilyIndexCombinations[<span class="par">deviceIndex</span>];
 
     <span class="cmt">//如果有任何队列族索引已被找过但未找到，返回VK_RESULT_MAX_ENUM</span>
-    <span class="kw">if</span> (ig == notFound &amp;&amp; enableGraphicsQueue ||
+    <span class="kw">if</span> (ig == notFound &amp;&amp; <span class="par">enableGraphicsQueue</span> ||
         ip == notFound &amp;&amp; surface ||
-        ic == notFound &amp;&amp; enableComputeQueue)
+        ic == notFound &amp;&amp; <span class="par">enableComputeQueue</span>)
         <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;
 
     <span class="cmt">//如果有任何队列族索引应被获取但还未被找过</span>
-    <span class="kw">if</span> (ig == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp; enableGraphicsQueue ||
+    <span class="kw">if</span> (ig == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp; <span class="par">enableGraphicsQueue</span> ||
         ip == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp; surface ||
-        ic == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp; enableComputeQueue) {
+        ic == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span> &amp;&amp; <span class="par">enableComputeQueue</span>) {
         <span class="type">uint32_t</span> indices[3];
-        <span class="type">VkResult</span> result = <span class="fn">GetQueueFamilyIndices</span>(availablePhysicalDevices[deviceIndex], enableGraphicsQueue, enableComputeQueue, indices);
+        <span class="type">VkResult</span> result = <span class="fn">GetQueueFamilyIndices</span>(availablePhysicalDevices[<span class="par">deviceIndex</span>], <span class="par">enableGraphicsQueue</span>, <span class="par">enableComputeQueue</span>, indices);
         <span class="cmt">//若GetQueueFamilyIndices(...)返回VK_SUCCESS或VK_RESULT_MAX_ENUM（vkGetPhysicalDeviceSurfaceSupportKHR(...)执行成功但没找齐所需队列族），</span>
         <span class="cmt">//说明对所需队列族索引已有结论，保存结果到queueFamilyIndexCombinations[deviceIndex]中相应变量</span>
         <span class="cmt">//应被获取的索引若仍为VK_QUEUE_FAMILY_IGNORED，说明未找到相应队列族，VK_QUEUE_FAMILY_IGNORED（~0u）与INT32_MAX做位与得到的数值等于notFound</span>
         <span class="kw">if</span> (result == <span class="enum">VK_SUCCESS</span> ||
             result == <span class="enum">VK_RESULT_MAX_ENUM</span>) {
-            <span class="kw">if</span> (enableGraphicsQueue)
+            <span class="kw">if</span> (<span class="par">enableGraphicsQueue</span>)
                 ig = indices[0] &amp; <span class="mcr">INT32_MAX</span>;
             <span class="kw">if</span> (surface)
                 ip = indices[1] &amp; <span class="mcr">INT32_MAX</span>;
-            <span class="kw">if</span> (enableComputeQueue)
+            <span class="kw">if</span> (<span class="par">enableComputeQueue</span>)
                 ic = indices[2] &amp; <span class="mcr">INT32_MAX</span>;
         }
         <span class="cmt">//如果GetQueueFamilyIndices(...)执行失败，return</span>
@@ -1200,18 +1200,18 @@ queueFamilyIndex_compute = ic;
 
     <span class="cmt">//若以上两个if分支皆不执行，则说明所需的队列族索引皆已被获取，从queueFamilyIndexCombinations[deviceIndex]中取得索引</span>
     <span class="kw">else</span> {
-        queueFamilyIndex_graphics = enableGraphicsQueue ? ig : <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>;
+        queueFamilyIndex_graphics = <span class="par">enableGraphicsQueue</span> ? ig : <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>;
         queueFamilyIndex_presentation = surface ? ip : <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>;
-        queueFamilyIndex_compute = enableComputeQueue ? ic : <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>;
+        queueFamilyIndex_compute = <span class="par">enableComputeQueue</span> ? ic : <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>;
     }
-    physicalDevice = availablePhysicalDevices[deviceIndex];
+    physicalDevice = availablePhysicalDevices[<span class="par">deviceIndex</span>];
     <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
 }
 </pre>
 <ul>
     <li>
         <p>
-            我打算之后在<span class="type">graphicsBase</span>::<span class="fn">CreateDevice</span>(...)中会判断队列族索引是否为<span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>以确定是否要创建相应队列，因此这里应当将不需要的队列族索引覆写为<span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>。
+            我打算之后在<span class="type">graphicsBase</span>::<span class="fn">CreateDevice</span>(...)中判断队列族索引是否为<span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>以确定是否要创建相应队列，因此这里应当将不需要的队列族索引覆写为<span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>。
         </p>
     </li>
 </ul>
@@ -1221,25 +1221,25 @@ queueFamilyIndex_compute = ic;
     如果你程序的目标平台一定能跑DirectX12的图形程序（能装Win11的电脑皆在此列，嘛不是老古董电脑就没问题），那么你可以大胆假定一定会有这么一个队列族，以上两个函数就可以简化为：
 </p>
 <pre class="code">
-<span class="type">VkResult</span> <span class="fn">GetQueueFamilyIndices</span>(<span class="type">VkPhysicalDevice</span> physicalDevice) {
+<span class="type">VkResult</span> <span class="fn">GetQueueFamilyIndices</span>(<span class="type">VkPhysicalDevice</span> <span class="par">physicalDevice</span>) {
     <span class="type">uint32_t</span> queueFamilyCount = 0;
-    <span class="fn">vkGetPhysicalDeviceQueueFamilyProperties</span>(physicalDevice, &amp;queueFamilyCount, <span class="kw">nullptr</span>);
+    <span class="fn">vkGetPhysicalDeviceQueueFamilyProperties</span>(<span class="par">physicalDevice</span>, &amp;queueFamilyCount, <span class="kw">nullptr</span>);
     <span class="kw">if</span> (!queueFamilyCount)
         <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;
     std::<span class="type">vector</span>&lt;<span class="type">VkQueueFamilyProperties</span>&gt; queueFamilyPropertieses(queueFamilyCount);
-    <span class="fn">vkGetPhysicalDeviceQueueFamilyProperties</span>(physicalDevice, &amp;queueFamilyCount, queueFamilyPropertieses.<span class="fn">data</span>());
+    <span class="fn">vkGetPhysicalDeviceQueueFamilyProperties</span>(<span class="par">physicalDevice</span>, &amp;queueFamilyCount, queueFamilyPropertieses.<span class="fn">data</span>());
     <span class="kw">for</span> (<span class="type">uint32_t</span> i = 0; i &lt; queueFamilyCount; i++) {
         <span class="type">VkBool32</span>
             supportGraphics = queueFamilyPropertieses[i].queueFlags &amp; <span class="enum">VK_QUEUE_GRAPHICS_BIT</span>,
             supportPresentation = <span class="kw">false</span>,
             supportCompute = queueFamilyPropertieses[i].queueFlags &amp; <span class="enum">VK_QUEUE_COMPUTE_BIT</span>;
         <span class="kw">if</span> (surface)
-            <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfaceSupportKHR</span>(physicalDevice, i, surface, &amp;supportPresentation)) {
+            <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfaceSupportKHR</span>(<span class="par">physicalDevice</span>, i, surface, &amp;supportPresentation)) {
                 std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to determine if the queue family supports presentation!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
                 <span class="kw">return</span> result;
             }
         <span class="kw">if</span> (supportGraphics &amp;&amp; supportCompute &amp;&amp;
-            (!surface || supportPresentation)) {<span class="cmt">//短路执行，需要呈现的时候才需要判断supportPresentation</span>
+            (!surface || supportPresentation)) { <span class="cmt">//短路执行，需要呈现的时候才需要判断supportPresentation</span>
             queueFamilyIndex_graphics = queueFamilyIndex_compute = i;
             <span class="kw">if</span> (surface)
                 queueFamilyIndex_presentation = i;
@@ -1248,36 +1248,36 @@ queueFamilyIndex_compute = ic;
     }
     <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;
 }
-<span class="type">VkResult</span> <span class="fn">DeterminePhysicalDevice</span>(<span class="type">uint32_t</span> deviceIndex = 0) {
+<span class="type">VkResult</span> <span class="fn">DeterminePhysicalDevice</span>(<span class="type">uint32_t</span> <span class="par">deviceIndex</span> = 0) {
     <span class="cmt">//定义一个特殊值用于标记一个队列族索引已被找过但未找到</span>
-    <span class="kw">static constexpr</span> <span class="type">uint32_t</span> notFound = <span class="mcr">INT32_MAX</span>;<span class="cmt">//== VK_QUEUE_FAMILY_IGNORED & INT32_MAX</span>
+    <span class="kw">static constexpr</span> <span class="type">uint32_t</span> notFound = <span class="mcr">INT32_MAX</span>; <span class="cmt">//== VK_QUEUE_FAMILY_IGNORED & INT32_MAX</span>
     <span class="cmt">//queueFamilyIndices用于为各个物理设备保存一份队列族索引</span>
     <span class="kw">static</span> std::<span class="type">vector</span>&lt;<span class="type">uint32_t</span>&gt; queueFamilyIndices(availablePhysicalDevices.<span class="fn">size</span>());
 
     <span class="cmt">//如果队列族索引已被找过但未找到，返回VK_RESULT_MAX_ENUM</span>
-    <span class="kw">if</span> (queueFamilyIndices[deviceIndex] == notFound)
+    <span class="kw">if</span> (queueFamilyIndices[<span class="par">deviceIndex</span>] == notFound)
         <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;
 
     <span class="cmt">//如果队列族索引应被获取但还未被找过</span>
-    <span class="kw">if</span> (queueFamilyIndices[deviceIndex] == VK_QUEUE_FAMILY_IGNORED) {
-        <span class="type">VkResult</span> result = <span class="fn">GetQueueFamilyIndices</span>(availablePhysicalDevices[deviceIndex]);
+    <span class="kw">if</span> (queueFamilyIndices[<span class="par">deviceIndex</span>] == <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>) {
+        <span class="type">VkResult</span> result = <span class="fn">GetQueueFamilyIndices</span>(availablePhysicalDevices[<span class="par">deviceIndex</span>]);
         <span class="cmt">//若GetQueueFamilyIndices(...)返回VK_SUCCESS或VK_RESULT_MAX_ENUM（vkGetPhysicalDeviceSurfaceSupportKHR(...)执行成功但没找齐所需队列族），</span>
         <span class="cmt">//说明对所需队列族索引已有结论，保存结果到queueFamilyIndexCombinations[deviceIndex]中相应变量</span>
         <span class="kw">if</span> (result) {
             <span class="kw">if</span> (result == <span class="enum">VK_RESULT_MAX_ENUM</span>)
-                queueFamilyIndices[deviceIndex] = notFound;
+                queueFamilyIndices[<span class="par">deviceIndex</span>] = notFound;
             <span class="kw">return</span> result;
         }
         <span class="kw">else</span>
-            queueFamilyIndices[deviceIndex] = queueFamilyIndex_graphics;
+            queueFamilyIndices[<span class="par">deviceIndex</span>] = queueFamilyIndex_graphics;
     }
 
     <span class="cmt">//若以上两个if分支皆不执行，则说明队列族索引已被获取，从queueFamilyIndices[deviceIndex]取得索引</span>
     <span class="kw">else</span> {
-        queueFamilyIndex_graphics = queueFamilyIndex_compute = queueFamilyIndices[deviceIndex];
-        queueFamilyIndex_presentation = surface ? queueFamilyIndices[deviceIndex] : <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>;
+        queueFamilyIndex_graphics = queueFamilyIndex_compute = queueFamilyIndices[<span class="par">deviceIndex</span>];
+        queueFamilyIndex_presentation = surface ? queueFamilyIndices[<span class="par">deviceIndex</span>] : <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>;
     }
-    physicalDevice = availablePhysicalDevices[deviceIndex];
+    physicalDevice = availablePhysicalDevices[<span class="par">deviceIndex</span>];
     <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
 }
 </pre></section>
@@ -1391,7 +1391,7 @@ queueFamilyIndex_compute = ic;
     于是乎，首先在<span class="type">graphicsBase</span>::<span class="fn">CreateDevice</span>(...)中为所需的队列族填写相应的<a href="https://renderdoc.org/vkspec_chunked/chap5.html#VkDeviceQueueCreateInfo">VkDeviceQueueCreateInfo</a>，并记录所需队列的个数：
 </p>
 <pre class="code">
-<span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="type">VkDeviceCreateFlags</span> flags = 0) {
+<span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="type">VkDeviceCreateFlags</span> <span class="par">flags</span> = 0) {
     <span class="kw">float</span> queuePriority = 1.f;
     <span class="type">VkDeviceQueueCreateInfo</span> queueCreateInfos[3] = {
         {
@@ -1451,7 +1451,7 @@ queueFamilyIndex_compute = ic;
 <pre class="code">
 <span class="type">VkDeviceCreateInfo</span> deviceCreateInfo = {
     .sType = <span class="enum">VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO</span>,
-    .flags = flags,
+    .flags = <span class="par">flags</span>,
     .queueCreateInfoCount = queueCreateInfoCount,
     .pQueueCreateInfos = queueCreateInfos,
     .enabledExtensionCount = <span class="type">uint32_t</span>(deviceExtensions.<span class="fn">size</span>()),
@@ -1529,7 +1529,7 @@ queueFamilyIndex_compute = ic;
     成功创建逻辑设备后，已没有必要变更物理设备，于是用<a href="https://renderdoc.org/vkspec_chunked/chap5.html#vkGetPhysicalDeviceProperties">vkGetPhysicalDeviceProperties</a>(...)获取物理设备属性，用<a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkGetPhysicalDeviceMemoryProperties">vkGetPhysicalDeviceMemoryProperties</a>(...)获取物理设备内存属性，整个<span class="type">graphicsBase</span>::<span class="fn">CreateDevice</span>()函数如下：
 </p>
 <pre class="code">
-<span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="type">VkDeviceCreateFlags</span> flags = 0) {
+<span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="type">VkDeviceCreateFlags</span> <span class="par">flags</span> = 0) {
     <span class="kw">float</span> queuePriority = 1.f;
     <span class="type">VkDeviceQueueCreateInfo</span> queueCreateInfos[3] = {
         {
@@ -1558,7 +1558,7 @@ queueFamilyIndex_compute = ic;
     <span class="fn">vkGetPhysicalDeviceFeatures</span>(physicalDevice, &amp;physicalDeviceFeatures);
     <span class="type">VkDeviceCreateInfo</span> deviceCreateInfo = {
         .sType = <span class="enum">VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO</span>,
-        .flags = flags,
+        .flags = <span class="par">flags</span>,
         .queueCreateInfoCount = queueCreateInfoCount,
         .pQueueCreateInfos = queueCreateInfos,
         .enabledExtensionCount = <span class="type">uint32_t</span>(deviceExtensions.<span class="fn">size</span>()),
@@ -1596,7 +1596,7 @@ queueFamilyIndex_compute = ic;
     在<span class="fn">InitializeWindow</span>(...)中按顺序调用本节中填充的函数：
 </p>
 <pre class="code">
-<span class="kw">bool</span> <span class="fn">InitializeWindow</span>(<span class="type">VkExtent2D</span> size, <span class="kw">bool</span> fullScreen = <span class="kw">false</span>, <span class="kw">bool</span> isResizable = <span class="kw">true</span>, <span class="kw">bool</span> limitFrameRate = <span class="kw">true</span>) {
+<span class="kw">bool</span> <span class="fn">InitializeWindow</span>(<span class="type">VkExtent2D</span> <span class="par">size</span>, <span class="kw">bool</span> <span class="par">fullScreen</span> = <span class="kw">false</span>, <span class="kw">bool</span> <span class="par">isResizable</span> = <span class="kw">true</span>, <span class="kw">bool</span> <span class="par">limitFrameRate</span> = <span class="kw">true</span>) {
     <span class="cmt">//using命名空间</span>
     <span class="kw">using namespace</span> vulkan;
 
@@ -1605,12 +1605,12 @@ queueFamilyIndex_compute = ic;
         <span class="kw">return false</span>;
     }
     <span class="fn">glfwWindowHint</span>(<span class="mcr">GLFW_CLIENT_API</span>, <span class="mcr">GLFW_NO_API</span>);
-    <span class="fn">glfwWindowHint</span>(<span class="mcr">GLFW_RESIZABLE</span>, isResizable);
+    <span class="fn">glfwWindowHint</span>(<span class="mcr">GLFW_RESIZABLE</span>, <span class="par">isResizable</span>);
     pMonitor = <span class="fn">glfwGetPrimaryMonitor</span>();
     <span class="kw">const</span> <span class="type">GLFWvidmode</span>* pMode = <span class="fn">glfwGetVideoMode</span>(pMonitor);
-    pWindow = fullScreen ?
-        <span class="fn">glfwCreateWindow</span>(size.width, size.height, windowTitle, pMonitor, <span class="kw">nullptr</span>) :
-        <span class="fn">glfwCreateWindow</span>(size.width, size.height, windowTitle, <span class="kw">nullptr</span>, <span class="kw">nullptr</span>);
+    pWindow = <span class="par">fullScreen</span> ?
+        <span class="fn">glfwCreateWindow</span>(pMode-&gt;width, pMode-&gt;height, windowTitle, pMonitor, <span class="kw">nullptr</span>) :
+        <span class="fn">glfwCreateWindow</span>(<span class="par">size</span>.width, <span class="par">size</span>.height, windowTitle, <span class="kw">nullptr</span>, <span class="kw">nullptr</span>);
     <span class="kw">if</span> (!pWindow) {
         std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ]\nFailed to create a glfw window!\n&quot;</span>);
         <span class="fn">glfwTerminate</span>();

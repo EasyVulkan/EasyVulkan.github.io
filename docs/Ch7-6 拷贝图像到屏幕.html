@@ -431,7 +431,7 @@
 <ul>
     <li>
         <p>
-            这里为了让代码不太难看，使用了<span class="fn">Between_Closed</span>(...)来替代先前相同的代码逻辑，该函数见示例代码中的<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch7/EasyVKStart.h#L71">EasyVKStart.h</a>。
+            这里为了让代码不太难看，使用了<span class="fn">Between_Closed</span>&lt;<span class="type">int32_t</span>&gt;(...)来替代先前相同的代码逻辑，该函数见示例代码中的<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch7/EasyVKStart.h#L75">EasyVKStart.h</a>。
         </p>
     </li>
 </ul>
@@ -736,14 +736,28 @@ commandBuffer.<span class="fn">End</span>();
     </li>
 </ul>
 <p>
-    于是，拷贝前的管线屏障旨在要求：先于该屏障的命令中由<span class="var">imb_from.stage</span>所指示的阶段（第一个同步域），必须在该屏障后的<span class="fn">vkCmdCopyBufferToImage</span>(...)命令执行到<span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>阶段（第二个同步域）前完成，即拷贝发生前完成。
-    <br>
-    以防你没有仔细阅读<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#pipeline-barrier">管线屏障相关的说明</a>，再次强调，简而言之，管线屏障注明其前后的命令在执行时，有哪些阶段不能重叠。
-    <br>
-    图像的内存布局会在两个同步域间，由<span class="var">imb_from.layout</span>转到<span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span>。
-    <br>
-    此处的内存屏障还应当确保传输命令的写入操作（<span class="enum">VK_ACCESS_TRANSFER_WRITE_BIT</span>），在由<span class="var">imb_from.access</span>指明的、先前的写入操作的结果的基础上发生。
+    于是，拷贝前的管线屏障旨在要求：
 </p>
+<ul>
+    <li>
+        <p>
+            先于该屏障的命令中由<span class="par">imb_from.stage</span>所指示的阶段（第一个同步域），必须在该屏障后的<span class="fn">vkCmdCopyBufferToImage</span>(...)命令执行到<span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>阶段（第二个同步域）前完成，即拷贝发生前完成。
+            <br>
+            （以防你没有仔细阅读<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#pipeline-barrier">管线屏障相关的说明</a>，再次强调，<strong>简而言之，管线屏障注明其前后的命令在执行时，有哪些阶段不能重叠</strong>）
+        </p>
+    </li>
+    <li>
+        <p>
+            图像的内存布局在两个同步域间，由<span class="par">imb_from.layout</span>转到<span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span>。
+        </p>
+    </li>
+    <li>
+        <p>
+            附带的内存屏障：传输命令的写入操作（<span class="enum">VK_ACCESS_TRANSFER_WRITE_BIT</span>），在由<span class="par">imb_from.access</span>指明的、先前的写入操作的结果的基础上发生。
+        </p>
+    </li>
+</p>
+</ul>
 <p>
     于是拷贝前的管线屏障为：
 </p>
@@ -878,7 +892,7 @@ commandBuffer.<span class="fn">End</span>();
     </li>
     <li>
         <p>
-            若bufferRowLength和bufferImageHeight之一为0，等效于两者等于imageExtent指定的长宽，则复制自缓冲区的图像数据之间为紧密排列，而从图像复制进缓冲区的数据之间则不会补足空余字节。
+            若bufferRowLength和bufferImageHeight至少其中之一为0，等效于两者等于imageExtent指定的长宽，则复制自缓冲区的图像数据之间为紧密排列，而从图像复制进缓冲区的数据之间则不会补足空余字节。
         </p>
     </li>
 </ul>

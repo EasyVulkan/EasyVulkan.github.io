@@ -428,7 +428,7 @@
 </p>
 <pre class="code">
 <span class="kw">class</span> <span class="type">commandBuffer</span> {
-    <span class="kw">friend class</span> <span class="type">commandPool</span>;<span class="cmt">//封装命令池的commandPool类负责分配和释放命令缓冲区，需要让其能访问私有成员handle</span>
+    <span class="kw">friend class</span> <span class="type">commandPool</span>; <span class="cmt">//封装命令池的commandPool类负责分配和释放命令缓冲区，需要让其能访问私有成员handle</span>
     <span class="type">VkCommandBuffer</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
 <span class="kw">public</span>:
     <span class="fn">commandBuffer</span>() = <span class="kw">default</span>;

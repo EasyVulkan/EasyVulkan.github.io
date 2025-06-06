@@ -181,8 +181,8 @@
     <span class="type">VkResult</span> result;
 <span class="kw">public</span>:
     <span class="kw">static</span> <span class="kw">void</span>(*callback_throw)(<span class="type">VkResult</span>);
-    <span class="fn">result_t</span>(<span class="type">VkResult</span> result) :result(result) {}
-    <span class="fn">result_t</span>(<span class="type">result_t</span>&amp;&amp; other) <span class="kw">noexcept</span> :result(other.result) { other.result = <span class="enum">VK_SUCCESS</span>; }
+    <span class="fn">result_t</span>(<span class="type">VkResult</span> <span class="par">result</span>) :result(<span class="par">result</span>) {}
+    <span class="fn">result_t</span>(<span class="type">result_t</span>&amp;&amp; <span class="par">other</span>) <span class="kw">noexcept</span> :result(<span class="par">other</span>.result) { <span class="par">other</span>.result = <span class="enum">VK_SUCCESS</span>; }
     <span class="fn">~result_t</span>() <span class="kw">noexcept</span>(<span class="kw">false</span>) {
         <span class="kw">if</span> (<span class="type">uint32_t</span>(result) &lt; <span class="enum">VK_RESULT_MAX_ENUM</span>)
             <span class="kw">return</span>;
@@ -199,10 +199,10 @@
 <span class="kw">inline</span> <span class="kw">void</span>(*<span class="type">result_t</span>::callback_throw)(<span class="type">VkResult</span>);
 
 <span class="cmt">//情况2：若抛弃函数返回值，让编译器发出警告</span>
-<span class="pragma">#elif defined</span> <span class="mcr">VK_RESULT_NODISCARD</span>
+<span class="pragma">#elifdef</span> <span class="mcr">VK_RESULT_NODISCARD</span>
 <span class="kw">struct</span> [[nodiscard]] <span class="type">result_t</span> {
     <span class="type">VkResult</span> result;
-    <span class="fn">result_t</span>(<span class="type">VkResult</span> result) :result(result) {}
+    <span class="fn">result_t</span>(<span class="type">VkResult</span> <span class="par">result</span>) :result(<span class="par">result</span>) {}
     <span class="kw">operator</span> <span class="type">VkResult</span>() <span class="kw">const</span> { <span class="kw">return</span> result; }
 };
 <span class="cmt">//在本文件中关闭弃值提醒（因为我懒得做处理）</span>
@@ -220,12 +220,12 @@
 <ul>
     <li>
         <p>
-            <span class="var">callback_throw</span>是回调函数的指针，因为光是抛出异常可能不够，你可能想在抛出异常前干某些事，比如输出错误代码（不过光有错误代码难以知道问题出在哪，这一点会在本节的后文中得到解决）。
+            callback_throw是回调函数的指针，因为光是抛出异常可能不够，你可能想在抛出异常前干某些事，比如输出错误代码（不过光有错误代码难以知道问题出在哪，这一点会在本节的后文中得到解决）。
         </p>
     </li>
     <li>
         <p>
-            当一个<span class="type">result_t</span>中的<span class="var">result</span>被处理时，由于<span class="type">result_t</span>无法被直接转到<span class="kw">bool</span>或整型，必定会执行<span class="kw">operator</span> <span class="type">VkResult</span>()，该函数返回原先保有的<span class="var">result</span>，并将<span class="var">result</span>置为<span class="enum">VK_SUCCESS</span>，这意味着，若一个<span class="type">result_t</span>类型对象在析构时仍旧保有一个错误代码，那么说明错误没有得到任何处理，抛出异常。
+            当一个<span class="type">result_t</span>中的result被处理时，由于<span class="type">result_t</span>无法被直接转到<span class="kw">bool</span>或整型，必定会执行<span class="kw">operator</span> <span class="type">VkResult</span>()，该函数返回原先保有的result的值，并将result置为<span class="enum">VK_SUCCESS</span>。这意味着：若一个<span class="type">result_t</span>类型对象在析构时仍旧保有一个错误代码，那么说明错误没有得到任何处理，抛出异常。
         </p>
     </li>
 </ul>
@@ -274,14 +274,14 @@
     <span class="type">VkCommandPool</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
 <span class="kw">public</span>:
     <span class="cmt">//省略其他函数</span>
-    <span class="kw">void</span> <span class="fn">FreeBuffers</span>(<span class="type">uint32_t</span> commandBufferCount, <span class="kw">const</span> <span class="type">VkCommandBuffer</span>* pCommandBuffers) <span class="kw">const</span> {
-        <span class="fn">vkFreeCommandBuffers</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, commandBufferCount, pCommandBuffers);
-        <span class="fn">memset</span>(pCommandBuffers, 0, commandBufferCount * <span class="kw">sizeof</span>(<span class="type">VkCommandPool</span>));
+    <span class="kw">void</span> <span class="fn">FreeBuffers</span>(<span class="type">uint32_t</span> <span class="par">commandBufferCount</span>, <span class="kw">const</span> <span class="type">VkCommandBuffer</span>* <span class="par">pCommandBuffers</span>) <span class="kw">const</span> {
+        <span class="fn">vkFreeCommandBuffers</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, <span class="par">commandBufferCount</span>, <span class="par">pCommandBuffers</span>);
+        <span class="fn">memset</span>(<span class="par">pCommandBuffers</span>, 0, <span class="par">commandBufferCount</span> * <span class="kw">sizeof</span>(<span class="type">VkCommandPool</span>));
     }
 };
 </pre>
 <p>
-    这里的问题在于，即便你只要释放一个命令缓冲区，你也不得不对其取地址并将<span class="var">commandBufferCount</span>指定为1。
+    这里的问题在于，即便你只要释放一个命令缓冲区，你也不得不对其取地址并将<span class="par">commandBufferCount</span>指定为1。
     <br>
     编程中常用的一种技巧是，把一系列相关参数放到一个类或结构体中，并为其提供多种构造器，这样就能以多种方式指定这些参数。
     <br>
@@ -296,31 +296,55 @@
     <span class="cmt">//从空参数构造，count为0</span>
     <span class="fn">arrayRef</span>() = <span class="kw">default</span>;
     <span class="cmt">//从单个对象构造，count为1</span>
-    <span class="fn">arrayRef</span>(<span class="type">T</span>&amp; data) :pArray(&amp;data), count(1) {}
+    <span class="fn">arrayRef</span>(<span class="type">T</span>&amp; <span class="par">data</span>) :pArray(&amp;<span class="par">data</span>), count(1) {}
     <span class="cmt">//从顶级数组构造</span>
-    <span class="kw">template</span>&lt;<span class="type">size_t</span> elementCount&gt;
-    <span class="fn">arrayRef</span>(<span class="type">T</span>(&amp;data)[elementCount]) : pArray(data), count(elementCount) {}
+    <span class="kw">template</span>&lt;<span class="type">size_t</span> ElementCount&gt;
+    <span class="fn">arrayRef</span>(<span class="type">T</span>(&amp;<span class="par">data</span>)[ElementCount]) : pArray(<span class="par">data</span>), count(ElementCount) {}
     <span class="cmt">//从指针和元素个数构造</span>
-    <span class="fn">arrayRef</span>(<span class="type">T</span>* pData, <span class="type">size_t</span> elementCount) :pArray(pData), count(elementCount) {}
-    <span class="cmt">//复制构造，若T带const修饰，兼容从对应的无const修饰版本的arrayRef构造</span>
-    <span class="cmt">//24.01.07 修正因复制粘贴产生的typo：从pArray(&other)改为pArray(other.Pointer())</span>
-    <span class="fn">arrayRef</span>(<span class="kw">const</span> <span class="type">arrayRef</span>&lt;std::<span class="type">remove_const_t</span>&lt;<span class="type">T</span>&gt;&gt;&amp; other) :pArray(other.<span class="fn">Pointer</span>()), count(other.<span class="fn">Count</span>()) {}
+    <span class="fn">arrayRef</span>(<span class="type">T</span>* <span class="par">pData</span>, <span class="type">size_t</span> <span class="par">elementCount</span>) :pArray(<span class="par">pData</span>), count(<span class="par">elementCount</span>) {}
+    <span class="cmt">//若T带const修饰，兼容从对应的无const修饰版本的arrayRef构造</span>
+    <span class="fn">arrayRef</span>(<span class="kw">const</span> <span class="type">arrayRef</span>&lt;std::<span class="type">remove_const_t</span>&lt;<span class="type">T</span>&gt;&gt;&amp; <span class="par">other</span>) :pArray(<span class="par">other</span>.<span class="fn">Pointer</span>()), count(<span class="par">other</span>.<span class="fn">Count</span>()) {}
     <span class="cmt">//Getter</span>
     <span class="type">T</span>* <span class="fn">Pointer</span>() <span class="kw">const</span> { <span class="kw">return</span> pArray; }
     <span class="type">size_t</span> <span class="fn">Count</span>() <span class="kw">const</span> { <span class="kw">return</span> count; }
     <span class="cmt">//Const Function</span>
-    <span class="type">T</span>&amp; <span class="kw">operator</span>[](<span class="type">size_t</span> index) <span class="kw">const</span> { <span class="kw">return</span> pArray[index]; }
+    <span class="type">T</span>&amp; <span class="kw">operator</span>[](<span class="type">size_t</span> <span class="par">index</span>) <span class="kw">const</span> { <span class="kw">return</span> pArray[<span class="par">index</span>]; }
     <span class="type">T</span>* <span class="fn">begin</span>() <span class="kw">const</span> { <span class="kw">return</span> pArray; }
     <span class="type">T</span>* <span class="fn">end</span>() <span class="kw">const</span> { <span class="kw">return</span> pArray + count; }
     <span class="cmt">//Non-const Function</span>
-    <span class="cmt">//禁止复制/移动赋值</span>
+    <span class="cmt">//禁止复制/移动赋值（arrayRef旨在模拟“对数组的引用”，用处归根结底只是传参，故使其同C++引用的底层地址一样，防止初始化后被修改）</span>
     <span class="type">arrayRef</span>&amp; <span class="fn">operator=</span>(<span class="kw">const</span> <span class="type">arrayRef</span>&amp;) = <span class="kw">delete</span>;
 };
 </pre>
+<p>
+    25.08.05更新：
+    <br>
+    以上代码中<span class="type">arrayRef</span>不支持直接从底层内存连续的标准库容器构造，而std::<span class="type">vector</span>又用得尤其多。
+    <br>
+    如果你希望实现直接从符合要求的标准库容器构造，删去上文中“从顶级数组构造”的构造器，用以下代码替代：
+</p>
+<pre class="code">
+<span class="kw">template</span>&lt;<span class="kw">typename</span> <span class="type">R</span>&gt;
+<span class="fn">arrayRef</span>(<span class="type">R</span>&amp;&amp; <span class="par">range</span>) <span class="kw">requires</span> <span class="kw">requires</span>(<span class="type">R</span> <span class="par">r</span>) {
+    <span class="kw">requires</span> std::ranges::<span class="cncpt">contiguous_range</span>&lt;<span class="type">R</span>&gt;;
+    <span class="kw">requires</span> std::ranges::<span class="cncpt">sized_range</span>&lt;<span class="type">R</span>&gt;;
+    <span class="kw">requires</span> std::ranges::<span class="cncpt">borrowed_range</span>&lt;<span class="type">R</span>&gt;;
+    <span class="kw">requires</span> std::<span class="cncpt">convertible_to</span>&lt;<span class="kw">decltype</span>(std::ranges::data(<span class="par">r</span>)), <span class="type">T</span>*&gt;
+} :pArray(std::ranges::data(<span class="par">range</span>)), count(std::ranges::size(<span class="par">range</span>)) {}
+</pre>
+<ul>
+    <li>
+        <p>
+            <span class="kw">requires</span>关键字用于<a href="https://en.cppreference.com/w/cpp/language/constraints.html">类型约束</a>，这里不作讲解（通常你也用不着它），需要解释的话可向我提问。
+        </p>
+    </li>
+</ul>
 <div class="admonition note">
     <p class="admonition-title">Note</p>
     <p>
-        C++标准库中提供了std::<span class="type">span</span>类型，这东西可以从数组构造，具有与我的<span class="type">arrayRef</span>类相似的功能，但是不支持从单个对象构造。
+        C++标准库中提供了std::<span class="type">span</span>类型，该类型可以从数组和连续的标准库容器构造，但是不支持从单个对象构造。
+        <br>
+        你当然也可以继承并扩展std::<span class="type">span</span>以实现<span class="type">arrayRef</span>相应的功能，只不过，继承标准库容器可能会有后患。
     </p>
 </div></section>
 </section>
@@ -344,7 +368,7 @@
     于是之前的vulkan::<span class="type">graphicsBase</span>::<span class="fn">CreateInstance</span>(...)变成这样：
 </p>
 <pre class="code">
-<span class="type">result_t</span> <span class="fn">CreateInstance</span>(<span class="type">VkInstanceCreateFlags</span> flags = 0) {
+<span class="type">result_t</span> <span class="fn">CreateInstance</span>(<span class="type">VkInstanceCreateFlags</span> <span class="par">flags</span> = 0) {
     <span class="kw">if constexpr</span> (<span class="mcr">ENABLE_DEBUG_MESSENGER</span>)
         <span class="fn">AddInstanceLayer</span>(<span class="str">&quot;VK_LAYER_KHRONOS_validation&quot;</span>),
         <span class="fn">AddInstanceExtension</span>(<span class="mcr">VK_EXT_DEBUG_UTILS_EXTENSION_NAME</span>);
@@ -354,7 +378,7 @@
     };
     <span class="type">VkInstanceCreateInfo</span> instanceCreateInfo = {
         .sType = <span class="enum">VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO</span>,
-        .flags = flags,
+        .flags = <span class="par">flags</span>,
         .pApplicationInfo = &amp;applicatianInfo,
         .enabledLayerCount = <span class="type">uint32_t</span>(instanceLayers.<span class="fn">size</span>()),
         .ppEnabledLayerNames = instanceLayers.data(),
@@ -451,7 +475,7 @@
     之前一直将错误信息直接输出到<span class="var">std::cout</span>，现在定义<span class="var">outStream</span>：
 </p>
 <pre class="code">
-<span class="kw">inline auto</span>&amp; outStream = std::cout;<span class="cmt">//不是constexpr，因为std::cout具有外部链接</span>
+<span class="kw">inline auto</span>&amp; outStream = std::cout; <span class="cmt">//不是constexpr，因为std::cout具有外部链接</span>
 </pre>
 <p>
     然后将目前为止写的<span class="var">std::cout</span>全部变更为<span class="var">outStream</span>。
@@ -463,18 +487,18 @@
 <span class="kw">constexpr struct</span> <span class="type">outStream_t</span> {
     <span class="kw">static</span> std::<span class="type">stringstream</span> ss;
     <span class="kw">struct</span> <span class="type">returnedStream_t</span> {
-        <span class="type">returnedStream_t</span> <span class="kw">operator</span>&lt;&lt;(<span class="kw">const</span> std::<span class="type">string</span>&amp; string) <span class="kw">const</span> {
-            ss &lt;&lt; string;
+        <span class="type">returnedStream_t</span> <span class="kw">operator</span>&lt;&lt;(<span class="kw">const</span> std::<span class="type">string</span>&amp; <span class="par">string</span>) <span class="kw">const</span> {
+            ss &lt;&lt; <span class="par">string</span>;
             <span class="kw">return</span> {};
         }
     };
-    <span class="type">returnedStream_t</span> <span class="kw">operator</span>&lt;&lt;(<span class="kw">const</span> std::<span class="type">string</span>&amp; string) <span class="kw">const</span> {
+    <span class="type">returnedStream_t</span> <span class="kw">operator</span>&lt;&lt;(<span class="kw">const</span> std::<span class="type">string</span>&amp; <span class="par">string</span>) <span class="kw">const</span> {
         ss.<span class="fn">clear</span>();
-        ss &lt;&lt; string;
+        ss &lt;&lt; <span class="par">string</span>;
         <span class="kw">return</span> {};
     }
 } outStream;
-<span class="kw">inline </span> std::<span class="type">stringstream</span> <span class="type">outStream_t</span>::ss;
+<span class="kw">inline</span> std::<span class="type">stringstream</span> <span class="type">outStream_t</span>::ss;
 </pre>
 <p>
     前面定义了用于抛出异常的<span class="type">result_t</span>，如果在主函数中指定它里头的回调函数：

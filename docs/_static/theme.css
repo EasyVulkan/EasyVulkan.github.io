@@ -6060,7 +6060,7 @@ span[id*=MathJax-Span] {
 
 .var {
     color: #000000;
-    font-weight: bold;
+    text-shadow: 0px 0px 1px black;
 }
 
 .par {

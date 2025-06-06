@@ -347,6 +347,107 @@ namespace easyVulkan {
 		return rpwf;
 	}
 
+	std::vector<colorAttachment> cas_msaaWithDSToScreen;
+	std::vector<depthStencilAttachment> dsas_msaaWithDSToScreen;
+	const auto& CreateRpwf_MsaaWithDSToScreen(VkFormat depthStencilFormat = VK_FORMAT_D24_UNORM_S8_UINT, VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_4_BIT) {
+		static renderPassWithFramebuffers rpwf;
+		static VkFormat _depthStencilFormat = depthStencilFormat;
+		static VkSampleCountFlagBits _sampleCount = sampleCount;
+
+		VkAttachmentDescription attachmentDescriptions[3] = {
+			{//Swapchain attachment, used as resolve attachment
+				.format = graphicsBase::Base().SwapchainCreateInfo().imageFormat,
+				.samples = VK_SAMPLE_COUNT_1_BIT,
+				.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+				.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+				.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+				.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+				.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR },
+			{//Msaa color attachment
+				.format = graphicsBase::Base().SwapchainCreateInfo().imageFormat,//Must be the same format as above
+				.samples = _sampleCount,
+				.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+				.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+				.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+				.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+				.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL },
+			{//Msaa depth stencil attachment
+				.format = _depthStencilFormat,
+				.samples = _sampleCount,
+				.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+				.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+				.stencilLoadOp = _depthStencilFormat >= VK_FORMAT_S8_UINT ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+				.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+				.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL }
+		};
+		VkAttachmentReference attachmentReferences[3] = {
+			{ 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL },
+			{ 1, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL },
+			{ 2, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL }
+		};
+		VkSubpassDescription subpassDescription = {
+			.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+			.colorAttachmentCount = 1,
+			.pColorAttachments = attachmentReferences + 1,
+			.pResolveAttachments = attachmentReferences,
+			.pDepthStencilAttachment = attachmentReferences + 2
+		};
+		VkSubpassDependency subpassDependency = {
+			.srcSubpass = VK_SUBPASS_EXTERNAL,
+			.dstSubpass = 0,
+			.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+			.dstStageMask = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,
+			.srcAccessMask = 0,
+			.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
+			.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT
+		};
+		VkRenderPassCreateInfo renderPassCreateInfo = {
+			.attachmentCount = 3,
+			.pAttachments = attachmentDescriptions,
+			.subpassCount = 1,
+			.pSubpasses = &subpassDescription,
+			.dependencyCount = 1,
+			.pDependencies = &subpassDependency
+		};
+		rpwf.renderPass.Create(renderPassCreateInfo);
+		auto CreateFramebuffers = [] {
+			cas_msaaWithDSToScreen.resize(graphicsBase::Base().SwapchainImageCount());
+			dsas_msaaWithDSToScreen.resize(graphicsBase::Base().SwapchainImageCount());
+			rpwf.framebuffers.resize(graphicsBase::Base().SwapchainImageCount());
+			for (auto& i : cas_msaaWithDSToScreen)
+				i.Create(graphicsBase::Base().SwapchainCreateInfo().imageFormat, windowSize, 1, _sampleCount, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT);
+			for (auto& i : dsas_msaaWithDSToScreen)
+				i.Create(_depthStencilFormat, windowSize, 1, _sampleCount, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT);
+			VkFramebufferCreateInfo framebufferCreateInfo = {
+				.renderPass = rpwf.renderPass,
+				.attachmentCount = 3,
+				.width = windowSize.width,
+				.height = windowSize.height,
+				.layers = 1
+			};
+			for (size_t i = 0; i < graphicsBase::Base().SwapchainImageCount(); i++) {
+				VkImageView attachments[3] = {
+					graphicsBase::Base().SwapchainImageView(i),
+					cas_msaaWithDSToScreen[i].ImageView(),
+					dsas_msaaWithDSToScreen[i].ImageView()
+				};
+				framebufferCreateInfo.pAttachments = attachments;
+				rpwf.framebuffers[i].Create(framebufferCreateInfo);
+			}
+		};
+		auto DestroyFramebuffers = [] {
+			cas_msaaWithDSToScreen.clear();
+			dsas_msaaWithDSToScreen.clear();
+			rpwf.framebuffers.clear();
+		};
+		CreateFramebuffers();
+
+		ExecuteOnce(rpwf);
+		graphicsBase::Base().AddCallback_CreateSwapchain(CreateFramebuffers);
+		graphicsBase::Base().AddCallback_DestroySwapchain(DestroyFramebuffers);
+		return rpwf;
+	}
+
 	colorAttachment ca_deferredToScreen_normalZ;
 	colorAttachment ca_deferredToScreen_albedoSpecular;
 	depthStencilAttachment dsa_deferredToScreen;

@@ -624,7 +624,7 @@
 <ul>
     <li>
         <p>
-            <span class="var">areBound</span>用于记录设备内存是否被完整绑定到缓冲区或图像，用在后文的<span class="type">bufferMemory</span>和<span class="type">imageMemory</span>类中，定义在这里是因为成员变量<span class="var">memoryProperties</span>后有4个字节的空档（考虑到<span class="type">VkDeviceMemory</span>和<span class="type">VkDeviceSize</span>都是8字节大小，对齐当然也是8字节）。
+            成员变量areBound用于记录设备内存是否被完整绑定到缓冲区或图像，用在后文的<span class="type">bufferMemory</span>和<span class="type">imageMemory</span>类中，定义在这里是因为成员变量memoryProperties后有4个字节的空档（考虑到<span class="type">VkDeviceMemory</span>和<span class="type">VkDeviceSize</span>都是8字节大小，对齐当然也是8字节）。
         </p>
     </li>
 </ul></section>
@@ -899,7 +899,7 @@ memoryAllocateInfo.allocationSize = memoryRequirements.size; <span class="cmt">/
 memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
 <span class="kw">auto</span>&amp; physicalDeviceMemoryProperties = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceMemoryProperties</span>();
 <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; physicalDeviceMemoryProperties.memoryTypeCount; i++) <span class="cmt">//遍历所有设备内存类型</span>
-    <span class="kw">if</span> ( <span class="cmt">//如果相应设备内存类型支持该缓冲区/图像，则继续执行后续判断，否则短路</span>
+    <span class="kw">if</span> (<span class="cmt">//如果相应设备内存类型支持该缓冲区/图像，则继续执行后续判断，否则短路</span>
         memoryRequirements.memoryTypeBits &amp; 1 &lt;&lt; i &amp;&amp;
         <span class="cmt">//如果相应设备内存类型支持所需的内存属性，覆写memoryAllocateInfo.memoryTypeIndex</span>
         (physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags &amp; <span class="par">desiredMemoryProperties</span>) == <span class="par">desiredMemoryProperties</span>) {
@@ -2254,15 +2254,15 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
     { 4, 8, 32, 2 },<span class="cmt">//VK_FORMAT_R64G64B64A64_SFLOAT = 121,</span>
 
     { 3, 0, 4, 2 },<span class="cmt">//VK_FORMAT_B10G11R11_UFLOAT_PACK32 = 122,</span>
-    { 3, 0, 4, 2 },<span class="cmt">//VK_FORMAT_E5B9G9R9_UFLOAT_PACK32 = 123,//'E' is a 5-bit shared exponent</span>
+    { 3, 0, 4, 2 },<span class="cmt">//VK_FORMAT_E5B9G9R9_UFLOAT_PACK32 = 123, //'E' is a 5-bit shared exponent</span>
 
     { 1, 2, 2, 1 },<span class="cmt">//VK_FORMAT_D16_UNORM = 124,</span>
-    { 1, 3, 4, 1 },<span class="cmt">//VK_FORMAT_X8_D24_UNORM_PACK32 = 125,//8 bits are unused therefore componentCount is 1, sizePerComponent is 3</span>
+    { 1, 3, 4, 1 },<span class="cmt">//VK_FORMAT_X8_D24_UNORM_PACK32 = 125, //8 bits are unused therefore componentCount is 1, sizePerComponent is 3</span>
     { 1, 4, 4, 2 },<span class="cmt">//VK_FORMAT_D32_SFLOAT = 126,</span>
     { 1, 1, 1, 1 },<span class="cmt">//VK_FORMAT_S8_UINT = 127,</span>
     { 2, 0, 3, 1 },<span class="cmt">//VK_FORMAT_D16_UNORM_S8_UINT = 128,</span>
     { 2, 0, 4, 1 },<span class="cmt">//VK_FORMAT_D24_UNORM_S8_UINT = 129,</span>
-    { 2, 0, 8, 0 },<span class="cmt">//VK_FORMAT_D32_SFLOAT_S8_UINT = 130,//24 bits are unused if data is of linear tiling therefore sizePerPixel is 8</span>
+    { 2, 0, 8, 0 },<span class="cmt">//VK_FORMAT_D32_SFLOAT_S8_UINT = 130, //24 bits are unused if data is of linear tiling therefore sizePerPixel is 8</span>
 
     <span class="cmt">//压缩格式</span>
     { 3, 0, 0, 1 },<span class="cmt">//VK_FORMAT_BC1_RGB_UNORM_BLOCK = 131,</span>

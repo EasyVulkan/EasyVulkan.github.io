@@ -173,7 +173,7 @@
 <pre class="code">
 <span class="kw">using namespace</span> vulkan; <span class="cmt">//main.cpp里会写一堆vulkan命名空间下的类型，using命名空间以省事</span>
 <span class="kw">int</span> <span class="fn">main</span>() {
-    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
+    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }))
         <span class="kw">return</span> -1;
 
     <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>); <span class="cmt">//以置位状态创建栅栏</span>
@@ -249,7 +249,7 @@
 <pre class="code">
 <span class="kw">using namespace</span> vulkan;
 <span class="kw">int</span> <span class="fn">main</span>() {
-    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
+    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }))
         <span class="kw">return</span> -1;
 
     <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
@@ -350,7 +350,7 @@
 <p>
     可同时提供栅栏和信号量，但只需一个即可。
     <br>
-    若选择只提供栅栏，那么必须在提交命令前在CPU一侧手动等待栅栏被置位；若选择只提供信号量，则能在命令执行到特定阶段前等待信号量被置位，换言之信号量的同步粒度更精细，因为我选择只提供信号量。
+    若选择只提供栅栏，那么必须在提交命令前在CPU一侧手动等待栅栏被置位；若选择只提供信号量，则能在命令执行到特定阶段前等待信号量被置位，换言之信号量的同步粒度更精细，因此我选择只提供信号量。
 </p>
 <p>
     需要注意的是，获取到的图像索引未必依序而来。
@@ -370,7 +370,7 @@
 <span class="cmt">//Getter</span>
 <span class="type">uint32_t</span> <span class="fn">CurrentImageIndex</span>() <span class="kw">const</span> { <span class="kw">return</span> currentImageIndex; }
 <span class="cmt">//该函数用于获取交换链图像索引到currentImageIndex，以及在需要重建交换链时调用RecreateSwapchain()、重建交换链后销毁旧交换链</span>
-<span class="type">result_t</span> <span class="fn">SwapImage</span>(<span class="type">VkSemaphore</span> semaphore_imageIsAvailable) {
+<span class="type">result_t</span> <span class="fn">SwapImage</span>(<span class="type">VkSemaphore</span> <span class="par">semaphore_imageIsAvailable</span>) {
     <span class="cmt">//销毁旧交换链（若存在）</span>
     <span class="kw">if</span> (swapchainCreateInfo.oldSwapchain &amp;&amp;
         swapchainCreateInfo.oldSwapchain != swapchain) {
@@ -378,7 +378,7 @@
         swapchainCreateInfo.oldSwapchain = <span class="mcr">VK_NULL_HANDLE</span>;
     }
     <span class="cmt">//获取交换链图像索引</span>
-    <span class="kw">while</span> (<span class="type">VkResult</span> result = <span class="fn">vkAcquireNextImageKHR</span>(device, swapchain, <span class="mcr">UINT64_MAX</span>, semaphore_imageIsAvailable, <span class="mcr">VK_NULL_HANDLE</span>, &amp;currentImageIndex))
+    <span class="kw">while</span> (<span class="type">VkResult</span> result = <span class="fn">vkAcquireNextImageKHR</span>(device, swapchain, <span class="mcr">UINT64_MAX</span>, <span class="par">semaphore_imageIsAvailable</span>, <span class="mcr">VK_NULL_HANDLE</span>, &amp;currentImageIndex))
         <span class="kw">switch</span> (result) {
         <span class="kw">case</span> <span class="enum">VK_SUBOPTIMAL_KHR</span>:
         <span class="kw">case</span> <span class="enum">VK_ERROR_OUT_OF_DATE_KHR</span>:
@@ -395,7 +395,7 @@
 <ul>
     <li>
         <p>
-            在<span class="fn">RecreateSwapchain</span>()中，旧交换链的handle被记录在<span class="var">swapchainCreateInfo.oldSwapchain</span>，所以销毁旧交换链的首要条件是验证<span class="var">swapchainCreateInfo.oldSwapchain</span>是否为空。旧交换链应该存活至创建新交换链成功为止，由于<span class="fn">RecreateSwapchain</span>()执行失败时不会覆写成员变量<span class="var">swapchain</span>，因此通过判断<span class="var">swapchainCreateInfo.oldSwapchain</span>是否等于<span class="var">swapchain</span>，来判断前一帧中<span class="fn">RecreateSwapchain</span>()是否执行成功。两个条件中间添加&amp;&amp;来短路执行。
+            在<span class="fn">RecreateSwapchain</span>()中，旧交换链的handle被记录在swapchainCreateInfo.oldSwapchain，所以销毁旧交换链的首要条件是验证swapchainCreateInfo.oldSwapchain是否为空。旧交换链应该存活至创建新交换链成功为止，由于<span class="fn">RecreateSwapchain</span>()执行失败时不会覆写成员变量swapchain，因此通过判断swapchainCreateInfo.oldSwapchain是否等于swapchain，来判断前一帧中<span class="fn">RecreateSwapchain</span>()是否执行成功。两个条件中间添加&amp;&amp;来短路执行。
         </p>
     </li>
     <li>
@@ -414,7 +414,7 @@
 </p>
 <pre class="code">
 <span class="kw">int</span> <span class="fn">main</span>() {
-    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
+    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }))
         <span class="kw">return</span> -1;
 
     <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
@@ -450,7 +450,7 @@
 </p>
 <pre class="code">
 <span class="kw">int</span> <span class="fn">main</span>() {
-    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
+    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }))
         <span class="kw">return</span> -1;
 
     <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
@@ -481,7 +481,7 @@
 </p>
 <pre class="code">
 <span class="kw">int</span> <span class="fn">main</span>() {
-    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
+    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }))
         <span class="kw">return</span> -1;
 
     <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
@@ -516,53 +516,53 @@
 <pre class="code">
 <span class="kw">public</span>:
 <span class="cmt">//该函数用于将命令缓冲区提交到用于图形的队列</span>
-<span class="type">result_t</span> <span class="fn">SubmitCommandBuffer_Graphics</span>(<span class="type">VkSubmitInfo</span>&amp; submitInfo, <span class="type">VkFence</span> fence = <span class="mcr">VK_NULL_HANDLE</span>) <span class="kw">const</span> {
-    submitInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_SUBMIT_INFO</span>;
-    <span class="type">VkResult</span> result = vkQueueSubmit(queue_graphics, 1, &amp;submitInfo, fence);
+<span class="type">result_t</span> <span class="fn">SubmitCommandBuffer_Graphics</span>(<span class="type">VkSubmitInfo</span>&amp; <span class="par">submitInfo</span>, <span class="type">VkFence</span> <span class="par">fence</span> = <span class="mcr">VK_NULL_HANDLE</span>) <span class="kw">const</span> {
+    <span class="par">submitInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_SUBMIT_INFO</span>;
+    <span class="type">VkResult</span> result = vkQueueSubmit(queue_graphics, 1, &amp;<span class="par">submitInfo</span>, <span class="par">fence</span>);
     <span class="kw">if</span> (result)
         outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to submit the command buffer!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
     <span class="kw">return</span> result;
 }
 <span class="cmt">//该函数用于在渲染循环中将命令缓冲区提交到图形队列的常见情形</span>
-<span class="type">result_t</span> <span class="fn">SubmitCommandBuffer_Graphics</span>(<span class="type">VkCommandBuffer</span> commandBuffer,
-    <span class="type">VkSemaphore</span> semaphore_imageIsAvailable = <span class="mcr">VK_NULL_HANDLE</span>, <span class="type">VkSemaphore</span> semaphore_renderingIsOver = <span class="mcr">VK_NULL_HANDLE</span>, <span class="type">VkFence</span> fence = <span class="mcr">VK_NULL_HANDLE</span>,
-    <span class="type">VkPipelineStageFlags</span> waitDstStage_imageIsAvailable = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>) <span class="kw">const</span> {
+<span class="type">result_t</span> <span class="fn">SubmitCommandBuffer_Graphics</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>,
+    <span class="type">VkSemaphore</span> <span class="par">semaphore_imageIsAvailable</span> = <span class="mcr">VK_NULL_HANDLE</span>, <span class="type">VkSemaphore</span> <span class="par">semaphore_renderingIsOver</span> = <span class="mcr">VK_NULL_HANDLE</span>, <span class="type">VkFence</span> <span class="par">fence</span> = <span class="mcr">VK_NULL_HANDLE</span>,
+    <span class="type">VkPipelineStageFlags</span> <span class="par">waitDstStage_imageIsAvailable</span> = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>) <span class="kw">const</span> {
     <span class="type">VkSubmitInfo</span> submitInfo = {
         .commandBufferCount = 1,
-        .pCommandBuffers = &amp;commandBuffer
+        .pCommandBuffers = &amp;<span class="par">commandBuffer</span>
     };
-    <span class="kw">if</span> (semaphore_imageIsAvailable)
+    <span class="kw">if</span> (<span class="par">semaphore_imageIsAvailable</span>)
         submitInfo.waitSemaphoreCount = 1,
-        submitInfo.pWaitSemaphores = &amp;semaphore_imageIsAvailable,
-        submitInfo.pWaitDstStageMask = &amp;waitDstStage_imageIsAvailable;
-    <span class="kw">if</span> (semaphore_renderingIsOver)
+        submitInfo.pWaitSemaphores = &amp;<span class="par">semaphore_imageIsAvailable</span>,
+        submitInfo.pWaitDstStageMask = &amp;<span class="par">waitDstStage_imageIsAvailable</span>;
+    <span class="kw">if</span> (<span class="par">semaphore_renderingIsOver</span>)
         submitInfo.signalSemaphoreCount = 1,
-        submitInfo.pSignalSemaphores = &amp;semaphore_renderingIsOver;
-    <span class="kw">return</span> <span class="fn">SubmitCommandBuffer_Graphics</span>(submitInfo, fence);
+        submitInfo.pSignalSemaphores = &amp;<span class="par">semaphore_renderingIsOver</span>;
+    <span class="kw">return</span> <span class="fn">SubmitCommandBuffer_Graphics</span>(submitInfo, <span class="par">fence</span>);
 }
 <span class="cmt">//该函数用于将命令缓冲区提交到用于图形的队列，且只使用栅栏的常见情形</span>
-<span class="type">result_t</span> <span class="fn">SubmitCommandBuffer_Graphics</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkFence</span> fence = <span class="mcr">VK_NULL_HANDLE</span>) <span class="kw">const</span> {
+<span class="type">result_t</span> <span class="fn">SubmitCommandBuffer_Graphics</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">VkFence</span> <span class="par">fence</span> = <span class="mcr">VK_NULL_HANDLE</span>) <span class="kw">const</span> {
     <span class="type">VkSubmitInfo</span> submitInfo = {
         .commandBufferCount = 1,
-        .pCommandBuffers = &amp;commandBuffer
+        .pCommandBuffers = &amp;<span class="par">commandBuffer</span>
     };
-    <span class="kw">return</span> <span class="fn">SubmitCommandBuffer_Graphics</span>(submitInfo, fence);
+    <span class="kw">return</span> <span class="fn">SubmitCommandBuffer_Graphics</span>(submitInfo, <span class="par">fence</span>);
 }
 <span class="cmt">//该函数用于将命令缓冲区提交到用于计算的队列</span>
-<span class="type">result_t</span> <span class="fn">SubmitCommandBuffer_Compute</span>(<span class="type">VkSubmitInfo</span>&amp; submitInfo, <span class="type">VkFence</span> fence = <span class="mcr">VK_NULL_HANDLE</span>) <span class="kw">const</span> {
-    submitInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_SUBMIT_INFO</span>;
-    <span class="type">VkResult</span> result = vkQueueSubmit(queue_compute, 1, &amp;submitInfo, fence);
+<span class="type">result_t</span> <span class="fn">SubmitCommandBuffer_Compute</span>(<span class="type">VkSubmitInfo</span>&amp; <span class="par">submitInfo</span>, <span class="type">VkFence</span> <span class="par">fence</span> = <span class="mcr">VK_NULL_HANDLE</span>) <span class="kw">const</span> {
+    <span class="par">submitInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_SUBMIT_INFO</span>;
+    <span class="type">VkResult</span> result = vkQueueSubmit(queue_compute, 1, &amp;<span class="par">submitInfo</span>, <span class="par">fence</span>);
     <span class="kw">if</span> (result)
         outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to submit the command buffer!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
     <span class="kw">return</span> result;
 }
 <span class="cmt">//该函数用于将命令缓冲区提交到用于计算的队列，且只使用栅栏的常见情形</span>
-<span class="type">result_t</span> <span class="fn">SubmitCommandBuffer_Compute</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkFence</span> fence = <span class="mcr">VK_NULL_HANDLE</span>) <span class="kw">const</span> {
+<span class="type">result_t</span> <span class="fn">SubmitCommandBuffer_Compute</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">VkFence</span> <span class="par">fence</span> = <span class="mcr">VK_NULL_HANDLE</span>) <span class="kw">const</span> {
     <span class="type">VkSubmitInfo</span> submitInfo = {
         .commandBufferCount = 1,
-        .pCommandBuffers = &amp;commandBuffer
+        .pCommandBuffers = &amp;<span class="par">commandBuffer</span>
     };
-    <span class="kw">return</span> <span class="fn">SubmitCommandBuffer_Compute</span>(submitInfo, fence);
+    <span class="kw">return</span> <span class="fn">SubmitCommandBuffer_Compute</span>(submitInfo, <span class="par">fence</span>);
 }
 </pre>
 <ul>
@@ -578,14 +578,14 @@
     </li>
 </ul>
 <p>
-    向<span class="var">queue_presentation</span>提交命令缓冲区的情况，仅限于用于呈现的队列族与用于图形的队列族不一致时，见本节的最后一小节。
+    向queue_presentation提交命令缓冲区的情况，仅限于用于呈现的队列族与用于图形的队列族不一致时，见本节的最后一小节。
 </p>
 <p>
     主函数更新为：
 </p>
 <pre class="code">
 <span class="kw">int</span> <span class="fn">main</span>() {
-    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
+    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }))
         <span class="kw">return</span> -1;
 
     <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
@@ -691,9 +691,9 @@
     <a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...)同<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)一样，可能会遭遇需要重建交换链的情况，因此在<span class="type">graphicsBase</span>中对其做如下封装：
 </p>
 <pre class="code">
-<span class="type">result_t</span> <span class="fn">PresentImage</span>(<span class="type">VkPresentInfoKHR</span>&amp; presentInfo) {
-    presentInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_PRESENT_INFO_KHR</span>;
-    <span class="kw">switch</span> (<span class="type">VkResult</span> result = <span class="fn">vkQueuePresentKHR</span>(queue_presentation, &amp;presentInfo)) {
+<span class="type">result_t</span> <span class="fn">PresentImage</span>(<span class="type">VkPresentInfoKHR</span>&amp; <span class="par">presentInfo</span>) {
+    <span class="par">presentInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_PRESENT_INFO_KHR</span>;
+    <span class="kw">switch</span> (<span class="type">VkResult</span> result = <span class="fn">vkQueuePresentKHR</span>(queue_presentation, &amp;<span class="par">presentInfo</span>)) {
     <span class="kw">case</span> <span class="enum">VK_SUCCESS:
         <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
     <span class="kw">case</span> <span class="enum">VK_SUBOPTIMAL_KHR</span>:
@@ -705,15 +705,15 @@
     }
 }
 <span class="cmt">//该函数用于在渲染循环中呈现图像的常见情形</span>
-<span class="type">result_t</span> <span class="fn">PresentImage</span>(<span class="type">VkSemaphore</span> semaphore_renderingIsOver = <span class="mcr">VK_NULL_HANDLE</span>) {
+<span class="type">result_t</span> <span class="fn">PresentImage</span>(<span class="type">VkSemaphore</span> <span class="par">semaphore_renderingIsOver</span> = <span class="mcr">VK_NULL_HANDLE</span>) {
     <span class="type">VkPresentInfoKHR</span> presentInfo = {
         .swapchainCount = 1,
         .pSwapchains = &amp;swapchain,
         .pImageIndices = &amp;currentImageIndex
     };
-    <span class="kw">if</span> (semaphore_renderingIsOver)
+    <span class="kw">if</span> (<span class="par">semaphore_renderingIsOver</span>)
         presentInfo.waitSemaphoreCount = 1,
-        presentInfo.pWaitSemaphores = &amp;semaphore_renderingIsOver;
+        presentInfo.pWaitSemaphores = &amp;<span class="par">semaphore_renderingIsOver</span>;
     <span class="kw">return</span> <span class="fn">PresentImage</span>(presentInfo);
 }
 </pre>
@@ -826,7 +826,7 @@
 </p>
 <pre class="code">
 <span class="kw">int</span> <span class="fn">main</span>() {
-    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
+    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }))
         <span class="kw">return</span> -1;
 
     <span class="type">fence</span> fence; <span class="cmt">//以非置位状态创建栅栏</span>
@@ -883,7 +883,7 @@
 </p>
 <pre class="code">
 <span class="kw">int</span> <span class="fn">main</span>() {
-    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
+    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }))
         <span class="kw">return</span> -1;
 
     <span class="kw">struct</span> <span class="type">perFrameObjects_t</span> {
@@ -896,14 +896,14 @@
     <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
     <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : perFrameObjects)
         commandPool.<span class="fn">AllocateBuffers</span>(i.commandBuffer);
-    <span class="type">uint32_t</span> i = 0;
+    <span class="type">uint32_t</span> index = 0;
 
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
             <span class="fn">glfwWaitEvents</span>();
 
-        <span class="kw">const auto</span>&amp; [fence, semaphore_imageIsAvailable, semaphore_renderingIsOver, commandBuffer] = perFrameObjects[i];
-        i = (i + 1) % <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>();
+        <span class="kw">const auto</span>&amp; [fence, semaphore_imageIsAvailable, semaphore_renderingIsOver, commandBuffer] = perFrameObjects[index];
+        index = (index + 1) % <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>();
 
         fence.<span class="fn">WaitAndReset</span>(); <span class="cmt">//在渲染循环开头等待与当前交换链图像配套的栅栏（在渲染循环末尾等待的话，下一帧必须等待当前帧渲染完，即时帧的做法便没了意义）</span>
         <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
@@ -923,18 +923,18 @@
 }
 </pre>
 <p>
-    假定获取到的交换链图像索引在每个周期中有固定顺序，那么虽然这里的<span class="var">i</span>可能跟当前图像索引不同（如果获取到的交换链图像索引总是0、1、2依序而来，那么<span class="var">i</span>跟当前图像索引一致），但<span class="var">i</span>总是跟图像索引一一对应（也就是一种映射关系）。
+    假定获取到的交换链图像索引在每个周期中有固定顺序，那么虽然这里的<span class="var">index</span>可能跟当前图像索引不同（如果获取到的交换链图像索引总是0、1、2依序而来，那么<span class="var">i</span>跟当前图像索引一致），但<span class="var">index</span>总是跟图像索引一一对应（也就是一种映射关系）。
 </p>
 <p>
     如先前<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id2">获取交换链图像索引</a>所述，Vulkan标准对交换链图像索引在每个周期中的顺序并无要求。那么上述代码是否还能确保执行逻辑不出错呢？
     <br>
-    考虑比较极端的情况：如果连续两次获取到索引为0的交换链图像，而你的同步对象按0、1的索引依序使用。既然是连续两次渲染到同一交换链图像，后一次得等待前一次命令执行完成，可前一次点亮的是0号栅栏，后一次等待的为1号栅栏，这么一来同步不就出问题了吗！？
+    考虑比较极端的情况：如果连续两次获取到索引为0的交换链图像，而<span class="var">perFrameObjects</span>中的对象按0、1的索引依序使用。既然是连续两次渲染到同一交换链图像，后一次得等待前一次命令执行完成，可前一次点亮的是0号栅栏，后一次等待的为1号栅栏，这么一来同步不就出问题了吗！？
     <br>
     上述情况没有什么值得你担心的：
     <br>
-    <strong>只有在将图像交还给呈现引擎后（此时已通过信号量确保已完成了先前在该图像上的渲染），<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)才能获取到与该图像对应的索引。</strong>
+    <strong>只有在将图像交还给呈现引擎后（此时已通过信号量确保已完成了先前在该图像上的渲染），<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)才获取到与该图像对应的索引。</strong>
     <br>
-    因此，前文的代码在获取到的交换链图像索引是乱序时也不会有问题，只是也难以减少阻塞。
+    因此，前文的代码在获取到的交换链图像索引是乱序时也不会有问题，只是不会起到减少阻塞的效果（理论上，若是真有“能连续获取到同一索引的交换链图像”这种情况，说明渲染任务很轻，也不必减少阻塞）。
 </p></section>
 <section id="id9">
 <h2>队列族所有权转移<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h2>
@@ -945,13 +945,16 @@
     这套教程中不会做队列族所有权转移（日后更新说不准），因为实际上你总能找到一个同时支持图形、呈现、计算的队列族（虽然我不敢100%肯定，但至少用来开发图形程序的PC不应该糟糕到连这都无法满足），仅在这里简单演示一下，从用于图形的队列将所有权转移到用于呈现的队列。
 </p>
 <p>
-    通常而言，出于对资源访问效率的考虑，资源在某一时刻只应被单一队列族独占访问，并在创建资源时将sharingMode指定为<span class="enum">VK_SHARING_MODE_EXCLUSIVE</span>。当这样的资源要被另一队列族访问时，应当事先显式地告知Vulkan。
+    <strong>什么是队列族所有权转移？</strong>
     <br>
+    通常而言，出于对资源访问效率的考虑，资源在某一时刻只应被单一队列族独占访问，并在创建资源时将sharingMode指定为<span class="enum">VK_SHARING_MODE_EXCLUSIVE</span>。当这样的资源要被另一队列族访问时，应当事先显式地告知Vulkan，这一步骤即为转移资源的所有权给另一队列族。
+</p>
+<p>
     队列所有权转移的必要性为同时满足以下两点：
     <br>
-    1.一块物理设备内存区域先后被两个不同队列族中的队列使用
+    1.一块物理设备内存区域先后<strong>被两个不同队列族中的队列使用</strong>
     <br>
-    2.后使用该资源的队列需要保留其中的数据
+    2.后使用该资源的队列<strong>需要保留其中的数据</strong>
     <br>
     举例而言，若用于图形的队列QG与用于呈现的队列QP不同，从QG到QP需要做队列族所有权转移，因为呈现需要读取已渲染完的图像数据，而从QP到QG则不需要，因为渲染一张新图像时，不需要保留先前的内容。
 </p>
@@ -970,8 +973,8 @@
 <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier_g2p_release = {
     .sType = <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
     .srcAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
-    .dstAccessMask = 0,<span class="cmt">//因为vkCmdPipelineBarrier(...)的参数中dstStage是BOTTOM_OF_PIPE，不需要dstAccessMask</span>
-    .oldLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>,<span class="cmt">//内存布局已经在渲染通道结束时转换（这是下一节的内容），此处oldLayout和newLayout相同，不发生转变</span>
+    .dstAccessMask = 0,                           <span class="cmt">//因为vkCmdPipelineBarrier(...)的参数中dstStage是BOTTOM_OF_PIPE，不需要dstAccessMask</span>
+    .oldLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>, <span class="cmt">//内存布局已经在渲染通道结束时转换（这是下一节的内容），此处oldLayout和newLayout相同，不发生转变</span>
     .newLayout = <span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span>,
     .srcQueueFamilyIndex = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(),
     .dstQueueFamilyIndex = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Presentation</span>(),
@@ -1010,9 +1013,9 @@
 <ul>
     <li>
         <p>
-            队列族所有权转移的典型做法，是在两个不同的队列中使用两个参数完全一致的内存屏障。
+            <strong>队列族所有权转移的典型做法，是在两个不同的队列中使用两个参数完全一致的内存屏障。</strong>
             <br>
-            然而这里使用的srcStage是<span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>，srcAccessMask是0，与<span class="fn">CmdReleaseImageOwnership_Graphics</span>(...)中的不一致，这是因为有信号量这一粒度更粗的同步手段，使得<span class="fn">CmdAcquireImageOwnership_Presentation</span>(...)中的内存屏障必然在渲染命令及其附属的内存屏障之后执行，因此这里的srcStage也就不再重要了。
+            然而这里使用的srcStage是<span class="enum">VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</span>，srcAccessMask是0，与前文“释放图像所有权”的不一致，这是因为有信号量这一粒度更粗的同步手段，使得“获得图像所有权”的内存屏障必然在渲染命令及其附属的内存屏障之后执行，因此这里的srcStage也就不再重要了。
         </p>
     </li>
 </ul>
@@ -1021,7 +1024,7 @@
 </p>
 <pre class="code">
 <span class="kw">int</span> <span class="fn">main</span>() {
-    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
+    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }))
         <span class="kw">return</span> -1;
 
     <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
@@ -1148,7 +1151,7 @@
 </p>
 <pre class="code">
 <span class="kw">int</span> <span class="fn">main</span>() {
-    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
+    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }))
         <span class="kw">return</span> -1;
 
     <span class="type">fence</span> fence(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);

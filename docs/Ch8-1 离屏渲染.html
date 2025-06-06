@@ -1089,7 +1089,7 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
 </p>
 <pre class="code">
 <span class="kw">int</span> <span class="fn">main</span>() {
-    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
+    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }))
         <span class="kw">return</span> -1;
 
     <span class="cmt">//画布大小</span>;
@@ -1116,7 +1116,7 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
     <span class="type">descriptorPool descriptorPool</span> descriptorPool(1, descriptorPoolSizes);
     <span class="type">descriptorSet</span> descriptorSet_texture;
     descriptorPool.<span class="fn">AllocateSets</span>(descriptorSet_texture, descriptorSetLayout_texture);
-    <span class="cmt">//写入描述符</span>;
+    <span class="cmt">//写入描述符</span>
     descriptorSet_texture.<span class="fn">Write</span>(easyVulkan::ca_canvas.<span class="fn">DescriptorImageInfo</span>(sampler), <span class="enum">VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER</span>);
 
     <span class="cmt">/*待填充*/</span>

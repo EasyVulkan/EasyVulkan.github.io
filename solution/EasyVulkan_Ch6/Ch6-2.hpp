@@ -58,8 +58,8 @@ int main() {
 		if (!InitializeWindow({ 1280, 720 }) ||
 			!physicalDeviceDynamicRenderingFeatures.dynamicRendering)
 			return -1;
-		vkCmdBeginRendering = reinterpret_cast<PFN_vkCmdBeginRenderingKHR>(vkGetDeviceProcAddr(graphicsBase::Base().Device(), "vkCmdBeginRenderingKHR"));
-		vkCmdEndRendering = reinterpret_cast<PFN_vkCmdEndRenderingKHR>(vkGetDeviceProcAddr(graphicsBase::Base().Device(), "vkCmdEndRenderingKHR"));
+		vkCmdBeginRendering = graphicsBase::Base().DeviceProcedureAddress("vkCmdBeginRenderingKHR");
+		vkCmdEndRendering = graphicsBase::Base().DeviceProcedureAddress("vkCmdEndRenderingKHR");
 	}
 	else
 		if (!InitializeWindow({ 1280, 720 }) ||

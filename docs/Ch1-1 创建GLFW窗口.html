@@ -430,7 +430,7 @@ pWindow = <span class="par">fullScreen</span> ?
         info.<span class="fn">precision</span>(1);
         info &lt;&lt; windowTitle &lt;&lt; <span class="str">&quot;    &quot;</span> &lt;&lt; std::<span class="fn">fixed</span> &lt;&lt; dframe / dt &lt;&lt; <span class="str">&quot; FPS&quot;</span>;
         <span class="fn">glfwSetWindowTitle</span>(pWindow, <span class="fn">info.str</span>().<span class="fn">c_str</span>());
-        info.<span class="fn">str</span>(<span class="str">&quot;&quot;</span>);<span class="cmt">//别忘了在设置完窗口标题后清空所用的stringstream</span>
+        info.<span class="fn">str</span>(<span class="str">&quot;&quot;</span>); <span class="cmt">//别忘了在设置完窗口标题后清空所用的stringstream</span>
         time0 = time1;
         dframe = 0;
     }
@@ -449,8 +449,8 @@ pWindow = <span class="par">fullScreen</span> ?
 <span class="pragma">#include</span> <span class="str">&quot;GlfwGeneral.hpp&quot;</span>
 
 <span class="kw">int</span> <span class="fn">main</span>() {
-    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({1280,720}))
-        <span class="kw">return</span> -1;<span class="cmt">//来个你讨厌的返回值</span>
+    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }))
+        <span class="kw">return</span> -1; <span class="cmt">//来个你讨厌的返回值</span>
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
 
         <span class="cmt">/*渲染过程，待填充*/</span>

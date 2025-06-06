@@ -259,7 +259,7 @@ pipelineCiPack.vertexInputAttributes.<span class="fn">emplace_back</span>(2, 1, 
 <span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec4</span> o_Color;
 
 <span class="kw">void</span> <span class="fn">main</span>() {
-    gl_Position = <span class="type">vec4</span>(i_Position + i_InstancePosition, 0, 1);<span class="cmt">//共通顶点数据中的位置坐标 + 各个实例的位置偏移</span>
+    gl_Position = <span class="type">vec4</span>(i_Position + i_InstancePosition, 0, 1); <span class="cmt">//共通顶点数据中的位置坐标 + 各个实例的位置偏移</span>
     o_Color = i_Color;
 }
 </pre>
@@ -269,7 +269,7 @@ pipelineCiPack.vertexInputAttributes.<span class="fn">emplace_back</span>(2, 1, 
 <pre class="code">
 <span class="kw">void</span> <span class="fn">CreatePipeline</span>() {
     <span class="kw">static</span> <span class="type">shaderModule</span> vert(<span class="str">"shader/InstancedRendering.vert.spv"</span>);
-    <span class="cmt">//省略后续代码</span>
+    <span class="cmt">/*...省略后续代码*/</span>
 }
 </pre></section>
 <section id="id3">

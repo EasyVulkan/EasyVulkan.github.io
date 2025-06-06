@@ -190,8 +190,8 @@ glm::<span class="type">vec2</span> pushConstants[] = {
 <span class="kw">void</span> <span class="fn">CreateLayout</span>() {
     <span class="type">VkPushConstantRange</span> pushConstantRange = {
         <span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>,
-        0,<span class="cmt">//offset</span>
-        24<span class="cmt">//范围大小，3个vec2是24</span>
+        0, <span class="cmt">//offset</span>
+        24 <span class="cmt">//范围大小，3个vec2是24</span>
     };
     <span class="type">VkPipelineLayoutCreateInfo</span> pipelineLayoutCreateInfo = {
         .pushConstantRangeCount = 1,
@@ -240,7 +240,7 @@ glm::<span class="type">vec2</span> pushConstants[] = {
 <pre class="code">
 <span class="kw">void</span> <span class="fn">CreatePipeline</span>() {
     <span class="kw">static</span> <span class="type">shaderModule</span> vert(<span class="str">"shader/PushConstant.vert.spv"</span>);
-    <span class="cmt">//省略后续代码</span>
+    <span class="cmt">/*...省略后续代码*/</span>
 }
 </pre></section>
 <section id="id3">

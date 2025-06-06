@@ -776,7 +776,7 @@ uniformBuffer.<span class="fn">TransferData</span>(descriptorConstants);
 <ul>
     <li>
         <p>
-            用GLSL的内置函数<span class="fn">normalize</span>(...)将法向量标准化（即归一化，使矢量模长为1），以使之后的点乘能正确反映法向量与其他向量的夹角。
+            用GLSL的内置函数<span class="fn">normalize</span>(...)将法向量归一化（使矢量模长为1），以使之后的点乘能正确反映法向量与其他向量的夹角。
         </p>
     </li>
 </ul><section id="id7">
@@ -1131,7 +1131,7 @@ descriptorSet_gBuffer.<span class="fn">Write</span>(bufferInfos[0], <span class=
 descriptorSet_composition.<span class="fn">Write</span>(bufferInfos[1], <span class="enum">VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER</span>, 0, 0);
 </pre>
 <p>
-    被用作输入附件的图像会在重建交换链时被一并重新创建，因此定义回调函数来写入输入附件对应的描述符。
+    本例中被用作输入附件的图像会在重建交换链时被一并重新创建，因此定义回调函数来写入输入附件对应的描述符。
     <br>
     除了不需要采样器，及描述符类型不同以外，提供给描述符的输入附件信息跟一般的贴图信息类似：
 </p>
