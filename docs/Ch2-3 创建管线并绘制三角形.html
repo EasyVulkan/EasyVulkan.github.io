@@ -153,11 +153,12 @@
     首先在<span class="path">main.cpp</span>中定义下列变量和函数：
 </p>
 <pre class="code">
-<span class="kw">using namespace</span> vulkan;<span class="cmt">//上一节中在main.cpp中全局范围内使用了命名空间</span>
+<span class="kw">using namespace</span> vulkan; <span class="cmt">//上一节中在main.cpp中全局范围内使用了命名空间</span>
 
-<span class="type">pipelineLayout</span> pipelineLayout_triangle;<span class="cmt">//管线布局</span>
-<span class="type">pipeline</span> pipeline_triangle;<span class="cmt">//管线</span>
-<span class="cmt">//该函数调用easyVulkan::CreateRpwf_Screen()并存储返回的引用到静态变量，避免重复调用easyVulkan::CreateRpwf_Screen()</span>
+<span class="type">pipelineLayout</span> pipelineLayout_triangle; <span class="cmt">//管线布局</span>
+<span class="type">pipeline</span> pipeline_triangle;             <span class="cmt">//管线</span>
+
+<span class="cmt">//该函数调用easyVulkan::CreateRpwf_Screen()并存储返回的引用到静态变量</span>
 <span class="kw">const auto</span>&amp; <span class="fn">RenderPassAndFramebuffers</span>() {
     <span class="kw">static const auto</span>&amp; rpwf = easyVulkan::<span class="fn">CreateRpwf_Screen</span>();
     <span class="kw">return</span> rpwf;
@@ -170,7 +171,19 @@
 <span class="kw">void</span> <span class="fn">CreatePipeline</span>() {
     <span class="cmt">/*待后续填充*/</span>
 }
-</pre><section id="id1">
+</pre>
+<div class="admonition note">
+    <p class="admonition-title">Note</p>
+    <p>
+        <strong>简述上述代码中<span class="fn">RenderPassAndFramebuffers</span>()函数的意义，兼介绍一个给编程初学者的超基础小技巧（虽然这个技巧在这套教程里不会发挥作用）。</strong>
+    </p>
+    <p>
+        考虑以下情况：假定你的程序有多个可开关的功能模块会用到同一对象，而这些功能在启动程序时全关闭的话就不需要该对象，那么就会涉及何时初始化该对象、是否需要初始化该对象的问题。这不是什么复杂的问题，只是会让人纠结相关代码该写在哪，以及该怎么写不难看罢了。
+    </p>
+    <p>
+        而上述代码中，静态变量<span class="var">rpwf</span>所引用的对象会在<span class="fn">RenderPassAndFramebuffers</span>()被首次调用时初始化，若不调用该函数就不会被初始化。这么一来就可以避免考虑上述的两个问题，需要<span class="var">rpwf</span>所引用的对象时，就地调用<span class="fn">RenderPassAndFramebuffers</span>()获取它即可。
+    </p>
+</div><section id="id1">
 <h2>书写着色器<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
 <p>
     参见<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id1">Ch4-1 着色器模组</a>，我在该节中具体叙述何为着色器模组，并对它进行了简单封装，请先阅览该节并完成封装。
@@ -308,7 +321,7 @@ glslc.exe路径 FirstTriangle.vert.shader -c
     </li>
     <li>
         <p>
-            输出到<span class="var">o_Color</span>的是标准化的数值，通常的8位整数色值[0, 255]被线性映射到[0, 1]。
+            输出到<span class="var">o_Color</span>的是归一化的数值，通常的8位整数色值[0, 255]被线性映射到[0, 1]。
         </p>
     </li>
 </ul>
@@ -442,7 +455,7 @@ pipelineCiPack.colorBlendAttachmentStates.<span class="fn">push_back</span>({ .c
 </pre>
 </p>
 <p>
-    由于之前的代码中，已经将管线阶段的创建信息定义为了函数内的静态变量，这里先通过<span class="fn">UpdateAllArrays()</span>更新所有涉及到的数组地址，然后手动指定可编程管线阶段的数量及其创建信息的地址：
+    由于之前的代码中，已经将管线阶段的创建信息定义为了函数内的静态变量，这里先通过<span class="fn">UpdateAllArrays</span>()更新所有涉及到的数组地址，然后手动指定可编程管线阶段的数量及其创建信息的地址：
 </p>
 <p>
 <pre class="code">
@@ -496,9 +509,9 @@ pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
     <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }))
         <span class="kw">return</span> -1;
 
-    <span class="cmt">/*变更*/</span><span class="kw">const auto</span>&amp; [renderPass, framebuffers] = <span class="fn">RenderPassAndFramebuffers</span>();
-    <span class="cmt">/*新增*/</span><span class="fn">CreateLayout</span>();
-    <span class="cmt">/*新增*/</span><span class="fn">CreatePipeline</span>();
+    <span class="cmt">/*变更*/ </span><span class="kw">const auto</span>&amp; [renderPass, framebuffers] = <span class="fn">RenderPassAndFramebuffers</span>();
+    <span class="cmt">/*新增*/ </span><span class="fn">CreateLayout</span>();
+    <span class="cmt">/*新增*/ </span><span class="fn">CreatePipeline</span>();
 
     <span class="type">fence</span> fence;
     <span class="type">semaphore</span> semaphore_imageIsAvailable;
@@ -508,7 +521,7 @@ pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
     <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
     commandPool.<span class="type">AllocateBuffers</span>(commandBuffer);
 
-    <span class="type">VkClearValue</span> clearColor = { .color = { 1.f, 0.f, 0.f, 1.f } };<span class="cmt">//红色</span>
+    <span class="type">VkClearValue</span> clearColor = { .color = { 1.f, 0.f, 0.f, 1.f } }; <span class="cmt">//红色</span>
 
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
@@ -655,7 +668,7 @@ pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
     <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
     commandPool.<span class="type">AllocateBuffers</span>(commandBuffer);
 
-    <span class="type">VkClearValue</span> clearColor = { .color = { 1.f, 0.f, 0.f, 1.f } };<span class="cmt">//红色</span>
+    <span class="type">VkClearValue</span> clearColor = { .color = { 1.f, 0.f, 0.f, 1.f } }; <span class="cmt">//红色</span>
 
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
@@ -667,8 +680,8 @@ pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
         renderPass.<span class="fn">CmdBegin</span>(commandBuffer, framebuffers[i], { {}, windowSize }, clearColor);
 
-        <span class="cmt">/*新增*/</span><span class="fn">vkCmdBindPipeline</span>(commandBuffer, <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>, pipeline_triangle);
-        <span class="cmt">/*新增*/</span><span class="fn">vkCmdDraw</span>(commandBuffer, 3, 1, 0, 0);
+        <span class="cmt">/*新增*/ </span><span class="fn">vkCmdBindPipeline</span>(commandBuffer, <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>, pipeline_triangle);
+        <span class="cmt">/*新增*/ </span><span class="fn">vkCmdDraw</span>(commandBuffer, 3, 1, 0, 0);
 
         renderPass.<span class="fn">CmdEnd</span>(commandBuffer);
         commandBuffer.<span class="fn">End</span>();

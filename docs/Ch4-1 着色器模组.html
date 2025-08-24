@@ -404,8 +404,8 @@ file.<span class="fn">close</span>();
     <span class="type">int32_t</span> shininess = 64;
 } constants;
 <span class="type">VkSpecializationMapEntry</span> specializationMapEntries[] = {
-    { 0, 0, 4 },<span class="cmt">//开头的0对应constant_id = 0，之后的0对应结构体变量constants中成员maxLightCount的起始位置</span>
-    { 1, 4, 4 } <span class="cmt">//开头的1对应constant_id = 1，之后的4对应结构体变量constants中成员shininess的起始位置</span>
+    { 0, 0, 4 }, <span class="cmt">//开头的0对应constant_id = 0，之后的0对应结构体变量constants中成员maxLightCount的起始位置</span>
+    { 1, 4, 4 }  <span class="cmt">//开头的1对应constant_id = 1，之后的4对应结构体变量constants中成员shininess的起始位置</span>
 };
 <span class="type">VkSpecializationInfo</span> specializationInfo = {
     .mapEntryCount = 2,
@@ -424,45 +424,45 @@ file.<span class="fn">close</span>();
     <span class="type">VkShaderModule</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
 <span class="kw">public</span>:
     <span class="fn">shaderModule</span>() = <span class="kw">default</span>;
-    <span class="fn">shaderModule</span>(<span class="type">VkShaderModuleCreateInfo</span>&amp; createInfo) {
-        <span class="fn">Create</span>(createInfo);
+    <span class="fn">shaderModule</span>(<span class="type">VkShaderModuleCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="fn">Create</span>(<span class="par">createInfo</span>);
     }
-    <span class="fn">shaderModule</span>(<span class="kw">const char</span>* filepath <span class="cmt">/*VkShaderModuleCreateFlags flags*/</span>) {
-        <span class="fn">Create</span>(filepath);
+    <span class="fn">shaderModule</span>(<span class="kw">const char</span>* <span class="par">filepath</span> <span class="cmt">/*VkShaderModuleCreateFlags flags*/</span>) {
+        <span class="fn">Create</span>(<span class="par">filepath</span>);
     }
-    <span class="fn">shaderModule</span>(<span class="type">size_t</span> codeSize, <span class="kw">const</span> <span class="type">uint32_t</span>* pCode <span class="cmt">/*VkShaderModuleCreateFlags flags*/</span>) {
-        <span class="fn">Create</span>(codeSize, pCode);
+    <span class="fn">shaderModule</span>(<span class="type">size_t</span> <span class="par">codeSize</span>, <span class="kw">const</span> <span class="type">uint32_t</span>* <span class="par">pCode</span> <span class="cmt">/*VkShaderModuleCreateFlags flags*/</span>) {
+        <span class="fn">Create</span>(<span class="par">codeSize</span>, <span class="par">pCode</span>);
     }
-    <span class="fn">shaderModule</span>(<span class="type">shaderModule</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    <span class="fn">shaderModule</span>(<span class="type">shaderModule</span>&amp;&amp; <span class="par">other</span>) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
     <span class="fn">~shaderModule</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyShaderModule</span>); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
     <span class="cmt">//Const Function</span>
-    <span class="type">VkPipelineShaderStageCreateInfo</span> <span class="fn">StageCreateInfo</span>(<span class="type">VkShaderStageFlagBits</span> stage, <span class="kw">const char</span>* entry = <span class="str">&quot;main&quot;</span>) <span class="kw">const</span> {
+    <span class="type">VkPipelineShaderStageCreateInfo</span> <span class="fn">StageCreateInfo</span>(<span class="type">VkShaderStageFlagBits</span> <span class="par">stage</span>, <span class="kw">const char</span>* <span class="par">entry</span> = <span class="str">&quot;main&quot;</span>) <span class="kw">const</span> {
         <span class="kw">return</span> {
-            <span class="enum">VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO</span>,<span class="cmt">//sType</span>
-            <span class="kw">nullptr</span>,                                            <span class="cmt">//pNext</span>
-            0,                                                  <span class="cmt">//flags</span>
-            stage,                                              <span class="cmt">//stage</span>
-            handle,                                             <span class="cmt">//module</span>
-            entry,                                              <span class="cmt">//pName</span>
-            <span class="kw">nullptr</span>                                             <span class="cmt">//pSpecializationInfo</span>
+            <span class="enum">VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO</span>, <span class="cmt">//sType</span>
+            <span class="kw">nullptr</span>,                                             <span class="cmt">//pNext</span>
+            0,                                                   <span class="cmt">//flags</span>
+            <span class="par">stage</span>,                                               <span class="cmt">//stage</span>
+            handle,                                              <span class="cmt">//module</span>
+            <span class="par">entry</span>,                                               <span class="cmt">//pName</span>
+            <span class="kw">nullptr</span>                                              <span class="cmt">//pSpecializationInfo</span>
         };
     }
     <span class="cmt">//Non-const Function</span>
-    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkShaderModuleCreateInfo</span>&amp; createInfo) {
-        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO</span>;
-        <span class="type">VkResult</span> result = <span class="fn">vkCreateShaderModule</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkShaderModuleCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateShaderModule</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ shader ] ERROR\nFailed to create a shader module!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
-    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="kw">const char</span>* filepath <span class="cmt">/*VkShaderModuleCreateFlags flags*/</span>) {
-        std::<span class="type">ifstream</span> file(filepath, std::<span class="type">ios</span>::ate | std::<span class="type">ios</span>::binary);
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="kw">const char</span>* <span class="par">filepath</span> <span class="cmt">/*VkShaderModuleCreateFlags flags*/</span>) {
+        std::<span class="type">ifstream</span> file(<span class="par">filepath</span>, std::<span class="type">ios</span>::ate | std::<span class="type">ios</span>::binary);
         <span class="kw">if</span> (!file) {
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ shader ] ERROR\nFailed to open the file: {}\n&quot;</span>, filepath);
-            <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>;<span class="cmt">//没有合适的错误代码，别用VK_ERROR_UNKNOWN</span>
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ shader ] ERROR\nFailed to open the file: {}\n&quot;</span>, <span class="par">createInfo</span>);
+            <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>; <span class="cmt">//没有合适的错误代码，别用VK_ERROR_UNKNOWN</span>
         }
         <span class="type">size_t</span> fileSize = <span class="type">size_t</span>(file.<span class="fn">tellg</span>());
         std::<span class="type">vector</span>&lt;<span class="type">uint32_t</span>&gt; binaries(fileSize / 4);
@@ -471,10 +471,10 @@ file.<span class="fn">close</span>();
         file.<span class="fn">close</span>();
         <span class="kw">return</span> <span class="fn">Create</span>(fileSize, binaries.<span class="fn">data</span>());
     }
-    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">size_t</span> codeSize, <span class="kw">const</span> <span class="type">uint32_t</span>* pCode <span class="cmt">/*VkShaderModuleCreateFlags flags*/</span>) {
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">size_t</span> <span class="par">codeSize</span>, <span class="kw">const</span> <span class="type">uint32_t</span>* <span class="par">pCode</span> <span class="cmt">/*VkShaderModuleCreateFlags flags*/</span>) {
         <span class="type">VkShaderModuleCreateInfo</span> createInfo = {
-            .codeSize = codeSize,
-            .pCode = pCode
+            .codeSize = <span class="par">codeSize</span>,
+            .pCode = <span class="par">pCode</span>
         };
         <span class="kw">return</span> <span class="fn">Create</span>(createInfo);
     }
@@ -883,7 +883,7 @@ glslc.exe路径 着色器文件路径 -fshader-stage=阶段名称 -c
 </p>
 <pre class="code">
 <span class="type">mat3</span> matrix;
-matrix[1] = <span class="kw">vec3</span>(3.0, 3.0, 3.0);<span class="cmt">//第二列元素全赋值为3.0</span>
+matrix[1] = <span class="kw">vec3</span>(3.0, 3.0, 3.0); <span class="cmt">//第二列元素全赋值为3.0</span>
 matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</span>
 </pre>
 <p>
@@ -1140,7 +1140,9 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
 <p>
     Vulkan的GLSL着色器中，对于块，允许两种内存布局：std140和std430。不同的内存布局遵循不同的对齐规则。
     <br>
-    Uniform缓冲区的内存布局只能为std140。Storage缓冲区和push constant的默认内存布局为std430，可以指定为std140。
+    Uniform缓冲区的内存布局只能为std140。
+    <br>
+    Storage缓冲区和push constant的默认内存布局为std430，可以指定为std140。
 </p>
 <p>
     内存布局涉及到的对齐规则十分重要，关系到如何在C++中定义相应的结构体。
@@ -1149,13 +1151,13 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
 </p>
 <pre class="code">
 <span class="kw">layout</span>(push_constant) <span class="kw">uniform</span> pushConstants {
-    <span class="type">mat4</span> proj;         <span class="cmt">//offset为0</span>
-    <span class="type">vec2</span> view;         <span class="cmt">//offset为64</span>
-    <span class="type">vec2</span> scale;        <span class="cmt">//offset为72</span>
-    <span class="kw">float</span> width;       <span class="cmt">//offset为80</span>
-    <span class="kw">float</span> cornerRadius;<span class="cmt">//offset为84</span>
-    <span class="type">vec4</span> color0;       <span class="cmt">//offset为96</span>
-    <span class="type">vec4</span> color1;       <span class="cmt">//offset为112</span>
+    <span class="type">mat4</span> proj;          <span class="cmt">//offset为0</span>
+    <span class="type">vec2</span> view;          <span class="cmt">//offset为64</span>
+    <span class="type">vec2</span> scale;         <span class="cmt">//offset为72</span>
+    <span class="kw">float</span> width;        <span class="cmt">//offset为80</span>
+    <span class="kw">float</span> cornerRadius; <span class="cmt">//offset为84</span>
+    <span class="type">vec4</span> color0;        <span class="cmt">//offset为96</span>
+    <span class="type">vec4</span> color1;        <span class="cmt">//offset为112</span>
 };
 </pre>
 <ul>
@@ -1192,13 +1194,13 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
 </p>
 <pre class="code">
 <span class="kw">struct</span> {
-    <span class="kw">alignas</span>(16) <span class="type">mat4</span> proj;         <span class="cmt">//offset为0</span>
-    <span class="kw">alignas</span>( 8) <span class="type">vec2</span> view;         <span class="cmt">//offset为64</span>
-    <span class="kw">alignas</span>( 8) <span class="type">vec2</span> scale;        <span class="cmt">//offset为72</span>
-    <span class="kw">alignas</span>( 4) <span class="kw">float</span> width;       <span class="cmt">//offset为80</span>
-    <span class="kw">alignas</span>( 4) <span class="kw">float</span> cornerRadius;<span class="cmt">//offset为84</span>
-    <span class="kw">alignas</span>(16) <span class="type">vec4</span> color0;       <span class="cmt">//offset为96</span>
-    <span class="kw">alignas</span>(16) <span class="type">vec4</span> color1;       <span class="cmt">//offset为112</span>
+    <span class="kw">alignas</span>(16) <span class="type">mat4</span> proj;          <span class="cmt">//offset为0</span>
+    <span class="kw">alignas</span>( 8) <span class="type">vec2</span> view;          <span class="cmt">//offset为64</span>
+    <span class="kw">alignas</span>( 8) <span class="type">vec2</span> scale;         <span class="cmt">//offset为72</span>
+    <span class="kw">alignas</span>( 4) <span class="kw">float</span> width;        <span class="cmt">//offset为80</span>
+    <span class="kw">alignas</span>( 4) <span class="kw">float</span> cornerRadius; <span class="cmt">//offset为84</span>
+    <span class="kw">alignas</span>(16) <span class="type">vec4</span> color0;        <span class="cmt">//offset为96</span>
+    <span class="kw">alignas</span>(16) <span class="type">vec4</span> color1;        <span class="cmt">//offset为112</span>
 } constant;
 </pre>
 <p>
@@ -1208,24 +1210,24 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
 <span class="pragma">#define</span> <span class="mcr">GLM_FORCE_ALIGNED_GENTYPES</span>
 <span class="pragma">#include</span> <span class="str">&lt;gtc/type_aligned.hpp&gt;</span>
 <span class="cmt">//通过using来简化太长的名称</span>
-<span class="kw">using</span>  <span class="type">vec2a</span> = glm::<span class="type">aligned_vec2</span>; <span class="cmt">//对齐为 8</span>
-<span class="kw">using</span>  <span class="type">vec3a</span> = glm::<span class="type">aligned_vec3</span>; <span class="cmt">//对齐为16</span>
-<span class="kw">using</span>  <span class="type">vec4a</span> = glm::<span class="type">aligned_vec4</span>; <span class="cmt">//对齐为16</span>
+<span class="kw">using</span>  <span class="type">vec2a</span> = glm::<span class="type">aligned_vec2</span>;  <span class="cmt">//对齐为 8</span>
+<span class="kw">using</span>  <span class="type">vec3a</span> = glm::<span class="type">aligned_vec3</span>;  <span class="cmt">//对齐为16</span>
+<span class="kw">using</span>  <span class="type">vec4a</span> = glm::<span class="type">aligned_vec4</span>;  <span class="cmt">//对齐为16</span>
 
-<span class="kw">using</span> <span class="type">dvec2a</span> = glm::<span class="type">aligned_dvec2</span>;<span class="cmt">//对齐为16</span>
-<span class="kw">using</span> <span class="type">dvec3a</span> = glm::<span class="type">aligned_dvec3</span>;<span class="cmt">//对齐为32</span>
-<span class="kw">using</span> <span class="type">dvec4a</span> = glm::<span class="type">aligned_dvec4</span>;<span class="cmt">//对齐为32</span>
+<span class="kw">using</span> <span class="type">dvec2a</span> = glm::<span class="type">aligned_dvec2</span>; <span class="cmt">//对齐为16</span>
+<span class="kw">using</span> <span class="type">dvec3a</span> = glm::<span class="type">aligned_dvec3</span>; <span class="cmt">//对齐为32</span>
+<span class="kw">using</span> <span class="type">dvec4a</span> = glm::<span class="type">aligned_dvec4</span>; <span class="cmt">//对齐为32</span>
 
-<span class="kw">using</span> <span class="type">ivec2a</span> = glm::<span class="type">aligned_ivec2</span>;<span class="cmt">//对齐为 8</span>
-<span class="kw">using</span> <span class="type">ivec3a</span> = glm::<span class="type">aligned_ivec3</span>;<span class="cmt">//对齐为16</span>
-<span class="kw">using</span> <span class="type">ivec4a</span> = glm::<span class="type">aligned_ivec4</span>;<span class="cmt">//对齐为16</span>
+<span class="kw">using</span> <span class="type">ivec2a</span> = glm::<span class="type">aligned_ivec2</span>; <span class="cmt">//对齐为 8</span>
+<span class="kw">using</span> <span class="type">ivec3a</span> = glm::<span class="type">aligned_ivec3</span>; <span class="cmt">//对齐为16</span>
+<span class="kw">using</span> <span class="type">ivec4a</span> = glm::<span class="type">aligned_ivec4</span>; <span class="cmt">//对齐为16</span>
 
-<span class="kw">using</span> <span class="type">uvec2a</span> = glm::<span class="type">aligned_uvec2</span>;<span class="cmt">//对齐为 8</span>
-<span class="kw">using</span> <span class="type">uvec3a</span> = glm::<span class="type">aligned_uvec3</span>;<span class="cmt">//对齐为16</span>
-<span class="kw">using</span> <span class="type">uvec4a</span> = glm::<span class="type">aligned_uvec4</span>;<span class="cmt">//对齐为16</span>
+<span class="kw">using</span> <span class="type">uvec2a</span> = glm::<span class="type">aligned_uvec2</span>; <span class="cmt">//对齐为 8</span>
+<span class="kw">using</span> <span class="type">uvec3a</span> = glm::<span class="type">aligned_uvec3</span>; <span class="cmt">//对齐为16</span>
+<span class="kw">using</span> <span class="type">uvec4a</span> = glm::<span class="type">aligned_uvec4</span>; <span class="cmt">//对齐为16</span>
 
-<span class="kw">using</span>  <span class="type">mat3a</span> = glm::<span class="type">aligned_mat3</span>; <span class="cmt">//对齐为16</span>
-<span class="kw">using</span>  <span class="type">mat4a</span> = glm::<span class="type">aligned_mat4</span>; <span class="cmt">//对齐为16</span>
+<span class="kw">using</span>  <span class="type">mat3a</span> = glm::<span class="type">aligned_mat3</span>;  <span class="cmt">//对齐为16</span>
+<span class="kw">using</span>  <span class="type">mat4a</span> = glm::<span class="type">aligned_mat4</span>;  <span class="cmt">//对齐为16</span>
 </pre>
 <p>
     注意GLM提供的aligned type也存在问题：
@@ -1243,7 +1245,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
 } constant;
 </pre>
 <p>
-    因为glm::<span class="type">aligned_vec3</span>的大小和对齐都是16（理想的情况是，大小为12，但对齐为16），所以C++代码中<span class="var">alpha</span>没有填入12~16字节间的空位上。
+    因为glm::<span class="type">aligned_vec3</span>的大小和对齐都是16（理想的情况是，大小为12，但对齐为16），所以C++代码中<span class="var">constant.alpha</span>没有填入12~16字节间的空位上。
     <br>
     我建议始终手动<span class="kw">alignas</span>(...)而非使用GLM的aligned type。
 </p></section>
@@ -1265,7 +1267,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
 <span class="kw">layout</span>(binding = 0) <span class="kw">uniform</span> descriptorConstants {
     <span class="type">vec3</span> cameraPosition;
     <span class="kw">int</span> lightCount;
-    <span class="type">light</span> lights[maxLightCount];<span class="cmt">//light是自定义结构体类型，定义略</span>
+    <span class="type">light</span> lights[maxLightCount]; <span class="cmt">//light是自定义结构体类型，定义略</span>
 };
 <span class="cmt">//Case 2: 不要这么做</span>
 <span class="kw">layout</span>(binding = 0) <span class="kw">uniform</span> descriptorConstants {

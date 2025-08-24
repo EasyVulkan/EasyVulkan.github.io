@@ -169,13 +169,13 @@
 
 <span class="kw">class</span> <span class="type">graphicsBase</span> {
     <span class="cmt">/*其他成员变量略*/</span>
-    <span class="type">graphicsBasePlus</span>* pPlus = <span class="kw">nullptr</span>;<span class="cmt">//=nullptr可以省略，因为是单例类的成员，自动零初始化</span>
+    <span class="type">graphicsBasePlus</span>* pPlus = <span class="kw">nullptr</span>; <span class="cmt">//=nullptr可以省略，因为是单例类的成员，自动零初始化</span>
 <span class="kw">public</span>:
     <span class="cmt">/*其他成员函数略*/</span>
     <span class="cmt">//*pPlus的Getter</span>
     <span class="kw">static</span> <span class="type">graphicsBasePlus</span>&amp; <span class="sfn">Plus</span>() { <span class="kw">return</span> *singleton.pPlus; }
     <span class="cmt">//*pPlus的Setter，只允许设置pPlus一次</span>
-    <span class="kw">static void</span> <span class="sfn">Plus</span>(<span class="type">graphicsBasePlus</span>&amp; plus) { <span class="kw">if</span> (!singleton.pPlus) singleton.pPlus = &amp;plus; }
+    <span class="kw">static void</span> <span class="sfn">Plus</span>(<span class="type">graphicsBasePlus</span>&amp; <span class="par">plus</span>) { <span class="kw">if</span> (!singleton.pPlus) singleton.pPlus = &amp;<span class="par">plus</span>; }
 };
 </pre>
 <ul>
@@ -202,7 +202,7 @@
 <span class="kw">inline</span> <span class="type">graphicsBasePlus</span> <span class="type">graphicsBasePlus</span>::singleton;
 </pre>
 <p>
-    首先使<span class="type">graphicsBasePlus</span>::<span class="var">singleton</span>能在初始化时自动设置<span class="type">graphicsBase</span>::<span class="var">pPlus</span>，填充<span class="fn">graphicsBasePlus</span>()：
+    首先使<span class="type">graphicsBasePlus</span>::<span class="var">singleton</span>能在初始化时自动设置<span class="type">graphicsBase</span>::pPlus，填充<span class="fn">graphicsBasePlus</span>()：
 </p>
 <pre class="code">
 <span class="fn">graphicsBasePlus</span>() {
@@ -214,7 +214,7 @@
 <ul>
     <li>
         <p>
-            定义时以<span class="kw">inline</span>修饰的静态成员变量（<span class="type">graphicsBase</span>::<span class="var">singleton</span>和<span class="type">graphicsBasePlus</span>::<span class="var">singleton</span>都以<span class="kw">inline</span>修饰）首先发生静态初始化，数值变为零值或默认值，然后按定义顺序发生动态初始化（若有必要），全局/静态变量逆初始化顺序发生析构。由于<span class="path">VKBase+.h</span>包含了<span class="path">VKBase.h</span>，<span class="type">graphicsBasePlus</span>::<span class="var">singleton</span>的初始化器在<span class="type">graphicsBase</span>::<span class="var">singleton</span>初始化后执行，由此可以确保<span class="type">graphicsBase</span>::<span class="var">pPlus</span>不会在被设置后又被刷成<span class="kw">nullptr</span>。
+            定义时以<span class="kw">inline</span>修饰的静态成员变量（<span class="type">graphicsBase</span>::<span class="var">singleton</span>和<span class="type">graphicsBasePlus</span>::<span class="var">singleton</span>都以<span class="kw">inline</span>修饰）首先发生静态初始化，数值变为零值或默认值，然后按定义顺序发生动态初始化（若有必要），全局/静态变量逆初始化顺序发生析构。由于<span class="path">VKBase+.h</span>包含了<span class="path">VKBase.h</span>，<span class="type">graphicsBasePlus</span>::<span class="var">singleton</span>的初始化器在<span class="type">graphicsBase</span>::<span class="var">singleton</span>初始化后执行，由此可以确保<span class="type">graphicsBase</span>::pPlus不会在被设置后又被刷成<span class="kw">nullptr</span>。
         </p>
     </li>
 </ul>
@@ -226,7 +226,7 @@
     <span class="type">commandPool</span> commandPool_graphics;
     <span class="type">commandPool</span> commandPool_presentation;
     <span class="type">commandPool</span> commandPool_compute;
-    <span class="type">commandBuffer</span> commandBuffer_transfer;<span class="cmt">//从commandPool_graphics分配</span>
+    <span class="type">commandBuffer</span> commandBuffer_transfer; <span class="cmt">//从commandPool_graphics分配</span>
     <span class="type">commandBuffer</span> commandBuffer_presentation;
     <span class="cmt">//静态变量</span>
     <span class="kw">static</span> <span class="type">graphicsBasePlus</span> singleton;
@@ -240,16 +240,16 @@
     <span class="fn">~graphicsBasePlus</span>() = <span class="kw">default</span>;
 <span class="kw">public</span>:
     <span class="cmt">//Getter</span>
-    <span class="kw">const</span> <span class="type">commandPool</span>&amp; <span class="fn">CommandPool_Graphics</span>() const { <span class="kw">return</span> commandPool_graphics; }
-    <span class="kw">const</span> <span class="type">commandPool</span>&amp; <span class="fn">CommandPool_Compute</span>() const { <span class="kw">return</span> commandPool_compute; }
-    <span class="kw">const</span> <span class="type">commandBuffer</span>&amp; <span class="fn">CommandBuffer_Transfer</span>() const { <span class="kw">return</span> commandBuffer_transfer; }
+    <span class="kw">const</span> <span class="type">commandPool</span>&amp; <span class="fn">CommandPool_Graphics</span>() <span class="kw">const</span> { <span class="kw">return</span> commandPool_graphics; }
+    <span class="kw">const</span> <span class="type">commandPool</span>&amp; <span class="fn">CommandPool_Compute</span>() <span class="kw">const</span> { <span class="kw">return</span> commandPool_compute; }
+    <span class="kw">const</span> <span class="type">commandBuffer</span>&amp; <span class="fn">CommandBuffer_Transfer</span>() <span class="kw">const</span> { <span class="kw">return</span> commandBuffer_transfer; }
     <span class="cmt">//Const Function</span>
     <span class="cmt">//简化命令提交</span>
-    <span class="type">result_t</span> <span class="fn">ExecuteCommandBuffer_Graphics</span>(<span class="type">VkCommandBuffer</span> commandBuffer) <span class="kw">const</span> {
+    <span class="type">result_t</span> <span class="fn">ExecuteCommandBuffer_Graphics</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>) <span class="kw">const</span> {
         <span class="type">fence</span> fence;
         <span class="type">VkSubmitInfo</span> submitInfo = {
             .commandBufferCount = 1,
-            .pCommandBuffers = &amp;commandBuffer
+            .pCommandBuffers = &amp;<span class="par">commandBuffer</span>
         };
         <span class="type">VkResult</span> result = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(submitInfo, fence);
         <span class="kw">if</span> (!result)
@@ -257,13 +257,13 @@
         <span class="kw">return</span> result;
     }
     <span class="cmt">//该函数专用于向呈现队列提交用于接收交换链图像的队列族所有权的命令缓冲区</span>
-    <span class="type">result_t</span> <span class="fn">AcquireImageOwnership_Presentation</span>(<span class="type">VkSemaphore</span> semaphore_renderingIsOver, <span class="type">VkSemaphore</span> semaphore_ownershipIsTransfered, <span class="type">VkFence</span> fence = <span class="mcr">VK_NULL_HANDLE</span>) <span class="kw">const</span> {
+    <span class="type">result_t</span> <span class="fn">AcquireImageOwnership_Presentation</span>(<span class="type">VkSemaphore</span> <span class="par">semaphore_renderingIsOver</span>, <span class="type">VkSemaphore</span> <span class="par">semaphore_ownershipIsTransfered</span>, <span class="type">VkFence</span> <span class="par">fence</span> = <span class="mcr">VK_NULL_HANDLE</span>) <span class="kw">const</span> {
         <span class="kw">if</span> (<span class="type">VkResult</span> result = commandBuffer_presentation.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>))
             <span class="kw">return</span> result;
         <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CmdTransferImageOwnership</span>(commandBuffer_presentation);
         <span class="kw">if</span> (<span class="type">VkResult</span> result = commandBuffer_presentation.<span class="fn">End</span>())
             <span class="kw">return</span> result;
-        <span class="kw">return</span> <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Presentation</span>(commandBuffer_presentation, semaphore_renderingIsOver, semaphore_ownershipIsTransfered, fence);
+        <span class="kw">return</span> <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Presentation</span>(commandBuffer_presentation, <span class="par">semaphore_renderingIsOver</span>, <span class="par">semaphore_ownershipIsTransfered</span>, <span class="par">fence</span>);
     }
 };
 <span class="kw">inline</span> <span class="type">graphicsBasePlus</span> <span class="type">graphicsBasePlus</span>::singleton;
@@ -444,11 +444,11 @@
 </p>
 <pre class="code">
 <span class="kw">class</span> <span class="type">graphicsBasePlus</span> {
-    <span class="cmt">/*新增*/</span><span class="type">VkFormatProperties</span> formatProperties[std::<span class="fn">size</span>(formatInfos_v1_0)] = {};
+    <span class="cmt">/*新增*/ </span><span class="type">VkFormatProperties</span> formatProperties[std::<span class="fn">size</span>(formatInfos_v1_0)] = {};
     <span class="type">commandPool</span> commandPool_graphics;
     <span class="type">commandPool</span> commandPool_presentation;
     <span class="type">commandPool</span> commandPool_compute;
-    <span class="type">commandBuffer</span> commandBuffer_transfer;<span class="cmt">//从commandPool_graphics分配</span>
+    <span class="type">commandBuffer</span> commandBuffer_transfer; <span class="cmt">//从commandPool_graphics分配</span>
     <span class="type">commandBuffer</span> commandBuffer_presentation;
     <span class="cmt">//静态变量</span>
     <span class="kw">static</span> <span class="type">graphicsBasePlus</span> singleton;
@@ -483,36 +483,37 @@
     <span class="fn">~graphicsBasePlus</span>() = <span class="kw">default</span>;
 <span class="kw">public</span>:
     <span class="cmt">//Getter</span>
-    <span class="cmt">/*新增*/</span><span class="kw">const</span> <span class="type">VkFormatProperties</span>&amp; <span class="fn">FormatProperties</span>(<span class="type">VkFormat</span> format) <span class="kw">const</span> {
+    <span class="cmt">/*新增*/ </span><span class="kw">const</span> <span class="type">VkFormatProperties</span>&amp; <span class="fn">FormatProperties</span>(<span class="type">VkFormat</span> <span class="par">format</span>) <span class="kw">const</span> {
 <span class="pragma">#ifndef</span> <span class="mcr">NDEBUG</span>
-       <span class="kw">if</span> (<span class="type">uint32_t</span>(format) &gt;= std::<span class="fn">size</span>(formatInfos_v1_0))
+       <span class="kw">if</span> (<span class="type">uint32_t</span>(<span class="par">format</span>) &gt;= std::<span class="fn">size</span>(formatInfos_v1_0))
            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ FormatProperties ] ERROR\nThis function only supports definite formats provided by VK_VERSION_1_0.\n&quot;</span>),
            <span class="fn">abort</span>();
 <span class="pragma">#endif</span>
-        <span class="kw">return</span> formatProperties[format];
+        <span class="kw">return</span> formatProperties[<span class="par">format</span>];
     }
-    <span class="kw">const</span> <span class="type">commandPool</span>&amp; <span class="fn">CommandPool_Graphics</span>() const { <span class="kw">return</span> commandPool_graphics; }
-    <span class="kw">const</span> <span class="type">commandPool</span>&amp; <span class="fn">CommandPool_Compute</span>() const { <span class="kw">return</span> commandPool_compute; }
-    <span class="kw">const</span> <span class="type">commandBuffer</span>&amp; <span class="fn">CommandBuffer_Transfer</span>() const { <span class="kw">return</span> commandBuffer_transfer; }
+    <span class="kw">const</span> <span class="type">commandPool</span>&amp; <span class="fn">CommandPool_Graphics</span>() <span class="kw">const</span> { <span class="kw">return</span> commandPool_graphics; }
+    <span class="kw">const</span> <span class="type">commandPool</span>&amp; <span class="fn">CommandPool_Compute</span>() <span class="kw">const</span> { <span class="kw">return</span> commandPool_compute; }
+    <span class="kw">const</span> <span class="type">commandBuffer</span>&amp; <span class="fn">CommandBuffer_Transfer</span>() <span class="kw">const</span> { <span class="kw">return</span> commandBuffer_transfer; }
     <span class="cmt">//Const Function</span>
-    <span class="type">result_t</span> <span class="fn">ExecuteCommandBuffer_Graphics</span>(<span class="type">VkCommandBuffer</span> commandBuffer) <span class="kw">const</span> {
+    <span class="type">result_t</span> <span class="fn">ExecuteCommandBuffer_Graphics</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>) <span class="kw">const</span> {
         <span class="type">fence</span> fence;
         <span class="type">VkSubmitInfo</span> submitInfo = {
             .commandBufferCount = 1,
-            .pCommandBuffers = &amp;commandBuffer
+            .pCommandBuffers = &amp;<span class="par">commandBuffer</span>
         };
         <span class="type">VkResult</span> result = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(submitInfo, fence);
         <span class="kw">if</span> (!result)
             fence.<span class="fn">Wait</span>();
         <span class="kw">return</span> result;
     }
-    <span class="type">result_t</span> <span class="fn">AcquireImageOwnership_Presentation</span>(<span class="type">VkSemaphore</span> semaphore_renderingIsOver, <span class="type">VkSemaphore</span> semaphore_ownershipIsTransfered, <span class="type">VkFence</span> fence = <span class="mcr">VK_NULL_HANDLE</span>) <span class="kw">const</span> {
+    <span class="cmt">//该函数专用于向呈现队列提交用于接收交换链图像的队列族所有权的命令缓冲区</span>
+    <span class="type">result_t</span> <span class="fn">AcquireImageOwnership_Presentation</span>(<span class="type">VkSemaphore</span> <span class="par">semaphore_renderingIsOver</span>, <span class="type">VkSemaphore</span> <span class="par">semaphore_ownershipIsTransfered</span>, <span class="type">VkFence</span> <span class="par">fence</span> = <span class="mcr">VK_NULL_HANDLE</span>) <span class="kw">const</span> {
         <span class="kw">if</span> (<span class="type">VkResult</span> result = commandBuffer_presentation.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>))
             <span class="kw">return</span> result;
         <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CmdTransferImageOwnership</span>(commandBuffer_presentation);
         <span class="kw">if</span> (<span class="type">VkResult</span> result = commandBuffer_presentation.<span class="fn">End</span>())
             <span class="kw">return</span> result;
-        <span class="kw">return</span> <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Presentation</span>(commandBuffer_presentation, semaphore_renderingIsOver, semaphore_ownershipIsTransfered, fence);
+        <span class="kw">return</span> <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Presentation</span>(commandBuffer_presentation, <span class="par">semaphore_renderingIsOver</span>, <span class="par">semaphore_ownershipIsTransfered</span>, <span class="par">fence</span>);
     }
 };
 <span class="kw">inline</span> <span class="type">graphicsBasePlus</span> <span class="type">graphicsBasePlus</span>::singleton;
@@ -527,23 +528,23 @@
 <p>
     再在vulkan命名空间中添加三个函数：
     <br>
-    1.对<span class="var">formatInfos_v1_0</span>进一步包装，函数<span class="fn">FormatInfo</span>(...)使得能直接以格式（而不是还要转到<span class="type">uint32_t</span>）为参数获取格式信息。
+    1.对<span class="var">formatInfos_v1_0</span>进一步包装，函数<span class="fn">FormatInfo</span>(...)便于获取格式信息，并在Debug Build下检查参数。
     <br>
     2.<span class="fn">Corresponding16BitFloatFormat</span>(...)获取32位浮点数格式对应的16位浮点数格式类型，这会在之后将32位浮点数的hdr图像数据转到16位浮点数数据时发挥作用。
     <br>
     3.<span class="fn">FormatProperties</span>(...)用于简化<span class="type">graphicsBase</span>::<span class="sfn">Plus</span>().<span class="fn">FormatProperties</span>(...)。
 </p>
 <pre class="code">
-<span class="kw">constexpr</span> <span class="type">formatInfo</span> <span class="fn">FormatInfo</span>(<span class="type">VkFormat</span> format) {
+<span class="kw">constexpr</span> <span class="type">formatInfo</span> <span class="fn">FormatInfo</span>(<span class="type">VkFormat</span> <span class="par">format</span>) {
 <span class="pragma">#ifndef</span> <span class="mcr">NDEBUG</span>
-    <span class="kw">if</span> (<span class="type">uint32_t</span>(format) &gt;= std::<span class="fn">size</span>(formatInfos_v1_0))
+    <span class="kw">if</span> (<span class="type">uint32_t</span>(<span class="par">format</span>) &gt;= std::<span class="fn">size</span>(formatInfos_v1_0))
         outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ FormatInfo ] ERROR\nThis function only supports definite formats provided by VK_VERSION_1_0.\n&quot;</span>),
         <span class="fn">abort</span>();
 <span class="pragma">#endif</span>
-    <span class="kw">return</span> formatInfos_v1_0[<span class="type">uint32_t</span>(format)];
+    <span class="kw">return</span> formatInfos_v1_0[<span class="par">format</span>];
 }
-<span class="kw">constexpr</span> <span class="type">VkFormat</span> <span class="fn">Corresponding16BitFloatFormat</span>(<span class="type">VkFormat</span> format_32BitFloat) {
-    <span class="kw">switch</span> (format_32BitFloat) {
+<span class="kw">constexpr</span> <span class="type">VkFormat</span> <span class="fn">Corresponding16BitFloatFormat</span>(<span class="type">VkFormat</span> <span class="par">format_32BitFloat</span>) {
+    <span class="kw">switch</span> (<span class="par">format_32BitFloat</span>) {
     <span class="kw">case</span> <span class="enum">VK_FORMAT_R32_SFLOAT</span>:
         <span class="kw">return</span> <span class="enum">VK_FORMAT_R16_SFLOAT</span>;
     <span class="kw">case</span> <span class="enum">VK_FORMAT_R32G32_SFLOAT</span>:
@@ -553,10 +554,10 @@
     <span class="kw">case</span> <span class="enum">VK_FORMAT_R32G32B32A32_SFLOAT</span>:
         <span class="kw">return</span> <span class="enum">VK_FORMAT_R16G16B16A16_SFLOAT</span>;
     }
-    <span class="kw">return</span> format_32BitFloat;
+    <span class="kw">return</span> <span class="par">format_32BitFloat</span>;
 }
-<span class="kw">inline const</span> <span class="type">VkFormatProperties</span>&amp; <span class="fn">FormatProperties</span>(<span class="type">VkFormat</span> format) {
-    <span class="kw">return</span> <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>().<span class="fn">FormatProperties</span>(format);
+<span class="kw">inline const</span> <span class="type">VkFormatProperties</span>&amp; <span class="fn">FormatProperties</span>(<span class="type">VkFormat</span> <span class="par">format</span>) {
+    <span class="kw">return</span> <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>().<span class="fn">FormatProperties</span>(<span class="par">format</span>);
 }
 </pre></section>
 </section>

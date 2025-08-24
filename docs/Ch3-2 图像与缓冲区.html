@@ -252,6 +252,11 @@
             所需分配内存区的大小和内存类型索引需要根据与之对应的图像或缓冲区确定。
         </p>
     </li>
+    <li>
+        <p>
+            <a href="https://renderdoc.org/vkspec_chunked/chap11.html#VkMemoryAllocateInfo">VkMemoryAllocateInfo</a>并没有flags选项，但从Vulkan1.1版本起可在其pNext链中加入<a href="https://renderdoc.org/vkspec_chunked/chap11.html#VkMemoryAllocateFlagsInfo">VkMemoryAllocateFlagsInfo</a>结构体来指定flags，使用光线追踪相关扩展须填写这一结构体。由于本套教程中用不着，这里不做具体解说，示例代码中Ch8的<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch8/VKBase.h">VKBase.h</a>和<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch8/VKBase+.h">VKBase+.h</a>在封装图像与缓冲区时考虑到了注明flags的必要，与后文的封装代码有所区别。
+        </p>
+    </li>
 </ul></section>
 <section id="id2">
 <h3>将设备内存绑定给缓冲区或图像<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
@@ -502,7 +507,7 @@
 <pre class="code">
 <span class="kw">class</span> <span class="type">deviceMemory</span> {
     <span class="type">VkDeviceMemory</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
-    <span class="type">VkDeviceSize</span> allocationSize = 0; <span class="cmt">//实际分配的内存大小</span>
+    <span class="type">VkDeviceSize</span> allocationSize = 0;            <span class="cmt">//实际分配的内存大小</span>
     <span class="type">VkMemoryPropertyFlags</span> memoryProperties = 0; <span class="cmt">//内存属性</span>
     <span class="cmt">//--------------------</span>
     <span class="cmt">//该函数用于在映射内存区时，调整非host coherent的内存区域的范围</span>
@@ -1957,13 +1962,13 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
             <td><p>UNORM</p></td>
             <td><p>无符号整型</p></td>
             <td><p><span class="kw">float</span></p></td>
-            <td><p>在着色器中被标准化到[ 0, 1]的范围</p></td>
+            <td><p>在着色器中被归一化到[ 0, 1]的范围</p></td>
         </tr>
         <tr class="row-odd">
             <td><p>SNORM</p></td>
             <td><p>无符号整型</p></td>
             <td><p><span class="kw">float</span></p></td>
-            <td><p>在着色器中被标准化到[-1, 1]的范围</p></td>
+            <td><p>在着色器中被归一化到[-1, 1]的范围</p></td>
         </tr>
         <tr class="row-even">
             <td><p>USCALED</p></td>
@@ -2005,7 +2010,7 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
             <td><p>SRGB</p></td>
             <td><p>无符号整型</p></td>
             <td><p><span class="kw">float</span></p></td>
-            <td><p>在着色器中被标准化到[ 0, 1]的范围，通过渲染等方式写入该格式的图像时，对RGB通道应用<a class="reference internal" href="Ch8-5%20sRGB%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%BC%80%E5%90%AFHDR.html#srgb">sRGB EOTF</a></p></td>
+            <td><p>在着色器中被归一化到[ 0, 1]的范围，通过渲染等方式写入该格式的图像时，对RGB通道应用<a class="reference internal" href="Ch8-5%20sRGB%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%BC%80%E5%90%AFHDR.html#srgb">sRGB EOTF</a></p></td>
         </tr>
     </tbody>
 </table>
@@ -2022,7 +2027,7 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
     </li>
 </ul>
 <p>
-    关于标准化，举例而言：
+    关于归一化（normalized，又译标准化），举例而言：
     <br>
     <span class="enum">VK_FORMAT_R8G8B8A8_UNORM</span>的任一通道，若数值为0，则着色器中读取为0.f，若数值为255，则着色器中读取为1.f。
     <br>
@@ -2047,11 +2052,11 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
     <tbody>
         <tr class="row-even">
             <td><p><span class="enum">VK_FORMAT_D16_UNORM</span></p></td>
-            <td><p>只有深度值，16位无符号整型，被标准化到[ 0, 1]的范围</p></td>
+            <td><p>只有深度值，16位无符号整型，被归一化到[ 0, 1]的范围</p></td>
         </tr>
         <tr class="row-odd">
             <td><p><span class="enum">VK_FORMAT_X8_D24_UNORM_PACK32</span></p></td>
-            <td><p>共32位，8个比特未使用，只有深度值，24位无符号整型，被标准化到[ 0, 1]的范围</p></td>
+            <td><p>共32位，8个比特未使用，只有深度值，24位无符号整型，被归一化到[ 0, 1]的范围</p></td>
         </tr>
         <tr class="row-even">
             <td><p><span class="enum">VK_FORMAT_D32_SFLOAT</span></p></td>
@@ -2063,11 +2068,11 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
         </tr>
         <tr class="row-even">
             <td><p><span class="enum">VK_FORMAT_D16_UNORM_S8_UINT</span></p></td>
-            <td><p>16位无符号整型作为深度值，被标准化到[ 0, 1]的范围，8位无符号整型作为模板值</p></td>
+            <td><p>16位无符号整型作为深度值，被归一化到[ 0, 1]的范围，8位无符号整型作为模板值</p></td>
         </tr>
         <tr class="row-odd">
             <td><p><span class="enum">VK_FORMAT_D24_UNORM_S8_UINT</span></p></td>
-            <td><p>24位无符号整型作为深度值，被标准化到[ 0, 1]的范围，8位无符号整型作为模板值</p></td>
+            <td><p>24位无符号整型作为深度值，被归一化到[ 0, 1]的范围，8位无符号整型作为模板值</p></td>
         </tr>
         <tr class="row-even">
             <td><p><span class="enum">VK_FORMAT_D32_SFLOAT_S8_UINT</span></p></td>

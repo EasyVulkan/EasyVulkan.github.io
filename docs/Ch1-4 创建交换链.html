@@ -839,7 +839,7 @@ swapchainCreateInfo.oldSwapchain = swapchain;
     queue_graphics != queue_presentation)
     result = <span class="fn">vkQueueWaitIdle</span>(queue_presentation);
 <span class="kw">if</span> (result) {
-    std::cout &lt;&lt; std::<span class="fn">format</span>(<spas class="str">&quot;[ graphicsBase ] ERROR\nFailed to wait for the queue to be idle!\nError code: {}\n&quot;</spas>, <span class="type">int32_t</span>(result));
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to wait for the queue to be idle!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
     <span class="kw">return</span> result;
 }
 </pre>
@@ -1083,7 +1083,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
         queue_graphics != queue_presentation)
         result = <span class="fn">vkQueueWaitIdle</span>(queue_presentation);
     <span class="kw">if</span> (result) {
-        std::cout &lt;&lt; std::<span class="fn">format</span>(<spas class="str">&quot;[ graphicsBase ] ERROR\nFailed to wait for the queue to be idle!\nError code: {}\n&quot;</spas>, <span class="type">int32_t</span>(result));
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to wait for the queue to be idle!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="cmt">//销毁旧交换链相关对象</span>
@@ -1169,7 +1169,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
 <span class="type">VkResult</span> <span class="fn">WaitIdle</span>() <span class="kw">const</span> {
     <span class="type">VkResult</span> result = <span class="fn">vkDeviceWaitIdle</span>(device);
     <span class="kw">if</span> (result)
-        std::cout &lt;&lt; std::<span class="fn">format</span>(<spas class="str">&quot;[ graphicsBase ] ERROR\nFailed to wait for the device to be idle!\nError code: {}\n&quot;</spas>, <span class="type">int32_t</span>(result));
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to wait for the device to be idle!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
     <span class="kw">return</span> result;
 }
 </pre>

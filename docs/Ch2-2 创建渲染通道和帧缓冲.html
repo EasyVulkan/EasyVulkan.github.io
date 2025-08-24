@@ -299,7 +299,7 @@
     .srcSubpass = <span class="mcr">VK_SUBPASS_EXTERNAL</span>,
     .dstSubpass = 0,
     .srcStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,
-    .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>,<span class="cmt">//不早于提交命令缓冲区时等待semaphore对应的waitDstStageMask</span>
+    .dstStageMask = <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>, <span class="cmt">//不早于提交命令缓冲区时等待semaphore对应的waitDstStageMask</span>
     .srcAccessMask = 0,
     .dstAccessMask = <span class="enum">VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</span>,
     .dependencyFlags = <span class="enum">VK_DEPENDENCY_BY_REGION_BIT</span>
@@ -311,7 +311,7 @@
     注：由于（在这套教程的示例中）在每次渲染循环中使用同个栅栏对同个命令缓冲区进行同步，执行当前渲染命令时，前一次渲染必定已经结束，因此这里的srcStageMask其实没有实质作用。填写为<span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>更多是出于演示子通道依赖用法的目的。
 </p>
 <p>
-    图像内存布局的转换最迟可以在这里dstStageMask指定的阶段发生，而这件事当然得发生在获取到交换链图像之后，那么dstStageMask便不得早于提交命令缓冲区时等待（<span class="fn">vkAcquireNextImageKHR</span>(...)所置位的）信号量对应的waitDstStageMask。
+    图像内存布局的转换最迟可以在这里dstStageMask指定的阶段发生，而这件事当然得发生在用<span class="fn">vkAcquireNextImageKHR</span>(...)获取到交换链图像之后，那么dstStageMask便不得早于提交命令缓冲区时等待信号量（该信号量由<span class="fn">vkAcquireNextImageKHR</span>(...)置位）对应的waitDstStageMask。
 </p>
 <p>
     书写渲染通道的创建信息，以创建渲染通道：
@@ -372,7 +372,7 @@ rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase
     }
 };
 <span class="kw">auto</span> DestroyFramebuffers = [] {
-    rpwf.framebuffers.<span class="fn">clear</span>();<span class="cmt">//清空vector中的元素时会逐一执行析构函数</span>
+    rpwf.framebuffers.<span class="fn">clear</span>(); <span class="cmt">//清空vector中的元素时会逐一执行析构函数</span>
 };
 <span class="cmt">/*待后续填充*/</span>
 <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>(CreateFramebuffers);
@@ -447,7 +447,7 @@ rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase
 <ul>
     <li>
         <p>
-            如果你需要重建逻辑设备，那么需要一并重建与之相关的Vulkan对象，则重建逻辑设备后势必会再次调用<span class="fn">CreateRpwf_Screen</span>()，而添加回调函数的两条语句只应该被执行一次，用<a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html#execute_once">Ch2-0</a>中定义的宏<span class="mcr">ExecuteOnce</span>来确保这一点。
+            如果你需要重建逻辑设备，那么需要一并重建与之相关的Vulkan对象，则重建逻辑设备后势必会再次调用<span class="fn">CreateRpwf_Screen</span>()以创建渲染通道，而添加回调函数的两条语句只应该被执行一次，用<a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html#execute_once">Ch2-0</a>中定义的宏<span class="mcr">ExecuteOnce</span>来确保这一点。
         </p>
     </li>
 </ul></section>
@@ -464,7 +464,7 @@ rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase
     <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }))
         <span class="kw">return</span> -1;
 
-    <span class="cmt">/*新增*/</span><span class="kw">const auto</span>&amp; [renderPass, framebuffers] = easyVulkan::<span class="fn">CreateRpwf_Screen</span>();
+    <span class="cmt">/*新增*/ </span><span class="kw">const auto</span>&amp; [renderPass, framebuffers] = easyVulkan::<span class="fn">CreateRpwf_Screen</span>();
 
     <span class="type">fence</span> fence;
     <span class="type">semaphore</span> semaphore_imageIsAvailable;
@@ -474,7 +474,7 @@ rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase
     <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
     commandPool.<span class="type">AllocateBuffers</span>(commandBuffer);
 
-    <span class="cmt">/*新增*/</span><span class="type">VkClearValue</span> clearColor = { .color = { 1.f, 0.f, 0.f, 1.f } };<span class="cmt">//红色</span>
+    <span class="cmt">/*新增*/ </span><span class="type">VkClearValue</span> clearColor = { .color = { 1.f, 0.f, 0.f, 1.f } }; <span class="cmt">//红色</span>
 
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
@@ -482,12 +482,12 @@ rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase
 
         <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
         <span class="cmt">//因为帧缓冲与所获取的交换链图像一一对应，获取交换链图像索引</span>
-        <span class="cmt">/*新增*/</span><span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CurrentImageIndex</span>();
+        <span class="cmt">/*新增*/ </span><span class="kw">auto</span> i = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CurrentImageIndex</span>();
 
         commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
-        <span class="cmt">/*新增，开始渲染通道*/</span>renderPass.<span class="fn">CmdBegin</span>(commandBuffer, framebuffers[i], { {}, windowSize }, clearColor);
+        <span class="cmt">/*新增，开始渲染通道*/</span> renderPass.<span class="fn">CmdBegin</span>(commandBuffer, framebuffers[i], { {}, windowSize }, clearColor);
         <span class="cmt">/*渲染命令，待填充*/</span>
-        <span class="cmt">/*新增，结束渲染通道*/</span>renderPass.<span class="fn">CmdEnd</span>(commandBuffer);
+        <span class="cmt">/*新增，结束渲染通道*/</span> renderPass.<span class="fn">CmdEnd</span>(commandBuffer);
         commandBuffer.<span class="fn">End</span>();
 
         <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);

@@ -6,8 +6,8 @@
 1.捉虫/答疑，发Issue，开新的，或者发在[【长期】 捉虫/答疑集中贴](https://github.com/EasyVulkan/EasyVulkan.github.io/issues/7)。<br>
 2.反馈/交流/答疑，发Discussion。
 
+2025.08.27 各种细枝末节的更新，代码中Ch8的[VKBase.h](https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch8/VKBase.h)和[VKBase+.h](https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch8/VKBase+.h)相比先前更接近我个人使用的版本。<br>
 2025.05.07 [Ch4-4 几何着色器](https://easyvulkan.github.io/Ch4-4%20%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8.html)完成。<br>
-2025.05.07 首页上的留言板似乎已可以正常使用。<br>
 2024.04.02 代码里加了CMakeLists.txt（我不确定Visual Studio之外是什么效果，谁愿意的话可以fork到私有仓库，帮我改一下然后pull request给我）
 
 ## 章节目录

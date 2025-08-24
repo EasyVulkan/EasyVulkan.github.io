@@ -128,7 +128,7 @@ bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable
 		mainWindow.Create(windowTitle, { GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) }, WS_POPUP) :
 		mainWindow.Create(windowTitle, { long(size.width), long(size.height) }, style_windowed);
 	if (!mainWindow.HWindow()) {
-		outStream << std::format("[ InitializeWindow ] ERROR\nFailed to create a win32 window!\n");
+		OutputMessage("[ InitializeWindow ] ERROR\nFailed to create a win32 window!\n");
 		return false;
 	}
 	//Add extensions
@@ -150,7 +150,7 @@ bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable
 		.hwnd = mainWindow.HWindow()
 	};
 	if (VkResult result = vkCreateWin32SurfaceKHR(graphicsBase::Base().Instance(), &surfaceCreateInfo, nullptr, &surface)) {
-		outStream << std::format("[ InitializeWindow ] ERROR\nFailed to create a window surface!\nError code: {}\n", int32_t(result));
+		OutputMessage("[ InitializeWindow ] ERROR\nFailed to create a window surface!\nError code: {}\n", int32_t(result));
 		return false;
 	}
 	graphicsBase::Base().Surface(surface);
@@ -170,13 +170,13 @@ bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable
 				result_setColorSpace == VK_SUCCESS)
 				break;
 		if (result_setColorSpace)
-			outStream << std::format("[ InitializeWindow ] WARNING\nFailed to satisfy the requirement of color space!\n");
+			OutputMessage("[ InitializeWindow ] WARNING\nFailed to satisfy the requirement of color space!\n");
 	}
 	if (!graphicsBase::Base().SwapchainCreateInfo().imageFormat &&
 		decltype(PreInitialization_EnableSrgb()){}())
 		if (graphicsBase::Base().SetSurfaceFormat({ VK_FORMAT_R8G8B8A8_SRGB, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR }) &&
 			graphicsBase::Base().SetSurfaceFormat({ VK_FORMAT_B8G8R8A8_SRGB, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR }))
-			outStream << std::format("[ InitializeWindow ] WARNING\nFailed to enable sRGB!\n");
+			OutputMessage("[ InitializeWindow ] WARNING\nFailed to enable sRGB!\n");
 	//Create swapchain
 	if (graphicsBase::Base().CreateSwapchain(limitFrameRate))
 		return false;

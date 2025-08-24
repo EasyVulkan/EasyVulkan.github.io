@@ -850,41 +850,41 @@
     <span class="type">VkRenderPass</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
 <span class="kw">public</span>:
     <span class="fn">renderPass</span>() = <span class="kw">default</span>;
-    <span class="fn">renderPass</span>(<span class="type">VkRenderPassCreateInfo</span>&amp; createInfo) {
-        <span class="fn">Create</span>(createInfo);
+    <span class="fn">renderPass</span>(<span class="type">VkRenderPassCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="fn">Create</span>(<span class="par">createInfo</span>);
     }
-    <span class="fn">renderPass</span>(<span class="type">renderPass</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    <span class="fn">renderPass</span>(<span class="type">renderPass</span>&amp;&amp; <span class="par">other</span>) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
     <span class="fn">~renderPass</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyRenderPass</span>); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
     <span class="cmt">//Const Function</span>
-    <span class="kw">void</span> <span class="fn">CmdBegin</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkRenderPassBeginInfo</span>&amp; beginInfo, <span class="type">VkSubpassContents</span> subpassContents = <span class="enum">VK_SUBPASS_CONTENTS_INLINE</span>) <span class="kw">const</span> {
-        beginInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO</span>;
-        beginInfo.renderPass = handle;
-        <span class="fn">vkCmdBeginRenderPass</span>(commandBuffer, &amp;beginInfo, subpassContents);
+    <span class="kw">void</span> <span class="fn">CmdBegin</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">VkRenderPassBeginInfo</span>&amp; <span class="par">beginInfo</span>, <span class="type">VkSubpassContents</span> <span class="par">subpassContents</span> = <span class="enum">VK_SUBPASS_CONTENTS_INLINE</span>) <span class="kw">const</span> {
+        <span class="par">beginInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO</span>;
+        <span class="par">beginInfo</span>.renderPass = handle;
+        <span class="fn">vkCmdBeginRenderPass</span>(<span class="par">commandBuffer</span>, &amp;<span class="par">beginInfo</span>, <span class="par">subpassContents</span>);
     }
-    <span class="kw">void</span> <span class="fn">CmdBegin</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkFramebuffer</span> framebuffer, <span class="type">VkRect2D</span> renderArea, <span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">VkClearValue</span>&gt; clearValues = {}, <span class="type">VkSubpassContents</span> subpassContents = <span class="enum">VK_SUBPASS_CONTENTS_INLINE</span>) <span class="kw">const</span> {
+    <span class="kw">void</span> <span class="fn">CmdBegin</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">VkFramebuffer</span> <span class="par">framebuffer</span>, <span class="type">VkRect2D</span> <span class="par">renderArea</span>, <span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">VkClearValue</span>&gt; <span class="par">clearValues</span> = {}, <span class="type">VkSubpassContents</span> <span class="par">subpassContents</span> = <span class="enum">VK_SUBPASS_CONTENTS_INLINE</span>) <span class="kw">const</span> {
         <span class="type">VkRenderPassBeginInfo</span> beginInfo = {
             .sType = <span class="enum">VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO</span>,
             .renderPass = handle,
-            .framebuffer = framebuffer,
-            .renderArea = renderArea,
-            .clearValueCount = <span class="type">uint32_t</span>(clearValues.<span class="fn">Count</span>()),
-            .pClearValues = clearValues.<span class="fn">Pointer</span>()
+            .framebuffer = <span class="par">framebuffer</span>,
+            .renderArea = <span class="par">renderArea</span>,
+            .clearValueCount = <span class="type">uint32_t</span>(<span class="par">clearValues</span>.<span class="fn">Count</span>()),
+            .pClearValues = <span class="par">clearValues</span>.<span class="fn">Pointer</span>()
         };
-        <span class="fn">vkCmdBeginRenderPass</span>(commandBuffer, &amp;beginInfo, subpassContents);
+        <span class="fn">vkCmdBeginRenderPass</span>(<span class="par">commandBuffer</span>, &amp;beginInfo, <span class="par">subpassContents</span>);
     }
-    <span class="kw">void</span> <span class="fn">CmdNext</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkSubpassContents</span> subpassContents = <span class="enum">VK_SUBPASS_CONTENTS_INLINE</span>) <span class="kw">const</span> {
-        <span class="fn">vkCmdNextSubpass</span>(commandBuffer, subpassContents);
+    <span class="kw">void</span> <span class="fn">CmdNext</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">VkSubpassContents</span> <span class="par">subpassContents</span> = <span class="enum">VK_SUBPASS_CONTENTS_INLINE</span>) <span class="kw">const</span> {
+        <span class="fn">vkCmdNextSubpass</span>(<span class="par">commandBuffer</span>, <span class="par">subpassContents</span>);
     }
-    <span class="kw">void</span> <span class="fn">CmdEnd</span>(<span class="type">VkCommandBuffer</span> commandBuffer) <span class="kw">const</span> {
-        <span class="fn">vkCmdEndRenderPass</span>(commandBuffer);
+    <span class="kw">void</span> <span class="fn">CmdEnd</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>) <span class="kw">const</span> {
+        <span class="fn">vkCmdEndRenderPass</span>(<span class="par">commandBuffer</span>);
     }
     <span class="cmt">//Non-const Function</span>
-    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkRenderPassCreateInfo</span>&amp; createInfo) {
-        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO</span>;
-        <span class="type">VkResult</span> result = <span class="fn">vkCreateRenderPass</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkRenderPassCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateRenderPass</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ renderPass ] ERROR\nFailed to create a render pass!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;
@@ -1012,18 +1012,18 @@
     <span class="type">VkFramebuffer</span> handle = <span class="mcr">VK_NULL_HANDLE</span>;
 <span class="kw">public</span>:
     <span class="fn">framebuffer</span>() = <span class="kw">default</span>;
-    <span class="fn">framebuffer</span>(<span class="type">VkFramebufferCreateInfo</span>&amp; createInfo) {
-        <span class="fn">Create</span>(createInfo);
+    <span class="fn">framebuffer</span>(<span class="type">VkFramebufferCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="fn">Create</span>(<span class="par">createInfo</span>);
     }
-    <span class="fn">framebuffer</span>(<span class="type">framebuffer</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
+    <span class="fn">framebuffer</span>(<span class="type">framebuffer</span>&amp;&amp; <span class="par">other</span>) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
     <span class="fn">~framebuffer</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyFramebuffer</span>); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
     <span class="cmt">//Non-const Function</span>
-    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkFramebufferCreateInfo</span>&amp; createInfo) {
-        createInfo.sType = <span class="enum">VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO</span>;
-        <span class="type">VkResult</span> result = <span class="fn">vkCreateFramebuffer</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;createInfo, <span class="kw">nullptr</span>, &amp;handle);
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkFramebufferCreateInfo</span>&amp; <span class="par">createInfo</span>) {
+        <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO</span>;
+        <span class="type">VkResult</span> result = <span class="fn">vkCreateFramebuffer</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ framebuffer ] ERROR\nFailed to create a framebuffer!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
         <span class="kw">return</span> result;

@@ -270,7 +270,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;
 std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt; instanceExtensions;
 
 <span class="cmt">//该函数用于向instanceLayers或instanceExtensions容器中添加字符串指针，并确保不重复</span>
-<span class="kw">static void</span> <span class="sfn">AddLayerOrExtension</span>( std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;&amp; <span class="par">container</span>, <span class="kw">const char</span>* <span class="par">name</span>) {
+<span class="kw">static void</span> <span class="sfn">AddLayerOrExtension</span>(std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;&amp; <span class="par">container</span>, <span class="kw">const char</span>* <span class="par">name</span>) {
     <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : <span class="par">container</span>)
         <span class="kw">if</span> (!<span class="fn">strcmp</span>(<span class="par">name</span>, i)) <span class="cmt">//strcmp(...)在字符串匹配时返回0</span>
             <span class="kw">return</span>;           <span class="cmt">//如果层/扩展的名称已在容器中，直接返回</span>
@@ -281,10 +281,10 @@ std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;
 <span class="type">VkInstance</span> <span class="fn">Instance</span>() <span class="kw">const</span> {
     <span class="kw">return</span> instance;
 }
-<span class="kw">const</span> std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;&amp; <span class="fn">InstanceLayers()</span> <span class="kw">const</span> {
+<span class="kw">const</span> std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;&amp; <span class="fn">InstanceLayers</span>() <span class="kw">const</span> {
     <span class="kw">return</span> instanceLayers;
 }
-<span class="kw">const</span> std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;&amp; <span class="fn">InstanceExtensions()</span> <span class="kw">const</span> {
+<span class="kw">const</span> std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;&amp; <span class="fn">InstanceExtensions</span>() <span class="kw">const</span> {
     <span class="kw">return</span> instanceExtensions;
 }
 
@@ -472,7 +472,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;
     <span class="kw">return</span> availablePhysicalDevices[<span class="par">index</span>];
 }
 <span class="type">uint32_t</span> <span class="fn">AvailablePhysicalDeviceCount</span>() <span class="kw">const</span> {
-    <span class="kw">return</span> <span class="type">uint32_t</span>(availablePhysicalDevices.<span class="fn">size()</span>);
+    <span class="kw">return</span> <span class="type">uint32_t</span>(availablePhysicalDevices.<span class="fn">size</span>());
 }
 
 <span class="type">VkDevice</span> <span class="fn">Device</span>() <span class="kw">const</span> {
@@ -497,7 +497,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;
     <span class="kw">return</span> queue_compute;
 }
 
-<span class="kw">const</span> std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;&amp; <span class="fn">DeviceExtensions()</span> <span class="kw">const</span> {
+<span class="kw">const</span> std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;&amp; <span class="fn">DeviceExtensions</span>() <span class="kw">const</span> {
     <span class="kw">return</span> deviceExtensions;
 }
 
@@ -744,7 +744,7 @@ std::<span class="type">vector</span> &lt;<span class="type">VkImageView&gt;</sp
         <span class="kw">return</span> availablePhysicalDevices[<span class="par">index</span>];
     }
     <span class="type">uint32_t</span> <span class="fn">AvailablePhysicalDeviceCount</span>() <span class="kw">const</span> {
-        <span class="kw">return</span> <span class="type">uint32_t</span>(availablePhysicalDevices.<span class="fn">size()</span>);
+        <span class="kw">return</span> <span class="type">uint32_t</span>(availablePhysicalDevices.<span class="fn">size</span>());
     }
 
     <span class="type">VkDevice</span> <span class="fn">Device</span>() <span class="kw">const</span> {
@@ -798,13 +798,13 @@ std::<span class="type">vector</span> &lt;<span class="type">VkImageView&gt;</sp
         <span class="kw">return</span> swapchainCreateInfo;
     }
 
-    <span class="kw">const</span> std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;&amp; <span class="fn">InstanceLayers()</span> <span class="kw">const</span> {
+    <span class="kw">const</span> std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;&amp; <span class="fn">InstanceLayers</span>() <span class="kw">const</span> {
         <span class="kw">return</span> instanceLayers;
     }
-    <span class="kw">const</span> std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;&amp; <span class="fn">InstanceExtensions()</span> <span class="kw">const</span> {
+    <span class="kw">const</span> std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;&amp; <span class="fn">InstanceExtensions</span>() <span class="kw">const</span> {
         <span class="kw">return</span> instanceExtensions;
     }
-    <span class="kw">const</span> std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;&amp; <span class="fn">DeviceExtensions()</span> <span class="kw">const</span> {
+    <span class="kw">const</span> std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;&amp; <span class="fn">DeviceExtensions</span>() <span class="kw">const</span> {
         <span class="kw">return</span> deviceExtensions;
     }
 

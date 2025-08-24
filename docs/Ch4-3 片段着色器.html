@@ -214,7 +214,7 @@
         </tr>
         <tr class="row-even">
             <td><p><span class="type">vec2</span> gl_PointCoord</p></td>
-            <td><p>若生成当前片段的图元是点，表示该片段在点内的标准化坐标（点是有大小的）</p></td>
+            <td><p>若生成当前片段的图元是点，表示该片段在点内的归一化坐标（点是有大小的）</p></td>
         </tr>
         <tr class="row-odd">
             <td><p><span class="kw">int</span> gl_SampleID</p></td>
@@ -222,7 +222,7 @@
         </tr>
         <tr class="row-even">
             <td><p><span class="type">vec2</span> gl_SamplePosition</p></td>
-            <td><p>当前采样点在像素内的标准化坐标，x和y的范围为[0,1]</p></td>
+            <td><p>当前采样点在像素内的归一化坐标，x和y的范围为[0,1]</p></td>
         </tr>
         <tr class="row-odd">
             <td><p><span class="kw">int</span> gl_SampleMaskIn[]</p></td>
@@ -253,7 +253,7 @@
 </p><section id="gl-fragcoord">
 <h3>gl_FragCoord<a class="headerlink" href="#gl-fragcoord" title="Permalink to this heading"></a></h3>
 <p>
-    gl_FragCoord的x和y坐标是<strong>屏幕空间内的非标准化坐标</strong>，在没有多重采样的情况下，坐标选取各个像素的中心位置即数值以.5结尾，以左上角为原点，左上角像素坐标为(0.5, 0.5)。
+    gl_FragCoord的x和y坐标是<strong>屏幕空间内的非归一化坐标</strong>，在没有多重采样的情况下，坐标选取各个像素的中心位置即数值以.5结尾，以左上角为原点，左上角像素坐标为(0.5, 0.5)。
     <br>
     从OpenGL转来的程序员注意，OpenGL中默认以左下角为原点，并且Vulkan中不再支持pixel_center_integer修饰符。
     <br>
@@ -275,7 +275,7 @@
 <p>
     绘制点绘制出的是正方形，点的大小由先前阶段中的gl_PointSize指定。
     <br>
-    gl_PointCoord以正方形左上角为原点，因是标准化坐标，x和y的范围为[0,1]。
+    gl_PointCoord以正方形左上角为原点，因是归一化坐标，x和y的范围为[0,1]。
 </p></section>
 <section id="gl-samplemaskin">
 <h3>gl_SampleMaskIn<a class="headerlink" href="#gl-samplemaskin" title="Permalink to this heading"></a></h3>
@@ -382,8 +382,8 @@
     片段着色器可以向一个location输出两个色值，写法如下：
 </p>
 <pre class="code">
-<span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec4</span> o_Color;            <span class="cmt">//index为0，对应SRC</span>
-<span class="kw">layout</span>(location = 0, index = 1) <span class="kw">out</span> <span class="type">vec4</span> o_Color1;<span class="cmt">//index为1，对应SRC1</span>
+<span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec4</span> o_Color;             <span class="cmt">//index为0，对应SRC</span>
+<span class="kw">layout</span>(location = 0, index = 1) <span class="kw">out</span> <span class="type">vec4</span> o_Color1; <span class="cmt">//index为1，对应SRC1</span>
 </pre></section>
 </section>
 

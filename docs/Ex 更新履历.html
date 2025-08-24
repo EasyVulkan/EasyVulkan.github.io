@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ex 更新履历 &mdash; EasyVulkan</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EasyVulkan
+            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html">Ch1-1 创建GLFW窗口</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-2%20%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B.html">Ch1-2 初始化流程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html">Ch1-3 创建VK实例与逻辑设备</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html">Ch1-4 创建交换链</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第二章 绘制一个三角形</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html">Ch2-0 代码整理及一些辅助类</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第三章 纵观Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html">Ch3-1 同步原语</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html">Ch3-3 管线布局和管线</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-5%20%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-5 命令缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">Ch3-6 描述符</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html">Ch3-7 采样器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch3-8%20%E6%9F%A5%E8%AF%A2.html">Ch3-8 查询</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第四章 着色器</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html">Ch4-1 着色器模组</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3 片段着色器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch4-4%20%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-4 几何着色器</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第五章 封装常用对象</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-0%20VKBase%2B.h.html">Ch5-0 VKBase+.h</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch5-1 各种缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch5-3%202D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第六章 进阶Vulkan</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch6-1 无图像帧缓冲</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html">Ch6-2 动态渲染</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第七章 基础示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-1 初识顶点缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-2%20%E5%88%9D%E8%AF%86%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-2 初识索引缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%BB%98%E5%88%B6.html">Ch7-3 初识实例化绘制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Push%20Constant.html">Ch7-4 初识Push Constant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-5 初识Uniform缓冲区</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">第八章 简单示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html">Ch8-3 延迟渲染</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html">Ch8-4 预乘Alpha</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Ch8-5%20sRGB%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%BC%80%E5%90%AFHDR.html">Ch8-5 sRGB色彩空间与开启HDR</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">附录</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Ap1-1%20%E8%BF%90%E8%A1%8C%E6%9C%9F%E7%BC%96%E8%AF%91GLSL.html">Ap1-1 运行期编译GLSL</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EasyVulkan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Ex 更新履历</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ex">
+<h1>Ex 更新履历<a class="headerlink" href="#ex" title="Permalink to this heading"></a></h1>
+<ul>
+    <li>
+        <p>
+            25.08.27 修改代码，给<span class="type">deviceMemory</span>及其衍生类的构造器添加了flags参数，添加了一些教程中没有的辅助类等（因此教程中的代码跟solution中的代码可能有所区别，<strong>尤其是目前Ch8的<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch8/VKBase.h">VKBase.h</a>和<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch8/VKBase+.h">VKBase+.h</a>相对而言较为接近我个人使用的版本</strong>）。
+        </p>
+    </li>
+    <li>
+        <p>
+            25.08.27 修改一些用词（比如将“normalized”译为“归一化”，比“标准化”更直观，“NDC”一词仍译作标准化设备坐标系）。
+        </p>
+    </li>
+    <li>
+        <p>
+            25.08.27 一如既往改正一些笔误、复制粘贴错误，比如<a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-2 顶点着色器</a>中：
+            <br>
+                误：对于索引绘制命令，...，gl_VertexIndex为<strong>命令缓冲区</strong>中与firstIndex相应的索引值加上vertexOffset。
+            <br>
+                正：对于索引绘制命令，...，gl_VertexIndex为<strong>索引缓冲区</strong>中与firstIndex相应的索引值加上vertexOffset。
+            <br>
+                感觉每次读自己写的东西都有类似的新发现呐！...
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            25.08.11 <a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html#id12">Ch1-4</a>中更改了<span class="fn">RecreateDevice</span>(...)函数中<code><span class="kw">if</span> (device)</code>的位置（原先被我写在了<span class="fn">WaitIdle</span>()后，真是秀逗了）。
+        </p>
+    </li>
+    <li>
+        <p>
+            25.08.11 在<a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html#id1">Ch3-6的描述符类型</a>一小节中漏了在计算着色器之外写入storage图像/纹素缓冲区的说明，补上。
+        </p>
+    </li>
+    <li>
+        <p>
+            25.08.11 优化一些叙述，修正一些复制粘贴错误、忘记修改的残余文本，更新代码着色（仍在施工中，代码和正文中<span class="par">函数参数</span>全部高亮；正文中<span class="var">全局、局部、静态成员变量</span>采用阴影，成员变量一概取消高亮）。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            25.05.08 <a class="reference internal" href="Ch4-4%20%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-4</a>中修正开头的一处笔误：
+            <br>
+                误：或在<strong>没有输入图元</strong>的情况下根据一定规则
+            <br>
+                正：或在<strong>没有输入顶点数据</strong>的情况下根据一定规则
+            <br>
+                以及补上<a class="reference internal" href="Ch4-4%20%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8.html#id8">示例</a>中漏写的关于gl_Layer的几句赋值语句的解释。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            25.05.07 <a class="reference internal" href="Ch4-4%20%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-4 几何着色器</a>姑且算完成。
+        </p>
+    </li>
+    <li>
+        <p>
+            25.05.07 <a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html#id5">Ch7-7</a>中增加一小段关于绘制triangle strip时背面剔除机制的说明。
+        </p>
+    </li>
+    <li>
+        <p>
+            25.05.07 在首页上新增基于gitalk的留言板（如遇无法登录的情况请反馈）。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            25.05.05 修正了<a class="reference internal" href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html#id2">Ch6-2</a>中对<span class="type">VkPipelineRenderingCreateInfo</span>::viewMask的说明：
+            <br>
+                误：“若开启了多视口，指定在哪些视口对应的图层上进行渲染”
+            <br>
+                正：“若开启了多视点（multiview），指定在哪些视点对应的图层上进行渲染”。
+            <br>
+                嗯？视口（viewport）跟多层帧缓冲的图层有什么关系？当然没有关系啊！
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            25.05.04 心血来潮把Vulkan官方文档中管线流程的框图搬到了<a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html#id2">Ch3-3</a>。
+            <br>
+            <strong>By the way，鸣谢知乎用户<a href="https://www.zhihu.com/people/mai-huo-chai-de-sheng-dan-lao-ren">星生</a>的认真阅读。</strong>各位要是觉得我第三章各节写的太啰嗦也可以看看ta写的梳理。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.07.02 修正<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html#id3">Ch3-2 图像与缓冲区</a>中，“在内存区不具有host-coherent属性时，调整映射范围”的代码（感谢<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/issues/7#issuecomment-2201828093">issue#7中的反馈</a>）。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.06.25 <a class="reference internal" href="Ch8-5%20sRGB%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%BC%80%E5%90%AFHDR.html">Ch8-5 sRGB色彩空间与开启HDR</a>完成（就差一点点内容却拖了很久...），除了末尾的内容外，增加了关于scRGB的说明。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.06.04 Ch1-3和Ch1-4页面上汇总的代码中，因复制粘贴错误漏了<code><span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_SWAPCHAIN_EXTENSION_NAME</span>);</code>，补上。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.05.25 修正05.12更新的错误：<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id8">即时帧</a>中的<code>fence.<span class="fn">WaitAndReset</span>();</code>应该放渲染循环开头而非最后（批量修改需谨慎啊！），并修正获取到的交换链图像索引是乱序时的说明（总结：乱序的话就不必考虑即时帧了）。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.05.12 <a class="reference internal" href="Ch3-8%20%E6%9F%A5%E8%AF%A2.html">Ch3-8 查询</a>完成。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.05.12 <code>fence.<span class="fn">WaitAndReset</span>();</code>的位置移动到了渲染循环最后，原因见<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id7">Ch2-1 Rendering Loop</a>。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.05.12 修正<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id8">即时帧</a>代码中因复制粘贴错误多出的一行。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.05.12 更改了一些有歧义的叙述。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.05.05 修正关于<a class="reference internal" href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html#gl-clipdistance">gl_ClipDistance</a>的说明，简单总结：gl_ClipDistance的作用在栅格化前应用。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.05.05 略微简化了<a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0</a>中的叙事（原先有段代码的解释写得我自己都看不懂-_-||）。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.04.29 <a class="reference internal" href="Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html">Ch8-4 预乘Alpha</a>完成。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.04.29 原本<span class="fn">CreateRpwf_Screen</span>(...)中有个防止函数重复执行的判定逻辑：
+        <br>
+        <code>
+        <span class="kw">if</span> (rpwf.renderPass) outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;警告信息，略&quot;</span>);
+        <span class="kw">else</span> {
+            <span class="cmt">/*...*/</span>
+            }
+        <span class="kw">return</span> rpwf;
+        </code>
+        <br>
+                如今一来觉得这个防呆设计属实没必要，二来这里“防止重复执行”忽视了需重建逻辑设备的情况，遂改之。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.04.29 接上一条，将各<span class="fn">CreateRpwf_后缀</span>(...)函数中的<code><span class="mcr">ExecuteOnce</span>(rpwf);</code>语句挪动了位置，这条语句在原先的代码中起前述的“防呆设计”作用，不过我定义<span class="mcr">ExecuteOnce</span>这个宏的原本目的并不在此（见：<a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html#execute_once">Ch2-2</a>）。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.04.21 在<a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html#mipmap">Ch5-2 2D贴图及生成Mipmap</a>中增加关于摩尔纹的说明。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.04.17 输入附件示例：<a class="reference internal" href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html">Ch8-3 延迟渲染</a>完成。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.04.14 修正<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/issues/7#issuecomment-2053544791">issue#7中提到的bug</a>。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.04.14 修正+消歧义<a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html#vkpipelinemultisamplestatecreateinfo">Ch3-3</a>和<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html">Ch4-3</a>中对MSAA和sample shading的说明。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.04.07 新增<a class="reference internal" href="Ap1-1%20%E8%BF%90%E8%A1%8C%E6%9C%9F%E7%BC%96%E8%AF%91GLSL.html">Ap1-1 运行期编译GLSL</a>。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.04.05 在<a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html#id10">Ch8-2 深度测试和深度可视化</a>中非常简单地演示了一下深度边界测试。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.04.03 <a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#event">Ch3-1 同步原语</a>中新增对<span class="type">VkEvent</span>的说明。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.04.03 修正对gl_SampleMaskIn的说明：<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#gl-samplemaskin">片段着色器中gl_SampleMaskIn</a>的数值根据是否开启sample shading有所不同。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.04.02 <a class="reference internal" href="Ch8-2%20%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%8F%AF%E8%A7%86%E5%8C%96.html">Ch8-2 深度测试和深度可视化</a>完成。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.04.02 修正对深度偏移的说明：<a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html#vkpipelinerasterizationstatecreateinfo">深度偏移</a>作用于经视口变换后的深度，非NDC深度。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.04.02 修正对设备内存的说明，简单总结：根据要求的内存属性，设备内存的底层可能是计算机主存，可能是显存。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.03.30 用于在渲染循环中提交命令缓冲区的函数<span class="fn">SubmitCommandBuffer_Graphics</span>(...)，原先提交信息中的waitDstStage由常量指定，现改为由参数指定以增加函数的灵活性。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.03.30 <a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html#createrpwf-canvas">Ch8-1 离屏渲染</a>中：
+            <br>
+                “srcStageMask指定为<span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>是多余的，因为有信号量来同步”，改为“因为有栅栏来同步”。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.03.30 <a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html#id3">Ch2-2 创建渲染通道和帧缓冲</a>中增加对子通道依赖的dstStageMask的说明（代码里写了“<span class="cmt">//不早于提交命令缓冲区时等待semaphore对应的waitDstStageMask</span>”结果被自己无视了-_-||），并相应修正前后文。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.03.27 <a class="reference internal" href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html">Ch8-1 离屏渲染</a>完成。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.03.26 <a class="reference internal" href="Ch7-4%20%E5%88%9D%E8%AF%86Push%20Constant.html#id3">Ch7-4 初识Push Constant</a>中对<span class="type">vkCmdPushConstants</span>(...)增加了些说明。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.03.26 修正笔误：贴图坐标的第三个分量是叫做s分量，先前写了w。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.03.26 在<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id4">Ch4-1</a>中，修正对NDC坐标系的说明（原先写了“投影变换后得到NDC坐标”，三维渲染中投影变换后的是剪裁空间坐标）+简述了NDC坐标系与剪裁空间和屏幕空间的关系。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.03.24 <a class="reference internal" href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html">Ch6-2 动态渲染</a>中增加了多线程录制命令的简单示例。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.03.23 <a class="reference internal" href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html">Ch6-2 动态渲染</a>完成。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.03.23 修正<a class="reference internal" href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch6-1 无图像帧缓冲</a>中，Vulkan最高版本只有1.0时开启该设备特性的说明（总结：开不了，这特性在1.1以后才出现）。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.03.22 简略地说明了一下<a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html#id2">创建描述符布局时，指定不可变更的采样器</a>的效果。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.03.22 网站主页精简 + 版式变更（有显示异常的话请汇报）。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.03.21 <a class="reference internal" href="Ch6-1%20%E6%97%A0%E5%9B%BE%E5%83%8F%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch6-1 无图像帧缓冲</a>完成。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.03.20 <a class="reference internal" href="Ch6-0%20%E4%BD%BF%E7%94%A8%E6%96%B0%E7%89%88%E6%9C%AC%E7%89%B9%E6%80%A7.html">Ch6-0 使用新版本特性</a>完成。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.03.20 将静态成员函数的着色改成了与通常函数不同的颜色。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.03.20 修正<a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html#id8">Ch3-4 渲染通道和帧缓冲</a>中关于帧缓冲宽度、高度、图层数的说明，帧缓冲的宽高和图层数可以与图像附件的宽高和图层数不同（前者各项小于等于后者各项且大于0）。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.03.18 <a class="reference internal" href="Ch5-3%2D%E8%B4%B4%E5%9B%BE%E6%95%B0%E7%BB%84.html">Ch5-3 2D贴图数组</a>完成。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.03.01 新增<a class="reference internal" href="Ch7-3%20%E5%88%9D%E8%AF%86%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%BB%98%E5%88%B6.html">Ch7-3 初识实例化绘制</a>。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.03.01 <a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a>完成。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.02.19 <a class="reference internal" href="Ch2-1%20Rendering%20Loop.html">Ch2-1 Rendering Loop</a>中变更了“等待栅栏”和“获取交换链图像”的顺序（更新Vulkan SDK后才检查出问题），顺带简要说明了同步和异步。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.02.13 <a class="reference internal" href="Ch5-2%2D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a>完成。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.02.04 根据先前所写的关于内存屏障的说明，修正<a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕 #CmdCopyBufferToImage</a>中关于内存屏障的部分说明（-_-||）。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.01.25 进一步修正并细化说明<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#id10">内存屏障的作用</a>。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.01.13 <a class="reference internal" href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html">Ch7-6 拷贝图像到屏幕</a> 完成，同时修正了先前（在完成Ch7-6前便已上传的该节的示例）代码中的一些错误。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.01.09 详细说明了内存依赖：<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#id10">内存屏障的作用</a>。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.01.09 改正了<span class="enum">VK_DEPENDENCY_VIEW_LOCAL_BIT</span>的简短说明
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            24.01.07 根据Vulkan标准更新后的章节划分，修正了到renderdoc的超链接。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.01.07 略微增加了一些说明。
+        </p>
+    </li>
+    <li>
+        <p>
+            24.01.07 改正一些typo。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            23.10.13 新增<a class="reference internal" href="Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html">Ch3-7 采样器</a>。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            23.03.14 修正几处笔误。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            23.01.11 修改了一些函数名和类名。
+        </p>
+    </li>
+    <li>
+        <p>
+            23.01.11 示例代码中，增加了一些<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch7/EasyVKStart.h#L53">数学函数</a>备用。
+        </p>
+    </li>
+    <li>
+        <p>
+            23.01.11 删了个在参数中间省略默认参数<span class="var">renderArea</span>的函数<span class="type">renderPass</span>::<span class="fn">CmdBegin</span>(...)，这种不良习惯容易导致bug！并相应修改代码。
+        </p>
+    </li>
+    <li>
+        <p>
+            23.01.11 <a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html#id14">Ch1-4最后</a>应该要更新<span class="fn">TerminateWindow</span>()，<a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html#id12">"若需要重建逻辑设备"</a>末尾应该要向<span class="type">graphicsBase</span>::<span class="fn">CreateDevice</span>()增加一小段执行回调函数的代码，原本忘记了现在补上。在<a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html#id9">"创建和销毁交换链时的回调函数"</a>末尾添加了关于使用range-based for循环执行回调函数的注释。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            22.11.30 新增关于线性图像中填充字节的说明，见<a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html#staging-buffer">stagingBuffer</a>的部分。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
+            22.11.24 基础部分重写完毕。
+        </p>
+    </li>
+</ul></section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021-2025, 葉橙.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

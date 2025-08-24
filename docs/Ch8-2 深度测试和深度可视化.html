@@ -211,10 +211,10 @@
 <span class="type">mat4</span> <span class="fn">infinitePerspective</span>(<span class="type">T</span> <span class="par">fovy</span>, <span class="type">T</span> <span class="par">aspect</span>, <span class="type">T</span> <span class="par">zNear</span>);
 <span class="kw">template</span>&lt;<span class="kw">template</span> <span class="type">T</span>&gt;
 <span class="type">mat4</span> <span class="fn">perspective</span>(
-    <span class="type">T</span> <span class="par">fovy</span>,  <span class="cmt">//垂直视场角，弧度制</span>
-    <span class="type">T</span> <span class="par">aspect</span>,<span class="cmt">//宽高比</span>
-    <span class="type">T</span> <span class="par">zNear</span>, <span class="cmt">//近平面的位置</span>
-    <span class="type">T</span> <span class="par">zFar</span>   <span class="cmt">//远平面的位置</span>
+    <span class="type">T</span> <span class="par">fovy</span>,   <span class="cmt">//垂直视场角，弧度制</span>
+    <span class="type">T</span> <span class="par">aspect</span>, <span class="cmt">//宽高比</span>
+    <span class="type">T</span> <span class="par">zNear</span>,  <span class="cmt">//近平面的位置</span>
+    <span class="type">T</span> <span class="par">zFar</span>    <span class="cmt">//远平面的位置</span>
 );
 </pre>
 <ul>
@@ -232,11 +232,11 @@
 <pre class="code">
 <span class="kw">template</span>&lt;<span class="kw">template</span> <span class="type">T</span>&gt;
 <span class="type">mat4</span> <span class="fn">perspectiveFov</span>(
-    <span class="type">T</span> <span class="par">fov</span>,   <span class="cmt">//垂直视场角，弧度制</span>
-    <span class="type">T</span> <span class="par">width</span>, <span class="cmt">//宽</span>
-    <span class="type">T</span> <span class="par">height</span>,<span class="cmt">//高</span>
-    <span class="type">T</span> <span class="par">near</span>,  <span class="cmt">//近平面的位置</span>
-    <span class="type">T</span> <span class="par">far</span>    <span class="cmt">//远平面的位置</span>
+    <span class="type">T</span> <span class="par">fov</span>,    <span class="cmt">//垂直视场角，弧度制</span>
+    <span class="type">T</span> <span class="par">width</span>,  <span class="cmt">//宽</span>
+    <span class="type">T</span> <span class="par">height</span>, <span class="cmt">//高</span>
+    <span class="type">T</span> <span class="par">near</span>,   <span class="cmt">//近平面的位置</span>
+    <span class="type">T</span> <span class="par">far</span>     <span class="cmt">//远平面的位置</span>
 );
 </pre>
 <ul>
@@ -877,7 +877,7 @@ pipelineCiPack.viewports.<span class="fn">emplace_back</span>(0.f, 0.f, <span cl
 <p>
     竟然！难道是我程序写错了吗！？不能慌，赶紧看看先前齐次剪裁空间下的深度公式：<code>Z_hcs = z - dn;</code>
     <br>
-    该式除以z，即是使用无限远远平面透视投影矩阵时的NDC深度：<code>Z_p = 1 - dn / z;</code>
+    该式除以<span class="var">z</span>，即是使用无限远远平面透视投影矩阵时的NDC深度：<code>Z_p = 1 - dn / z;</code>
     <br>
     近平面位置<span class="var">dn</span>是0.1f，那只有在<span class="var">z</span>很小的时候，<span class="var">Z_p</span>才有可能是一个明显小于1的数值。
     <br>

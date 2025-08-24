@@ -619,7 +619,7 @@ filepath.<span class="fn">replace</span>(pos + 1 + filepath.<span class="fn">beg
 <ul>
     <li>
         <p>
-            <span class="type">CompileOptions</span>::<span class="fn">SetIncluder</span>(...)要求的参数类型为std::<span class="type">unique_ptr</span>&lt;<span class="type">IncluderInterface</span>&gt;&amp;&amp;，即需要转移对象的所有权，由<span class="var">options</span>管理<span class="type">IncluderInterface</span>对象的生存期。
+            <span class="type">CompileOptions</span>::<span class="fn">SetIncluder</span>(...)要求的参数类型为std::<span class="type">unique_ptr</span>&lt;<span class="type">IncluderInterface</span>&gt;&amp;&amp;，即需要转移对象的所有权，由<span class="type">CompileOptions</span>类型的对象管理<span class="type">IncluderInterface</span>对象的生存期。
         </p>
     </li>
 </ul></section>

@@ -1,7 +1,7 @@
 #include "VkBase+.h"
 
 using namespace vulkan;
-const VkExtent2D& windowSize = graphicsBase::Base().SwapchainCreateInfo().imageExtent;
+constexpr const VkExtent2D& windowSize = graphicsBase::Base().SwapchainCreateInfo().imageExtent;
 
 namespace easyVulkan {
 	struct renderPassWithFramebuffers {

@@ -193,7 +193,7 @@
 </p>
 <pre class="code">
     <span class="type">VkPhysicalDeviceFeatures2</span> physicalDeviceFeatures;
-    <span class="type">VkPhysicalDeviceVulkan11Features</span> physicalDeviceVulkan11Features;<span class="cmt">//Provided by VK_API_VERSION_1_2</span>
+    <span class="type">VkPhysicalDeviceVulkan11Features</span> physicalDeviceVulkan11Features; <span class="cmt">//Provided by VK_API_VERSION_1_2</span>
     <span class="type">VkPhysicalDeviceVulkan12Features</span> physicalDeviceVulkan12Features;
     <span class="type">VkPhysicalDeviceVulkan13Features</span> physicalDeviceVulkan13Features;
     <span class="cmt">//获取物理设备特性</span>
@@ -334,7 +334,7 @@
 </p>
 <pre class="code">
     <span class="type">VkPhysicalDeviceProperties2</span> physicalDeviceProperties;
-    <span class="type">VkPhysicalDeviceVulkan11Properties</span> physicalDeviceVulkan11Properties;<span class="cmt">//Provided by VK_API_VERSION_1_2</span>
+    <span class="type">VkPhysicalDeviceVulkan11Properties</span> physicalDeviceVulkan11Properties; <span class="cmt">//Provided by VK_API_VERSION_1_2</span>
     <span class="type">VkPhysicalDeviceVulkan12Properties</span> physicalDeviceVulkan12Properties;
     <span class="type">VkPhysicalDeviceVulkan13Properties</span> physicalDeviceVulkan13Properties;
     <span class="type">VkPhysicalDeviceMemoryProperties2</span> physicalDeviceMemoryProperties;   <span class="cmt">//截至Vulkan1.3为止，不存在VkPhysicalDeviceVulkan11MemoryProperties等结构体</span>
@@ -384,28 +384,28 @@
     <span class="kw">void</span>* pNext_physicalDeviceFeatures;
     <span class="kw">void</span>* pNext_physicalDeviceProperties;
     <span class="kw">void</span>* pNext_physicalDeviceMemoryProperties;
-    <span class="kw">static void</span>** <span class="sfn">SetPNext</span>(<span class="kw">void</span>*&amp; pBegin, <span class="kw">void</span>* pNext, <span class="kw">bool</span> allowDuplicate = <span class="kw">false</span>) {
+    <span class="kw">static void</span>** <span class="sfn">SetPNext</span>(<span class="kw">void</span>*&amp; <span class="par">pBegin</span>, <span class="kw">void</span>* <span class="par">pNext</span>, <span class="kw">bool</span> <span class="par">allowDuplicate</span> = <span class="kw">false</span>) {
         <span class="cmt">/*待填充*/</span>
     }
 <span class="kw">public</span>:
     <span class="cmt">//以下各函数将指定的next结构体添加到各个pNext链末尾</span>
-    <span class="kw">void</span> <span class="fn">AddNextStructure_InstanceCreateInfo</span>(<span class="kw">auto</span>&amp; next, <span class="kw">bool</span> allowDuplicate = <span class="kw">false</span>) {
-        <span class="sfn">SetPNext</span>(pNext_instanceCreateInfo, &amp;next, allowDuplicate);
+    <span class="kw">void</span> <span class="fn">AddNextStructure_InstanceCreateInfo</span>(<span class="kw">auto</span>&amp; <span class="par">next</span>, <span class="kw">bool</span> <span class="par">allowDuplicate</span> = <span class="kw">false</span>) {
+        <span class="sfn">SetPNext</span>(pNext_instanceCreateInfo, &amp;<span class="par">next</span>, <span class="par">allowDuplicate</span>);
     }
-    <span class="kw">void</span> <span class="fn">AddNextStructure_DeviceCreateInfo</span>(<span class="kw">auto</span>&amp; next, <span class="kw">bool</span> allowDuplicate = <span class="kw">false</span>) {
-        <span class="sfn">SetPNext</span>(pNext_deviceCreateInfo, &amp;next, allowDuplicate);
+    <span class="kw">void</span> <span class="fn">AddNextStructure_DeviceCreateInfo</span>(<span class="kw">auto</span>&amp; <span class="par">next</span>, <span class="kw">bool</span> <span class="par">allowDuplicate</span> = <span class="kw">false</span>) {
+        <span class="sfn">SetPNext</span>(pNext_deviceCreateInfo, &amp;<span class="par">next</span>, <span class="par">allowDuplicate</span>);
     }
-    <span class="kw">void</span> <span class="fn">AddNextStructure_PhysicalDeviceFeatures</span>(<span class="kw">auto</span>&amp; next, <span class="kw">bool</span> allowDuplicate = <span class="kw">false</span>) {
-        <span class="sfn">SetPNext</span>(pNext_physicalDeviceFeatures, &amp;next, allowDuplicate);
+    <span class="kw">void</span> <span class="fn">AddNextStructure_PhysicalDeviceFeatures</span>(<span class="kw">auto</span>&amp; <span class="par">next</span>, <span class="kw">bool</span> <span class="par">allowDuplicate</span> = <span class="kw">false</span>) {
+        <span class="sfn">SetPNext</span>(pNext_physicalDeviceFeatures, &amp;<span class="par">next</span>, <span class="par">allowDuplicate</span>);
     }
-    <span class="kw">void</span> <span class="fn">AddNextStructure_PhysicalDeviceProperties</span>(<span class="kw">auto</span>&amp; next, <span class="kw">bool</span> allowDuplicate = <span class="kw">false</span>) {
-        <span class="sfn">SetPNext</span>(pNext_physicalDeviceProperties, &amp;next, allowDuplicate);
+    <span class="kw">void</span> <span class="fn">AddNextStructure_PhysicalDeviceProperties</span>(<span class="kw">auto</span>&amp; <span class="par">next</span>, <span class="kw">bool</span> <span class="par">allowDuplicate</span> = <span class="kw">false</span>) {
+        <span class="sfn">SetPNext</span>(pNext_physicalDeviceProperties, &amp;<span class="par">next</span>, <span class="par">allowDuplicate</span>);
     }
-    <span class="kw">void</span> <span class="fn">AddNextStructure_PhysicalDeviceMemoryProperties</span>(<span class="kw">auto</span>&amp; next, <span class="kw">bool</span> allowDuplicate = <span class="kw">false</span>) {
-        <span class="sfn">SetPNext</span>(pNext_physicalDeviceMemoryProperties, &amp;next, allowDuplicate);
+    <span class="kw">void</span> <span class="fn">AddNextStructure_PhysicalDeviceMemoryProperties</span>(<span class="kw">auto</span>&amp; <span class="par">next</span>, <span class="kw">bool</span> <span class="par">allowDuplicate</span> = <span class="kw">false</span>) {
+        <span class="sfn">SetPNext</span>(pNext_physicalDeviceMemoryProperties, &amp;<span class="par">next</span>, <span class="par">allowDuplicate</span>);
     }
-    <span class="kw">void</span> <span class="fn">AddNextStructure_SwapchainCreateInfo</span>(<span class="kw">auto</span>&amp; next, <span class="kw">bool</span> allowDuplicate = <span class="kw">false</span>) {
-        <span class="sfn">SetPNext</span>(<span class="kw">const_cast</span>&lt;<span class="kw">void</span>*&amp;&gt;(swapchainCreateInfo.pNext), &amp;next, allowDuplicate);
+    <span class="kw">void</span> <span class="fn">AddNextStructure_SwapchainCreateInfo</span>(<span class="kw">auto</span>&amp; <span class="par">next</span>, <span class="kw">bool</span> <span class="par">allowDuplicate</span> = <span class="kw">false</span>) {
+        <span class="sfn">SetPNext</span>(<span class="kw">const_cast</span>&lt;<span class="kw">void</span>*&amp;&gt;(swapchainCreateInfo.pNext), &amp;<span class="par">next</span>, <span class="par">allowDuplicate</span>);
     }
 </pre>
 <ul>
@@ -416,22 +416,22 @@
     </li>
     <li>
         <p>
-            <span class="sfn">SetPNext</span>(...)的参数<span class="var">allowDuplicate</span>指定是否允许某种结构体重复出现。对于某些函数，某些结构体可以在向其提供的pNext链中出现多个，比如<span class="type">VkDeviceCreateInfo</span>的pNext链中，允许有多个<span class="type">VkDeviceDeviceMemoryReportCreateInfoEXT</span>和<span class="type">VkDevicePrivateDataCreateInfo</span>。
+            <span class="sfn">SetPNext</span>(...)的参数<span class="par">allowDuplicate</span>指定是否允许某种结构体重复出现。对于某些函数，某些结构体可以在向其提供的pNext链中出现多个，比如<span class="type">VkDeviceCreateInfo</span>的pNext链中，允许有多个<span class="type">VkDeviceDeviceMemoryReportCreateInfoEXT</span>和<span class="type">VkDevicePrivateDataCreateInfo</span>。
         </p>
     </li>
 </ul>
 <p>
-    以引用传递的<span class="var">pBegin</span>是向<span class="sfn">SetPNext</span>(...)提供的pNext链中的首个指针，参数<span class="var">pNext</span>指向要被加入该pNext链的结构体。
+    以引用传递的<span class="par">pBegin</span>是向<span class="sfn">SetPNext</span>(...)提供的pNext链中的首个指针，参数<span class="par">pNext</span>指向要被加入该pNext链的结构体。
     <br>
-    <span class="sfn">SetPNext</span>(...)的返回类型是<span class="kw">void</span>**，这个无法一上来就解释清楚，但我打算让函数在给定的<span class="var">pNext</span>参数无法被接到以<span class="var">pBegin</span>起始的pNext链时，返回<span class="kw">nullptr</span>。
+    <span class="sfn">SetPNext</span>(...)的返回类型是<span class="kw">void</span>**，这个无法一上来就解释清楚，但我打算让函数在给定的<span class="par">pNext</span>参数无法被接到以<span class="par">pBegin</span>起始的pNext链时，返回<span class="kw">nullptr</span>。
 </p>
 <pre class="code">
-<span class="kw">static void</span>** <span class="sfn">SetPNext</span>(<span class="kw">void</span>*&amp; pBegin, <span class="kw">void</span>* pNext, <span class="kw">bool</span> allowDuplicate = <span class="kw">false</span>) {
+<span class="kw">static void</span>** <span class="sfn">SetPNext</span>(<span class="kw">void</span>*&amp; <span class="par">pBegin</span>, <span class="kw">void</span>* <span class="par">pNext</span>, <span class="kw">bool</span> <span class="par">allowDuplicate</span> = <span class="kw">false</span>) {
     <span class="kw">struct</span> <span class="type">vkStructureHead</span> {
         <span class="type">VkStructureType</span> sType;
         <span class="kw">void</span>* pNext;
     };
-    <span class="kw">if</span> (!pNext)
+    <span class="kw">if</span> (!<span class="par">pNext</span>)
         <span class="kw">return nullptr</span>;
     <span class="cmt">/*待后续填充*/</span>
 }
@@ -439,12 +439,12 @@
 <ul>
     <li>
         <p>
-            pNext链中各个结构体都有不同的构造，但开头是相同的，可以通过<span class="kw">reinterpret_cast</span>&lt;<span class="type">vkStructureHead</span>&gt;(...)，获得<span class="var">pBegin</span>和<span class="var">pNext</span>所指向结构体的sType和pNext成员。
+            pNext链中各个结构体都有不同的构造，但开头是相同的，可以通过<span class="kw">reinterpret_cast</span>&lt;<span class="type">vkStructureHead</span>&gt;(...)，获得<span class="par">pBegin</span>和<span class="par">pNext</span>所指向结构体的sType和pNext成员。
         </p>
     </li>
     <li>
         <p>
-            因为pNext链尾部的指针本就是<span class="kw">nullptr</span>，若传入函数的参数<span class="var">pNext</span>是<span class="kw">nullptr</span>，不必有后续执行，直接返回<span class="kw">nullptr</span>。
+            因为pNext链尾部的指针本就是<span class="kw">nullptr</span>，若传入函数的参数<span class="par">pNext</span>是<span class="kw">nullptr</span>，不必有后续执行，直接返回<span class="kw">nullptr</span>。
         </p>
     </li>
 </ul>
@@ -452,17 +452,17 @@
     既然pNext链是链表，很容易想到使用递归来处理相关逻辑。<span class="sfn">SetPNext</span>(...)剩下的部分我打算使用一个能自我调用的lambda表达式来实现：
 </p>
 <pre class="code">
-<span class="kw">static void</span>** <span class="sfn">SetPNext</span>(<span class="kw">void</span>*&amp; pBegin, <span class="kw">void</span>* pNext, <span class="kw">bool</span> allowDuplicate = <span class="kw">false</span>) {
+<span class="kw">static void</span>** <span class="sfn">SetPNext</span>(<span class="kw">void</span>*&amp; <span class="par">pBegin</span>, <span class="kw">void</span>* <span class="par">pNext</span>, <span class="kw">bool</span> <span class="par">allowDuplicate</span> = <span class="kw">false</span>) {
     <span class="kw">struct</span> <span class="type">vkStructureHead</span> {
         <span class="type">VkStructureType</span> sType;
         <span class="kw">void</span>* pNext;
     };
-    <span class="kw">if</span> (!pNext)
+    <span class="kw">if</span> (!<span class="par">pNext</span>)
         <span class="kw">return nullptr</span>;
-    <span class="kw">auto</span> SetPNext_Internal = [](<span class="kw">this auto</span>&amp;&amp; self, <span class="kw">void</span>*&amp; pCurrentNode, <span class="kw">void</span>* pNext, <span class="kw">bool</span> allowDuplicate)-&gt;<span class="kw">void</span>** {
+    <span class="kw">auto</span> SetPNext_Internal = [](<span class="kw">this auto</span>&amp;&amp; <span class="par">self</span>, <span class="kw">void</span>*&amp; <span class="par">pCurrentNode</span>, <span class="kw">void</span>* <span class="par">pNext</span>, <span class="kw">bool</span> <span class="par">allowDuplicate</span>)-&gt;<span class="kw">void</span>** {
         <span class="cmt">/*待后续填充*/</span>
     };
-    <span class="kw">retur</span> SetPNext_Internal(pBegin, pNext, allowDuplicate);
+    <span class="kw">return</span> SetPNext_Internal(<span class="par">pBegin</span>, <span class="par">pNext</span>, <span class="par">allowDuplicate</span>);
 }
 </pre>
 <ul>
@@ -473,88 +473,88 @@
     </li>
 </ul>
 <p>
-    填充<span class="var">SetPNext_Internal</span>(...)，先只用关心<span class="var">pCurrentNode</span>跟<span class="var">pNext</span>两个参数的关系，这里<span class="var">pCurrentNode</span>是pNext链中的任意节点（即某一结构体的pNext成员），<span class="var">pNext</span>则跟传入<span class="sfn">SetPNext</span>(...)的<span class="var">pNext</span>数值一致。
+    填充<span class="var">SetPNext_Internal</span>(...)，先只用关心<span class="par">pCurrentNode</span>跟<span class="par">pNext</span>两个参数的关系，这里<span class="par">pCurrentNode</span>是pNext链中的任意节点（即某一结构体的pNext成员），<span class="par">pNext</span>则跟传入<span class="sfn">SetPNext</span>(...)的<span class="par">pNext</span>数值一致。
     <br>
-    显然，若<span class="var">pCurrentNode</span>跟<span class="var">pNext</span>一致，则说明<span class="var">pNext</span>指定的结构体已在pNext链中，则函数执行失败（pNext链中可能允许某种结构体出现多个，但特定对象只能出现一次，否则理所当然地会出现无限递归链表）。
+    显然，若<span class="par">pCurrentNode</span>跟<span class="par">pNext</span>一致，则说明<span class="par">pNext</span>指定的结构体已在pNext链中，则函数执行失败（pNext链中可能允许某种结构体出现多个，但特定对象只能出现一次，否则理所当然地会出现无限递归链表）。
     <br>
-    然后，若<span class="var">pCurrentNode</span>为<span class="kw">nullptr</span>，说明达到了链表尾端，将<span class="var">pCurrentNode</span>赋值为<span class="var">pNext</span>，成功时的返回值是<span class="var">pCurrentNode</span>的地址，即被赋值为了<span class="var">pNext</span>的那个节点的地址，用处到本节末尾再解释。
+    然后，若<span class="par">pCurrentNode</span>为<span class="kw">nullptr</span>，说明达到了链表尾端，将<span class="par">pCurrentNode</span>赋值为<span class="par">pNext</span>，成功时的返回值是<span class="par">pCurrentNode</span>的地址，即被赋值为了<span class="par">pNext</span>的那个节点的地址，用处到本节末尾再解释。
 </p>
 <pre class="code">
-<span class="kw">static void</span>** <span class="sfn">SetPNext</span>(<span class="kw">void</span>*&amp; pBegin, <span class="kw">void</span>* pNext, <span class="kw">bool</span> allowDuplicate = <span class="kw">false</span>) {
+<span class="kw">static void</span>** <span class="sfn">SetPNext</span>(<span class="kw">void</span>*&amp; <span class="par">pBegin</span>, <span class="kw">void</span>* <span class="par">pNext</span>, <span class="kw">bool</span> <span class="par">allowDuplicate</span> = <span class="kw">false</span>) {
     <span class="kw">struct</span> <span class="type">vkStructureHead</span> {
         <span class="type">VkStructureType</span> sType;
         <span class="kw">void</span>* pNext;
     };
-    <span class="kw">if</span> (!pNext)
+    <span class="kw">if</span> (!<span class="par">pNext</span>)
         <span class="kw">return nullptr</span>;
-    <span class="kw">auto</span> SetPNext_Internal = [](<span class="kw">this auto</span>&amp;&amp; self, <span class="kw">void</span>*&amp; pCurrentNode, <span class="kw">void</span>* pNext, <span class="kw">bool</span> allowDuplicate)-&gt;<span class="kw">void</span>** {
-        <span class="kw">if</span> (pCurrentNode == pNext)
+    <span class="kw">auto</span> SetPNext_Internal = [](<span class="kw">this auto</span>&amp;&amp; <span class="par">self</span>, <span class="kw">void</span>*&amp; <span class="par">pCurrentNode</span>, <span class="kw">void</span>* <span class="par">pNext</span>, <span class="kw">bool</span> <span class="par">allowDuplicate</span>)-&gt;<span class="kw">void</span>** {
+        <span class="kw">if</span> (<span class="par">pCurrentNode</span> == <span class="par">pNext</span>)
             <span class="kw">return nullptr</span>;
-        <span class="kw">if</span> (pCurrentNode)
+        <span class="kw">if</span> (<span class="par">pCurrentNode</span>)
             <span class="cmt">/*待后续填充*/</span>
         <span class="kw">else</span>
-            <span class="kw">return</span> &amp;(pCurrentNode = pNext);
+            <span class="kw">return</span> &amp;(<span class="par">pCurrentNode</span> = <span class="par">pNext</span>);
     };
-    <span class="kw">retur</span> SetPNext_Internal(pBegin, pNext, allowDuplicate);
+    <span class="kw">return</span> SetPNext_Internal(<span class="par">pBegin</span>, <span class="par">pNext</span>, <span class="par">allowDuplicate</span>);
 }
 </pre>
 <p>
-    若<span class="var">allowDuplicate</span>为<span class="kw">false</span>，比较<span class="var">pCurrentNode</span>和<span class="var">pNext</span>指向结构体的sType成员，一致则函数执行失败：
+    若<span class="par">allowDuplicate</span>为<span class="kw">false</span>，比较<span class="par">pCurrentNode</span>和<span class="par">pNext</span>指向结构体的sType成员，一致则函数执行失败：
 </p>
 <pre class="code">
-<span class="kw">auto</span> SetPNext_Internal = [](<span class="kw">this auto</span>&amp;&amp; self, <span class="kw">void</span>*&amp; pCurrentNode, <span class="kw">void</span>* pNext, <span class="kw">bool</span> allowDuplicate)-&gt;<span class="kw">void</span>** {
-    <span class="kw">if</span> (pCurrentNode == pNext)
+<span class="kw">auto</span> SetPNext_Internal = [](<span class="kw">this auto</span>&amp;&amp; <span class="par">self</span>, <span class="kw">void</span>*&amp; <span class="par">pCurrentNode</span>, <span class="kw">void</span>* <span class="par">pNext</span>, <span class="kw">bool</span> <span class="par">allowDuplicate</span>)-&gt;<span class="kw">void</span>** {
+    <span class="kw">if</span> (<span class="par">pCurrentNode</span> == <span class="par">pNext</span>)
         <span class="kw">return nullptr</span>;
-    <span class="kw">if</span> (pCurrentNode)
-        <span class="kw">if</span> (!allowDuplicate &amp;&amp;
-            <span class="kw">reinterpret_cast</span>&lt;<span class="type">vkStructureHead</span>&gt;(pCurrentNode)-&gt;sType == <span class="kw">reinterpret_cast</span>&lt;<span class="type">vkStructureHead</span>&gt;(pNext)-&gt;sType)
+    <span class="kw">if</span> (<span class="par">pCurrentNode</span>)
+        <span class="kw">if</span> (!<span class="par">allowDuplicate</span> &amp;&amp;
+            <span class="kw">reinterpret_cast</span>&lt;<span class="type">vkStructureHead</span>&gt;(<span class="par">pCurrentNode</span>)-&gt;sType == <span class="kw">reinterpret_cast</span>&lt;<span class="type">vkStructureHead</span>&gt;(<span class="par">pNext</span>)-&gt;sType)
             <span class="kw">return nullptr</span>;
         <span class="kw">else</span>
             <span class="cmt">/*待后续填充*/</span>
     <span class="kw">else</span>
-        <span class="kw">return</span> &amp;(pCurrentNode = pNext);
+        <span class="kw">return</span> &amp;(<span class="par">pCurrentNode</span> = <span class="par">pNext</span>);
 };
 </pre>
 <p>
-    还剩的一个<span class="kw">else</span>分支就是<span class="var">pCurrentNode</span>非空并且满足查重条件的情况，这时候就继续向链表后续节点迭代，后续节点即当前节点<span class="var">pCurrentNode</span>所指结构体的pNext成员：
+    还剩的一个<span class="kw">else</span>分支就是<span class="par">pCurrentNode</span>非空并且满足查重条件的情况，这时候就继续向链表后续节点迭代，后续节点即当前节点<span class="par">pCurrentNode</span>所指结构体的pNext成员：
 </p>
 <pre class="code">
-<span class="kw">static void</span>** <span class="sfn">SetPNext</span>(<span class="kw">void</span>*&amp; pBegin, <span class="kw">void</span>* pNext, <span class="kw">bool</span> allowDuplicate = <span class="kw">false</span>) {
+<span class="kw">static void</span>** <span class="sfn">SetPNext</span>(<span class="kw">void</span>*&amp; <span class="par">pBegin</span>, <span class="kw">void</span>* <span class="par">pNext</span>, <span class="kw">bool</span> <span class="par">allowDuplicate</span> = <span class="kw">false</span>) {
     <span class="kw">struct</span> <span class="type">vkStructureHead</span> {
         <span class="type">VkStructureType</span> sType;
         <span class="kw">void</span>* pNext;
     };
-    <span class="kw">if</span> (!pNext)
+    <span class="kw">if</span> (!<span class="par">pNext</span>)
         <span class="kw">return nullptr</span>;
-    <span class="kw">auto</span> SetPNext_Internal = [](<span class="kw">this auto</span>&amp;&amp; self, <span class="kw">void</span>*&amp; pCurrentNode, <span class="kw">void</span>* pNext, <span class="kw">bool</span> allowDuplicate)-&gt;<span class="kw">void</span>** {
-        <span class="kw">if</span> (pCurrentNode == pNext)
+    <span class="kw">auto</span> SetPNext_Internal = [](<span class="kw">this auto</span>&amp;&amp; <span class="par">self</span>, <span class="kw">void</span>*&amp; <span class="par">pCurrentNode</span>, <span class="kw">void</span>* <span class="par">pNext</span>, <span class="kw">bool</span> <span class="par">allowDuplicate</span>)-&gt;<span class="kw">void</span>** {
+        <span class="kw">if</span> (<span class="par">pCurrentNode</span> == <span class="par">pNext</span>)
             <span class="kw">return nullptr</span>;
-        <span class="kw">if</span> (pCurrentNode)
-            <span class="kw">if</span> (!allowDuplicate &amp;&amp;
-                <span class="kw">reinterpret_cast</span>&lt;<span class="type">vkStructureHead</span>&gt;(pCurrentNode)-&gt;sType == <span class="kw">reinterpret_cast</span>&lt;<span class="type">vkStructureHead</span>&gt;(pNext)-&gt;sType)
+        <span class="kw">if</span> (<span class="par">pCurrentNode</span>)
+            <span class="kw">if</span> (!<span class="par">allowDuplicate</span> &amp;&amp;
+                <span class="kw">reinterpret_cast</span>&lt;<span class="type">vkStructureHead</span>&gt;(<span class="par">pCurrentNode</span>)-&gt;sType == <span class="kw">reinterpret_cast</span>&lt;<span class="type">vkStructureHead</span>&gt;(<span class="par">pNext</span>)-&gt;sType)
                 <span class="kw">return nullptr</span>;
             <span class="kw">else</span>
-                <span class="kw">return</span> self(<span class="kw">reinterpret_cast</span>&lt;<span class="type">vkStructureHead</span>&gt;(pCurrentNode)-&gt;pNext, pNext, allowDuplicate);
+                <span class="kw">return</span> self(<span class="kw">reinterpret_cast</span>&lt;<span class="type">vkStructureHead</span>&gt;(<span class="par">pCurrentNode</span>)-&gt;pNext, <span class="par">pNext</span>, <span class="par">allowDuplicate</span>);
         <span class="kw">else</span>
-            <span class="kw">return</span> &amp;(pCurrentNode = pNext);
+            <span class="kw">return</span> &amp;(<span class="par">pCurrentNode</span> = <span class="par">pNext</span>);
     };
-    <span class="kw">retur</span> SetPNext_Internal(pBegin, pNext, allowDuplicate);
+    <span class="kw">return</span> SetPNext_Internal(<span class="par">pBegin</span>, <span class="par">pNext</span>, <span class="par">allowDuplicate</span>);
 }
 </pre>
 <p>
     接着考虑更改创建Vulkan实例、逻辑设备、交换链的函数。
     <br>
-    24.03.20 注：原本在Ch1中，是在<span class="fn">CreateInstance</span>(...)和<span class="fn">CreateDevice</span>(...)等函数的参数中传入创建信息的pNext，在写本文时对以往教程和示例代码一并修改，去掉了这些函数参数中的<code><span class="kw">const void</span>* pNext</code>。在此日期前没读过我的教程的话不必在意。
+    24.03.20 注：原本在Ch1中，是在<span class="fn">CreateInstance</span>(...)和<span class="fn">CreateDevice</span>(...)等函数的参数中传入创建信息的pNext，在写本文时对以往教程和示例代码一并修改，去掉了这些函数参数中的<code><span class="kw">const void</span>* <span class="par">pNext</span></code>。在此日期前没读过我的教程的话不必在意。
     <br>
     <span class="fn">CreateSwapchain</span>(...)不用修改，<span class="fn">CreateInstance</span>(...)中只要赋值创建信息的pNext成员就行：
 </p>
 <pre class="code">
-<span class="type">VkResult</span> <span class="fn">CreateInstance</span>(<span class="type">VkInstanceCreateFlags</span> flags = 0) {
+<span class="type">VkResult</span> <span class="fn">CreateInstance</span>(<span class="type">VkInstanceCreateFlags</span> <span class="par">flags</span> = 0) {
     <span class="cmt">/*...*/</span>
     <span class="type">VkInstanceCreateInfo</span> instanceCreateInfo = {
         .sType = <span class="enum">VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO</span>,
-        .pNext = pNext_instanceCreateInfo,<span class="cmt">//新增</span>
-        .flags = flags,
+        .pNext = pNext_instanceCreateInfo, <span class="cmt">//新增</span>
+        .flags = <span class="par">flags</span>,
         .pApplicationInfo = &amp;applicatianInfo,
         .enabledLayerCount = <span class="type">uint32_t</span>(instanceLayers.<span class="fn">size</span>()),
         .ppEnabledLayerNames = instanceLayers.data(),
@@ -615,7 +615,7 @@
     更改<span class="fn">CreateDevice</span>(...)，类似<span class="fn">CreateInstance</span>(...)，赋值创建信息的pNext成员，然后将获取设备特性、属性、内存属性的部分用前述封装好的函数替代：
 </p>
 <pre class="code">
-<span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="type">VkDeviceCreateFlags</span> flags = 0) {
+<span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="type">VkDeviceCreateFlags</span> <span class="par">flags</span> = 0) {
     <span class="kw">float</span> queuePriority = 1.f;
     <span class="type">VkDeviceQueueCreateInfo</span> queueCreateInfos[3] = {
         {
@@ -643,8 +643,8 @@
     <span class="cmt">/*变更*/</span><span class="fn">GetPhysicalDeviceFeatures</span>();
     <span class="type">VkDeviceCreateInfo</span> deviceCreateInfo = {
         .sType = <span class="enum">VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO</span>,
-        .pNext = pNext_deviceCreateInfo,<span class="cmt">//新增，不过一会儿还会删掉</span>
-        .flags = flags,
+        .pNext = pNext_deviceCreateInfo, <span class="cmt">//新增，不过一会儿还会删掉</span>
+        .flags = <span class="par">flags</span>,
         .queueCreateInfoCount = queueCreateInfoCount,
         .pQueueCreateInfos = queueCreateInfos,
         .enabledExtensionCount = <span class="type">uint32_t</span>(deviceExtensions.<span class="fn">size</span>()),
@@ -673,13 +673,13 @@
     事情没完，标准中规定：如果开启的设备特性由<span class="type">VkPhysicalDeviceFeatures2</span>而非<span class="type">VkPhysicalDeviceFeatures</span>指定，那么<span class="type">VkPhysicalDeviceFeatures2</span>被接在<span class="type">VkDeviceCreateInfo</span>的pNext链中，而<span class="type">VkDeviceCreateInfo</span>::pEnabledFeatures必须为空指针：
 </p>
 <pre class="code">
-<span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="type">VkDeviceCreateFlags</span> flags = 0) {
+<span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="type">VkDeviceCreateFlags</span> <span class="par">flags</span> = 0) {
     <span class="cmt">/*...*/</span>
     <span class="fn">GetPhysicalDeviceFeatures</span>();
     <span class="type">VkDeviceCreateInfo</span> deviceCreateInfo = {
         .sType = <span class="enum">VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO</span>,
         <span class="cmt">//.pNext = pNext_deviceCreateInfo, //若pNext_deviceCreateInfo为nullptr，在此赋值没有意义，到执行SetPNext(...)后再赋值</span>
-        .flags = flags,
+        .flags = <span class="par">flags</span>,
         .queueCreateInfoCount = queueCreateInfoCount,
         .pQueueCreateInfos = queueCreateInfos,
         .enabledExtensionCount = <span class="type">uint32_t</span>(deviceExtensions.<span class="fn">size</span>()),
@@ -716,13 +716,13 @@
     因此，有必要在创建逻辑设备后，再将设备特性结构体链表，从以pNext_deviceCreateInfo起始的pNext链中分离出来（这就是让<span class="sfn">SetPNext</span>(...)返回一个<span class="kw">void</span>**类型指针的原因）：
 </p>
 <pre class="code">
-<span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="type">VkDeviceCreateFlags</span> flags = 0) {
+<span class="type">VkResult</span> <span class="fn">CreateDevice</span>(<span class="type">VkDeviceCreateFlags</span> <span class="par">flags</span> = 0) {
     <span class="cmt">/*...*/</span>
     <span class="fn">GetPhysicalDeviceFeatures</span>();
     <span class="type">VkDeviceCreateInfo</span> deviceCreateInfo = {
         .sType = <span class="enum">VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO</span>,
         <span class="cmt">//.pNext = pNext_deviceCreateInfo</span>,
-        .flags = flags,
+        .flags = <span class="par">flags</span>,
         .queueCreateInfoCount = queueCreateInfoCount,
         .pQueueCreateInfos = queueCreateInfos,
         .enabledExtensionCount = <span class="type">uint32_t</span>(deviceExtensions.<span class="fn">size</span>()),

@@ -93,7 +93,7 @@ namespace vulkan {
 			outStream << std::format("[ FormatInfo ] ERROR\nThis function only supports definite formats provided by VK_VERSION_1_0.\n"),
 			abort();
 #endif
-		return formatInfos_v1_0[uint32_t(format)];
+		return formatInfos_v1_0[format];
 	}
 	constexpr VkFormat Corresponding16BitFloatFormat(VkFormat format_32BitFloat) {
 		switch (format_32BitFloat) {

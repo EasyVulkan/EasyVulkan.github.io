@@ -806,7 +806,7 @@ uniformBuffer.<span class="fn">TransferData</span>(descriptorConstants);
     对于glm::<span class="fn">frustum</span>(...)这种可能将相机坐标系的原点映射到视口中心之外的投影矩阵，需要考虑偏移：
     <code>齐次剪裁空间坐标.x = 相机空间.x * 系数 + 相机空间.z * 另一系数</code>（这里“另一系数”会乘以“相机空间.z”是因为偏移也得符合近大远小）
     <br>
-    根据矩阵乘矢量的展开式可知，对于x坐标，这里的两个系数分别为<span class="var">proj[0][0]</span>和<span class="var">proj[2][0]</span>（注意GLM默认使用列主矩阵），将先前的伪代码等式代入上式，得到如下数学关系：
+    根据矩阵乘矢量的展开式可知，对于x坐标，这里的两个系数分别为<span class="var">proj</span>[0][0]和<span class="var">proj</span>[2][0]（注意GLM默认使用列主矩阵），将先前的伪代码等式代入上式，得到如下数学关系：
 </p>
 <pre class="code">
 <span class="cmt">//伪代码</span>

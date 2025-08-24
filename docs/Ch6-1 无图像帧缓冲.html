@@ -197,7 +197,7 @@
     <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">ApiVersion</span>() &lt; <span class="mcr">VK_API_VERSION_1_1</span>)
         <span class="kw">return</span> -1;
     <span class="kw">if</span> (<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">ApiVersion</span>() &lt; <span class="mcr">VK_API_VERSION_1_2</span>) {
-        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME</span>);<span class="cmt">//Vulkan1.1.XXX需要这个扩展</span>
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME</span>); <span class="cmt">//Vulkan1.1.XXX需要这个扩展</span>
         <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddDeviceExtension</span>(<span class="mcr">VK_KHR_IMAGELESS_FRAMEBUFFER_EXTENSION_NAME</span>);
         <span class="type">VkPhysicalDeviceImagelessFramebufferFeatures</span> physicalDeviceImagelessFramebufferFeatures = {
             <span class="enum">VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES</span>,

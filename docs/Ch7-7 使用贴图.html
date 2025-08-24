@@ -384,7 +384,7 @@ pipelineCiPack.vertexInputAttributes.<span class="fn">emplace_back</span>(1, 0, 
     </li>
 </ul>
 <p>
-    <span class="type">sampler2D</span>要求对应的image view的图像格式为浮点数，即不能是UINT或SINT后缀的类型，我们先前指定了<span class="enum">VK_FORMAT_R8G8B8A8_UNORM</span>，UNORM后缀的图像格式最常见并且被广泛支持，采样结果会把0~255的8位整形标准化到[0, 1]的范围。
+    <span class="type">sampler2D</span>要求对应的image view的图像格式为浮点数，即不能是UINT或SINT后缀的类型，我们先前指定了<span class="enum">VK_FORMAT_R8G8B8A8_UNORM</span>，UNORM后缀的图像格式最常见并且被广泛支持，采样结果会把0~255的8位整形归一化到[0, 1]的范围。
     <br>
     如果你想使用整数图像格式<span class="enum">VK_FORMAT_R8G8B8A8_UINT</span>，那么在上述代码基础上，<span class="var">u_Texture</span>的类型变更为<span class="type">usampler2D</span>，<span class="var">o_Color</span>要除以255.f。注意整数图像格式很可能不支持线性滤波，相应地也要修改采样器的创建参数。
 </p>

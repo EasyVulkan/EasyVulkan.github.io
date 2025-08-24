@@ -208,10 +208,10 @@ namespace vulkan {
 		VkPhysicalDevice PhysicalDevice() const {
 			return physicalDevice;
 		}
-		const VkPhysicalDeviceProperties& PhysicalDeviceProperties() const {
+		constexpr const VkPhysicalDeviceProperties& PhysicalDeviceProperties() const {
 			return physicalDeviceProperties;
 		}
-		const VkPhysicalDeviceMemoryProperties& PhysicalDeviceMemoryProperties() const {
+		constexpr const VkPhysicalDeviceMemoryProperties& PhysicalDeviceMemoryProperties() const {
 			return physicalDeviceMemoryProperties;
 		}
 		VkPhysicalDevice AvailablePhysicalDevice(uint32_t index) const {
@@ -246,10 +246,10 @@ namespace vulkan {
 		VkSurfaceKHR Surface() const {
 			return surface;
 		}
-		const VkFormat& AvailableSurfaceFormat(uint32_t index) const {
+		VkFormat AvailableSurfaceFormat(uint32_t index) const {
 			return availableSurfaceFormats[index].format;
 		}
-		const VkColorSpaceKHR& AvailableSurfaceColorSpace(uint32_t index) const {
+		VkColorSpaceKHR AvailableSurfaceColorSpace(uint32_t index) const {
 			return availableSurfaceFormats[index].colorSpace;
 		}
 		uint32_t AvailableSurfaceFormatCount() const {
@@ -268,7 +268,7 @@ namespace vulkan {
 		uint32_t SwapchainImageCount() const {
 			return uint32_t(swapchainImages.size());
 		}
-		const VkSwapchainCreateInfoKHR& SwapchainCreateInfo() const {
+		constexpr const VkSwapchainCreateInfoKHR& SwapchainCreateInfo() const {
 			return swapchainCreateInfo;
 		}
 
@@ -726,7 +726,7 @@ namespace vulkan {
 		}
 
 		//Static Function
-		static graphicsBase& Base() {
+		static constexpr graphicsBase& Base() {
 			return singleton;
 		}
 	};

@@ -22,7 +22,7 @@ bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable
 	using namespace vulkan;
 
 	if (!glfwInit()) {
-		outStream << std::format("[ InitializeWindow ] ERROR\nFailed to initialize GLFW!\n");
+		OutputMessage("[ InitializeWindow ] ERROR\nFailed to initialize GLFW!\n");
 		return false;
 	}
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -33,7 +33,7 @@ bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable
 		glfwCreateWindow(pMode->width, pMode->height, windowTitle, pMonitor, nullptr) :
 		glfwCreateWindow(size.width, size.height, windowTitle, nullptr, nullptr);
 	if (!pWindow) {
-		outStream << std::format("[ InitializeWindow ]\nFailed to create a glfw window!\n");
+		OutputMessage("[ InitializeWindow ]\nFailed to create a glfw window!\n");
 		glfwTerminate();
 		return false;
 	}
@@ -46,7 +46,7 @@ bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable
 	const char** extensionNames;
 	extensionNames = glfwGetRequiredInstanceExtensions(&extensionCount);
 	if (!extensionNames) {
-		outStream << std::format("[ InitializeWindow ]\nVulkan is not available on this machine!\n");
+		OutputMessage("[ InitializeWindow ]\nVulkan is not available on this machine!\n");
 		glfwTerminate();
 		return false;
 	}
@@ -64,7 +64,7 @@ bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable
 
 	VkSurfaceKHR surface = VK_NULL_HANDLE;
 	if (VkResult result = glfwCreateWindowSurface(vulkan::graphicsBase::Base().Instance(), pWindow, nullptr, &surface)) {
-		outStream << std::format("[ InitializeWindow ] ERROR\nFailed to create a window surface!\nError code: {}\n", int32_t(result));
+		OutputMessage("[ InitializeWindow ] ERROR\nFailed to create a window surface!\nError code: {}\n", int32_t(result));
 		glfwTerminate();
 		return false;
 	}
@@ -84,13 +84,13 @@ bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable
 				result_setColorSpace == VK_SUCCESS)
 				break;
 		if (result_setColorSpace)
-			outStream << std::format("[ InitializeWindow ] WARNING\nFailed to satisfy the requirement of color space!\n");
+			OutputMessage("[ InitializeWindow ] WARNING\nFailed to satisfy the requirement of color space!\n");
 	}
 	if (!graphicsBase::Base().SwapchainCreateInfo().imageFormat &&
 		decltype(PreInitialization_EnableSrgb()){}())
 		if (graphicsBase::Base().SetSurfaceFormat({ VK_FORMAT_R8G8B8A8_SRGB, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR }) &&
 			graphicsBase::Base().SetSurfaceFormat({ VK_FORMAT_B8G8R8A8_SRGB, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR }))
-			outStream << std::format("[ InitializeWindow ] WARNING\nFailed to enable sRGB!\n");
+			OutputMessage("[ InitializeWindow ] WARNING\nFailed to enable sRGB!\n");
 
 	if (graphicsBase::Base().CreateSwapchain(limitFrameRate))
 		return false;

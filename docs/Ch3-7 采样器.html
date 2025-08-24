@@ -223,15 +223,15 @@
         </tr>
         <tr class="row-even">
             <td><p><span class="type">VkSamplerAddressMode</span> addressModeU</p></td>
-            <td><p>指定采样坐标的u分量（对应通常的x分量）超出标准化坐标的[0,1)范围时的寻址模式</p></td>
+            <td><p>指定采样坐标的u分量（对应通常的x分量）超出归一化坐标的[0,1)范围时的寻址模式</p></td>
         </tr>
         <tr class="row-odd">
             <td><p><span class="type">VkSamplerAddressMode</span> addressModeV</p></td>
-            <td><p>指定采样坐标的v分量（对应通常的y分量）超出标准化坐标的[0,1)范围时的寻址模式</p></td>
+            <td><p>指定采样坐标的v分量（对应通常的y分量）超出归一化坐标的[0,1)范围时的寻址模式</p></td>
         </tr>
         <tr class="row-even">
             <td><p><span class="type">VkSamplerAddressMode</span> addressModeW</p></td>
-            <td><p>指定采样坐标的s分量（对应通常的z分量）超出标准化坐标的[0,1)范围时的寻址模式</p></td>
+            <td><p>指定采样坐标的s分量（对应通常的z分量）超出归一化坐标的[0,1)范围时的寻址模式</p></td>
         </tr>
         <tr class="row-odd">
             <td><p><span class="kw">float</span> mipLodBias</p></td>
@@ -267,16 +267,16 @@
         </tr>
         <tr class="row-even">
             <td><p><span class="type">VkBool32</span> unnormalizedCoordinates</p></td>
-            <td><p>是否使用非标准化贴图坐标进行采样</p></td>
+            <td><p>是否使用非归一化贴图坐标进行采样</p></td>
         </tr>
     </tbody>
 </table>
 <ul>
     <li>
         <p>
-            通常使用标准化坐标，整张图像的贴图坐标范围为0~1，以2D图像为例，左上角为<code>{0.f, 0.f}</code>，右下角为<code>{1.f, 1.f}</code>。<br>
-            而使用非标准化坐标采样时（unnormalizedCoordinates为<span class="mcr">VK_TRUE</span>），整张图像的贴图坐标范围为[0, 贴图大小)。<br>
-            使用非标准化坐标时，对滤波方式有限制，且compareEnable必须为<span class="mcr">VK_FALSE</span>，这里不做赘述，有兴趣请自行参考官方文档。
+            通常使用归一化坐标，整张图像的贴图坐标范围为0~1，以2D图像为例，左上角为<code>{0.f, 0.f}</code>，右下角为<code>{1.f, 1.f}</code>。<br>
+            而使用非归一化坐标采样时（unnormalizedCoordinates为<span class="mcr">VK_TRUE</span>），整张图像的贴图坐标范围为[0, 贴图大小)。<br>
+            使用非归一化坐标时，对滤波方式有限制，且compareEnable必须为<span class="mcr">VK_FALSE</span>，这里不做赘述，有兴趣请自行参考官方文档。
         </p>
     </li>
 </ul>
@@ -415,7 +415,7 @@
 <section id="id5">
 <h3>寻址模式<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
 <p>
-    寻址模式（<span class="type">VkSamplerAddressMode</span>），也称wrapping mode，决定当用于采样的标准化坐标超出[0,1)范围时的采样结果。
+    寻址模式（<span class="type">VkSamplerAddressMode</span>），也称wrapping mode，决定当用于采样的归一化坐标超出[0,1)范围时的采样结果。
 </p>
 <table class="docutils align-default">
     <colgroup>
@@ -454,7 +454,7 @@
 <ul>
     <li>
         <p>
-            如果你在意如何钳制到“小于等于1”，采样操作的底层实现是先计算出对应的整数坐标，取得色值（然后再插值，如果是线性滤波的话），整数坐标范围为[0, 贴图大小)，因为是整数所以等价于[0, 贴图大小 - 1]，根据与标准化坐标的映射关系，整数坐标无法为贴图大小即是钳制到“小于等于1”。
+            如果你在意如何钳制到“小于等于1”：采样操作的底层实现是先计算出对应的整数坐标，而整数坐标范围为[0, 贴图大小)，因为是整数所以等价于[0, 贴图大小 - 1]，根据与归一化坐标的映射关系，整数坐标无法为贴图大小即是钳制到“小于等于1”。
         </p>
     </li>
 </ul>

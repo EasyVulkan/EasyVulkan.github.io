@@ -209,8 +209,8 @@
     <span class="kw">const</span> <span class="type">VkImage</span>* <span class="fn">AddressOfImage</span>() <span class="kw">const</span> { <span class="kw">return</span> imageMemory.<span class="fn">AddressOfImage</span>(); }
     <span class="cmt">//Const Function</span>
     <span class="cmt">//该函数返回写入描述符时需要的信息</span>
-    <span class="type">VkDescriptorImageInfo</span> <span class="fn">DescriptorImageInfo</span>(<span class="type">VkSampler</span> sampler) <span class="kw">const</span> {
-        <span class="kw">return</span> { sampler, imageView, <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span> };
+    <span class="type">VkDescriptorImageInfo</span> <span class="fn">DescriptorImageInfo</span>(<span class="type">VkSampler</span> <span class="par">sampler</span>) <span class="kw">const</span> {
+        <span class="kw">return</span> { <span class="par">sampler</span>, imageView, <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span> };
     }
 };
 </pre>
@@ -223,36 +223,36 @@
 <span class="kw">class</span> <span class="type">colorAttachment</span> :<span class="kw">public</span> <span class="type">attachment</span> {
 <span class="kw">public</span>:
     <span class="fn">colorAttachment</span>() = <span class="kw">default</span>;
-    <span class="fn">colorAttachment</span>(<span class="type">VkFormat</span> format, <span class="type">VkExtent2D</span> extent, <span class="type">uint32_t</span> layerCount = 1,
-        <span class="type">VkSampleCountFlagBits</span> sampleCount = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>, <span class="type">VkImageUsageFlags</span> otherUsages = 0) {
-        <span class="fn">Create</span>(format, extent, layerCount, sampleCount, otherUsages);
+    <span class="fn">colorAttachment</span>(<span class="type">VkFormat</span> <span class="par">format</span>, <span class="type">VkExtent2D</span> <span class="par">extent</span>, <span class="type">uint32_t</span> <span class="par">layerCount</span> = 1,
+        <span class="type">VkSampleCountFlagBits</span> <span class="par">sampleCount</span> = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>, <span class="type">VkImageUsageFlags</span> <span class="par">otherUsages</span> = 0) {
+        <span class="fn">Create</span>(<span class="par">format</span>, <span class="par">extent</span>, <span class="par">layerCount</span>, <span class="par">sampleCount</span>, <span class="par">otherUsages</span>);
     }
     <span class="cmt">//Non-const Function</span>
-    <span class="kw">void</span> <span class="fn">Create</span>(<span class="type">VkFormat</span> format, <span class="type">VkExtent2D</span> extent, <span class="type">uint32_t</span> layerCount = 1,
-        <span class="type">VkSampleCountFlagBits</span> sampleCount = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>, <span class="type">VkImageUsageFlags</span> otherUsages = 0) {
+    <span class="kw">void</span> <span class="fn">Create</span>(<span class="type">VkFormat</span> <span class="par">format</span>, <span class="type">VkExtent2D</span> <span class="par">extent</span>, <span class="type">uint32_t</span> <span class="par">layerCount</span> = 1,
+        <span class="type">VkSampleCountFlagBits</span> <span class="par">sampleCount</span> = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>, <span class="type">VkImageUsageFlags</span> <span class="par">otherUsages</span> = 0) {
         <span class="cmt">/*待填充*/</span>
     }
     <span class="cmt">//Static Function</span>
     <span class="cmt">//该函数用于检查某一格式的图像可否被用作颜色附件</span>
-    <span class="kw">static bool</span> <span class="sfn">FormatAvailability</span>(<span class="type">VkFormat</span> format, <span class="kw">bool</span> supportBlending = true) {
+    <span class="kw">static bool</span> <span class="sfn">FormatAvailability</span>(<span class="type">VkFormat</span> <span class="par">format</span>, <span class="kw">bool</span> <span class="par">supportBlending</span> = <span class="kw">true</span>) {
         <span class="cmt">/*待填充*/</span>
     }
 };
 <span class="kw">class</span> <span class="type">depthStencilAttachment</span> :<span class="kw">public</span> <span class="type">attachment</span> {
 <span class="kw">public</span>:
     <span class="enum">depthStencilAttachment</span>() = <span class="kw">default</span>;
-    <span class="enum">depthStencilAttachment</span>(<span class="type">VkFormat</span> format, <span class="type">VkExtent2D</span> extent, <span class="type">uint32_t</span> layerCount = 1,
-        <span class="type">VkSampleCountFlagBits</span> sampleCount = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>, <span class="type">VkImageUsageFlags</span> otherUsages = 0, <span class="kw">bool</span> stencilOnly = <span class="kw">false</span>) {
-        <span class="fn">Create</span>(format, extent, layerCount, sampleCount, otherUsages, stencilOnly);
+    <span class="enum">depthStencilAttachment</span>(<span class="type">VkFormat</span> <span class="par">format</span>, <span class="type">VkExtent2D</span> <span class="par">extent</span>, <span class="type">uint32_t</span> <span class="par">layerCount</span> = 1,
+        <span class="type">VkSampleCountFlagBits</span> <span class="par">sampleCount</span> = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>, <span class="type">VkImageUsageFlags</span> <span class="par">otherUsages</span> = 0, <span class="kw">bool</span> <span class="par">stencilOnly</span> = <span class="kw">false</span>) {
+        <span class="fn">Create</span>(<span class="par">format</span>, <span class="par">extent</span>, <span class="par">layerCount</span>, <span class="par">sampleCount</span>, <span class="par">otherUsages</span>, <span class="par">stencilOnly</span>);
     }
     <span class="cmt">//Non-const Function</span>
-    <span class="kw">void</span> <span class="fn">Create</span>(<span class="type">VkFormat</span> format, <span class="type">VkExtent2D</span> extent, <span class="type">uint32_t</span> layerCount = 1,
-        <span class="type">VkSampleCountFlagBits</span> sampleCount = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>, <span class="type">VkImageUsageFlags</span> otherUsages = 0, <span class="kw">bool</span> stencilOnly = <span class="kw">false</span>) {
+    <span class="kw">void</span> <span class="fn">Create</span><span class="type">VkFormat</span> <span class="par">format</span>, <span class="type">VkExtent2D</span> <span class="par">extent</span>, <span class="type">uint32_t</span> <span class="par">layerCount</span> = 1,
+        <span class="type">VkSampleCountFlagBits</span> <span class="par">sampleCount</span> = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>, <span class="type">VkImageUsageFlags</span> <span class="par">otherUsages</span> = 0, <span class="kw">bool</span> <span class="par">stencilOnly</span> = <span class="kw">false</span>) {
         <span class="cmt">/*待填充*/</span>
     }
     <span class="cmt">//Static Function</span>
     <span class="cmt">//该函数用于检查某一格式的图像可否被用作深度模板附件</span>
-    <span class="kw">static bool</span> <span class="sfn">FormatAvailability</span>(<span class="type">VkFormat</span> format) {
+    <span class="kw">static bool</span> <span class="sfn">FormatAvailability</span>(<span class="type">VkFormat</span> <span class="par">format</span>) {
         <span class="cmt">/*待填充*/</span>
     }
 };
@@ -270,11 +270,11 @@
     先前在<a class="reference internal" href="Ch5-0%20VKBase%2B.h.html">Ch5-0 VKBase+.h</a>中获取了所有格式的<span class="type">VkFormatProperties</span>，现在用先前准备好的函数<span class="fn">FormatProperties</span>(...)获取格式属性，让其optimalTilingFeatures成员与相应的<span class="type">VkImageUsageFlagBits</span>枚举项做位与，即可知某种格式的图像能否用作颜色/深度模板附件：
 </p>
 <pre class="code">
-<span class="kw">static</span> <span class="type">colorAttachment</span>::<span class="sfn">FormatAvailability</span>(<spanclass="type">VkFormat</span> format, <span class="kw">bool</span> supportBlending = true) {
-    <span class="kw">return</span> <span class="fn">FormatProperties</span>(format).optimalTilingFeatures &amp; <span class="enum">VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT</span> &lt;&lt; <span class="type">uint32_t</span>(supportBlending);
+<span class="kw">static</span> <span class="type">colorAttachment</span>::<span class="sfn">FormatAvailability</span>(<span class="type">VkFormat</span> <span class="par">format</span>, <span class="kw">bool</span> <span class="par">supportBlending</span> = <span class="kw">true</span>) {
+    <span class="kw">return</span> <span class="fn">FormatProperties</span>(<span class="par">format</span>).optimalTilingFeatures &amp; <span class="enum">VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT</span> &lt;&lt; <span class="type">uint32_t</span>(<span class="par">supportBlending</span>);
 }
-<span class="kw">bool</span> <span class="type">depthStencilAttachment</span>::<span class="sfn">FormatAvailability</span>(<spanclass="type">VkFormat</span> format) {
-    <span class="kw">return</span> <span class="fn">FormatProperties</span>(format).optimalTilingFeatures &amp; <span class="enum">VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT</span>;
+<span class="kw">bool</span> <span class="type">depthStencilAttachment</span>::<span class="sfn">FormatAvailability</span>(<span class="type">VkFormat</span> <span class="par">format</span>) {
+    <span class="kw">return</span> <span class="fn">FormatProperties</span>(<span class="par">format</span>).optimalTilingFeatures &amp; <span class="enum">VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT</span>;
 }
 </pre>
 <ul>
@@ -288,25 +288,25 @@
     然后填充<span class="type">colorAttachment</span>::<span class="fn">Create</span>(...)：
 </p>
 <pre class="code">
-<span class="kw">void</span> <span class="type">colorAttachment</span>::<span class="fn">Create</span>(<span class="type">VkFormat</span> format, <span class="type">VkExtent2D</span> extent, <span class="type">uint32_t</span> layerCount = 1,
-    <span class="type">VkSampleCountFlagBits</span> sampleCount = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>, <span class="type">VkImageUsageFlags</span> otherUsages = 0) {
+<span class="kw">void</span> <span class="type">colorAttachment</span>::<span class="fn">Create</span>(<span class="type">VkFormat</span> <span class="par">format</span>, <span class="type">VkExtent2D</span> <span class="par">extent</span>, <span class="type">uint32_t</span> <span class="par">layerCount</span> = 1,
+    <span class="type">VkSampleCountFlagBits</span> <span class="par">sampleCount</span> = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>, <span class="type">VkImageUsageFlags</span> <span class="par">otherUsages</span> = 0) {
     <span class="type">VkImageCreateInfo</span> imageCreateInfo = {
         .imageType = <span class="enum">VK_IMAGE_TYPE_2D</span>,
-        .format = format,
-        .extent = { extent.width, extent.height, 1 },
+        .format = <span class="par">format</span>,
+        .extent = { <span class="par">extent</span>.width, <span class="par">extent</span>.height, 1 },
         .mipLevels = 1,
-        .arrayLayers = layerCount,
-        .samples = sampleCount,
-        .usage = <span class="enum">VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT</span> | otherUsages
+        .arrayLayers = <span class="par">layerCount</span>,
+        .samples = <span class="par">sampleCount</span>,
+        .usage = <span class="enum">VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT</span> | <span class="par">otherUsages</span>
     };
     imageMemory.<span class="fn">Create</span>(
         imageCreateInfo,
-        <span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span> | <span class="kw">bool</span>(otherUsages &amp; <span class="enum">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</span>) * <span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>);
+        <span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span> | <span class="kw">bool</span>(<span class="par">otherUsages</span> &amp; <span class="enum">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</span>) * <span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>);
     imageView.<span class="fn">Create</span>(
         imageMemory.<span class="fn">Image</span>(),
-        layerCount > 1 ? <span class="enum">VK_IMAGE_VIEW_TYPE_2D_ARRAY</span> : <span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>,
-        format,
-        { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, layerCount });
+        <span class="par">layerCount</span> > 1 ? <span class="enum">VK_IMAGE_VIEW_TYPE_2D_ARRAY</span> : <span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>,
+        <span class="par">format</span>,
+        { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, <span class="par">layerCount</span> });
 }
 </pre>
 <ul>
@@ -325,32 +325,32 @@
     相比之下，<span class="type">depthStencilAttachment</span>::<span class="fn">Create</span>(...)多出一段根据图像格式确定<span class="type">VkImageSubresourceRange</span>::aspectMask的逻辑：
 </p>
 <pre class="code">
-<span class="kw">void</span> <span class="type">depthStencilAttachment</span>::<span class="fn">Create</span>(<span class="type">VkFormat</span> format, <span class="type">VkExtent2D</span> extent, <span class="type">uint32_t</span> layerCount = 1,
-    <span class="type">VkSampleCountFlagBits</span> sampleCount = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>, <span class="type">VkImageUsageFlags</span> otherUsages = 0, <span class="kw">bool</span> stencilOnly = <span class="kw">false</span>) {
+<span class="kw">void</span> <span class="type">depthStencilAttachment</span>::<span class="fn">Create</span>(<span class="type">VkFormat</span> <span class="par">format</span>, <span class="type">VkExtent2D</span> <span class="par">extent</span>, <span class="type">uint32_t</span> <span class="par">layerCount</span> = 1,
+    <span class="type">VkSampleCountFlagBits</span> <span class="par">sampleCount</span> = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>, <span class="type">VkImageUsageFlags</span> <span class="par">otherUsages</span> = 0, <span class="kw">bool</span> <span class="par">stencilOnly</span> = <span class="kw">false</span>) {
     <span class="type">VkImageCreateInfo</span> imageCreateInfo = {
         .imageType = <span class="enum">VK_IMAGE_TYPE_2D</span>,
-        .format = format,
-        .extent = { extent.width, extent.height, 1 },
+        .format = <span class="par">format</span>,
+        .extent = { <span class="par">extent</span>.width, <span class="par">extent</span>.height, 1 },
         .mipLevels = 1,
-        .arrayLayers = layerCount,
-        .samples = sampleCount,
-        .usage = <span class="enum">VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT</span> | otherUsages
+        .arrayLayers = <span class="par">layerCount</span>,
+        .samples = <span class="par">sampleCount</span>,
+        .usage = <span class="enum">VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT</span> | <span class="par">otherUsages</span>
     };
     imageMemory.<span class="fn">Create</span>(
         imageCreateInfo,
-        <span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span> | <span class="kw">bool</span>(otherUsages &amp; <span class="enum">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</span>) * <span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>);
+        <span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span> | <span class="kw">bool</span>(<span class="par">otherUsages</span> &amp; <span class="enum">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</span>) * <span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>);
     <span class="cmt">//确定aspcet mask-------------------------</span>
-    <span class="type">VkImageAspectFlags</span> aspectMask = (!stencilOnly) * <span class="enum">VK_IMAGE_ASPECT_DEPTH_BIT</span>;
-    <span class="kw">if</span> (format &gt; <span class="enum">VK_FORMAT_S8_UINT</span>)
+    <span class="type">VkImageAspectFlags</span> aspectMask = (!<span class="par">stencilOnly</span>) * <span class="enum">VK_IMAGE_ASPECT_DEPTH_BIT</span>;
+    <span class="kw">if</span> (<span class="par">format</span> &gt; <span class="enum">VK_FORMAT_S8_UINT</span>)
         aspectMask |= <span class="enum">VK_IMAGE_ASPECT_STENCIL_BIT</span>;
-    <span class="kw">else if</span> (format == <span class="enum">VK_FORMAT_S8_UINT</span>)
+    <span class="kw">else if</span> (<span class="par">format</span> == <span class="enum">VK_FORMAT_S8_UINT</span>)
         aspectMask = <span class="enum">VK_IMAGE_ASPECT_STENCIL_BIT</span>;
     <span class="cmt">//----------------------------------------</span>
     imageView.<span class="fn">Create</span>(
         imageMemory.<span class="fn">Image</span>(),
-        layerCount > 1 ? <span class="enum">VK_IMAGE_VIEW_TYPE_2D_ARRAY</span> : <span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>,
-        format,
-        { aspectMask, 0, 1, 0, layerCount });
+        <span class="par">layerCount</span> > 1 ? <span class="enum">VK_IMAGE_VIEW_TYPE_2D_ARRAY</span> : <span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>,
+        <span class="par">format</span>,
+        { aspectMask, 0, 1, 0, <span class="par">layerCount</span> });
 }
 </pre>
 <ul>
@@ -368,11 +368,11 @@
     </li>
 </ul>
 <p>
-    <span class="var">stencilOnly</span>参数的解释：
+    <span class="par">stencilOnly</span>参数的解释：
     <br>
     你只打算使用深度测试的话，使用只有深度的格式即可，Vulkan标准规定实现必须支持<span class="enum">VK_FORMAT_D16_UNORM</span>格式的深度模板附件，然后<span class="enum">VK_FORMAT_X8_D24_UNORM_PACK32</span>（X8是填充字节）和<span class="enum">VK_FORMAT_D32_SFLOAT</span>之中至少有一个受支持。
     <br>
-    但是，只打算使用模板测试时，实现不一定支持<span class="enum">VK_FORMAT_S8_UINT</span>格式的深度模板附件，可能不得不使用带深度值的格式，这里<span class="var">stencilOnly</span>意在让格式中带深度分量时使aspectMask中不标明深度（这样一来，要将图像用于采样时，就不必再另外创建image view）。
+    但是，只打算使用模板测试时，实现不一定支持<span class="enum">VK_FORMAT_S8_UINT</span>格式的深度模板附件，可能不得不使用带深度值的格式，这里<span class="par">stencilOnly</span>意在让格式中带深度分量时使<span class="var">aspectMask</span>中不标明深度（以方便需要采样模板附件的情况）。
 </p></section>
 <section id="createrpwf-canvas">
 <h2>CreateRpwf_Canvas<a class="headerlink" href="#createrpwf-canvas" title="Permalink to this heading"></a></h2>
@@ -385,7 +385,7 @@
         <span class="type">renderPass</span> renderPass;
         <span class="type">framebuffer</span> framebuffer;
     };
-    <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> canvasSize) {
+    <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> <span class="par">canvasSize</span>) {
         <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf;
 
         <span class="cmt">/*待后续填充*/</span>
@@ -409,10 +409,10 @@
 
     <span class="type">colorAttachment</span> ca_canvas;
 
-    <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> canvasSize) {
+    <span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> <span class="par">canvasSize</span>) {
         <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf;
 
-        ca_canvas.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat, canvasSize, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+        ca_canvas.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat, <span class="par">canvasSize</span>, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
             <span class="enum">VK_IMAGE_USAGE_SAMPLED_BIT</span> | <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>);
 
         <span class="cmt">/*待后续填充*/</span>
@@ -436,10 +436,10 @@
     这次的应用场景中，图像附件是“渲染→被采样→渲染→被采样”如此循环，所以前后内存布局都用<span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>即可。
 </p>
 <pre class="code">
-<span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> canvasSize) {
+<span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> <span class="par">canvasSize</span>) {
     <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf;
 
-    ca_canvas.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat, canvasSize, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+    ca_canvas.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat, <span class="par">canvasSize</span>, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
         <span class="enum">VK_IMAGE_USAGE_SAMPLED_BIT</span> | <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>);
 
     <span class="type">VkAttachmentDescription</span> attachmentDescription = {
@@ -537,10 +537,10 @@
     最后非常简单无脑地创建帧缓冲，整个<span class="fn">CreateRpwf_Canvas</span>(...)如下：
 </p>
 <pre class="code">
-<span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> canvasSize = windowSize) {
+<span class="kw">const auto</span>&amp; <span class="fn">CreateRpwf_Canvas</span>(<span class="type">VkExtent2D</span> <span class="par">canvasSize</span> = windowSize) {
     <span class="kw">static</span> <span class="type">renderPassWithFramebuffer</span> rpwf;
 
-    ca_canvas.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat, canvasSize, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
+    ca_canvas.<span class="fn">Create</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat, <span class="par">canvasSize</span>, 1, <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
         <span class="enum">VK_IMAGE_USAGE_SAMPLED_BIT</span> | <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>);
 
     <span class="type">VkAttachmentDescription</span> attachmentDescription = {
@@ -590,8 +590,8 @@
         .renderPass = rpwf.renderPass,
         .attachmentCount = 1,
         .pAttachments = ca_canvas.<span class="fn">AddressOfImageView</span>(),
-        .width = canvasSize.width,
-        .height = canvasSize.height,
+        .width = <span class="par">canvasSize</span>.width,
+        .height = <span class="par">canvasSize</span>.height,
         .layers = 1
     };
     rpwf.framebuffer.<span class="fn">Create</span>(framebufferCreateInfo);
@@ -763,14 +763,14 @@
     <span class="kw">static const auto</span>&amp; rpwf = easyVulkan::<span class="fn">CreateRpwf_Screen</span>();
     <span class="kw">return</span> rpwf;
 }
-<span class="kw">const auto</span>&amp; <span class="fn">RenderPassAndFramebuffer_Offscreen</span>(<span class="type">VkExtent2D</span> canvasSize) {
-    <span class="kw">static const auto</span>&amp; rpwf = easyVulkan::<span class="fn">CreateRpwf_Canvas</span>(canvasSize);
+<span class="kw">const auto</span>&amp; <span class="fn">RenderPassAndFramebuffer_Offscreen</span>(<span class="type">VkExtent2D</span> <span class="par">canvasSize</span>) {
+    <span class="kw">static const auto</span>&amp; rpwf = easyVulkan::<span class="fn">CreateRpwf_Canvas</span>(<span class="par">canvasSize</span>);
     <span class="kw">return</span> rpwf;
 }
 <span class="kw">void</span> <span class="fn">CreateLayout</span>() {
     <span class="cmt">/*待填充*/</span>
 }
-<span class="kw">void</span> <span class="fn">CreatePipeline</span>(<span class="type">VkExtent2D</span> canvasSize) {
+<span class="kw">void</span> <span class="fn">CreatePipeline</span>(<span class="type">VkExtent2D</span> <span class="par">canvasSize</span>) {
     <span class="cmt">/*待填充*/</span>
 }
 </pre>
@@ -849,10 +849,10 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
     };
     <span class="type">graphicsPipelineCreateInfoPack</span> pipelineCiPack;
     pipelineCiPack.createInfo.layout = pipelineLayout_line;
-    pipelineCiPack.createInfo.renderPass = <span class="fn">RenderPassAndFramebuffer_Offscreen</span>(canvasSize).renderPass;
-    pipelineCiPack.inputAssemblyStateCi.topology = <span class="enum">VK_PRIMITIVE_TOPOLOGY_LINE_LIST</span>;<span class="cmt">//绘制线</span>
-    pipelineCiPack.viewports.<span class="fn">emplace_back</span>(0.f, 0.f, <span class="kw">float</span>(canvasSize.width), <span class="kw">float</span>(canvasSize.height), 0.f, 1.f);
-    pipelineCiPack.scissors.<span class="fn">emplace_back</span>(<span class="type">VkOffset2D</span>{}, canvasSize);
+    pipelineCiPack.createInfo.renderPass = <span class="fn">RenderPassAndFramebuffer_Offscreen</span>(<span class="par">canvasSize</span>).renderPass;
+    pipelineCiPack.inputAssemblyStateCi.topology = <span class="enum">VK_PRIMITIVE_TOPOLOGY_LINE_LIST</span>; <span class="cmt">//绘制线</span>
+    pipelineCiPack.viewports.<span class="fn">emplace_back</span>(0.f, 0.f, <span class="kw">float</span>(<span class="par">canvasSize</span>.width), <span class="kw">float</span>(<span class="par">canvasSize</span>.height), 0.f, 1.f);
+    pipelineCiPack.scissors.<span class="fn">emplace_back</span>(<span class="type">VkOffset2D</span>{}, <span class="par">canvasSize</span>);
     pipelineCiPack.rasterizationStateCi.lineWidth = 1;                             <span class="cmt">//线宽</span>
     pipelineCiPack.multisampleStateCi.rasterizationSamples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>;
     pipelineCiPack.colorBlendAttachmentStates.<span class="fn">push_back</span>({ .colorWriteMask = 0b1111 });
@@ -877,10 +877,10 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
     };
     <span class="type">graphicsPipelineCreateInfoPack</span> pipelineCiPack;
     pipelineCiPack.createInfo.layout = pipelineLayout_line;
-    pipelineCiPack.createInfo.renderPass = <span class="fn">RenderPassAndFramebuffers_Screen</span>(canvasSize).renderPass;
-    pipelineCiPack.inputAssemblyStateCi.topology = <span class="enum">VK_PRIMITIVE_TOPOLOGY_LINE_LIST</span>;<span class="cmt">//绘制线</span>
-    pipelineCiPack.viewports.<span class="fn">emplace_back</span>(0.f, 0.f, <span class="kw">float</span>(canvasSize.width), <span class="kw">float</span>(canvasSize.height), 0.f, 1.f);
-    pipelineCiPack.scissors.<span class="fn">emplace_back</span>(<span class="type">VkOffset2D</span>{}, canvasSize);
+    pipelineCiPack.createInfo.renderPass = <span class="fn">RenderPassAndFramebuffers_Screen</span>(<span class="par">canvasSize</span>).renderPass;
+    pipelineCiPack.inputAssemblyStateCi.topology = <span class="enum">VK_PRIMITIVE_TOPOLOGY_LINE_LIST</span>; <span class="cmt">//绘制线</span>
+    pipelineCiPack.viewports.<span class="fn">emplace_back</span>(0.f, 0.f, <span class="kw">float</span>(<span class="par">canvasSize</span>.width), <span class="kw">float</span>(<span class="par">canvasSize</span>.height), 0.f, 1.f);
+    pipelineCiPack.scissors.<span class="fn">emplace_back</span>(<span class="type">VkOffset2D</span>{}, <span class="par">canvasSize</span>);
     pipelineCiPack.rasterizationStateCi.lineWidth = 1;                             <span class="cmt">//线宽</span>
     pipelineCiPack.multisampleStateCi.rasterizationSamples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>;
     pipelineCiPack.colorBlendAttachmentStates.<span class="fn">push_back</span>({ .colorWriteMask = 0b1111 });
@@ -899,7 +899,7 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
         <span class="type">graphicsPipelineCreateInfoPack</span> pipelineCiPack;
         pipelineCiPack.createInfo.layout = pipelineLayout_screen;
         pipelineCiPack.createInfo.renderPass = <span class="fn">RenderPassAndFramebuffers_Screen</span>().renderPass;
-        pipelineCiPack.inputAssemblyStateCi.topology = <span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP</span>;<span class="cmt">//绘制模式跟Ch7-7一样</span>
+        pipelineCiPack.inputAssemblyStateCi.topology = <span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP</span>; <span class="cmt">//绘制模式跟Ch7-7一样</span>
         pipelineCiPack.viewports.<span class="fn">emplace_back</span>(0.f, 0.f, <span class="kw">float</span>(windowSize.width), <span class="kw">float</span>(windowSize.height), 0.f, 1.f);
         pipelineCiPack.scissors.<span class="fn">emplace_back</span>(<span class="type">VkOffset2D</span>{}, windowSize);
         pipelineCiPack.multisampleStateCi.rasterizationSamples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>;
@@ -928,7 +928,7 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
     向<span class="path">EasyVulkan.hpp</span>，easyVulkan命名空间中，定义函数<span class="fn">CmdClearCanvas</span>(...)，用于清屏并转换图像布局：
 </p>
 <pre class="code">
-<span class="kw">void</span> <span class="fn">CmdClearCanvas</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkClearColorValue</span> clearColor) {
+<span class="kw">void</span> <span class="fn">CmdClearCanvas</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">VkClearColorValue</span> clearColor) {
     <span class="cmt">/*待填充*/</span>
 }
 </pre>
@@ -939,7 +939,7 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
     <span class="fn">vkCmdClearColorImage</span>(...)属于数据转移命令，清屏前的内存屏障要将图像内存布局从<span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>转到<span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span>待写：
 </p>
 <pre class="code">
-<span class="kw">void</span> <span class="fn">CmdClearCanvas</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkClearColorValue</span> clearColor) {
+<span class="kw">void</span> <span class="fn">CmdClearCanvas</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">VkClearColorValue</span> clearColor) {
     <span class="type">VkImageSubresourceRange</span> imageSubresourceRange = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, 1 };
     <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
         <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
@@ -953,7 +953,7 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
         ca_canvas.<span class="fn">Image</span>(),
         imageSubresourceRange
     };
-    <span class="fn">vkCmdPipelineBarrier</span>(commandBuffer, <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>, <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, 0,
+    <span class="fn">vkCmdPipelineBarrier</span>(<span class="par">commandBuffer</span>, <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>, <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, 0,
         0, <span class="kw">nullptr</span>, 0, <span class="kw">nullptr</span>, 1, &amp;imageMemoryBarrier);
 
     <span class="cmt">/*待填充*/</span>
@@ -974,7 +974,7 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
     因为之后有子通道依赖，dstStageMask就算填写成晚于<span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>的阶段也没关系，内存布局转换具有隐式同步保证，这个屏障引发的转换一定先于渲染通道开始时的依赖：
 </p>
 <pre class="code">
-<span class="kw">void</span> <span class="fn">CmdClearCanvas</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkClearColorValue</span> clearColor) {
+<span class="kw">void</span> <span class="fn">CmdClearCanvas</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">VkClearColorValue</span> clearColor) {
     <span class="type">VkImageSubresourceRange</span> imageSubresourceRange = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, 1 };
     <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
         <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
@@ -988,7 +988,7 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
         ca_canvas.<span class="fn">Image</span>(),
         imageSubresourceRange
     };
-    <span class="fn">vkCmdPipelineBarrier</span>(commandBuffer, <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>, <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, 0,
+    <span class="fn">vkCmdPipelineBarrier</span>(<span class="par">commandBuffer</span>, <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>, <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, 0,
         0, <span class="kw">nullptr</span>, 0, <span class="kw">nullptr</span>, 1, &amp;imageMemoryBarrier);
 
     <span class="cmt">/*调用命令清屏，待填充*/</span>
@@ -997,7 +997,7 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
     imageMemoryBarrier.dstAccessMask = 0;
     imageMemoryBarrier.oldLayout = <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span>;
     imageMemoryBarrier.newLayout = <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>;
-    <span class="fn">vkCmdPipelineBarrier</span>(commandBuffer, <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>, 0,
+    <span class="fn">vkCmdPipelineBarrier</span>(<span class="par">commandBuffer</span>, <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>, 0,
         0, <span class="kw">nullptr</span>, 0, <span class="kw">nullptr</span>, 1, &amp;imageMemoryBarrier);
 }
 </pre>
@@ -1053,7 +1053,7 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
     清空整张图，毫无难度地写完：
 </p>
 <pre class="code">
-<span class="kw">void</span> <span class="fn">CmdClearCanvas</span>(<span class="type">VkCommandBuffer</span> commandBuffer, <span class="type">VkClearColorValue</span> clearColor) {
+<span class="kw">void</span> <span class="fn">CmdClearCanvas</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">VkClearColorValue</span> <span class="par">clearColor</span>) {
     <span class="type">VkImageSubresourceRange</span> imageSubresourceRange = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, 1 };
     <span class="type">VkImageMemoryBarrier</span> imageMemoryBarrier = {
         <span class="enum">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER</span>,
@@ -1067,16 +1067,16 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
         ca_canvas.<span class="fn">Image</span>(),
         imageSubresourceRange
     };
-    <span class="fn">vkCmdPipelineBarrier</span>(commandBuffer, <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>, <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, 0,
+    <span class="fn">vkCmdPipelineBarrier</span>(<span class="par">commandBuffer</span>, <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>, <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, 0,
         0, <span class="kw">nullptr</span>, 0, <span class="kw">nullptr</span>, 1, &amp;imageMemoryBarrier);
 
-    <span class="fn">vkCmdClearColorImage</span>(commandBuffer, ca_canvas.<span class="fn">Image</span>(), <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span>, &amp;clearColor, 1, &amp;imageSubresourceRange);
+    <span class="fn">vkCmdClearColorImage</span>(<span class="par">commandBuffer</span>, ca_canvas.<span class="fn">Image</span>(), <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span>, &amp;<span class="par">clearColor</span>, 1, &amp;imageSubresourceRange);
 
     imageMemoryBarrier.srcAccessMask = <span class="enum">VK_ACCESS_TRANSFER_WRITE_BIT</span>;
     imageMemoryBarrier.dstAccessMask = 0;
     imageMemoryBarrier.oldLayout = <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span>;
     imageMemoryBarrier.newLayout = <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>;
-    <span class="fn">vkCmdPipelineBarrier</span>(commandBuffer, <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>, 0,
+    <span class="fn">vkCmdPipelineBarrier</span>(<span class="par">commandBuffer</span>, <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, <span class="enum">VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</span>, 0,
         0, <span class="kw">nullptr</span>, 0, <span class="kw">nullptr</span>, 1, &amp;imageMemoryBarrier);
 }
 </pre></section>
@@ -1085,7 +1085,7 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
 <p>
     主函数框架如下，都是你见过的东西。
     <br>
-    在里面定义画布大小<span class="var">canvas</span>，将图像附件的view写入描述符：
+    在里面定义画布大小<span class="var">canvasSize</span>，将图像附件的view写入描述符：
 </p>
 <pre class="code">
 <span class="kw">int</span> <span class="fn">main</span>() {
@@ -1282,15 +1282,15 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
     };
 
     <span class="kw">bool</span> clearCanvas = <span class="kw">true</span>;
-    <span class="cmt">/*新增*/</span><span class="kw">bool</span> index = 0;
+    <span class="cmt">/*New*/ </span><span class="kw">bool</span> index = 0;
 
     <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
         <span class="cmt">/*...前略*/</span>
 
         <span class="fn">glfwPollEvents</span>();
 
-        <span class="cmt">/*新增*/</span><span class="fn">glfwGetCursorPos</span>(pWindow, &amp;mouseX, &amp;mouseY);
-        <span class="cmt">/*新增*/</span>pushConstants_offscreen.offsets[index = !index] = { mouseX, mouseY };
+        <span class="cmt">/*New*/ </span><span class="fn">glfwGetCursorPos</span>(pWindow, &amp;mouseX, &amp;mouseY);
+        <span class="cmt">/*New*/ </span>pushConstants_offscreen.offsets[index = !index] = { mouseX, mouseY };
         clearCanvas = <span class="fn">glfwGetMouseButton</a>(pWindow, <span class="mcr">GLFW_MOUSE_BUTTON_LEFT</span>)
     }
     <span class="fn">TerminateWindow</span>();

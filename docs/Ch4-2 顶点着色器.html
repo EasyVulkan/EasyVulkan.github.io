@@ -199,7 +199,7 @@
     对于非索引绘制命令，比如<code><a href="https://renderdoc.org/vkspec_chunked/chap21.html#vkCmdDraw">vkCmdDraw</a>(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance)</code>，gl_BaseVertex值为firstVertex，gl_VertexIndex必然不小于该值，类似地，gl_BaseInstance值为firstInstance，gl_InstanceIndex必然不小于该值。
 <p>
 <p>
-    对于索引绘制命令，比如<code><a href="https://renderdoc.org/vkspec_chunked/chap21.html#vkCmdDrawIndexed">vkCmdDrawIndexed</a>(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance)</code>，gl_BaseVertex值为vertexOffset，gl_VertexIndex为命令缓冲区中的与firstIndex相应的索引值加上vertexOffset。
+    对于索引绘制命令，比如<code><a href="https://renderdoc.org/vkspec_chunked/chap21.html#vkCmdDrawIndexed">vkCmdDrawIndexed</a>(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance)</code>，gl_BaseVertex值为vertexOffset，gl_VertexIndex为索引缓冲区中与firstIndex相应的索引值加上vertexOffset。
 </p>
 <p>
     从OpenGL转来的程序员注意gl_InstanceIndex语义同gl_InstanceID不同（gl_InstanceID从0开始，不计算gl_BaseInstance）。

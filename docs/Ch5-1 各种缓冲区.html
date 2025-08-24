@@ -195,7 +195,7 @@
 <span class="kw">class</span> <span class="type">stagingBuffer</span> {
 <span class="kw">protected</span>:
     <span class="type">bufferMemory</span> bufferMemory;
-    <span class="type">VkDeviceSize</span> memoryUsage = 0;<span class="cmt">//每次映射的内存大小</span>
+    <span class="type">VkDeviceSize</span> memoryUsage = 0; <span class="cmt">//每次映射的内存大小</span>
     <span class="type">image</span> aliasedImage;
 <span class="kw">public</span>:
     <span class="fn">stagingBuffer</span>() = <span class="kw">default</span>;
@@ -376,7 +376,7 @@
     <span class="kw">if</span> (<span class="par">extent</span>.width &gt; imageFormatProperties.maxExtent.width ||
         <span class="par">extent</span>.height &gt; imageFormatProperties.maxExtent.height ||
         imageDataSize &gt; imageFormatProperties.maxResourceSize)
-        <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>;<span class="cmt">//如不满足要求，返回VK_NULL_HANDLE</span>
+        <span class="kw">return</span> <span class="mcr">VK_NULL_HANDLE</span>; <span class="cmt">//如不满足要求，返回VK_NULL_HANDLE</span>
     <span class="cmt">/*待后续填充*/</span>
 }
 </pre>
@@ -586,7 +586,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
 <ul>
     <li>
         <p>
-            <span class="var">stagingBuffer_mainThread</span>的类型是<span class="type">stagingBuffer</span>的嵌套类，嵌套类中定义的变量（无论是否静态）的类型不能为外围类，因此需要定义<span class="var">pointer</span>，然后再用一个函数调用作为其初始化器，使其指向局部静态变量<span class="var">stagingBuffer</span>。
+            <span class="var">stagingBuffer_mainThread</span>的类型是<span class="type">stagingBuffer</span>的嵌套类，嵌套类中定义的变量（无论是否静态）的类型不能为外围类，因此需要定义一个指针，然后再用一个函数调用作为其初始化器，使其指向局部静态变量<span class="var">stagingBuffer</span>。此方法的原理即是<a class="reference internal" href="Ch5-0%20VKBase%2B.h.html#graphicsbaseplus">Ch5-0</a>中提了一嘴的pimpl。
         </p>
     </li>
     <li>
