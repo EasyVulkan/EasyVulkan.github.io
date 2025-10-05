@@ -528,7 +528,7 @@
         std::<span class="type">vector</span>&lt;<span class="kw">char</span>&gt; code; <span class="cmt">//用来存被包含文件的内容</span>
     };
     <span class="type">shaderc_include_result</span>* <span class="fn">GetInclude</span>(<span class="kw">const char</span>* <span class="par">requested_source</span>, <span class="type">shaderc_include_result</span>, <span class="kw">const char</span>* <span class="par">requesting_source</span>, <span class="type">size_t</span>) <span class="kw">override</span> {
-        <span class="cmt">//↑无实参名的形参在我接下来的逻辑里都用不着</span>
+        <span class="cmt">//↑无名形参在我接下来的逻辑里都用不着</span>
 
         <span class="kw">auto</span>&amp; result = *(<span class="kw">new</span> <span class="type">result_t</span>);
         <span class="kw">auto</span>&amp; filepath = result.filepath;

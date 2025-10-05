@@ -1129,7 +1129,109 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
 <h3>Storage缓冲区的声明<a class="headerlink" href="#storage" title="Permalink to this heading"></a></h3>
 <p>
     //TODO 等写计算着色器的示例再写。
-</p></section>
+    <br>
+    //25.10.05 空置太久也不好，把陈年草稿放上来（为什么这是草稿？有哪里还需要检查？）：
+</p>
+<pre class="code">
+<span class="kw">layout</span>(内存布局修饰符, set = 描述符集索引, binding = 绑定索引) 内存修饰符 <span class="kw">buffer</span> 块名称 {
+    内存修饰符 成员声明
+} 实例名称;
+</pre>
+<ul>
+    <li>
+        <p>
+            语法细则见<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#uniform">uniform缓冲区的声明</a>。
+        </p>
+    </li>
+</ul>
+<h4>内存修饰符</h4>
+<p>
+    可使用一个或多个内存修饰符修饰storage对象，也可以为<span class="kw">buffer</span>块中的成员添加各自的内存修饰符。
+</p>
+<p>
+    各种内存修饰符的作用如下：
+</p>
+<p>
+    <span class="kw">coherent</span>
+    <br>
+    &emsp;&emsp;表示该变量/块代表的数据可能被<strong>不同着色器调用</strong>（包括与当前着色器调用并行的同阶段调用、之后的着色器阶段）访问。
+    <br>
+    &emsp;&emsp;该修饰符旨在避免读取低层级缓存（较贴近处理单元的高速缓存）数据，要确保对同一数据的后续读取正确发生，还需要使用<span class="fn">memoryBarrier</span>()在内的<strong>用于着色器内的</strong>GLSL内存屏障函数确保数据可获性和可见性。还需注意，读和写的着色器阶段中都需要注明此修饰符。
+    <br>
+    &emsp;&emsp;例：在几何着色器中向storage缓冲区写入数据后，若要在片段着色器中读取，应在这两个阶段中使用<span class="kw">coherent</span>修饰相应变量/块，并在几何着色器中调用<span class="fn">memoryBarrier</span>()。
+</p>
+<ul>
+    <li>
+        <p>
+            如需要在并行的着色器调用（适用于细分控制、计算着色器）中读取其他调用所写入的<span class="kw">coherent</span>数据，应在<span class="fn">memoryBarrier</span>()后使用GLSL内置函数<span class="fn">barrier</span>()确保这些调用都执行到了相同位置。
+        </p>
+    </li>
+    <li>
+        <p>
+            若不同的着色器调用虽然访问同一缓冲区，但彼此访问范围不重叠，则可以无需此修饰符。
+            <br>
+            具体而言，比如，访问的是同一缓冲区中不同索引的数组元素（例如Sascha Willems的Vulkan示例中的这个<a href="https://github.com/SaschaWillems/Vulkan/blob/0686ff5dbcecdef282484ded9c96f98c2f9fbb22/shaders/glsl/computenbody/particle_calculate.comp#L11">计算着色器</a>）。
+        </p>
+    </li>
+    <li>
+        <p>
+            对于整个的缓冲区/图像，Vulkan命令间应尽量使用诸如<span class="fn">vkCmdPipelineBarrier</span>(...)在内的Vulkan同步原语确保数据可见性，而非使用此修饰符。
+        </p>
+    </li>
+    <li>
+        <p>
+            只使用原子性操作访问数据时无需该修饰符。
+        </p>
+    </li>
+</ul>
+</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>
+    Vulkan中，原子性操作会确保至少同一队列族间的可获性和可见性：
+    <br>
+    <span class="ref">Atomic operations implicitly have availability/visibility operations, and the scope of those operations is taken from the atomic operation’s scope.</span>（<a href="https://renderdoc.org/vkspec_chunked/chap52.html#memory-model-informative-descriptions">官方文档</a>）
+    <br>
+    ↑其中的scope会是SPIR-V中的"Device"或"QueueFamily"级别（读得懂SPIR-V的话，可以自行使用<a href="https://www.khronos.org/spirv/visualizer/">SPIR-V Visualizer</a>读取spv文件进行验证）。
+    <br>
+    这跟是否在着色器中声明<code><span class="pragma">#pragma use_vulkan_memory_model</span></code>无关，该GLSL预编译指令影响编译得到的SPIR-V结果，但毕竟SPIR-V也只是编译到着色器模组前的中间语言。
+    <br>
+    本质上，这是由于现代GPU的原子性操作基于L2缓存（而非更贴近处理单元的L1缓存）。
+</p>
+</div>
+<p>
+    <span class="kw">volatile</span>
+    <br>
+    &emsp;&emsp;表示该变量/块代表的数据可能随时（而非在采取同步手段之后）在<strong>当前着色器调用之外</strong>（包括着色器写入之外的方式）发生改变。
+    <br>
+    &emsp;&emsp;该修饰符涵盖<span class="kw">coherent</span>的含义。
+    <br>
+    &emsp;&emsp;因为对性能的影响，通常不会使用该修饰符。
+</p>
+<p>
+    <span class="kw">restrict</span>
+    <br>
+    &emsp;&emsp;表示在<strong>当前着色器</strong>中，该变量/块代表的数据不会被其它变量/块引用，或者说，该变量/块与其他变量/块没有混叠。
+    <br>
+    &emsp;&emsp;该修饰符<strong>能用则用</strong>。
+</p>
+<p>
+    <span class="kw">readonly</span>
+    <br>
+    &emsp;&emsp;表示只读。
+</p>
+<p>
+    <span class="kw">writeonly</span>
+    <br>
+    &emsp;&emsp;表示只写。
+</p>
+<ul>
+    <li>
+        <p>
+            <span class="kw">readonly</span>和<span class="kw">writeonly</span>可同时声明，这种情况下不能访问数据内容，但能做一些操作来访问数据的元信息，比如使用<span class="fn">imageSize</span>(...)取得storage图像的大小
+        </p>
+    </li>
+</ul></section>
 <section id="id14">
 <h3>其他Storage对象的声明<a class="headerlink" href="#id14" title="Permalink to this heading"></a></h3>
 <p>

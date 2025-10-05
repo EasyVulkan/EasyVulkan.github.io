@@ -45,7 +45,6 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Ch1-0 准备工作</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id1">下载所需的库</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#vulkan-sdk">下载并安装Vulkan SDK</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#glm">下载GLM</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#glfw">下载GLFW</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#stb-image-h">下载stb_image.h</a></li>
 </ul>
@@ -209,24 +208,40 @@
     <br>
     <a href="https://vulkan.lunarg.com/sdk/home">https://vulkan.lunarg.com/sdk/home</a>
 </p>
+<p id="glm">
+    在安装时注意勾选“GLM Headers”，顺带取得GLM。
+    <br>
+    如果你觉得Vulkan SDK中附带的GLM版本可能有所滞后，你也可以到GLM的Github仓库去下载最新版：
+    <br>
+    <a href="https://github.com/g-truc/glm/releases">https://github.com/g-truc/glm/releases</a>
+    <br>
+    （数学库这种东西几年下来也不会有太大变化，不过从OpenGL过来的程序员们，注意不要使用2020年前的版本）
+</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>
-    <strong>检查设备是否支持Vulkan</strong>
+    Vulkan SDK中还有一些其它实用的第三方库，比如：
+    <br>
+    &bull; Volk：能方便地取得所有扩展，并进行动态链接。
+    <br>
+    &bull; VMA（Vulkan Memory Allocator）：AMD的库，用于简化Vulkan内存分配及管理。
+    <br>
+    这套教程中不会讲解如何使用它们。
+    <br>
+    <br>
+    关于VMA，建议读者在充分理解了<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch3-2 图像与缓冲区</a>的内容后，再去学习它的使用方式。
+    <br>
+    （不过这套教程里的封装对个人开发者的小型项目来讲，应该也算是够用的了）
+</p>
+</div>
+<p>
+    <strong>检查设备是否支持Vulkan：</strong>
     <br>
     安装完Vulkan SDK后，你可以在<span class="path">VulkanSDK\版本号\Bin</span>或者<span class="path">VulkanSDK\版本号\Bin32</span>下找到一些exe文件。
     <br>
     运行其中的<span class="path">vkcube.exe</span>，若是成功运行，看到了一个正在旋转的正方体，说明你的显卡支持Vulkan。
     <br>
     另外，你可以通过<span class="path">vulkaninfoSDK.exe</span>来查看显卡的相关信息。
-</p>
-</div></section>
-<section id="glm">
-<h3>下载GLM<a class="headerlink" href="#glm" title="Permalink to this heading"></a></h3>
-<p>
-    务必是最新的。从OpenGL过来的程序员们，不要使用几年前的版本！
-    <br>
-    <a href="https://github.com/g-truc/glm/releases">https://github.com/g-truc/glm/releases</a>
 </p></section>
 <section id="glfw">
 <h3>下载GLFW<a class="headerlink" href="#glfw" title="Permalink to this heading"></a></h3>
@@ -268,7 +283,7 @@
         </li>
         <li>
             <p>
-                将glm压缩包内的<span class="path">glm/glm</span>放在<span class="path">Dependency</span>下。
+                将<span class="path">VulkanSDK\版本号\Include\glm</span>（如果你是从Github下载的GLM，则是glm压缩包内的<span class="path">glm/glm</span>）复制到<span class="path">Dependency</span>下。
             </p>
         </li>
         <li>
