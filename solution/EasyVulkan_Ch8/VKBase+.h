@@ -301,16 +301,15 @@ public:
 
 #pragma region Buffer
 class stagingBuffer {
-	static inline class {
-		stagingBuffer* pointer = Create();//Pimpl, it's not allowed to define a enclosing class object as a non-static data member of the nested class
+	static inline class stagingBuffer_MainThread_t {
+		stagingBuffer* pointer;
 		stagingBuffer* Create() {
 			static stagingBuffer stagingBuffer;
-			//Following code is the purpose of this class,
-			//the callback lambda will set stagingBuffer.bufferMemory.allocationSize to 0, it's not necessary if you don't need to recreate logical device.
 			graphicsBase::Base().AddCallback_DestroyDevice([] { stagingBuffer.~stagingBuffer(); });
-			return &stagingBuffer;
+			return std::addressof(stagingBuffer);
 		}
 	public:
+		stagingBuffer_MainThread_t() : pointer(Create()) {}
 		stagingBuffer& Get() const { return *pointer; }
 	} stagingBuffer_mainThread;
 protected:
@@ -504,7 +503,7 @@ public:
 		VkResult result;//To throw
 		false ||
 			(result = bufferMemory.CreateBuffer(size, desiredUsages_Without_transfer_dst | VK_BUFFER_USAGE_TRANSFER_DST_BIT)) ||
-			(result = bufferMemory.AllocateMemory(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, next_allocateInfo)) &&//Try allocating host visible memory
+			(result = bufferMemory.AllocateMemory(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, next_allocateInfo)) &&//Try allocating host-visible memory
 			(result = bufferMemory.AllocateMemory(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, next_allocateInfo)) ||
 			(result = bufferMemory.BindMemory());
 		result_t _result(result);

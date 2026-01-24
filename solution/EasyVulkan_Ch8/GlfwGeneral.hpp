@@ -15,7 +15,7 @@ auto PreInitialization_EnableSrgb() {
 auto PreInitialization_TrySetColorSpaceByOrder(arrayRef<const VkColorSpaceKHR> colorSpaces) {
 	static std::unique_ptr<VkColorSpaceKHR[]> pColorSpaces;
 	pColorSpaces = std::make_unique<VkColorSpaceKHR[]>(colorSpaces.Count() + 1);                    //Value-initialization
-	memcpy(pColorSpaces.get(), colorSpaces.Pointer(), sizeof VkColorSpaceKHR * colorSpaces.Count());//The last element remains zero
+	memcpy(pColorSpaces.get(), colorSpaces.Pointer(), sizeof(VkColorSpaceKHR) * colorSpaces.Count());//The last element remains zero
 	return []()->const VkColorSpaceKHR* { return pColorSpaces.get(); };
 }
 bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable = true, bool limitFrameRate = true) {

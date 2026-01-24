@@ -555,7 +555,7 @@
         .sType = <span class="enum">VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO</span>,
         .pNext = pNext_instanceCreateInfo, <span class="cmt">//新增</span>
         .flags = <span class="par">flags</span>,
-        .pApplicationInfo = &amp;applicatianInfo,
+        .pApplicationInfo = &amp;applicationInfo,
         .enabledLayerCount = <span class="type">uint32_t</span>(instanceLayers.<span class="fn">size</span>()),
         .ppEnabledLayerNames = instanceLayers.data(),
         .enabledExtensionCount = <span class="type">uint32_t</span>(instanceExtensions.<span class="fn">size</span>()),

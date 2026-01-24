@@ -570,14 +570,16 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
 </p>
 <pre class="code">
 <span class="kw">class</span> <span class="type">stagingBuffer</span> {
-    <span class="kw">static inline class</span> {
-        <span class="type">stagingBuffer</span>* pointer = <span class="fn">Create</span>();
+    <span class="cmt">//这个内部类可以没有类名和构造器（直接让pointer = Create();），MSVC可以正常编译，但GCC和CLang在嵌套类有 static inline 修饰时无法正确识别成员默认初始化器</span>
+    <span class="kw">static inline class</span> <span class="type">stagingBuffer_mainThread_t</span> {
+        <span class="type">stagingBuffer</span>* pointer;
         <span class="type">stagingBuffer</span>* <span class="fn">Create</span>() {
             <span class="kw">static</span> <span class="type">stagingBuffer</span> stagingBuffer;
             <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroyDevice</span>([] { stagingBuffer.<span class="fn">~stagingBuffer</span>(); });
             <span class="kw">return</span> &amp;stagingBuffer;
         }
         <span class="kw">public</span>:
+        <span class="type">stagingBuffer_mainThread_t</span>() :pointer(<span class="fn">Create</span>()) {}
         <span class="type">stagingBuffer</span>&amp; <span class="fn">Get</span>() <span class="kw">const</span> { <span class="kw">return</span> *pointer; }
     } stagingBuffer_mainThread;
     <span class="cmt">/*其他成员略*/</span>
@@ -600,14 +602,15 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
 </p>
 <pre class="code">
 <span class="kw">class</span> <span class="type">stagingBuffer</span> {
-    <span class="kw">static inline class</span> {
-        <span class="type">stagingBuffer</span>* pointer = <span class="fn">Create</span>();
+    <span class="kw">static inline class</span> <span class="type">stagingBuffer_mainThread_t</span> {
+        <span class="type">stagingBuffer</span>* pointer;
         <span class="type">stagingBuffer</span>* <span class="fn">Create</span>() {
             <span class="kw">static</span> <span class="type">stagingBuffer</span> stagingBuffer;
-            pointer = &amp;stagingBuffer;
             <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroyDevice</span>([] { stagingBuffer.<span class="fn">~stagingBuffer</span>(); });
+            <span class="kw">return</span> &amp;stagingBuffer;
         }
         <span class="kw">public</span>:
+        <span class="type">stagingBuffer_mainThread_t</span>() :pointer(<span class="fn">Create</span>()) {}
         <span class="type">stagingBuffer</span>&amp; <span class="fn">Get</span>() <span class="kw">const</span> { <span class="kw">return</span> *pointer; }
     } stagingBuffer_mainThread;
 <span class="kw">protected</span>:

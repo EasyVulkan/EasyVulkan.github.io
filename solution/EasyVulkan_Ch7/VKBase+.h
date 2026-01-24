@@ -287,14 +287,15 @@ namespace vulkan {
 
 	//Buffer
 	class stagingBuffer {
-		static inline class {
-			stagingBuffer* pointer = Create();
+		static inline class stagingBuffer_MainThread_t {
+			stagingBuffer* pointer;
 			stagingBuffer* Create() {
 				static stagingBuffer stagingBuffer;
 				graphicsBase::Base().AddCallback_DestroyDevice([] { stagingBuffer.~stagingBuffer(); });
-				return &stagingBuffer;
+				return std::addressof(stagingBuffer);
 			}
 		public:
+			stagingBuffer_MainThread_t() : pointer(Create()) {}
 			stagingBuffer& Get() const { return *pointer; }
 		} stagingBuffer_mainThread;
 	protected:

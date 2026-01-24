@@ -321,7 +321,9 @@ namespace vulkan {
 		uint32_t SwapchainImageCount() const {
 			return uint32_t(swapchainImages.size());
 		}
-		uint32_t CurrentImageIndex() const { return currentImageIndex; }
+		uint32_t CurrentImageIndex() const {
+			return currentImageIndex;
+		}
 		constexpr const VkSwapchainCreateInfoKHR& SwapchainCreateInfo() const {
 			return swapchainCreateInfo;
 		}
@@ -373,14 +375,14 @@ namespace vulkan {
 			if constexpr (ENABLE_DEBUG_MESSENGER)
 				AddInstanceLayer("VK_LAYER_KHRONOS_validation"),
 				AddInstanceExtension(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-			VkApplicationInfo applicatianInfo = {
+			VkApplicationInfo applicationInfo = {
 				.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
 				.apiVersion = apiVersion
 			};
 			VkInstanceCreateInfo instanceCreateInfo = {
 				.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
 				.flags = flags,
-				.pApplicationInfo = &applicatianInfo,
+				.pApplicationInfo = &applicationInfo,
 				.enabledLayerCount = uint32_t(instanceLayers.size()),
 				.ppEnabledLayerNames = instanceLayers.data(),
 				.enabledExtensionCount = uint32_t(instanceExtensions.size()),
@@ -433,7 +435,7 @@ namespace vulkan {
 			std::vector<VkExtensionProperties> availableExtensions;
 			if (VkResult result = vkEnumerateInstanceExtensionProperties(layerName, &extensionCount, nullptr)) {
 				layerName ?
-					outStream << std::format("[ graphicsBase ] ERROR\nFailed to get the count of instance extensions!\nLayer name:{}\n", layerName) :
+					outStream << std::format("[ graphicsBase ] ERROR\nFailed to get the count of instance extensions!\nLayer name: {}\n", layerName) :
 					outStream << std::format("[ graphicsBase ] ERROR\nFailed to get the count of instance extensions!\n");
 				return result;
 			}
@@ -584,7 +586,7 @@ namespace vulkan {
 			std::vector<VkExtensionProperties> availableExtensions;
 			if (VkResult result = vkEnumerateDeviceExtensionProperties(physicalDevice, layerName, &extensionCount, nullptr)) {
 				layerName ?
-					outStream << std::format("[ graphicsBase ] ERROR\nFailed to get the count of device extensions!\nLayer name:{}\n", layerName) :
+					outStream << std::format("[ graphicsBase ] ERROR\nFailed to get the count of device extensions!\nLayer name: {}\n", layerName) :
 					outStream << std::format("[ graphicsBase ] ERROR\nFailed to get the count of device extensions!\n");
 				return result;
 			}
@@ -695,7 +697,7 @@ namespace vulkan {
 			if (!availableSurfaceFormats.size())
 				if (VkResult result = GetSurfaceFormats())
 					return result;
-			//If surface format is not determined, select a a four-component UNORM format
+			//If surface format is not determined, select a four-component UNORM format
 			if (!swapchainCreateInfo.imageFormat)
 				if (SetSurfaceFormat({ VK_FORMAT_R8G8B8A8_UNORM, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR }) &&
 					SetSurfaceFormat({ VK_FORMAT_B8G8R8A8_UNORM, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR })) {
@@ -748,8 +750,6 @@ namespace vulkan {
 			device = VK_NULL_HANDLE;
 			surface = VK_NULL_HANDLE;
 			swapchain = VK_NULL_HANDLE;
-			swapchainImages.resize(0);
-			swapchainImageViews.resize(0);
 			swapchainCreateInfo = {};
 			debugMessenger = VK_NULL_HANDLE;
 		}

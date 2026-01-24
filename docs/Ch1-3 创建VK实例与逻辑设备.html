@@ -455,14 +455,14 @@ extensionNames = <span class="type">glfwGetRequiredInstanceExtensions</span>(&am
     <span class="fn">AddInstanceLayer</span>(<span class="str">&quot;VK_LAYER_KHRONOS_validation&quot;</span>);
     <span class="fn">AddInstanceExtension</span>(<span class="mcr">VK_EXT_DEBUG_UTILS_EXTENSION_NAME</span>);
 <span class="pragma">#endif</span>
-    <span class="type">VkApplicationInfo</span> applicatianInfo = {
+    <span class="type">VkApplicationInfo</span> applicationInfo = {
         .sType = <span class="enum">VK_STRUCTURE_TYPE_APPLICATION_INFO</span>,
         .apiVersion = apiVersion
     };
     <span class="type">VkInstanceCreateInfo</span> instanceCreateInfo = {
         .sType = <span class="enum">VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO</span>,
         .flags = <span class="par">flags</span>,
-        .pApplicationInfo = &amp;applicatianInfo,
+        .pApplicationInfo = &amp;applicationInfo,
         .enabledLayerCount = <span class="type">uint32_t</span>(instanceLayers.<span class="fn">size</span>()),
         .ppEnabledLayerNames = instanceLayers.data(),
         .enabledExtensionCount = <span class="type">uint32_t</span>(instanceExtensions.<span class="fn">size</span>()),

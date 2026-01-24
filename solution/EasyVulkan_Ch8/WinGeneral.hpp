@@ -11,7 +11,7 @@
 class window {
 	struct windowClass :WNDCLASSEX {
 		windowClass() {
-			//ZeroMemory(this, sizeof(WNDCLASSEX)); No necessary. Static object automatically zeros memory at launch.
+			//ZeroMemory(this, sizeof(WNDCLASSEX));//Not necessary. Static object automatically zeros memory at launch.
 			cbSize = sizeof(WNDCLASSEX);
 			style = CS_OWNDC;
 			lpfnWndProc = WindowProcedureSetup;
@@ -23,6 +23,7 @@ class window {
 	};
 	HWND hWindow = nullptr;
 	MSG message = {};
+	bool isMinimized = false;
 	bool shouldClose = false;
 	LRESULT(*fHandleMessage)(HWND, UINT, WPARAM, LPARAM) = nullptr;
 	//--------------------
@@ -39,10 +40,13 @@ class window {
 	static LRESULT CALLBACK WindowProcedureThunk(HWND hWindow, UINT message, WPARAM wParam, LPARAM lParam) {
 		window* pWindow = reinterpret_cast<window*>(GetWindowLongPtr(hWindow, GWLP_USERDATA));
 		switch (message) {
+		case WM_SIZE:
+			pWindow->isMinimized = wParam == SIZE_MINIMIZED;
+			break;
 			//If the program is running with a console, you should terminate the program by clicking the console's closebox.
 		case WM_CLOSE:
 			pWindow->shouldClose = true;
-			return 0;//When quiting, DestroyWindow(...) is called in ~window()Cno need to return DefWindowProc(...)
+			return 0;//When quiting, DestroyWindow(...) is called in ~window(), no need to return DefWindowProc(...).
 		case WM_DESTROY:
 			PostQuitMessage(0);
 			return 0;
@@ -64,7 +68,8 @@ public:
 	//Getter
 	HWND HWindow() const { return hWindow; }
 	const MSG& Message() const { return message; }
-	bool ShouldClose() { return shouldClose; }
+	bool IsMinimized() const { return isMinimized; }
+	bool ShouldClose() const { return shouldClose; }
 	//Setter
 	void FHandleMessage(LRESULT(*fHandleMessage)(HWND, UINT, WPARAM, LPARAM)) { this->fHandleMessage = fHandleMessage; }
 	//Non-const Function
@@ -115,7 +120,7 @@ auto PreInitialization_EnableSrgb() {
 auto PreInitialization_TrySetColorSpaceByOrder(arrayRef<const VkColorSpaceKHR> colorSpaces) {
 	static std::unique_ptr<VkColorSpaceKHR[]> pColorSpaces;
 	pColorSpaces = std::make_unique<VkColorSpaceKHR[]>(colorSpaces.Count() + 1);                    //Value-initialization
-	memcpy(pColorSpaces.get(), colorSpaces.Pointer(), sizeof VkColorSpaceKHR * colorSpaces.Count());//The last element remains zero
+	memcpy(pColorSpaces.get(), colorSpaces.Pointer(), sizeof(VkColorSpaceKHR) * colorSpaces.Count());//The last element remains zero
 	return []()->const VkColorSpaceKHR* { return pColorSpaces.get(); };
 }
 bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable = true, bool limitFrameRate = true) {
