@@ -329,7 +329,8 @@
     <span class="kw">requires</span> std::ranges::<span class="cncpt">contiguous_range</span>&lt;<span class="type">R</span>&gt;;
     <span class="kw">requires</span> std::ranges::<span class="cncpt">sized_range</span>&lt;<span class="type">R</span>&gt;;
     <span class="kw">requires</span> std::ranges::<span class="cncpt">borrowed_range</span>&lt;<span class="type">R</span>&gt;;
-    <span class="kw">requires</span> std::<span class="cncpt">convertible_to</span>&lt;<span class="kw">decltype</span>(std::ranges::data(<span class="par">r</span>)), <span class="type">T</span>*&gt;
+    <span class="kw">requires</span> std::<span class="cncpt">convertible_to</span>&lt;<span class="kw">decltype</span>(std::ranges::data(<span class="par">r</span>)), <span class="type">T</span>*&gt;;
+    <span class="kw">requires</span> <span class="kw">sizeof</span>(std::<span class="type">iter_value_t</span>&lt;<span class="type">R</span>&gt;) == <span class="kw">sizeof</span>(<span class="type">T</span>);
 } :pArray(std::ranges::data(<span class="par">range</span>)), count(std::ranges::size(<span class="par">range</span>)) {}
 </pre>
 <ul>
@@ -391,9 +392,9 @@
     }
     std::cout &lt;&lt; <span class="fn">format</span>(
         <span class="str">&quot;Vulkan API Version: {}.{}.{}\n&quot;</span>,
-        <span class="mcr">VK_VERSION_MAJOR</span>(apiVersion),
-        <span class="mcr">VK_VERSION_MINOR</span>(apiVersion),
-        <span class="mcr">VK_VERSION_PATCH</span>(apiVersion));
+        <span class="mcr">VK_API_VERSION_MAJOR</span>(apiVersion),
+        <span class="mcr">VK_API_VERSION_MINOR</span>(apiVersion),
+        <span class="mcr">VK_API_VERSION_PATCH</span>(apiVersion));
     <span class="kw">if constexpr</span> (<span class="mcr">ENABLE_DEBUG_MESSENGER</span>)
         <span class="fn">CreateDebugMessenger</span>();
     <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;

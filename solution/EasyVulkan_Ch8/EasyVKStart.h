@@ -81,6 +81,7 @@ public:
 		requires std::ranges::sized_range<R>;
 		requires std::ranges::borrowed_range<R>;
 		requires std::convertible_to<decltype(std::ranges::data(r)), T*>;
+		requires sizeof(std::iter_value_t<R>) == sizeof(T);
 	} :pArray(std::ranges::data(range)), count(std::ranges::size(range)) {}
 	arrayRef(T* pData, size_t elementCount) :pArray(pData), count(elementCount) {}
 	arrayRef(const arrayRef<std::remove_const_t<T>>& other) :pArray(&other), count(other.Count()) {}
