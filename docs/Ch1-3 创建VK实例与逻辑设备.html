@@ -404,7 +404,7 @@ extensionNames = <span class="type">glfwGetRequiredInstanceExtensions</span>(&am
 <p>
     这个结构体很水，你可以用它描述你的应用程序名称和版本号，如果你写的程序是某种引擎，比如游戏引擎，可以描述其引擎名称和版本号，随你喜欢即可，毕竟这对程序的运行不构成任何影响，可以直接省略。
     <br>
-    重要的是apiVersion，这个参数决定了所用的VulkanAPI版本号。版本号总是能有三个部分，你可以用<span class="mcr">VK_MAKE_VERSION</span>(major, minor, patch)计算版本号。apiVersion不关心patch版本号，所以请直接使用宏<span class="mcr">VK_API_VERSION_1_0</span>或<span class="mcr">VK_API_VERSION_1_1</span>或<span class="mcr">VK_API_VERSION_1_2</span>或<span class="mcr">VK_API_VERSION_1_3</span>。
+    重要的是apiVersion，这个参数决定了所用的VulkanAPI版本号。版本号总是能有三个部分，你可以用<span class="mcr">VK_MAKE_API_VERSION</span>(variant, major, minor, patch)计算版本号。apiVersion不关心variant和patch版本号，所以请直接使用宏<span class="mcr">VK_API_VERSION_1_0</span>或<span class="mcr">VK_API_VERSION_1_1</span>或<span class="mcr">VK_API_VERSION_1_2</span>或<span class="mcr">VK_API_VERSION_1_3</span>。
 </p>
 <p>
     填写了以上两个结构体后，使用<a href="https://renderdoc.org/vkspec_chunked/chap4.html#vkCreateInstance">vkCreateInstance</a>(...)来创建Vulkan实例：
@@ -475,9 +475,9 @@ extensionNames = <span class="type">glfwGetRequiredInstanceExtensions</span>(&am
     <span class="cmt">//成功创建Vulkan实例后，输出Vulkan版本</span>
     std::cout &lt;&lt; std::<span class="fn">format</span>(
         <span class="str">&quot;Vulkan API Version: {}.{}.{}\n&quot;</span>,
-        <span class="mcr">VK_VERSION_MAJOR</span>(apiVersion),
-        <span class="mcr">VK_VERSION_MINOR</span>(apiVersion),
-        <span class="mcr">VK_VERSION_PATCH</span>(apiVersion));
+        <span class="mcr">VK_API_VERSION_MAJOR</span>(apiVersion),
+        <span class="mcr">VK_API_VERSION_MINOR</span>(apiVersion),
+        <span class="mcr">VK_API_VERSION_PATCH</span>(apiVersion));
 <span class="pragma">#ifndef</span> <span class="mcr">NDEBUG</span>
     <span class="cmt">//创建完Vulkan实例后紧接着创建debug messenger</span>
     <span class="fn">CreateDebugMessenger</span>();
@@ -565,7 +565,7 @@ std::<span class="type">vector</span>&lt;<span class="type">VkLayerProperties</s
 <span class="kw">if</span> (layerCount) {
     availableLayers.<span class="fn">resize</span>(layerCount);
     <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkEnumerateInstanceLayerProperties</span>(&amp;layerCount, availableLayers.<span class="fn">data</span>())) {
-        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to enumerate instance layer properties!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to enumerate instance layer properties!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : <span class="par">layersToCheck</span>) {
@@ -631,14 +631,14 @@ std::<span class="type">vector</span>&lt;<span class="type">VkLayerProperties</s
     std::<span class="type">vector</span>&lt;<span class="type">VkExtensionProperties</span>&gt; availableExtensions;
     <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkEnumerateInstanceExtensionProperties</span>(<span class="par">layerName</span>, &amp;extensionCount, <span class="kw">nullptr</span>)) {
         <span class="par">layerName</span> ?
-        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of instance extensions!\nLayer name:{}\n&quot;</span>, <span class="par">layerName</span>) :
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of instance extensions!\nLayer name: {}\n&quot;</span>, <span class="par">layerName</span>) :
         std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of instance extensions!\n&quot;</span>);
         <span class="kw">return</span> result;
     }
     <span class="kw">if</span> (extensionCount) {
         availableExtensions.<span class="fn">resize</span>(extensionCount);
         <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkEnumerateInstanceExtensionProperties</span>(<span class="par">layerName</span>, &amp;extensionCount, availableExtensions.<span class="fn">data</span>())) {
-            std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to enumerate instance extension properties!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to enumerate instance extension properties!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
             <span class="kw">return</span> result;
         }
         <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : <span class="par">extensionsToCheck</span>) {
@@ -863,7 +863,7 @@ std::<span class="type">vector</span>&lt;<span class="type">VkLayerProperties</s
     <span class="kw">if</span> (vkCreateDebugUtilsMessenger) {
         <span class="type">VkResult</span> result = vkCreateDebugUtilsMessenger(instance, &amp;debugUtilsMessengerCreateInfo, <span class="kw">nullptr</span>, &amp;debugMessenger);
         <span class="kw">if</span> (result)
-            std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a debug messenger!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a debug messenger!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the function pointer of vkCreateDebugUtilsMessengerEXT!\n&quot;</span>);
@@ -925,7 +925,7 @@ std::<span class="type">vector</span>&lt;<span class="type">VkLayerProperties</s
 <pre class="code">
 <span class="type">VkSurfaceKHR</span> surface = <span class="mcr">VK_NULL_HANDLE</span>;
 <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">glfwCreateWindowSurface</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Instance</span>(), pWindow, <span class="kw">nullptr</span>, &amp;surface)) {
-    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ] ERROR\nFailed to create a window surface!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ] ERROR\nFailed to create a window surface!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
     <span class="fn">glfwTerminate</span>();
     <span class="kw">return false</span>;
 }
@@ -970,7 +970,7 @@ std::<span class="type">vector</span>&lt;<span class="type">VkLayerProperties</s
 <span class="type">VkResult</span> <span class="fn">GetPhysicalDevices</span>() {
     <span class="type">uint32_t</span> deviceCount;
     <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkEnumeratePhysicalDevices</span>(instance, &amp;deviceCount, <span class="kw">nullptr</span>)) {
-        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of physical devices!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of physical devices!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="kw">if</span> (!deviceCount)
@@ -979,7 +979,7 @@ std::<span class="type">vector</span>&lt;<span class="type">VkLayerProperties</s
     availablePhysicalDevices.<span class="fn">resize</span>(deviceCount);
     <span class="type">VkResult</span> result = <span class="fn">vkEnumeratePhysicalDevices</span>(instance, &amp;deviceCount, availablePhysicalDevices.<span class="fn">data</span>());
     <span class="kw">if</span> (result)
-        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to enumerate physical devices!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to enumerate physical devices!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
     <span class="kw">return</span> result;
 }
 </pre>
@@ -1099,7 +1099,7 @@ queueFamilyIndex_compute = ic;
             <span class="cmt">//只在创建了window surface时获取支持呈现的队列族的索引</span>
         <span class="kw">if</span> (surface)
             <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfaceSupportKHR</span>(<span class="par">physicalDevice</span>, i, surface, &amp;supportPresentation)) {
-                std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to determine if the queue family supports presentation!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+                std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to determine if the queue family supports presentation!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
                 <span class="kw">return</span> result;
             }
         <span class="cmt">//若某队列族同时支持图形操作和计算</span>
@@ -1235,7 +1235,7 @@ queueFamilyIndex_compute = ic;
             supportCompute = queueFamilyPropertieses[i].queueFlags &amp; <span class="enum">VK_QUEUE_COMPUTE_BIT</span>;
         <span class="kw">if</span> (surface)
             <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfaceSupportKHR</span>(<span class="par">physicalDevice</span>, i, surface, &amp;supportPresentation)) {
-                std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to determine if the queue family supports presentation!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+                std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to determine if the queue family supports presentation!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
                 <span class="kw">return</span> result;
             }
         <span class="kw">if</span> (supportGraphics &amp;&amp; supportCompute &amp;&amp;
@@ -1471,7 +1471,7 @@ queueFamilyIndex_compute = ic;
 </p>
 <pre class="code">
 <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkCreateDevice</span>(physicalDevice, &amp;deviceCreateInfo, <span class="kw">nullptr</span>, &amp;device)) {
-    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a vulkan logical device!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a vulkan logical device!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
     <span class="kw">return</span> result;
 }
 </pre>
@@ -1566,7 +1566,7 @@ queueFamilyIndex_compute = ic;
         .pEnabledFeatures = &amp;physicalDeviceFeatures
     };
     <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkCreateDevice</span>(physicalDevice, &amp;deviceCreateInfo, <span class="kw">nullptr</span>, &amp;device)) {
-        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a vulkan logical device!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a vulkan logical device!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="kw">if</span> (queueFamilyIndex_graphics != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
@@ -1642,7 +1642,7 @@ queueFamilyIndex_compute = ic;
     <span class="cmt">//创建window surface</span>
     <span class="type">VkSurfaceKHR</span> surface = <span class="mcr">VK_NULL_HANDLE</span>;
     <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">glfwCreateWindowSurface</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Instance</span>(), pWindow, <span class="kw">nullptr</span>, &amp;surface)) {
-        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ] ERROR\nFailed to create a window surface!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ] ERROR\nFailed to create a window surface!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="fn">glfwTerminate</span>();
         <span class="kw">return false</span>;
     }

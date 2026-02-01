@@ -433,13 +433,13 @@
     <span class="type">result_t</span> <span class="fn">Wait</span>() <span class="kw">const</span> {
         <span class="type">VkResult</span> result = <span class="fn">vkWaitForFences</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), 1, &amp;handle, <span class="kw">false</span>, <span class="mcr">UINT64_MAX</span>);
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ fence ] ERROR\nFailed to wait for the fence!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ fence ] ERROR\nFailed to wait for the fence!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="type">result_t</span> <span class="fn">Reset</span>() <span class="kw">const</span> {
         <span class="type">VkResult</span> result = <span class="fn">vkResetFences</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), 1, &amp;handle);
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ fence ] ERROR\nFailed to reset the fence!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ fence ] ERROR\nFailed to reset the fence!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="cmt">//因为“等待后立刻重置”的情形经常出现，定义此函数</span>
@@ -451,7 +451,7 @@
     <span class="type">result_t</span> <span class="fn">Status</span>() <span class="kw">const</span> {
         <span class="type">VkResult</span> result = <span class="fn">vkGetFenceStatus</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle);
         <span class="kw">if</span> (result &lt; 0) <span class="cmt">//vkGetFenceStatus(...)成功时有两种结果，所以不能仅仅判断result是否非0</span>
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ fence ] ERROR\nFailed to get the status of the fence!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ fence ] ERROR\nFailed to get the status of the fence!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="cmt">//Non-const Function</span>
@@ -459,7 +459,7 @@
         <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_FENCE_CREATE_INFO</span>;
         <span class="type">VkResult</span> result = <span class="fn">vkCreateFence</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ fence ] ERROR\nFailed to create a fence!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ fence ] ERROR\nFailed to create a fence!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkFenceCreateFlags</span> <span class="par">flags</span> = 0) {
@@ -486,7 +486,8 @@
     1.二值信号量，只有置位（singaled）和未置位（unsingaled）两种状态，用于在队列间同步
     <br>
     2.时间线信号量（需Vulkan1.2或相应扩展），即可以计数的信号量
-    <br>
+</p>
+<p>
     可以在CPU一侧等待、重置时间线信号量，换言之时间线信号量兼具栅栏的功能。
     <br>
     时间线信号量并不完全涵盖二值信号量的作用，在提交命令缓冲区时，时间线信号量可以替代二值信号量，但在渲染循环中获取下一张交换连图像时，或呈现图像时，必须使用二值信号量，见后文。
@@ -618,7 +619,7 @@
         <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO</span>;
         <span class="type">VkResult</span> result = <span class="fn">vkCreateSemaphore</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ semaphore ] ERROR\nFailed to create a semaphore!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ semaphore ] ERROR\nFailed to create a semaphore!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="type">result_t</span> <span class="fn">Create</span>(<span class="cmt">/*VkSemaphoreCreateFlags flags*/</span>) {
@@ -644,7 +645,8 @@
     管线屏障（pipeline barrier）是以命令的形式录制在命令缓冲区中的一种同步方式，使用管线屏障不需要创建Vulkan对象。
     <br>
     虽然管线屏障是作为命令录制的，但是其同步范围不只是包含该管线屏障的命令缓冲区，执行该命令缓冲区的队列上的所有命令都能被纳入同步范围。
-    <br>
+</p>
+<p>
     自Vulkan1.0以来，可以通过<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkCmdPipelineBarrier">vkCmdPipelineBarrier</a>(...)设置管线屏障。从Vulkan1.3开始（在之前版本中也可以通过扩展使用），也可以使用<a href="https://renderdoc.org/vkspec_chunked/chap7.html#vkCmdPipelineBarrier2">vkCmdPipelineBarrier2</a>(...)。
     <br>
     本套教程就Vulkan1.0版本中的用法进行解说：
@@ -1267,6 +1269,10 @@
             <td><p>1.0 + VK_KHR_swapchain</p></td>
             <td><p><span class="enum">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR                            </span>表示最适用于呈现的布局</p></td>
         </tr>
+        <tr>
+            <td><p>1.1 + VK_EXT_zero_initialize_device_memory</p></td>
+            <td><p><span class="enum">VK_IMAGE_LAYOUT_ZERO_INITIALIZED_EXT                       </span>表示图像被绑定到零初始化的设备内存</p></td>
+        </tr>
     </tbody>
 </table>
 <ul>
@@ -1278,6 +1284,11 @@
     <li>
         <p>
             Vulkan1.2中仅注明深度/模板的布局，适用于在<a class="reference internal" href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html">动态渲染</a>中，使用两张不同的图像各自作为深度/模板附件的情况。
+        </p>
+    </li>
+    <li>
+        <p>
+            如果在创建图像时指定初始图像布局为<span class="enum">VK_IMAGE_LAYOUT_ZERO_INITIALIZED_EXT</span>，则应当将图像绑定到分配时指定了<span class="enum">VK_MEMORY_ALLOCATE_ZERO_INITIALIZE_BIT_EXT</span>的设备内存。
         </p>
     </li>
 </ul>
@@ -1563,7 +1574,7 @@
     </li>
     <li>
         <p>
-            该命令定义内存依赖：确保<strong>在置位各个事件之前的</strong>命令中srcStageMask注明的阶段中（这里各个内存屏障结构体指定的）srcAccessMask注明的写入操作的结果可获（这条仅说明源操作对应的同步范围，后略）。
+            该命令定义内存依赖：确保<strong>在置位各个事件之前的</strong>命令中srcStageMask注明的阶段中（这里各个内存屏障结构体指定的）srcAccessMask注明的写入操作的结果可获（本条重在说明源操作对应的同步范围，省略关于可见性的陈词滥调）。
         </p>
     </li>
 </ul></section>
@@ -1719,19 +1730,19 @@
     <span class="type">result_t</span> <span class="fn">Set</span>() <span class="kw">const</span> {
         <span class="type">VkResult</span> result = <span class="fn">vkSetEvent</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle);
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ event ] ERROR\nFailed to singal the event!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ event ] ERROR\nFailed to singal the event!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="type">result_t</span> <span class="fn">Reset</span>() <span class="kw">const</span> {
         <span class="type">VkResult</span> result = <span class="fn">vkResetEvent</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle);
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ event ] ERROR\nFailed to unsingal the event!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ event ] ERROR\nFailed to unsingal the event!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="type">result_t</span> <span class="fn">Status</span>() <span class="kw">const</span> {
         <span class="type">VkResult</span> result = <span class="fn">vkGetEventStatus</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle);
         <span class="kw">if</span> (result &lt; 0) <span class="cmt">//vkGetEventStatus(...)成功时有两种结果</span>
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ event ] ERROR\nFailed to get the status of the event!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ event ] ERROR\nFailed to get the status of the event!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="cmt">//Non-const Function</span>
@@ -1739,7 +1750,7 @@
         <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_EVENT_CREATE_INFO</span>;
         <span class="type">VkResult</span> result = <span class="fn">vkCreateEvent</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ event ] ERROR\nFailed to create an event!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ event ] ERROR\nFailed to create an event!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkEventCreateFlags</span> <span class="par">flags</span> = 0) {

@@ -386,7 +386,7 @@
                 <span class="kw">return</span> result;
             <span class="kw">break</span>; <span class="cmt">//注意重建交换链后仍需要获取图像，通过break递归，再次执行while的条件判定语句</span>
         <span class="kw">default</span>:
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to acquire the next image!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to acquire the next image!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
             <span class="kw">return</span> result;
         }
     <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
@@ -520,7 +520,7 @@
     <span class="par">submitInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_SUBMIT_INFO</span>;
     <span class="type">VkResult</span> result = vkQueueSubmit(queue_graphics, 1, &amp;<span class="par">submitInfo</span>, <span class="par">fence</span>);
     <span class="kw">if</span> (result)
-        outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to submit the command buffer!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to submit the command buffer!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
     <span class="kw">return</span> result;
 }
 <span class="cmt">//该函数用于在渲染循环中将命令缓冲区提交到图形队列的常见情形</span>
@@ -553,7 +553,7 @@
     <span class="par">submitInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_SUBMIT_INFO</span>;
     <span class="type">VkResult</span> result = vkQueueSubmit(queue_compute, 1, &amp;<span class="par">submitInfo</span>, <span class="par">fence</span>);
     <span class="kw">if</span> (result)
-        outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to submit the command buffer!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to submit the command buffer!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
     <span class="kw">return</span> result;
 }
 <span class="cmt">//该函数用于将命令缓冲区提交到用于计算的队列，且只使用栅栏的常见情形</span>
@@ -700,7 +700,7 @@
     <span class="kw">case</span> <span class="enum">VK_ERROR_OUT_OF_DATE_KHR</span>:
         <span class="kw">return</span> <span class="fn">RecreateSwapchain</span>();
     <span class="kw">default</span>:
-        outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to queue the image for presentation!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to queue the image for presentation!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
 }
@@ -872,7 +872,7 @@
     通过给交换链中的每张图像创建一套专用的同步对象、命令缓冲区、帧缓冲，以及其他一切在循环的单帧中会被更新、写入的Vulkan对象，以此在渲染每一帧图像的过程中避免资源竞争，减少阻塞，这种做法叫做<strong>即时帧</strong>（frames in flight）。
 </p>
 <p>
-    即时帧的好处显而易见，对每张交换链图像的写入，只需发生在呈现引擎上一次读取同一图像之后即可，假设交互链图像有3张，那么便是与2帧之前的操作同步，相比与上一帧同步，大幅提升了并行度。
+    即时帧的好处显而易见，对每张交换链图像的写入，只需发生在呈现引擎上一次读取同一图像之后即可，假设交换链图像有3张，那么便是与2帧之前的操作同步，相比与上一帧同步，大幅提升了并行度。
     <br>
     但是即时帧的设备内存开销也是成倍增加的，由于所有会被更新、写入的Vulkan对象都得创建与交换链图像相同的份数，在一些情况下会产生惊人的内存开销（比如延迟渲染）。而且即便应用了即时帧也未必能大幅提升帧数，如果每帧的渲染时间都很短的话，即时帧不会对帧数产生影响，换言之只应该在每帧渲染时间较长的情况下应用即时帧（起码应该要长于屏幕的垂直刷新间隔）。
     <br>
@@ -1112,7 +1112,7 @@
         submitInfo.pSignalSemaphores = &amp;semaphore_ownershipIsTransfered;
     <span class="type">VkResult</span> result = <span class="type">vkQueueSubmit</span>(queue_presentation, 1, &amp;submitInfo, fence);
     <span class="kw">if</span> (result)
-        outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to submit the presentation command buffer!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to submit the presentation command buffer!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
     <span class="kw">return</span> result;
 }
 </pre>

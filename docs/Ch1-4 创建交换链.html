@@ -293,7 +293,7 @@
 <pre class="code">
 <span class="type">VkSurfaceCapabilitiesKHR</span> surfaceCapabilities = {};
 <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfaceCapabilitiesKHR</span>(physicalDevice, surface, &amp;surfaceCapabilities)) {
-    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
     <span class="kw">return</span> result;
 }
 </pre>
@@ -387,7 +387,7 @@ swapchainCreateInfo.minImageCount = surfaceCapabilities.minImageCount + (surface
         <span class="type">VkResult</span> <span class="fn">CreateSwapchain</span>(<span class="kw">bool</span> <span class="par">limitFrameRate</span> = <span class="kw">true</span>, <span class="type">VkSwapchainCreateFlagsKHR</span> <span class="par">flags</span> = 0) {
             <span class="type">VkSurfaceCapabilitiesKHR</span> surfaceCapabilities = {};
             <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfaceCapabilitiesKHR</span>(physicalDevice, surface, &amp;surfaceCapabilities)) {
-                std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+                std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
                 <span class="kw">return</span> result;
             }
             swapchainCreateInfo.minImageCount = surfaceCapabilities.minImageCount + (surfaceCapabilities.maxImageCount &gt; surfaceCapabilities.minImageCount);
@@ -499,7 +499,7 @@ swapchainCreateInfo.imageUsage = <span class="enum">VK_IMAGE_USAGE_COLOR_ATTACHM
 <span class="type">VkResult</span> <span class="fn">GetSurfaceFormats</span>() {
     <span class="type">uint32_t</span> surfaceFormatCount;
     <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfaceFormatsKHR</span>(physicalDevice, surface, &amp;surfaceFormatCount, <span class="kw">nullptr</span>)) {
-        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of surface formats!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of surface formats!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="kw">if</span> (!surfaceFormatCount)
@@ -508,7 +508,7 @@ swapchainCreateInfo.imageUsage = <span class="enum">VK_IMAGE_USAGE_COLOR_ATTACHM
     availableSurfaceFormats.<span class="fn">resize</span>(surfaceFormatCount);
     <span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfaceFormatsKHR</span>(physicalDevice, surface, &amp;surfaceFormatCount, availableSurfaceFormats.<span class="fn">data</span>());
     <span class="kw">if</span> (result)
-        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get surface formats!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get surface formats!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
     <span class="kw">return</span> result;
 }
 </pre>
@@ -645,7 +645,7 @@ swapchainCreateInfo.imageUsage = <span class="enum">VK_IMAGE_USAGE_COLOR_ATTACHM
 <pre class="code">
 <span class="type">uint32_t</span> surfacePresentModeCount;
 <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfacePresentModesKHR</span>(physicalDevice, surface, &amp;surfacePresentModeCount, <span class="kw">nullptr</span>)) {
-    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of surface present modes!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of surface present modes!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
     <span class="kw">return</span> result;
 }
 <span class="kw">if</span> (!surfacePresentModeCount)
@@ -653,7 +653,7 @@ swapchainCreateInfo.imageUsage = <span class="enum">VK_IMAGE_USAGE_COLOR_ATTACHM
     abort();
 std::<span class="type">vector</span>&lt;<span class="type">VkPresentModeKHR</span>&gt; surfacePresentModes(surfacePresentModeCount);
 <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfacePresentModesKHR</span>(physicalDevice, surface, &amp;surfacePresentModeCount, surfacePresentModes.<span class="fn">data</span>())) {
-    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get surface present modes!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get surface present modes!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
     <span class="kw">return</span> result;
 }
 </pre>
@@ -716,7 +716,7 @@ swapchainCreateInfo.clipped = <span class="mcr">VK_TRUE</span>;
 </p>
 <pre class="code">
 <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkCreateSwapchainKHR</span>(device, &amp;swapchainCreateInfo, <span class="kw">nullptr</span>, &amp;swapchain)) {
-    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a swapchain!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a swapchain!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
     <span class="kw">return</span> result;
 }
 </pre>
@@ -736,12 +736,12 @@ swapchainCreateInfo.clipped = <span class="mcr">VK_TRUE</span>;
 <pre class="code">
 <span class="type">uint32_t</span> swapchainImageCount;
 <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetSwapchainImagesKHR</span>(device, swapchain, &amp;swapchainImageCount, <span class="kw">nullptr</span>)) {
-    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of swapchain images!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of swapchain images!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
     <span class="kw">return</span> result;
 }
 swapchainImages.<span class="fn">resize</span>(swapchainImageCount);
 <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetSwapchainImagesKHR</span>(device, swapchain, &amp;swapchainImageCount, swapchainImages.<span class="fn">data</span>())) {
-    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get swapchain images!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get swapchain images!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
     <span class="kw">return</span> result;
 }
 </pre></section>
@@ -760,19 +760,19 @@ swapchainImages.<span class="fn">resize</span>(swapchainImageCount);
 <pre class="code">
 <span class="type">VkResult</span> <span class="fn">CreateSwapchain_Internal</span>() {
     <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkCreateSwapchainKHR</span>(device, &amp;swapchainCreateInfo, <span class="kw">nullptr</span>, &amp;swapchain)) {
-        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a swapchain!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a swapchain!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
 
     <span class="cmt">//获取交换连图像</span>
     <span class="type">uint32_t</span> swapchainImageCount;
     <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetSwapchainImagesKHR</span>(device, swapchain, &amp;swapchainImageCount, <span class="kw">nullptr</span>)) {
-        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of swapchain images!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of swapchain images!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     swapchainImages.<span class="fn">resize</span>(swapchainImageCount);
     <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetSwapchainImagesKHR</span>(device, swapchain, &amp;swapchainImageCount, swapchainImages.<span class="fn">data</span>())) {
-        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get swapchain images!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get swapchain images!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
 
@@ -788,7 +788,7 @@ swapchainImages.<span class="fn">resize</span>(swapchainImageCount);
     <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; swapchainImageCount; i++) {
         imageViewCreateInfo.image = swapchainImages[i];
         <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkCreateImageView</span>(device, &amp;imageViewCreateInfo, <span class="kw">nullptr</span>, &amp;swapchainImageViews[i])) {
-            std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a swapchain image view!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a swapchain image view!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
             <span class="kw">return</span> result;
         }
     }
@@ -806,7 +806,7 @@ swapchainImages.<span class="fn">resize</span>(swapchainImageCount);
 <pre class="code">
 <span class="type">VkSurfaceCapabilitiesKHR</span> surfaceCapabilities = {};
 <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfaceCapabilitiesKHR</span>(physicalDevice, surface, &amp;surfaceCapabilities)) {
-    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
     <span class="kw">return</span> result;
 }
 <span class="kw">if</span> (surfaceCapabilities.currentExtent.width == 0 ||
@@ -839,7 +839,7 @@ swapchainCreateInfo.oldSwapchain = swapchain;
     queue_graphics != queue_presentation)
     result = <span class="fn">vkQueueWaitIdle</span>(queue_presentation);
 <span class="kw">if</span> (result) {
-    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to wait for the queue to be idle!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+    std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to wait for the queue to be idle!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
     <span class="kw">return</span> result;
 }
 </pre>
@@ -876,7 +876,7 @@ swapchainCreateInfo.oldSwapchain = swapchain;
 <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : swapchainImageViews)
     <span class="kw">if</span> (i)
         <span class="fn">vkDestroyImageView</span>(device, i, <span class="kw">nullptr</span>);
-swapchainImageViews.<span class="fn">resize</span>(0);
+swapchainImageViews.<span class="fn">clear</span>();
 </pre>
 <ul>
     <li>
@@ -984,7 +984,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
     <span class="cmt">//VkSurfaceCapabilitiesKHR相关的参数</span>
     <span class="type">VkSurfaceCapabilitiesKHR</span> surfaceCapabilities = {};
     <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfaceCapabilitiesKHR</span>(physicalDevice, surface, &amp;surfaceCapabilities)) {
-        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="cmt">//指定图像数量</span>
@@ -1033,7 +1033,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
     <span class="cmt">//指定呈现模式</span>
     <span class="type">uint32_t</span> surfacePresentModeCount;
     <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfacePresentModesKHR</span>(physicalDevice, surface, &amp;surfacePresentModeCount, <span class="kw">nullptr</span>)) {
-        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of surface present modes!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of surface present modes!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="kw">if</span> (!surfacePresentModeCount)
@@ -1041,7 +1041,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
         abort();
     std::<span class="type">vector</span>&lt;<span class="type">VkPresentModeKHR</span>&gt; surfacePresentModes(surfacePresentModeCount);
     <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfacePresentModesKHR</span>(physicalDevice, surface, &amp;surfacePresentModeCount, surfacePresentModes.<span class="fn">data</span>())) {
-        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get surface present modes!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get surface present modes!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     swapchainCreateInfo.presentMode = <span class="enum">VK_PRESENT_MODE_FIFO_KHR</span>;
@@ -1070,7 +1070,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
 <span class="type">VkResult</span> <span class="fn">RecreateSwapchain</span>() {
     <span class="type">VkSurfaceCapabilitiesKHR</span> surfaceCapabilities = {};
     <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetPhysicalDeviceSurfaceCapabilitiesKHR</span>(physicalDevice, surface, &amp;surfaceCapabilities)) {
-        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="kw">if</span> (surfaceCapabilities.currentExtent.width == 0 ||
@@ -1083,7 +1083,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
         queue_graphics != queue_presentation)
         result = <span class="fn">vkQueueWaitIdle</span>(queue_presentation);
     <span class="kw">if</span> (result) {
-        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to wait for the queue to be idle!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to wait for the queue to be idle!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="cmt">//销毁旧交换链相关对象</span>
@@ -1091,7 +1091,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
     <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : swapchainImageViews)
         <span class="kw">if</span> (i)
             <span class="fn">vkDestroyImageView</span>(device, i, <span class="kw">nullptr</span>);
-    swapchainImageViews.<span class="fn">resize</span>(0);
+    swapchainImageViews.<span class="fn">clear</span>();
     <span class="cmt">//创建新交换链及与之相关的对象</span>
     <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">CreateSwapchain_Internal</span>())
         <span class="kw">return</span> result;
@@ -1169,7 +1169,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
 <span class="type">VkResult</span> <span class="fn">WaitIdle</span>() <span class="kw">const</span> {
     <span class="type">VkResult</span> result = <span class="fn">vkDeviceWaitIdle</span>(device);
     <span class="kw">if</span> (result)
-        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to wait for the device to be idle!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to wait for the device to be idle!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
     <span class="kw">return</span> result;
 }
 </pre>
@@ -1230,7 +1230,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
         <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : swapchainImageViews)
             <span class="kw">if</span> (i)
                 <span class="fn">vkDestroyImageView</span>(device, i, <span class="kw">nullptr</span>);
-        swapchainImageViews.<span class="fn">resize</span>(0);
+        swapchainImageViews.<span class="fn">clear</span>();
         <span class="cmt">//销毁交换链</span>
         <span class="fn">vkDestroySwapchainKHR</span>(device, swapchain, <span class="kw">nullptr</span>);
         <span class="cmt">//重置交换链handle</span>
@@ -1291,7 +1291,7 @@ device = <span class="mcr">VK_NULL_HANDLE</span>;
             <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : swapchainImageViews)
                 <span class="kw">if</span> (i)
                     <span class="fn">vkDestroyImageView</span>(device, i, <span class="kw">nullptr</span>);
-            swapchainImageViews.<span class="fn">resize</span>(0);
+            swapchainImageViews.<span class="fn">clear</span>();
             <span class="fn">vkDestroySwapchainKHR</span>(device, swapchain, <span class="kw">nullptr</span>);
             swapchain = <span class="mcr">VK_NULL_HANDLE</span>;
             swapchainCreateInfo = {};
@@ -1445,8 +1445,6 @@ device = <span class="mcr">VK_NULL_HANDLE</span>;
     device = <span class="mcr">VK_NULL_HANDLE</span>;
     surface = <span class="mcr">VK_NULL_HANDLE</span>;
     swapchain = <span class="mcr">VK_NULL_HANDLE</span>;
-    swapchainImages.<span class="fn">resize</span>(0);
-    swapchainImageViews.<span class="fn">resize</span>(0);
     swapchainCreateInfo = {};
     debugMessenger = <span class="mcr">VK_NULL_HANDLE</span>;
 }
@@ -1502,7 +1500,7 @@ device = <span class="mcr">VK_NULL_HANDLE</span>;
 
     <span class="type">VkSurfaceKHR</span> surface = <span class="mcr">VK_NULL_HANDLE</span>;
     <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">glfwCreateWindowSurface</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Instance</span>(), pWindow, <span class="kw">nullptr</span>, &amp;surface)) {
-        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ] ERROR\nFailed to create a window surface!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ InitializeWindow ] ERROR\nFailed to create a window surface!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="fn">glfwTerminate</span>();
         <span class="kw">return false</span>;
     }

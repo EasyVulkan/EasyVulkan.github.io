@@ -813,7 +813,7 @@ uniformBuffer.<span class="fn">TransferData</span>(descriptorConstants);
 i_Position.x * position.z == 相机空间.x * proj[0][0] + position.z * proj[2][0];
 
 <span class="cmt">//则：</span>
-相机空间.x == (i_Position.x - * proj[2][0]) * position.z / proj[0][0];
+相机空间.x == (i_Position.x - proj[2][0]) * position.z / proj[0][0];
 </pre>
 <p>
     对于y坐标以此类推。
@@ -1049,6 +1049,7 @@ o_Color.rgb += specular * lightIntensity * <span class="fn">pow</span>(<span cla
     <span class="kw">sizeof</span> shininess, <span class="cmt">//dataSize</span>
     &amp;shininess        <span class="cmt">//pData</span>
 };
+    shaderStageCreateInfos_composition[1].pSpecializationInfo = &amp;specializationInfo;
 </pre>
 <p>
     创建管线：

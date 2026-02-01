@@ -510,7 +510,7 @@
     <span class="type">VkDeviceSize</span> allocationSize = 0;            <span class="cmt">//实际分配的内存大小</span>
     <span class="type">VkMemoryPropertyFlags</span> memoryProperties = 0; <span class="cmt">//内存属性</span>
     <span class="cmt">//--------------------</span>
-    <span class="cmt">//该函数用于在映射内存区时，调整非host coherent的内存区域的范围</span>
+    <span class="cmt">//该函数用于在映射内存区时，调整非host-coherent的内存区域的范围</span>
     <span class="type">VkDeviceSize</span> <span class="fn">AdjustNonCoherentMemoryRange</span>(<span class="type">VkDeviceSize</span>&amp; <span class="par">size</span>, <span class="type">VkDeviceSize</span>&amp; <span class="par">offset</span>) <span class="kw">const</span> {
         <span class="kw">const</span> <span class="type">VkDeviceSize</span>&amp; nonCoherentAtomSize = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.nonCoherentAtomSize;
         <span class="type">VkDeviceSize</span> _offset = <span class="par">offset</span>;
@@ -546,13 +546,13 @@
     <span class="type">VkDeviceSize</span> <span class="fn">AllocationSize</span>() <span class="kw">const</span> { <span class="kw">return</span> allocationSize; }
     <span class="type">VkMemoryPropertyFlags</span> <span class="fn">MemoryProperties</span>() <span class="kw">const</span> { <span class="kw">return</span> memoryProperties; }
     <span class="cmt">//Const Function</span>
-    <span class="cmt">//映射host visible的内存区</span>
+    <span class="cmt">//映射host-visible的内存区</span>
     <span class="type">result_t</span> <span class="fn">MapMemory</span>(<span class="kw">void</span>*&amp; <span class="par">pData</span>, <span class="type">VkDeviceSize</span> <span class="par">size</span>, <span class="type">VkDeviceSize</span> <span class="par">offset</span> = 0) <span class="kw">const</span> {
         <span class="type">VkDeviceSize</span> inverseDeltaOffset;
         <span class="kw">if</span> (!(memoryProperties &amp; <span class="enum">VK_MEMORY_PROPERTY_HOST_COHERENT_BIT</span>))
             inverseDeltaOffset = <span class="fn">AdjustNonCoherentMemoryRange</span>(<span class="par">size</span>, <span class="par">offset</span>);
         <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkMapMemory</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, <span class="par">offset</span>, <span class="par">size</span>, 0, &amp;<span class="par">pData</span>)) {
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ deviceMemory ] ERROR\nFailed to map the memory!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ deviceMemory ] ERROR\nFailed to map the memory!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
             <span class="kw">return</span> result;
         }
         <span class="kw">if</span> (!(memoryProperties &amp; <span class="enum">VK_MEMORY_PROPERTY_HOST_COHERENT_BIT</span>)) {
@@ -564,13 +564,13 @@
                 .size = <span class="par">size</span>
             };
             <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkInvalidateMappedMemoryRanges</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), 1, &amp;mappedMemoryRange)) {
-                outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ deviceMemory ] ERROR\nFailed to flush the memory!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+                outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ deviceMemory ] ERROR\nFailed to flush the memory!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
                 <span class="kw">return</span> result;
             }
         }
         <span class="kw">return</span> <span class="mcr">VK_SUCCESS</span>;
     }
-    <span class="cmt">//取消映射host visible的内存区</span>
+    <span class="cmt">//取消映射host-visible的内存区</span>
     <span class="type">result_t</span> <span class="fn">UnmapMemory</span>(<span class="type">VkDeviceSize</span> <span class="par">size</span>, <span class="type">VkDeviceSize</span> <span class="par">offset</span> = 0) <span class="kw">const</span> {
         <span class="kw">if</span> (!(memoryProperties &amp; <span class="enum">VK_MEMORY_PROPERTY_HOST_COHERENT_BIT</span>)) {
             <span class="fn">AdjustNonCoherentMemoryRange</span>(<span class="par">size</span>, <span class="par">offset</span>);
@@ -581,7 +581,7 @@
                 .size = <span class="par">size</span>
             };
             <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkFlushMappedMemoryRanges</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), 1, &amp;mappedMemoryRange)) {
-                outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ deviceMemory ] ERROR\nFailed to flush the memory!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+                outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ deviceMemory ] ERROR\nFailed to flush the memory!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
                 <span class="kw">return</span> result;
             }
         }
@@ -615,7 +615,7 @@
         }
         <span class="par">allocateInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO</span>;
         <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkAllocateMemory</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">allocateInfo</span>, <span class="kw">nullptr</span>, &amp;handle)) {
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ deviceMemory ] ERROR\nFailed to allocate memory!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ deviceMemory ] ERROR\nFailed to allocate memory!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
             <span class="kw">return</span> result;
         }
         <span class="cmt">//记录实际分配的内存大小</span>
@@ -995,7 +995,7 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
     <span class="type">result_t</span> <span class="fn">BindMemory</span>(<span class="type">VkDeviceMemory</span> <span class="par">deviceMemory</span>, <span class="type">VkDeviceSize</span> <span class="par">memoryOffset</span> = 0) <span class="kw">const</span> {
         <span class="type">VkResult</span> result = <span class="fn">vkBindBufferMemory</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, <span class="par">deviceMemory</span>, <span class="par">memoryOffset</span>);
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ buffer ] ERROR\nFailed to attach the memory!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ buffer ] ERROR\nFailed to attach the memory!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="cmt">//Non-const Function</span>
@@ -1003,7 +1003,7 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
         <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO</span>;
         <span class="type">VkResult</span> result = vkCreateBuffer(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ buffer ] ERROR\nFailed to create a buffer!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ buffer ] ERROR\nFailed to create a buffer!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
 };
@@ -1175,7 +1175,7 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
         <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO</span>;
         <span class="type">VkResult</span> result = <span class="fn">vkCreateBufferView</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ bufferView ] ERROR\nFailed to create a buffer view!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ bufferView ] ERROR\nFailed to create a buffer view!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkBuffer</span> <span class="par">buffer</span>, <span class="type">VkFormat</span> <span class="par">format</span>, <span class="type">VkDeviceSize</span> <span class="par">offset</span> = 0, <span class="type">VkDeviceSize</span> <span class="par">range</span> = 0 <span class="cmt">/*VkBufferViewCreateFlags flags*/</span>) {
@@ -1301,6 +1301,15 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
         </tr>
     </tbody>
 </table>
+<ul>
+    <li>
+        <p>
+            初始图像布局必须是<span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span>或<span class ="enum">VK_IMAGE_LAYOUT_PREINITIALIZED</span>或<span class ="enum">VK_IMAGE_LAYOUT_ZERO_INITIALIZED_EXT</span>。
+            <br>
+            关于图像的内存布局，参见<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#id13">图像内存屏障</a>。
+        </p>
+    </li>
+</ul>
 <table class="docutils align-default">
     <colgroup>
         <col>
@@ -1422,10 +1431,7 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
             <span class="enum">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</span>不得与<span class="enum">VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT</span>、<span class="enum">VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT</span>、<span class="enum">VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT</span>以外的bit一同使用。
         </p>
     </li>
-</ul>
-<p>
-    关于图像的内存布局，参见<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#id13">图像内存屏障</a>。
-</p></section>
+</ul></section>
 <section id="id11">
 <h3>获取图像的内存分配要求<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>
 <p>
@@ -1562,7 +1568,7 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
     <span class="type">result_t</span> <span class="fn">BindMemory</span>(<span class="type">VkDeviceMemory</span> <span class="par">deviceMemory</span>, <span class="type">VkDeviceSize</span> <span class="par">memoryOffset</span> = 0) <span class="par">const</span> {
         <span class="type">VkResult</span> result = <span class="fn">vkBindImageMemory</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, <span class="par">deviceMemory</span>, <span class="par">memoryOffset</span>);
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ image ] ERROR\nFailed to attach the memory!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ image ] ERROR\nFailed to attach the memory!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="cmt">//Non-const Function</span>
@@ -1570,7 +1576,7 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
         <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO</span>;
         <span class="type">VkResult</span> result = vkCreateImage(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ image ] ERROR\nFailed to create an image!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ image ] ERROR\nFailed to create an image!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
 };
@@ -1921,7 +1927,7 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
         <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO</span>;
         <span class="type">VkResult</span> result = <span class="fn">vkCreateImageView</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ imageView ] ERROR\nFailed to create an image view!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ imageView ] ERROR\nFailed to create an image view!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkImage</span> <span class="par">image</span>, <span class="type">VkImageViewType</span> <span class="par">viewType</span>, <span class="type">VkFormat</span> <span class="par">format</span>, <span class="kw">const</span> <span class="type">VkImageSubresourceRange</span>&amp; <span class="par">subresourceRange</span>, <span class="fn">VkImageViewCreateFlags</span> <span class="par">flags</span> = 0) {

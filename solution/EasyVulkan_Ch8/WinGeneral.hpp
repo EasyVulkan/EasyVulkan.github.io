@@ -155,7 +155,7 @@ bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable
 		.hwnd = mainWindow.HWindow()
 	};
 	if (VkResult result = vkCreateWin32SurfaceKHR(graphicsBase::Base().Instance(), &surfaceCreateInfo, nullptr, &surface)) {
-		OutputMessage("[ InitializeWindow ] ERROR\nFailed to create a window surface!\nError code: {}\n", int32_t(result));
+		OutputMessage("[ InitializeWindow ] ERROR\nFailed to create a window surface!\nError code: {}\n", string_VkResult(result));
 		return false;
 	}
 	graphicsBase::Base().Surface(surface);

@@ -58,6 +58,7 @@ void CreatePipeline() {
 	static constexpr int32_t shininess = 64;
 	static VkSpecializationMapEntry mapEntry = { 1, 0, sizeof shininess };
 	static VkSpecializationInfo specializationInfo = { 1, &mapEntry, sizeof shininess, &shininess };
+	shaderStageCreateInfos_composition[1].pSpecializationInfo = &specializationInfo;
 	auto Create = [] {
 		//G-buffer
 		graphicsPipelineCreateInfoPack pipelineCiPack;

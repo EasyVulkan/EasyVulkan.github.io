@@ -623,19 +623,19 @@
         <span class="fn">vkCmdWriteTimestamp</span>(<span class="par">commandBuffer</span>, <span class="par">pipelineStage</span>, handle, <span class="par">queryIndex</span>);
     }
     <span class="kw">void</span> <span class="fn">CmdCopyResults</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">uint32_t</span> <span class="par">firstQueryIndex</span>, <span class="type">uint32_t</span> <span class="par">queryCount</span>,
-        <span class="type">VkBuffer</span> <span class="par">buffer_dst</span>, <span class="type">VkDeviceSize</span> <span class="par">offset_dst</span>, <span class="type">VkDeviceSize</span> <span class="par">stride</span>, <span class="type">VkQueryResultFlags</span> <span class="par">flags</span> = 0) <span class="kw">const</span> {
-        <span class="fn">vkCmdCopyQueryPoolResults</span>(<span class="par">commandBuffer</span>, handle, <span class="par">firstQueryIndex</span>, <span class="par">queryCount</span>, <span class="par">buffer_dst</span>,<span class="par">offset_dst</span>, <span class="par">stride</span>, <span class="par">flags</span>);
+        <span class="type">VkBuffer</span> <span class="par">dstBuffer</span>, <span class="type">VkDeviceSize</span> <span class="par">dstOffset</span>, <span class="type">VkDeviceSize</span> <span class="par">stride</span>, <span class="type">VkQueryResultFlags</span> <span class="par">flags</span> = 0) <span class="kw">const</span> {
+        <span class="fn">vkCmdCopyQueryPoolResults</span>(<span class="par">commandBuffer</span>, handle, <span class="par">firstQueryIndex</span>, <span class="par">queryCount</span>, <span class="par">dstBuffer</span>,<span class="par">dstOffset</span>, <span class="par">stride</span>, <span class="par">flags</span>);
     }
     <span class="type">result_t</span> <span class="fn">GetResults</span>(<span class="type">uint32_t</span> <span class="par">firstQueryIndex</span>, <span class="type">uint32_t</span> <span class="par">queryCount</span>, <span class="type">size_t</span> <span class="par">dataSize</span>, <span class="kw">void</span>* <span class="par">pData_dst</span>, <span class="type">VkDeviceSize</span> <span class="par">stride</span>, <span class="type">VkQueryResultFlags</span> <span class="par">flags</span> = 0) <span class="kw">const</span> {
         <span class="type">VkResult</span> result = <span class="fn">vkGetQueryPoolResults</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, <span class="par">firstQueryIndex</span>, <span class="par">queryCount</span>, <span class="par">dataSize</span>, <span class="par">pData_dst</span>, <span class="par">stride</span>, <span class="par">flags</span>);
         <span class="kw">if</span> (result)
             result > 0 ? <span class="cmt">//若返回值为VK_NOT_READY，则查询尚未结束，有查询结果尚不可获</span>
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ queryPool ] WARNING\nNot all queries are available!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result)) :
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ queryPool ] ERROR\nFailed to get query pool results!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ queryPool ] WARNING\nNot all queries are available!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result)) :
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ queryPool ] ERROR\nFailed to get query pool results!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="cmt">/*Provided by VK_API_VERSION_1_2*/</span>
-    <span class="kw">void</span> <span class="fn">Reset</span>(<span class="type">uint32_t</span> <span class="par">firstQueryIndex</span>, <span class="type">uint32_t</span> <span class="par">queryCount</span>) {
+    <span class="kw">void</span> <span class="fn">Reset</span>(<span class="type">uint32_t</span> <span class="par">firstQueryIndex</span>, <span class="type">uint32_t</span> <span class="par">queryCount</span>) <span class="kw">const</span> {
         <span class="fn">vkResetQueryPool</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, <span class="par">firstQueryIndex</span>, <span class="par">queryCount</span>);
     }
     <span class="cmt">//Non-const Function</span>
@@ -643,7 +643,7 @@
         <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO</span>;
         <span class="type">VkResult</span> result = <span class="fn">vkCreateQueryPool</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ queryPool ] ERROR\nFailed to create a query pool!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ queryPool ] ERROR\nFailed to create a query pool!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkQueryType</span> <span class="par">queryType</span>, <span class="type">uint32_t</span> <span class="par">queryCount</span>, <span class="type">VkQueryPipelineStatisticFlags</span> <span class="par">pipelineStatistics</span> = 0 <span class="cmt">/*VkQueryPoolCreateFlags flags*/</span>) {
@@ -791,9 +791,9 @@
     }
     <span class="cmt">/*常用于GPU-driven遮挡剔除*/</span>
     <span class="kw">void</span> <span class="fn">CmdCopyResults</span>(<span class="type">VkCommandBuffer</span> <span class="par">commandBuffer</span>, <span class="type">uint32_t</span> <span class="par">firstQueryIndex</span>, <span class="type">uint32_t</span> <span class="par">queryCount</span>,
-        <span class="type">VkBuffer</span> <span class="par">buffer_dst</span>, <span class="type">VkDeviceSize</span> <span class="par">offset_dst</span>, <span class="type">VkDeviceSize</span> <span class="par">stride</span>) <span class="kw">const</span> {
+        <span class="type">VkBuffer</span> <span class="par">dstBuffer</span>, <span class="type">VkDeviceSize</span> <span class="par">dstOffset</span>, <span class="type">VkDeviceSize</span> <span class="par">stride</span>) <span class="kw">const</span> {
         <span class="cmt">//需要等待查询结束以获取正确的数值，flags为VK_QUERY_RESULT_WAIT_BIT</span>
-        queryPool.<span class="fn">CmdCopyResults</span>(<span class="par">commandBuffer</span>, <span class="par">firstQueryIndex</span>, <span class="par">queryCount</span>, <span class="par">buffer_dst</span>, <span class="par">offset_dst</span>,<span class="par">stride</span>, <span class="enum">VK_QUERY_RESULT_WAIT_BIT</span>);
+        queryPool.<span class="fn">CmdCopyResults</span>(<span class="par">commandBuffer</span>, <span class="par">firstQueryIndex</span>, <span class="par">queryCount</span>, <span class="par">dstBuffer</span>, <span class="par">dstOffset</span>,<span class="par">stride</span>, <span class="enum">VK_QUERY_RESULT_WAIT_BIT</span>);
     }
     <span class="cmt">//Non-const Function</span>
     <span class="kw">void</span> <span class="fn">Create</span>(<span class="type">uint32_t</span> <span class="par">capacity</span>) {

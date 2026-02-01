@@ -396,7 +396,7 @@
         <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO</span>;
         <span class="type">VkResult</span> result = <span class="fn">vkCreateDescriptorSetLayout</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ descriptorSetLayout ] ERROR\nFailed to create a descriptor set layout!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ descriptorSetLayout ] ERROR\nFailed to create a descriptor set layout!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
 };
@@ -905,7 +905,7 @@
 <ul>
     <li>
         <p>
-            该函数只会返回<span class="enum">VK_SUCCESS</span>。
+            至Vulkan1.3为止，该函数只会返回<span class="enum">VK_SUCCESS</span>。1.4开始可能返回<span class="enum">VK_ERROR_UNKNOWN</span>（未知错误）和<span class="enum">VK_ERROR_VALIDATION_FAILED</span>（校验失败，通常是参数错误引起）。
         </p>
     </li>
 </ul></section>
@@ -947,7 +947,7 @@
         };
         <span class="type">VkResult</span> result = <span class="fn">vkAllocateDescriptorSets</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;allocateInfo, <span class="par">sets</span>.<span class="fn">Pointer</span>());
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ descriptorPool ] ERROR\nFailed to allocate descriptor sets!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ descriptorPool ] ERROR\nFailed to allocate descriptor sets!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="type">result_t</span> <span class="fn">AllocateSets</span>(<span class="type">arrayRef</span>&lt;<span class="type">VkDescriptorSet</span>&gt; <span class="par">sets</span>, <span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">descriptorSetLayout</span>&gt; <span class="par">setLayouts</span>) <span class="kw">const</span> {
@@ -967,8 +967,11 @@
     }
     <span class="type">result_t</span> <span class="fn">FreeSets</span>(<span class="type">arrayRef</span>&lt;<span class="type">VkDescriptorSet</span>&gt; <span class="par">sets</span>) <span class="kw">const</span> {
         <span class="type">VkResult</span> result = <span class="fn">vkFreeDescriptorSets</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, <span class="par">sets</span>.<span class="fn">Count</span>(), <span class="par">sets</span>.<span class="fn">Pointer</span>());
-        <span class="fn">memset</span>(<span class="par">sets</span>.<span class="fn">Pointer</span>(), 0, <span class="par">sets</span>.<span class="fn">Count</span>() * <span class="kw">sizeof</span>(<span class="type">VkDescriptorSet</span>));
-        <span class="kw">return</span> result; <span class="cmt">//Though vkFreeDescriptorSets(...) can only return VK_SUCCESS</span>
+        <span class="kw">if</span> (result)
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ descriptorPool ] ERROR\nFailed to free descriptor sets!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
+        <span class="kw">else</span>
+            <span class="fn">memset</span>(<span class="par">sets</span>.<span class="fn">Pointer</span>(), 0, <span class="par">sets</span>.<span class="fn">Count</span>() * <span class="kw">sizeof</span>(<span class="type">VkDescriptorSet</span>));
+        <span class="kw">return</span> result;
     }
     <span class="type">result_t</span> <span class="fn">FreeSets</span>(<span class="type">arrayRef</span>&lt;<span class="type">descriptorSet</span>&gt; <span class="par">sets</span>) <span class="kw">const</span> {
         <span class="kw">return</span> <span class="fn">FreeSets</span>({ &amp;<span class="par">sets</span>[0].handle, <span class="par">sets</span>.<span class="fn">Count</span>() });
@@ -978,7 +981,7 @@
         <span class="par">createInfo</span>.sType = <span class="type">VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO</span>;
         <span class="type">VkResult</span> result = <span class="fn">vkCreateDescriptorPool</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ descriptorPool ] ERROR\nFailed to create a descriptor pool!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ descriptorPool ] ERROR\nFailed to create a descriptor pool!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">uint32_t</span> <span class="par">maxSetCount</span>, <span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">VkDescriptorPoolSize</span>&gt; <span class="par">poolSizes</span>, <span class="type">VkDescriptorPoolCreateFlags</span> <span class="par">flags</span> = 0) {

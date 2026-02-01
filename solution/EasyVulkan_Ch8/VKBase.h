@@ -175,7 +175,7 @@ class graphicsBase {
 		if (vkCreateDebugUtilsMessenger) {
 			VkResult result = vkCreateDebugUtilsMessenger(instance, &debugUtilsMessengerCreateInfo, nullptr, &debugMessenger);
 			if (result)
-				OutputMessage("[ graphicsBase ] ERROR\nFailed to create a debug messenger!\nError code: {}\n", int32_t(result));
+				OutputMessage("[ graphicsBase ] ERROR\nFailed to create a debug messenger!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		OutputMessage("[ graphicsBase ] ERROR\nFailed to get the function pointer of vkCreateDebugUtilsMessengerEXT!\n");
@@ -197,7 +197,7 @@ class graphicsBase {
 				supportCompute = enableComputeQueue && queueFamilyPropertieses[i].queueFlags & VK_QUEUE_COMPUTE_BIT;
 			if (surface)
 				if (VkResult result = vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, surface, &supportPresentation)) {
-					OutputMessage("[ graphicsBase ] ERROR\nFailed to determine if the queue family supports presentation!\nError code: {}\n", int32_t(result));
+					OutputMessage("[ graphicsBase ] ERROR\nFailed to determine if the queue family supports presentation!\nError code: {}\n", string_VkResult(result));
 					return result;
 				}
 			if (supportGraphics && supportCompute) {
@@ -272,7 +272,7 @@ class graphicsBase {
 	result_t CreateSwapchain_Internal() {
 		//Create new swapchain
 		if (VkResult result = vkCreateSwapchainKHR(device, &swapchainCreateInfo, nullptr, &swapchain)) {
-			OutputMessage("[ graphicsBase ] ERROR\nFailed to create a swapchain!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ graphicsBase ] ERROR\nFailed to create a swapchain!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		//Destruction of the retired old swapchain is written inside SwapImage(...).
@@ -282,12 +282,12 @@ class graphicsBase {
 		//Get swapchain images
 		uint32_t swapchainImageCount;
 		if (VkResult result = vkGetSwapchainImagesKHR(device, swapchain, &swapchainImageCount, nullptr)) {
-			OutputMessage("[ graphicsBase ] ERROR\nFailed to get the count of swapchain images!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ graphicsBase ] ERROR\nFailed to get the count of swapchain images!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		swapchainImages.resize(swapchainImageCount);
 		if (VkResult result = vkGetSwapchainImagesKHR(device, swapchain, &swapchainImageCount, swapchainImages.data())) {
-			OutputMessage("[ graphicsBase ] ERROR\nFailed to get swapchain images!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ graphicsBase ] ERROR\nFailed to get swapchain images!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 
@@ -303,7 +303,7 @@ class graphicsBase {
 		for (size_t i = 0; i < swapchainImageCount; i++) {
 			imageViewCreateInfo.image = swapchainImages[i];
 			if (VkResult result = vkCreateImageView(device, &imageViewCreateInfo, nullptr, &swapchainImageViews[i])) {
-				OutputMessage("[ graphicsBase ] ERROR\nFailed to create a swapchain image view!\nError code: {}\n", int32_t(result));
+				OutputMessage("[ graphicsBase ] ERROR\nFailed to create a swapchain image view!\nError code: {}\n", string_VkResult(result));
 				return result;
 			}
 		}
@@ -380,6 +380,10 @@ public:
 	uint32_t CurrentImageIndex() const { return currentImageIndex; }
 	constexpr const VkSwapchainCreateInfoKHR& SwapchainCreateInfo() const { return swapchainCreateInfo; }
 
+	const std::vector<const char*>& InstanceLayers() const { return instanceLayers; }
+	const std::vector<const char*>& InstanceExtensions() const { return instanceExtensions; }
+	const std::vector<const char*>& DeviceExtensions() const { return deviceExtensions; }
+
 	//Const Function
 	procedureAddress InstanceProcedureAddress(const char* functionName) const {
 		return vkGetInstanceProcAddr(instance, functionName);
@@ -398,7 +402,7 @@ public:
 		if (layerCount) {
 			availableLayers.resize(layerCount);
 			if (VkResult result = vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data())) {
-				OutputMessage("[ graphicsBase ] ERROR\nFailed to enumerate instance layer properties!\nError code: {}\n", int32_t(result));
+				OutputMessage("[ graphicsBase ] ERROR\nFailed to enumerate instance layer properties!\nError code: {}\n", string_VkResult(result));
 				return result;
 			}
 			for (auto& i : layersToCheck) {
@@ -423,14 +427,14 @@ public:
 		std::vector<VkExtensionProperties> availableExtensions;
 		if (VkResult result = vkEnumerateInstanceExtensionProperties(layerName, &extensionCount, nullptr)) {
 			layerName ?
-				OutputMessage("[ graphicsBase ] ERROR\nFailed to get the count of instance extensions!\nLayer name:{}\n", layerName) :
+				OutputMessage("[ graphicsBase ] ERROR\nFailed to get the count of instance extensions!\nLayer name: {}\n", layerName) :
 				OutputMessage("[ graphicsBase ] ERROR\nFailed to get the count of instance extensions!\n");
 			return result;
 		}
 		if (extensionCount) {
 			availableExtensions.resize(extensionCount);
 			if (VkResult result = vkEnumerateInstanceExtensionProperties(layerName, &extensionCount, availableExtensions.data())) {
-				OutputMessage("[ graphicsBase ] ERROR\nFailed to enumerate instance extension properties!\nError code: {}\n", int32_t(result));
+				OutputMessage("[ graphicsBase ] ERROR\nFailed to enumerate instance extension properties!\nError code: {}\n", string_VkResult(result));
 				return result;
 			}
 			for (auto& i : extensionsToCheck) {
@@ -455,14 +459,14 @@ public:
 		std::vector<VkExtensionProperties> availableExtensions;
 		if (VkResult result = vkEnumerateDeviceExtensionProperties(physicalDevice, layerName, &extensionCount, nullptr)) {
 			layerName ?
-				OutputMessage("[ graphicsBase ] ERROR\nFailed to get the count of device extensions!\nLayer name:{}\n", layerName) :
+				OutputMessage("[ graphicsBase ] ERROR\nFailed to get the count of device extensions!\nLayer name: {}\n", layerName) :
 				OutputMessage("[ graphicsBase ] ERROR\nFailed to get the count of device extensions!\n");
 			return result;
 		}
 		if (extensionCount) {
 			availableExtensions.resize(extensionCount);
 			if (VkResult result = vkEnumerateDeviceExtensionProperties(physicalDevice, layerName, &extensionCount, availableExtensions.data())) {
-				OutputMessage("[ graphicsBase ] ERROR\nFailed to enumerate device extension properties!\nError code: {}\n", int32_t(result));
+				OutputMessage("[ graphicsBase ] ERROR\nFailed to enumerate device extension properties!\nError code: {}\n", string_VkResult(result));
 				return result;
 			}
 			for (auto& i : extensionsToCheck) {
@@ -485,14 +489,14 @@ public:
 	result_t WaitIdle() const {
 		VkResult result = vkDeviceWaitIdle(device);
 		if (result)
-			OutputMessage("[ graphicsBase ] ERROR\nFailed to wait for the device to be idle!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ graphicsBase ] ERROR\nFailed to wait for the device to be idle!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t SubmitCommandBuffer_Graphics(VkSubmitInfo& submitInfo, VkFence fence = VK_NULL_HANDLE) const {
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		VkResult result = vkQueueSubmit(queue_graphics, 1, &submitInfo, fence);
 		if (result)
-			OutputMessage("[ graphicsBase ] ERROR\nFailed to submit the command buffer!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ graphicsBase ] ERROR\nFailed to submit the command buffer!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t SubmitCommandBuffer_Graphics(VkCommandBuffer commandBuffer,
@@ -522,7 +526,7 @@ public:
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		VkResult result = vkQueueSubmit(queue_compute, 1, &submitInfo, fence);
 		if (result)
-			OutputMessage("[ graphicsBase ] ERROR\nFailed to submit the command buffer!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ graphicsBase ] ERROR\nFailed to submit the command buffer!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t SubmitCommandBuffer_Compute(VkCommandBuffer commandBuffer, VkFence fence = VK_NULL_HANDLE) const {
@@ -566,7 +570,7 @@ public:
 			submitInfo.pSignalSemaphores = &semaphore_ownershipIsTransfered;
 		VkResult result = vkQueueSubmit(queue_presentation, 1, &submitInfo, fence);
 		if (result)
-			OutputMessage("[ graphicsBase ] ERROR\nFailed to submit the presentation command buffer!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ graphicsBase ] ERROR\nFailed to submit the presentation command buffer!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	//Non-const Function
@@ -609,7 +613,7 @@ public:
 			AddInstanceLayer("VK_LAYER_KHRONOS_validation"),
 			//Add debug extension
 			AddInstanceExtension(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-		VkApplicationInfo applicatianInfo = {
+		VkApplicationInfo applicationInfo = {
 			.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
 			.apiVersion = apiVersion
 		};
@@ -617,21 +621,21 @@ public:
 			.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
 			.pNext = pNext_instanceCreateInfo,
 			.flags = flags,
-			.pApplicationInfo = &applicatianInfo,
+			.pApplicationInfo = &applicationInfo,
 			.enabledLayerCount = uint32_t(instanceLayers.size()),
 			.ppEnabledLayerNames = instanceLayers.data(),
 			.enabledExtensionCount = uint32_t(instanceExtensions.size()),
 			.ppEnabledExtensionNames = instanceExtensions.data()
 		};
 		if (VkResult result = vkCreateInstance(&instanceCreateInfo, nullptr, &instance)) {
-			OutputMessage("[ graphicsBase ] ERROR\nFailed to create a Vulkan instance!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ graphicsBase ] ERROR\nFailed to create a Vulkan instance!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		OutputMessage(
 			"Vulkan API Version: {}.{}.{}\n",
-			VK_VERSION_MAJOR(apiVersion),
-			VK_VERSION_MINOR(apiVersion),
-			VK_VERSION_PATCH(apiVersion));
+			VK_API_VERSION_MAJOR(apiVersion),
+			VK_API_VERSION_MINOR(apiVersion),
+			VK_API_VERSION_PATCH(apiVersion));
 		if constexpr (ENABLE_DEBUG_MESSENGER)
 			CreateDebugMessenger();
 		return VK_SUCCESS;
@@ -646,20 +650,20 @@ public:
 	void AddNextStructure_DeviceCreateInfo(auto& next, bool allowDuplicate = false) {
 		SetPNext(pNext_deviceCreateInfo, &next, allowDuplicate);
 	}
-	void AddNextStructure_PhysicalDeviceFeatures(auto& next, bool allowDuplicate = false) {
-		SetPNext(pNext_physicalDeviceFeatures, &next, allowDuplicate);
+	void AddNextStructure_PhysicalDeviceFeatures(auto& next) {
+		SetPNext(pNext_physicalDeviceFeatures, &next);
 	}
-	void AddNextStructure_PhysicalDeviceProperties(auto& next, bool allowDuplicate = false) {
-		SetPNext(pNext_physicalDeviceProperties, &next, allowDuplicate);
+	void AddNextStructure_PhysicalDeviceProperties(auto& next) {
+		SetPNext(pNext_physicalDeviceProperties, &next);
 	}
-	void AddNextStructure_PhysicalDeviceMemoryProperties(auto& next, bool allowDuplicate = false) {
-		SetPNext(pNext_physicalDeviceMemoryProperties, &next, allowDuplicate);
+	void AddNextStructure_PhysicalDeviceMemoryProperties(auto& next) {
+		SetPNext(pNext_physicalDeviceMemoryProperties, &next);
 	}
 	void Surface(VkSurfaceKHR surface) { if (!this->surface) this->surface = surface; }
 	result_t GetPhysicalDevices() {
 		uint32_t deviceCount;
 		if (VkResult result = vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr)) {
-			OutputMessage("[ graphicsBase ] ERROR\nFailed to get the count of physical devices!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ graphicsBase ] ERROR\nFailed to get the count of physical devices!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		if (!deviceCount)
@@ -668,7 +672,7 @@ public:
 		availablePhysicalDevices.resize(deviceCount);
 		VkResult result = vkEnumeratePhysicalDevices(instance, &deviceCount, availablePhysicalDevices.data());
 		if (result)
-			OutputMessage("[ graphicsBase ] ERROR\nFailed to enumerate physical devices!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ graphicsBase ] ERROR\nFailed to enumerate physical devices!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t DeterminePhysicalDevice(uint32_t deviceIndex = 0, bool enableGraphicsQueue = true, bool enableComputeQueue = true) {
@@ -759,7 +763,7 @@ public:
 		if (ppNext)
 			*ppNext = nullptr;//Unset &physicalDeviceFeatures
 		if (result) {
-			OutputMessage("[ graphicsBase ] ERROR\nFailed to create a logical device!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ graphicsBase ] ERROR\nFailed to create a logical device!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		//Get queues
@@ -776,14 +780,14 @@ public:
 		return VK_SUCCESS;
 	}
 	//                    For swapchain creation
-	void AddNextStructure_SwapchainCreateInfo(auto& next, bool allowDuplicate = false) {
-		SetPNext(pNext_swapchainCreateInfo, &next, allowDuplicate);
+	void AddNextStructure_SwapchainCreateInfo(auto& next) {
+		SetPNext(pNext_swapchainCreateInfo, &next);
 	}
 	/*No need to call GetSurfaceFormats() if you don't want to manually set the surface format before creating swapchain*/
 	result_t GetSurfaceFormats() {
 		uint32_t surfaceFormatCount;
 		if (VkResult result = vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surfaceFormatCount, nullptr)) {
-			OutputMessage("[ graphicsBase ] ERROR\nFailed to get the count of surface formats!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ graphicsBase ] ERROR\nFailed to get the count of surface formats!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		if (!surfaceFormatCount)
@@ -792,7 +796,7 @@ public:
 		availableSurfaceFormats.resize(surfaceFormatCount);
 		VkResult result = vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surfaceFormatCount, availableSurfaceFormats.data());
 		if (result)
-			OutputMessage("[ graphicsBase ] ERROR\nFailed to get surface formats!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ graphicsBase ] ERROR\nFailed to get surface formats!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	/*Will call RecreateSwapchain() if the swapchain already exists*/
@@ -826,7 +830,7 @@ public:
 		//Get surface capabilities
 		VkSurfaceCapabilitiesKHR surfaceCapabilities = {};
 		if (VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &surfaceCapabilities)) {
-			OutputMessage("[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		//Set image count
@@ -862,7 +866,7 @@ public:
 		if (!availableSurfaceFormats.size())
 			if (VkResult result = GetSurfaceFormats())
 				return result;
-		//If surface format is not determined, select a a four-component UNORM format
+		//If surface format is not determined, select a four-component UNORM format
 		if (!swapchainCreateInfo.imageFormat)
 			if (SetSurfaceFormat({ VK_FORMAT_R8G8B8A8_UNORM, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR }) &&
 				SetSurfaceFormat({ VK_FORMAT_B8G8R8A8_UNORM, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR })) {
@@ -874,7 +878,7 @@ public:
 		//Get surface present modes
 		uint32_t surfacePresentModeCount;
 		if (VkResult result = vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &surfacePresentModeCount, nullptr)) {
-			OutputMessage("[ graphicsBase ] ERROR\nFailed to get the count of surface present modes!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ graphicsBase ] ERROR\nFailed to get the count of surface present modes!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		if (!surfacePresentModeCount)
@@ -882,7 +886,7 @@ public:
 			abort();
 		std::vector<VkPresentModeKHR> surfacePresentModes(surfacePresentModeCount);
 		if (VkResult result = vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &surfacePresentModeCount, surfacePresentModes.data())) {
-			OutputMessage("[ graphicsBase ] ERROR\nFailed to get surface present modes!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ graphicsBase ] ERROR\nFailed to get surface present modes!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		//Set present mode to mailbox if available and necessary
@@ -918,8 +922,6 @@ public:
 		device = nullptr;
 		surface = VK_NULL_HANDLE;
 		swapchain = VK_NULL_HANDLE;
-		swapchainImages.resize(0);
-		swapchainImageViews.resize(0);
 		swapchainCreateInfo = {};
 		debugMessenger = VK_NULL_HANDLE;
 	}
@@ -935,7 +937,7 @@ public:
 				for (auto& i : swapchainImageViews)
 					if (i)
 						vkDestroyImageView(device, i, nullptr);
-				swapchainImageViews.resize(0);
+				swapchainImageViews.clear();
 				vkDestroySwapchainKHR(device, swapchain, nullptr);
 				swapchain = VK_NULL_HANDLE;
 				swapchainCreateInfo = {};
@@ -949,7 +951,7 @@ public:
 	result_t RecreateSwapchain() {
 		VkSurfaceCapabilitiesKHR surfaceCapabilities = {};
 		if (VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &surfaceCapabilities)) {
-			OutputMessage("[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		if (surfaceCapabilities.currentExtent.width == 0 ||
@@ -959,13 +961,13 @@ public:
 		swapchainCreateInfo.imageExtent = surfaceCapabilities.currentExtent;
 		swapchainCreateInfo.oldSwapchain = swapchain;
 
-		//Wait graphics queue and presentation queue to be idle
+		//Wait for graphics queue and presentation queue to be idle
 		VkResult result = vkQueueWaitIdle(queue_graphics);
 		if (result == VK_SUCCESS &&
 			queue_graphics != queue_presentation)
 			result = vkQueueWaitIdle(queue_presentation);
 		if (result) {
-			OutputMessage("[ graphicsBase ] ERROR\nFailed to wait for the queue to be idle!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ graphicsBase ] ERROR\nFailed to wait for the queue to be idle!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 
@@ -974,7 +976,7 @@ public:
 		for (auto& i : swapchainImageViews)
 			if (i)
 				vkDestroyImageView(device, i, nullptr);
-		swapchainImageViews.resize(0);
+		swapchainImageViews.clear();
 		//Create swapchain
 		if (VkResult result = CreateSwapchain_Internal())
 			return result;
@@ -982,7 +984,7 @@ public:
 		return VK_SUCCESS;
 	}
 	result_t SwapImage(VkSemaphore semaphore_imageIsAvailable) {
-		//Destroy retired old swapchain and its associated VkImage handles
+		//Destroy retired old swapchain and its associated images
 		if (swapchainCreateInfo.oldSwapchain &&
 			swapchainCreateInfo.oldSwapchain != swapchain) {//Don't destroy old swapchain if RecreateSwapchain() fails
 			vkDestroySwapchainKHR(device, swapchainCreateInfo.oldSwapchain, nullptr);
@@ -996,7 +998,7 @@ public:
 					return result;
 				break;
 			default:
-				OutputMessage("[ graphicsBase ] ERROR\nFailed to acquire the next image!\nError code: {}\n", int32_t(result));
+				OutputMessage("[ graphicsBase ] ERROR\nFailed to acquire the next image!\nError code: {}\n", string_VkResult(result));
 				return result;
 			}
 		return VK_SUCCESS;
@@ -1010,7 +1012,7 @@ public:
 		case VK_ERROR_OUT_OF_DATE_KHR:
 			return RecreateSwapchain();
 		default:
-			OutputMessage("[ graphicsBase ] ERROR\nFailed to queue the image for presentation!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ graphicsBase ] ERROR\nFailed to queue the image for presentation!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 	}
@@ -1054,7 +1056,7 @@ public:
 		createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 		VkResult result = vkCreateSemaphore(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
 		if (result)
-			OutputMessage("[ semaphore ] ERROR\nFailed to create a semaphore!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ semaphore ] ERROR\nFailed to create a semaphore!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t Create(/*reserved for future use*/) {
@@ -1082,13 +1084,13 @@ public:
 	result_t Wait() const {
 		VkResult result = vkWaitForFences(graphicsBase::Base().Device(), 1, &handle, false, UINT64_MAX);
 		if (result)
-			OutputMessage("[ fence ] ERROR\nFailed to wait for the fence!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ fence ] ERROR\nFailed to wait for the fence!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t Reset() const {
 		VkResult result = vkResetFences(graphicsBase::Base().Device(), 1, &handle);
 		if (result)
-			OutputMessage("[ fence ] ERROR\nFailed to reset the fence!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ fence ] ERROR\nFailed to reset the fence!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t WaitAndReset() const {
@@ -1099,7 +1101,7 @@ public:
 	result_t Status() const {
 		VkResult result = vkGetFenceStatus(graphicsBase::Base().Device(), handle);
 		if (result < 0)
-			OutputMessage("[ fence ] ERROR\nFailed to get the status of the fence!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ fence ] ERROR\nFailed to get the status of the fence!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	//Non-const Function
@@ -1107,7 +1109,7 @@ public:
 		createInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 		VkResult result = vkCreateFence(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
 		if (result)
-			OutputMessage("[ fence ] ERROR\nFailed to create a fence!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ fence ] ERROR\nFailed to create a fence!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t Create(VkFenceCreateFlags flags = 0) {
@@ -1158,19 +1160,19 @@ public:
 	result_t Set() const {
 		VkResult result = vkSetEvent(graphicsBase::Base().Device(), handle);
 		if (result)
-			OutputMessage("[ event ] ERROR\nFailed to singal the event!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ event ] ERROR\nFailed to singal the event!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t Reset() const {
 		VkResult result = vkResetEvent(graphicsBase::Base().Device(), handle);
 		if (result)
-			OutputMessage("[ event ] ERROR\nFailed to unsingal the event!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ event ] ERROR\nFailed to unsingal the event!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t Status() const {
 		VkResult result = vkGetEventStatus(graphicsBase::Base().Device(), handle);
 		if (result < 0)
-			OutputMessage("[ event ] ERROR\nFailed to get the status of the event!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ event ] ERROR\nFailed to get the status of the event!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	//Non-const Function
@@ -1178,7 +1180,7 @@ public:
 		createInfo.sType = VK_STRUCTURE_TYPE_EVENT_CREATE_INFO;
 		VkResult result = vkCreateEvent(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
 		if (result)
-			OutputMessage("[ event ] ERROR\nFailed to create a event!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ event ] ERROR\nFailed to create an event!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t Create(VkEventCreateFlags flags = 0) {
@@ -1198,7 +1200,7 @@ class deviceMemory {
 	VkMemoryPropertyFlags memoryProperties = 0;
 	//--------------------
 	VkDeviceSize AdjustNonCoherentMemoryRange(VkDeviceSize& size, VkDeviceSize& offset) const {
-		//Adjust mapped memory range if memory is not host coherent
+		//Adjust mapped memory range if memory is not host-coherent
 		const VkDeviceSize& nonCoherentAtomSize = graphicsBase::Base().PhysicalDeviceProperties().limits.nonCoherentAtomSize;
 		VkDeviceSize _offset = offset;
 		offset = offset / nonCoherentAtomSize * nonCoherentAtomSize;
@@ -1232,13 +1234,13 @@ public:
 	VkDeviceSize AllocationSize() const { return allocationSize; }
 	VkMemoryPropertyFlags MemoryProperties() const { return memoryProperties; }
 	//Const Function
-	/*If allocated memory is host visible*/
+	/*If allocated memory is host-visible*/
 	result_t MapMemory(void*& pData, VkDeviceSize size, VkDeviceSize offset = 0) const {
 		VkDeviceSize inverseDeltaOffset;
 		if (!(memoryProperties & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT))
 			inverseDeltaOffset = AdjustNonCoherentMemoryRange(size, offset);
 		if (VkResult result = vkMapMemory(graphicsBase::Base().Device(), handle, offset, size, 0, &pData)) {
-			OutputMessage("[ deviceMemory ] ERROR\nFailed to map the memory!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ deviceMemory ] ERROR\nFailed to map the memory!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		if (!(memoryProperties & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)) {
@@ -1250,7 +1252,7 @@ public:
 				.size = size
 			};
 			if (VkResult result = vkInvalidateMappedMemoryRanges(graphicsBase::Base().Device(), 1, &mappedMemoryRange)) {
-				OutputMessage("[ deviceMemory ] ERROR\nFailed to flush the memory!\nError code: {}\n", int32_t(result));
+				OutputMessage("[ deviceMemory ] ERROR\nFailed to flush the memory!\nError code: {}\n", string_VkResult(result));
 				return result;
 			}
 		}
@@ -1266,7 +1268,7 @@ public:
 				.size = size
 			};
 			if (VkResult result = vkFlushMappedMemoryRanges(graphicsBase::Base().Device(), 1, &mappedMemoryRange)) {
-				OutputMessage("[ deviceMemory ] ERROR\nFailed to flush the memory!\nError code: {}\n", int32_t(result));
+				OutputMessage("[ deviceMemory ] ERROR\nFailed to flush the memory!\nError code: {}\n", string_VkResult(result));
 				return result;
 			}
 		}
@@ -1298,7 +1300,7 @@ public:
 		}
 		allocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 		if (VkResult result = vkAllocateMemory(graphicsBase::Base().Device(), &allocateInfo, nullptr, &handle)) {
-			OutputMessage("[ deviceMemory ] ERROR\nFailed to allocate memory!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ deviceMemory ] ERROR\nFailed to allocate memory!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		allocationSize = allocateInfo.allocationSize;
@@ -1357,7 +1359,7 @@ public:
 	result_t BindMemory(VkDeviceMemory deviceMemory, VkDeviceSize memoryOffset = 0) const {
 		VkResult result = vkBindBufferMemory(graphicsBase::Base().Device(), handle, deviceMemory, memoryOffset);
 		if (result)
-			OutputMessage("[ buffer ] ERROR\nFailed to attach the memory!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ buffer ] ERROR\nFailed to attach the memory!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	//Non-const Function
@@ -1365,7 +1367,7 @@ public:
 		createInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
 		VkResult result = vkCreateBuffer(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
 		if (result)
-			OutputMessage("[ buffer ] ERROR\nFailed to create a buffer!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ buffer ] ERROR\nFailed to create a buffer!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t Create(VkDeviceSize size, VkBufferUsageFlags usages, arrayRef<const uint32_t> queueFamilyIndices = {}, VkBufferCreateFlags flags = 0) {
@@ -1457,7 +1459,7 @@ public:
 		createInfo.sType = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO;
 		VkResult result = vkCreateBufferView(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
 		if (result)
-			OutputMessage("[ bufferView ] ERROR\nFailed to create a buffer view!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ bufferView ] ERROR\nFailed to create a buffer view!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t Create(VkBuffer buffer, VkFormat format, VkDeviceSize offset = 0, VkDeviceSize range = 0 /*reserved for future use*/) {
@@ -1516,7 +1518,7 @@ public:
 	result_t BindMemory(VkDeviceMemory deviceMemory, VkDeviceSize memoryOffset = 0) const {
 		VkResult result = vkBindImageMemory(graphicsBase::Base().Device(), handle, deviceMemory, memoryOffset);
 		if (result)
-			OutputMessage("[ image ] ERROR\nFailed to attach the memory!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ image ] ERROR\nFailed to attach the memory!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	//Non-const Function
@@ -1524,7 +1526,7 @@ public:
 		createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 		VkResult result = vkCreateImage(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
 		if (result)
-			OutputMessage("[ image ] ERROR\nFailed to create an image!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ image ] ERROR\nFailed to create an image!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t Create(VkImageType imageType, VkFormat format, VkExtent3D extent, uint32_t mipLevelCount, uint32_t layerCount, VkSampleCountFlagBits sampleCount,
@@ -1618,7 +1620,7 @@ public:
 		createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 		VkResult result = vkCreateImageView(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
 		if (result)
-			OutputMessage("[ imageView ] ERROR\nFailed to create an image view!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ imageView ] ERROR\nFailed to create an image view!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t Create(VkImage image, VkImageViewType viewType, VkFormat format, const VkImageSubresourceRange& subresourceRange, VkImageViewCreateFlags flags = 0) {
@@ -1651,7 +1653,7 @@ public:
 		createInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
 		VkResult result = vkCreateSampler(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
 		if (result)
-			OutputMessage("[ sampler ] ERROR\nFailed to create a sampler!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ sampler ] ERROR\nFailed to create a sampler!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 };
@@ -1694,7 +1696,7 @@ public:
 		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 		VkResult result = vkCreateShaderModule(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
 		if (result)
-			OutputMessage("[ shader ] ERROR\nFailed to create a shader module!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ shader ] ERROR\nFailed to create a shader module!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t Create(const char* filepath /*reserved for future use*/) {
@@ -1740,7 +1742,7 @@ public:
 		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 		VkResult result = vkCreateDescriptorSetLayout(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
 		if (result)
-			OutputMessage("[ descriptorSetLayout ] ERROR\nFailed to create a descriptor set layout!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ descriptorSetLayout ] ERROR\nFailed to create a descriptor set layout!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t Create(arrayRef<const VkDescriptorSetLayoutBinding> bindings, VkDescriptorSetLayoutCreateFlags flags = 0) {
@@ -1779,7 +1781,7 @@ public:
 		createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		VkResult result = vkCreatePipelineLayout(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
 		if (result)
-			OutputMessage("[ pipelineLayout ] ERROR\nFailed to create a pipeline layout!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ pipelineLayout ] ERROR\nFailed to create a pipeline layout!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t Create(arrayRef<const VkDescriptorSetLayout> descriptorSetLayouts, arrayRef<const VkPushConstantRange> pushConstantRanges, VkPipelineLayoutCreateFlags flags = 0) {
@@ -1821,14 +1823,14 @@ public:
 		createInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		VkResult result = vkCreateGraphicsPipelines(graphicsBase::Base().Device(), VK_NULL_HANDLE, 1, &createInfo, nullptr, &handle);
 		if (result)
-			OutputMessage("[ pipeline ] ERROR\nFailed to create a graphics pipeline!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ pipeline ] ERROR\nFailed to create a graphics pipeline!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t Create(VkComputePipelineCreateInfo& createInfo) {
 		createInfo.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
 		VkResult result = vkCreateComputePipelines(graphicsBase::Base().Device(), VK_NULL_HANDLE, 1, &createInfo, nullptr, &handle);
 		if (result)
-			OutputMessage("[ pipeline ] ERROR\nFailed to create a compute pipeline!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ pipeline ] ERROR\nFailed to create a compute pipeline!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 };
@@ -1882,7 +1884,7 @@ public:
 		createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
 		VkResult result = vkCreateRenderPass(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
 		if (result)
-			OutputMessage("[ renderPass ] ERROR\nFailed to create a render pass!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ renderPass ] ERROR\nFailed to create a render pass!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t Create(arrayRef<const VkAttachmentDescription> attachmentDescriptions, arrayRef<const VkSubpassDescription> subpassDescriptions,
@@ -1924,7 +1926,7 @@ public:
 		createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 		VkResult result = vkCreateFramebuffer(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
 		if (result)
-			OutputMessage("[ framebuffer ] ERROR\nFailed to create a framebuffer!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ framebuffer ] ERROR\nFailed to create a framebuffer!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t Create(VkRenderPass renderPass, arrayRef<const VkImageView> attachments, VkExtent2D extent, uint32_t layerCount, VkFramebufferCreateFlags flags = 0) {
@@ -1967,13 +1969,13 @@ public:
 			inheritanceInfo.Get().sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
 		VkResult result = vkBeginCommandBuffer(handle, &beginInfo);
 		if (result)
-			OutputMessage("[ commandBuffer ] ERROR\nFailed to begin a command buffer!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ commandBuffer ] ERROR\nFailed to begin a command buffer!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t End() const {
 		VkResult result = vkEndCommandBuffer(handle);
 		if (result)
-			OutputMessage("[ commandBuffer ] ERROR\nFailed to end a command buffer!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ commandBuffer ] ERROR\nFailed to end a command buffer!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 };
@@ -2002,7 +2004,7 @@ public:
 		};
 		VkResult result = vkAllocateCommandBuffers(graphicsBase::Base().Device(), &allocateInfo, buffers);
 		if (result)
-			OutputMessage("[ commandPool ] ERROR\nFailed to allocate command buffers!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ commandPool ] ERROR\nFailed to allocate command buffers!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t AllocateBuffers(arrayRef<commandBuffer> buffers, VkCommandBufferLevel level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const {
@@ -2020,7 +2022,7 @@ public:
 		createInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 		VkResult result = vkCreateCommandPool(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
 		if (result)
-			OutputMessage("[ commandPool ] ERROR\nFailed to create a command pool!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ commandPool ] ERROR\nFailed to create a command pool!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t Create(uint32_t queueFamilyIndex, VkCommandPoolCreateFlags flags = 0) {
@@ -2120,7 +2122,7 @@ public:
 		};
 		VkResult result = vkAllocateDescriptorSets(graphicsBase::Base().Device(), &allocateInfo, sets);
 		if (result)
-			OutputMessage("[ descriptorPool ] ERROR\nFailed to allocate descriptor sets!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ descriptorPool ] ERROR\nFailed to allocate descriptor sets!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t AllocateSets(arrayRef<VkDescriptorSet> sets, arrayRef<const descriptorSetLayout> setLayouts) const {
@@ -2134,8 +2136,11 @@ public:
 	}
 	result_t FreeSets(arrayRef<VkDescriptorSet> sets) const {
 		VkResult result = vkFreeDescriptorSets(graphicsBase::Base().Device(), handle, sets.Count(), sets);
-		memset(sets, 0, sets.Count() * sizeof(VkDescriptorSet));
-		return result;//Though vkFreeDescriptorSets(...) can only return VK_SUCCESS
+		if (result)
+			OutputMessage("[ descriptorPool ] ERROR\nFailed to free descriptor sets!\nError code: {}\n", string_VkResult(result));
+		else
+			memset(sets, 0, sets.Count() * sizeof(VkDescriptorSet));
+		return result;
 	}
 	result_t FreeSets(arrayRef<descriptorSet> sets) const {
 		return FreeSets({ &sets[0].handle, sets.Count() });
@@ -2145,7 +2150,7 @@ public:
 		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 		VkResult result = vkCreateDescriptorPool(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
 		if (result)
-			OutputMessage("[ descriptorPool ] ERROR\nFailed to create a descriptor pool!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ descriptorPool ] ERROR\nFailed to create a descriptor pool!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t Create(uint32_t maxSetCount, arrayRef<const VkDescriptorPoolSize> poolSizes, VkDescriptorPoolCreateFlags flags = 0) {
@@ -2196,12 +2201,12 @@ public:
 		VkResult result = vkGetQueryPoolResults(graphicsBase::Base().Device(), handle, firstQueryIndex, queryCount, dataSize, pData_dst, stride, flags);
 		if (result)
 			result > 0 ?
-			OutputMessage("[ queryPool ] WARNING\nNot all queries are available!\nError code: {}\n", int32_t(result)) :
-			OutputMessage("[ queryPool ] ERROR\nFailed to get query pool results!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ queryPool ] WARNING\nNot all queries are available!\nError code: {}\n", string_VkResult(result)) :
+			OutputMessage("[ queryPool ] ERROR\nFailed to get query pool results!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	/*Provided by VK_API_VERSION_1_2*/
-	void Reset(uint32_t firstQueryIndex, uint32_t queryCount) {
+	void Reset(uint32_t firstQueryIndex, uint32_t queryCount) const {
 		vkResetQueryPool(graphicsBase::Base().Device(), handle, firstQueryIndex, queryCount);
 	}
 	//Non-const Function
@@ -2209,7 +2214,7 @@ public:
 		createInfo.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
 		VkResult result = vkCreateQueryPool(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
 		if (result)
-			OutputMessage("[ queryPool ] ERROR\nFailed to create a query pool!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ queryPool ] ERROR\nFailed to create a query pool!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t Create(VkQueryType queryType, uint32_t queryCount, VkQueryPipelineStatisticFlags pipelineStatistics = 0 /*reserved for future use*/) {

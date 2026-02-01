@@ -652,7 +652,7 @@
         .pEnabledFeatures = &amp;physicalDeviceFeatures
     };
     <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkCreateDevice</span>(physicalDevice, &amp;deviceCreateInfo, <span class="kw">nullptr</span>, &amp;device)) {
-        outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a vulkan logical device!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a vulkan logical device!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="kw">if</span> (queueFamilyIndex_graphics != <span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>)
@@ -692,7 +692,7 @@
         deviceCreateInfo.pEnabledFeatures = &amp;physicalDeviceFeatures.features;
     deviceCreateInfo.pNext = pNext_deviceCreateInfo;
     <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkCreateDevice</span>(physicalDevice, &amp;deviceCreateInfo, <span class="kw">nullptr</span>, &amp;device)) {
-        outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a vulkan logical device!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a vulkan logical device!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="cmt">/*...*/</span>
@@ -739,7 +739,7 @@
     <span class="kw">if</span> (ppNext)
         *ppNext = <span class="kw">nullptr</span>;
     <span class="kw">if</span> (result) {
-        outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a vulkan logical device!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+        outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to create a vulkan logical device!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="cmt">/*...*/</span>

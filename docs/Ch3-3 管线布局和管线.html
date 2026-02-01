@@ -295,7 +295,7 @@
         <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO</span>;
         <span class="type">VkResult</span> result = <span class="fn">vkCreatePipelineLayout</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ pipelineLayout ] ERROR\nFailed to create a pipeline layout!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ pipelineLayout ] ERROR\nFailed to create a pipeline layout!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
 };
@@ -624,7 +624,7 @@
     <br>
     利用上一次执行程序时的管线缓存信息可能可以加快对管线的创建，这么做可以加快程序的启动速度，尽管程序初始化的时间大都不是花在创建管线上。也可以在本次运行中，利用首次创建某条管线时的信息来加快重建管线，就这种情况而言，你也可以从旧管线衍生出新管线。
     <br>
-    我个人认为<span class="type">VkPipelineCache</span>的作用比较鸡肋，本套教程中不作具体讲解，如果你有兴趣使用，请自行阅读官方标准，这里我简单提要：
+    我个人认为<span class="type">VkPipelineCache</span>的作用比较鸡肋（确实鸡肋，所以后续推出了具有类似作用的<span class="type">VkPipelineBinaryKHR</span>，更为实现特定但更高效），本套教程中不作具体讲解，如果你有兴趣使用，请自行阅读官方标准，这里我简单提要：
 </p>
 <ul>
     <li>
@@ -1821,7 +1821,7 @@
         </tr>
         <tr class="row-odd">
             <td><p><span class="type">uint32_t</span> attachmentCount</p></td>
-            <td><p>混色方式的数量</p></td>
+            <td><p>混色方式的数量，若不打算动态设置混色方式（该功能由扩展提供，说明略），则应与颜色附件的数量一致</p></td>
         </tr>
         <tr class="row-even">
             <td><p><span class="kw">const</span> <span class="type">VkPipelineColorBlendAttachmentState</span>* pAttachments</p></td>
@@ -2107,7 +2107,7 @@
     </li>
 </ul>
 <p>
-    关于混色方式的实际使用案例，参见<a class="reference internal" href="Ch8-4%20%E9%A2%84%E4%B9%98%E9%80%8F%E6%98%8E%E5%BA%A6.html">Ch8-4 预乘Alpha</a>。
+    关于混色方式的实际使用案例，参见<a class="reference internal" href="Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html">Ch8-4 预乘Alpha</a>。
 </p></section>
 <section id="vkpipelinedynamicstatecreateinfo">
 <h4>VkPipelineDynamicStateCreateInfo<a class="headerlink" href="#vkpipelinedynamicstatecreateinfo" title="Permalink to this heading"></a></h4>
@@ -2500,14 +2500,14 @@
         <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO</span>;
         <span class="type">VkResult</span> result = <span class="fn">vkCreateGraphicsPipelines</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), <span class="mcr">VK_NULL_HANDLE</span>, 1, &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ pipeline ] ERROR\nFailed to create a graphics pipeline!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ pipeline ] ERROR\nFailed to create a graphics pipeline!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkComputePipelineCreateInfo</span>&amp; <span class="par">createInfo</span>) {
         <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO</span>;
         <span class="type">VkResult</span> result = <span class="fn">vkCreateComputePipelines</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), <span class="mcr">VK_NULL_HANDLE</span>, 1, &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ pipeline ] ERROR\nFailed to create a compute pipeline!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ pipeline ] ERROR\nFailed to create a compute pipeline!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
 };

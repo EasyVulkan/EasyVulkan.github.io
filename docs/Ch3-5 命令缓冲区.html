@@ -448,7 +448,7 @@
         };
         <span class="type">VkResult</span> result = <span class="fn">vkBeginCommandBuffer</span>(handle, &amp;beginInfo);
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandBuffer ] ERROR\nFailed to begin a command buffer!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandBuffer ] ERROR\nFailed to begin a command buffer!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="type">result_t</span> <span class="fn">Begin</span>(<span class="type">VkCommandBufferUsageFlags</span> <span class="par">usageFlags</span> = 0) <span class="kw">const</span> {
@@ -458,13 +458,13 @@
         };
         <span class="type">VkResult</span> result = <span class="fn">vkBeginCommandBuffer</span>(handle, &amp;beginInfo);
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandBuffer ] ERROR\nFailed to begin a command buffer!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandBuffer ] ERROR\nFailed to begin a command buffer!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="type">result_t</span> <span class="fn">End</span>() <span class="kw">const</span> {
         <span class="type">VkResult</span> result = <span class="fn">vkEndCommandBuffer</span>(handle);
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandBuffer ] ERROR\nFailed to end a command buffer!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandBuffer ] ERROR\nFailed to end a command buffer!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
 };
@@ -751,7 +751,7 @@
         };
         <span class="type">VkResult</span> result = <span class="fn">vkAllocateCommandBuffers</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;allocateInfo, <span class="par">buffers</span>.<span class="fn">Pointer</span>());
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandPool ] ERROR\nFailed to allocate command buffers!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandPool ] ERROR\nFailed to allocate command buffers!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="type">result_t</span> <span class="fn">AllocateBuffers</span>(<span class="type">arrayRef</span>&lt;<span class="type">commandBuffer</span>&gt; <span class="par">buffers</span>, <span class="type">VkCommandBufferLevel</span> <span class="par">level</span> = <span class="enum">VK_COMMAND_BUFFER_LEVEL_PRIMARY</span>) <span class="kw">const</span> {
@@ -771,7 +771,7 @@
         <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO</span>;
         <span class="type">VkResult</span> result = <span class="fn">vkCreateCommandPool</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="enum">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandPool ] ERROR\nFailed to create a command pool!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ commandPool ] ERROR\nFailed to create a command pool!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
     <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">uint32_t</span> <span class="par">queueFamilyIndex</span>, <span class="type">VkCommandPoolCreateFlags</span> <span class="par">flags</span> = 0) {

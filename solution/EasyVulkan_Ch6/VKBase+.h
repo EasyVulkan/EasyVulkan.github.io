@@ -44,7 +44,7 @@ namespace vulkan {
 		const VkFormatProperties& FormatProperties(VkFormat format) const {
 #ifndef NDEBUG
 			if (uint32_t(format) >= std::size(formatInfos_v1_0))
-				outStream << std::format("[ FormatProperties ] ERROR\nThis function only supports definite formats provided by VK_VERSION_1_0.\n"),
+				outStream << std::format("[ FormatProperties ] ERROR\nThis function only supports definite formats provided by VK_API_VERSION_1_0.\n"),
 				abort();
 #endif
 			return formatProperties[format];
@@ -90,7 +90,7 @@ namespace vulkan {
 	constexpr formatInfo FormatInfo(VkFormat format) {
 #ifndef NDEBUG
 		if (uint32_t(format) >= std::size(formatInfos_v1_0))
-			outStream << std::format("[ FormatInfo ] ERROR\nThis function only supports definite formats provided by VK_VERSION_1_0.\n"),
+			outStream << std::format("[ FormatInfo ] ERROR\nThis function only supports definite formats provided by VK_API_VERSION_1_0.\n"),
 			abort();
 #endif
 		return formatInfos_v1_0[format];
@@ -241,13 +241,13 @@ namespace vulkan {
 			};
 			VkResult result = vkSignalSemaphore(graphicsBase::Base().Device(), &signalInfo);
 			if (result)
-				outStream << std::format("[ timelineSemaphore ] ERROR\nFailed to signal the semaphore!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ timelineSemaphore ] ERROR\nFailed to signal the semaphore!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		result_t GetValue(uint64_t& value) const {
 			VkResult result = vkGetSemaphoreCounterValue(graphicsBase::Base().Device(), *this, &value);
 			if (result)
-				outStream << std::format("[ timelineSemaphore ] ERROR\nFailed to get the counter value of the semaphore!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ timelineSemaphore ] ERROR\nFailed to get the counter value of the semaphore!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		//Non-const Function
@@ -280,7 +280,7 @@ namespace vulkan {
 			};
 			VkResult result = vkWaitSemaphores(graphicsBase::Base().Device(), &waitInfo, UINT64_MAX);
 			if (result)
-				outStream <<std::format("[ timelineSemaphore ] ERROR\nFailed to wait for semaphores!\nError code: {}\n", int32_t(result));
+				outStream <<std::format("[ timelineSemaphore ] ERROR\nFailed to wait for semaphores!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 	};
@@ -292,7 +292,7 @@ namespace vulkan {
 			stagingBuffer* Create() {
 				static stagingBuffer stagingBuffer;
 				graphicsBase::Base().AddCallback_DestroyDevice([] { stagingBuffer.~stagingBuffer(); });
-				return std::addressof(stagingBuffer);
+				return &stagingBuffer;
 			}
 		public:
 			stagingBuffer_MainThread_t() : pointer(Create()) {}

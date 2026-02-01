@@ -126,18 +126,18 @@ namespace vulkan {
 		//Non-const Function
 		result_t CreateSwapchain_Internal() {
 			if (VkResult result = vkCreateSwapchainKHR(device, &swapchainCreateInfo, nullptr, &swapchain)) {
-				outStream << std::format("[ graphicsBase ] ERROR\nFailed to create a swapchain!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ graphicsBase ] ERROR\nFailed to create a swapchain!\nError code: {}\n", string_VkResult(result));
 				return result;
 			}
 
 			uint32_t swapchainImageCount;
 			if (VkResult result = vkGetSwapchainImagesKHR(device, swapchain, &swapchainImageCount, nullptr)) {
-				outStream << std::format("[ graphicsBase ] ERROR\nFailed to get the count of swapchain images!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ graphicsBase ] ERROR\nFailed to get the count of swapchain images!\nError code: {}\n", string_VkResult(result));
 				return result;
 			}
 			swapchainImages.resize(swapchainImageCount);
 			if (VkResult result = vkGetSwapchainImagesKHR(device, swapchain, &swapchainImageCount, swapchainImages.data())) {
-				outStream << std::format("[ graphicsBase ] ERROR\nFailed to get swapchain images!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ graphicsBase ] ERROR\nFailed to get swapchain images!\nError code: {}\n", string_VkResult(result));
 				return result;
 			}
 
@@ -152,7 +152,7 @@ namespace vulkan {
 			for (size_t i = 0; i < swapchainImageCount; i++) {
 				imageViewCreateInfo.image = swapchainImages[i];
 				if (VkResult result = vkCreateImageView(device, &imageViewCreateInfo, nullptr, &swapchainImageViews[i])) {
-					outStream << std::format("[ graphicsBase ] ERROR\nFailed to create a swapchain image view!\nError code: {}\n", int32_t(result));
+					outStream << std::format("[ graphicsBase ] ERROR\nFailed to create a swapchain image view!\nError code: {}\n", string_VkResult(result));
 					return result;
 				}
 			}
@@ -174,7 +174,7 @@ namespace vulkan {
 					supportCompute = enableComputeQueue && queueFamilyPropertieses[i].queueFlags & VK_QUEUE_COMPUTE_BIT;
 				if (surface)
 					if (VkResult result = vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, surface, &supportPresentation)) {
-						outStream << std::format("[ graphicsBase ] ERROR\nFailed to determine if the queue family supports presentation!\nError code: {}\n", int32_t(result));
+						outStream << std::format("[ graphicsBase ] ERROR\nFailed to determine if the queue family supports presentation!\nError code: {}\n", string_VkResult(result));
 						return result;
 					}
 				if (supportGraphics && supportCompute) {
@@ -231,7 +231,7 @@ namespace vulkan {
 			if (vkCreateDebugUtilsMessenger) {
 				VkResult result = vkCreateDebugUtilsMessenger(instance, &debugUtilsMessengerCreateInfo, nullptr, &debugMessenger);
 				if (result)
-					outStream << std::format("[ graphicsBase ] ERROR\nFailed to create a debug messenger!\nError code: {}\n", int32_t(result));
+					outStream << std::format("[ graphicsBase ] ERROR\nFailed to create a debug messenger!\nError code: {}\n", string_VkResult(result));
 				return result;
 			}
 			outStream << std::format("[ graphicsBase ] ERROR\nFailed to get the function pointer of vkCreateDebugUtilsMessengerEXT!\n");
@@ -389,14 +389,14 @@ namespace vulkan {
 				.ppEnabledExtensionNames = instanceExtensions.data()
 			};
 			if (VkResult result = vkCreateInstance(&instanceCreateInfo, nullptr, &instance)) {
-				outStream << std::format("[ graphicsBase ] ERROR\nFailed to create a vulkan instance!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ graphicsBase ] ERROR\nFailed to create a vulkan instance!\nError code: {}\n", string_VkResult(result));
 				return result;
 			}
 			outStream << std::format(
 				"Vulkan API Version: {}.{}.{}\n",
-				VK_VERSION_MAJOR(apiVersion),
-				VK_VERSION_MINOR(apiVersion),
-				VK_VERSION_PATCH(apiVersion));
+				VK_API_VERSION_MAJOR(apiVersion),
+				VK_API_VERSION_MINOR(apiVersion),
+				VK_API_VERSION_PATCH(apiVersion));
 			if constexpr (ENABLE_DEBUG_MESSENGER)
 				CreateDebugMessenger();
 			return VK_SUCCESS;
@@ -411,7 +411,7 @@ namespace vulkan {
 			if (layerCount) {
 				availableLayers.resize(layerCount);
 				if (VkResult result = vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data())) {
-					outStream << std::format("[ graphicsBase ] ERROR\nFailed to enumerate instance layer properties!\nError code: {}\n", int32_t(result));
+					outStream << std::format("[ graphicsBase ] ERROR\nFailed to enumerate instance layer properties!\nError code: {}\n", string_VkResult(result));
 					return result;
 				}
 				for (auto& i : layersToCheck) {
@@ -442,7 +442,7 @@ namespace vulkan {
 			if (extensionCount) {
 				availableExtensions.resize(extensionCount);
 				if (VkResult result = vkEnumerateInstanceExtensionProperties(layerName, &extensionCount, availableExtensions.data())) {
-					outStream << std::format("[ graphicsBase ] ERROR\nFailed to enumerate instance extension properties!\nError code: {}\n", int32_t(result));
+					outStream << std::format("[ graphicsBase ] ERROR\nFailed to enumerate instance extension properties!\nError code: {}\n", string_VkResult(result));
 					return result;
 				}
 				for (auto& i : extensionsToCheck) {
@@ -479,7 +479,7 @@ namespace vulkan {
 		result_t GetPhysicalDevices() {
 			uint32_t deviceCount;
 			if (VkResult result = vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr)) {
-				outStream << std::format("[ graphicsBase ] ERROR\nFailed to get the count of physical devices!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ graphicsBase ] ERROR\nFailed to get the count of physical devices!\nError code: {}\n", string_VkResult(result));
 				return result;
 			}
 			if (!deviceCount)
@@ -488,7 +488,7 @@ namespace vulkan {
 			availablePhysicalDevices.resize(deviceCount);
 			VkResult result = vkEnumeratePhysicalDevices(instance, &deviceCount, availablePhysicalDevices.data());
 			if (result)
-				outStream << std::format("[ graphicsBase ] ERROR\nFailed to enumerate physical devices!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ graphicsBase ] ERROR\nFailed to enumerate physical devices!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		result_t DeterminePhysicalDevice(uint32_t deviceIndex = 0, bool enableGraphicsQueue = true, bool enableComputeQueue = true) {
@@ -566,7 +566,7 @@ namespace vulkan {
 				.pEnabledFeatures = &physicalDeviceFeatures
 			};
 			if (VkResult result = vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &device)) {
-				outStream << std::format("[ graphicsBase ] ERROR\nFailed to create a vulkan logical device!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ graphicsBase ] ERROR\nFailed to create a vulkan logical device!\nError code: {}\n", string_VkResult(result));
 				return result;
 			}
 			if (queueFamilyIndex_graphics != VK_QUEUE_FAMILY_IGNORED)
@@ -593,7 +593,7 @@ namespace vulkan {
 			if (extensionCount) {
 				availableExtensions.resize(extensionCount);
 				if (VkResult result = vkEnumerateDeviceExtensionProperties(physicalDevice, layerName, &extensionCount, availableExtensions.data())) {
-					outStream << std::format("[ graphicsBase ] ERROR\nFailed to enumerate device extension properties!\nError code: {}\n", int32_t(result));
+					outStream << std::format("[ graphicsBase ] ERROR\nFailed to enumerate device extension properties!\nError code: {}\n", string_VkResult(result));
 					return result;
 				}
 				for (auto& i : extensionsToCheck) {
@@ -619,7 +619,7 @@ namespace vulkan {
 		result_t GetSurfaceFormats() {
 			uint32_t surfaceFormatCount;
 			if (VkResult result = vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surfaceFormatCount, nullptr)) {
-				outStream << std::format("[ graphicsBase ] ERROR\nFailed to get the count of surface formats!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ graphicsBase ] ERROR\nFailed to get the count of surface formats!\nError code: {}\n", string_VkResult(result));
 				return result;
 			}
 			if (!surfaceFormatCount)
@@ -628,7 +628,7 @@ namespace vulkan {
 			availableSurfaceFormats.resize(surfaceFormatCount);
 			VkResult result = vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surfaceFormatCount, availableSurfaceFormats.data());
 			if (result)
-				outStream << std::format("[ graphicsBase ] ERROR\nFailed to get surface formats!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ graphicsBase ] ERROR\nFailed to get surface formats!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		result_t SetSurfaceFormat(VkSurfaceFormatKHR surfaceFormat) {
@@ -661,7 +661,7 @@ namespace vulkan {
 			//Get surface capabilities
 			VkSurfaceCapabilitiesKHR surfaceCapabilities = {};
 			if (VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &surfaceCapabilities)) {
-				outStream << std::format("[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n", string_VkResult(result));
 				return result;
 			}
 			//Set image count
@@ -709,7 +709,7 @@ namespace vulkan {
 			//Get surface present modes
 			uint32_t surfacePresentModeCount;
 			if (VkResult result = vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &surfacePresentModeCount, nullptr)) {
-				outStream << std::format("[ graphicsBase ] ERROR\nFailed to get the count of surface present modes!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ graphicsBase ] ERROR\nFailed to get the count of surface present modes!\nError code: {}\n", string_VkResult(result));
 				return result;
 			}
 			if (!surfacePresentModeCount)
@@ -717,7 +717,7 @@ namespace vulkan {
 				abort();
 			std::vector<VkPresentModeKHR> surfacePresentModes(surfacePresentModeCount);
 			if (VkResult result = vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &surfacePresentModeCount, surfacePresentModes.data())) {
-				outStream << std::format("[ graphicsBase ] ERROR\nFailed to get surface present modes!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ graphicsBase ] ERROR\nFailed to get surface present modes!\nError code: {}\n", string_VkResult(result));
 				return result;
 			}
 			//Set present mode to mailbox if available and necessary
@@ -764,7 +764,7 @@ namespace vulkan {
 					for (auto& i : swapchainImageViews)
 						if (i)
 							vkDestroyImageView(device, i, nullptr);
-					swapchainImageViews.resize(0);
+					swapchainImageViews.clear();
 					vkDestroySwapchainKHR(device, swapchain, nullptr);
 					swapchain = VK_NULL_HANDLE;
 					swapchainCreateInfo = {};
@@ -778,7 +778,7 @@ namespace vulkan {
 		result_t RecreateSwapchain() {
 			VkSurfaceCapabilitiesKHR surfaceCapabilities = {};
 			if (VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &surfaceCapabilities)) {
-				outStream << std::format("[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n", string_VkResult(result));
 				return result;
 			}
 			if (surfaceCapabilities.currentExtent.width == 0 ||
@@ -791,7 +791,7 @@ namespace vulkan {
 				queue_graphics != queue_presentation)
 				result = vkQueueWaitIdle(queue_presentation);
 			if (result) {
-				outStream << std::format("[ graphicsBase ] ERROR\nFailed to wait for the queue to be idle!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ graphicsBase ] ERROR\nFailed to wait for the queue to be idle!\nError code: {}\n", string_VkResult(result));
 				return result;
 			}
 
@@ -799,7 +799,7 @@ namespace vulkan {
 			for (auto& i : swapchainImageViews)
 				if (i)
 					vkDestroyImageView(device, i, nullptr);
-			swapchainImageViews.resize(0);
+			swapchainImageViews.clear();
 			if (result = CreateSwapchain_Internal())
 				return result;
 			ExecuteCallbacks(callbacks_createSwapchain);
@@ -808,7 +808,7 @@ namespace vulkan {
 		result_t WaitIdle() const {
 			VkResult result = vkDeviceWaitIdle(device);
 			if (result)
-				outStream << std::format("[ graphicsBase ] ERROR\nFailed to wait for the device to be idle!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ graphicsBase ] ERROR\nFailed to wait for the device to be idle!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		result_t SwapImage(VkSemaphore semaphore_imageIsAvailable) {
@@ -825,7 +825,7 @@ namespace vulkan {
 						return result;
 					break;
 				default:
-					outStream << std::format("[ graphicsBase ] ERROR\nFailed to acquire the next image!\nError code: {}\n", int32_t(result));
+					outStream << std::format("[ graphicsBase ] ERROR\nFailed to acquire the next image!\nError code: {}\n", string_VkResult(result));
 					return result;
 				}
 			return VK_SUCCESS;
@@ -834,7 +834,7 @@ namespace vulkan {
 			submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 			VkResult result = vkQueueSubmit(queue_graphics, 1, &submitInfo, fence);
 			if (result)
-				outStream << std::format("[ graphicsBase ] ERROR\nFailed to submit the command buffer!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ graphicsBase ] ERROR\nFailed to submit the command buffer!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		result_t SubmitCommandBuffer_Graphics(VkCommandBuffer commandBuffer,
@@ -864,7 +864,7 @@ namespace vulkan {
 			submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 			VkResult result = vkQueueSubmit(queue_compute, 1, &submitInfo, fence);
 			if (result)
-				outStream << std::format("[ graphicsBase ] ERROR\nFailed to submit the command buffer!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ graphicsBase ] ERROR\nFailed to submit the command buffer!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		result_t SubmitCommandBuffer_Compute(VkCommandBuffer commandBuffer, VkFence fence = VK_NULL_HANDLE) const {
@@ -891,7 +891,7 @@ namespace vulkan {
 				submitInfo.pSignalSemaphores = &semaphore_ownershipIsTransfered;
 			VkResult result = vkQueueSubmit(queue_presentation, 1, &submitInfo, fence);
 			if (result)
-				outStream << std::format("[ graphicsBase ] ERROR\nFailed to submit the presentation command buffer!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ graphicsBase ] ERROR\nFailed to submit the presentation command buffer!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		void CmdTransferImageOwnership(VkCommandBuffer commandBuffer) const {
@@ -918,7 +918,7 @@ namespace vulkan {
 			case VK_ERROR_OUT_OF_DATE_KHR:
 				return RecreateSwapchain();
 			default:
-				outStream << std::format("[ graphicsBase ] ERROR\nFailed to queue the image for presentation!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ graphicsBase ] ERROR\nFailed to queue the image for presentation!\nError code: {}\n", string_VkResult(result));
 				return result;
 			}
 		}
@@ -961,7 +961,7 @@ namespace vulkan {
 			createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 			VkResult result = vkCreateSemaphore(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
 			if (result)
-				outStream << std::format("[ semaphore ] ERROR\nFailed to create a semaphore!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ semaphore ] ERROR\nFailed to create a semaphore!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		result_t Create(/*reserved for future use*/) {
@@ -988,13 +988,13 @@ namespace vulkan {
 		result_t Wait() const {
 			VkResult result = vkWaitForFences(graphicsBase::Base().Device(), 1, &handle, false, UINT64_MAX);
 			if (result)
-				outStream << std::format("[ fence ] ERROR\nFailed to wait for the fence!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ fence ] ERROR\nFailed to wait for the fence!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		result_t Reset() const {
 			VkResult result = vkResetFences(graphicsBase::Base().Device(), 1, &handle);
 			if (result)
-				outStream << std::format("[ fence ] ERROR\nFailed to reset the fence!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ fence ] ERROR\nFailed to reset the fence!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		result_t WaitAndReset() const {
@@ -1005,7 +1005,7 @@ namespace vulkan {
 		result_t Status() const {
 			VkResult result = vkGetFenceStatus(graphicsBase::Base().Device(), handle);
 			if (result < 0)
-				outStream << std::format("[ fence ] ERROR\nFailed to get the status of the fence!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ fence ] ERROR\nFailed to get the status of the fence!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		//Non-const Function
@@ -1013,7 +1013,7 @@ namespace vulkan {
 			createInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 			VkResult result = vkCreateFence(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
 			if (result)
-				outStream << std::format("[ fence ] ERROR\nFailed to create a fence!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ fence ] ERROR\nFailed to create a fence!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		result_t Create(VkFenceCreateFlags flags = 0) {
@@ -1059,7 +1059,7 @@ namespace vulkan {
 			createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 			VkResult result = vkCreateShaderModule(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
 			if (result)
-				outStream << std::format("[ shader ] ERROR\nFailed to create a shader module!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ shader ] ERROR\nFailed to create a shader module!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		result_t Create(const char* filepath /*reserved for future use*/) {
@@ -1100,7 +1100,7 @@ namespace vulkan {
 			createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 			VkResult result = vkCreatePipelineLayout(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
 			if (result)
-				outStream << std::format("[ pipelineLayout ] ERROR\nFailed to create a pipeline layout!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ pipelineLayout ] ERROR\nFailed to create a pipeline layout!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 	};
@@ -1124,14 +1124,14 @@ namespace vulkan {
 			createInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 			VkResult result = vkCreateGraphicsPipelines(graphicsBase::Base().Device(), VK_NULL_HANDLE, 1, &createInfo, nullptr, &handle);
 			if (result)
-				outStream << std::format("[ pipeline ] ERROR\nFailed to create a graphics pipeline!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ pipeline ] ERROR\nFailed to create a graphics pipeline!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		result_t Create(VkComputePipelineCreateInfo& createInfo) {
 			createInfo.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
 			VkResult result = vkCreateComputePipelines(graphicsBase::Base().Device(), VK_NULL_HANDLE, 1, &createInfo, nullptr, &handle);
 			if (result)
-				outStream << std::format("[ pipeline ] ERROR\nFailed to create a compute pipeline!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ pipeline ] ERROR\nFailed to create a compute pipeline!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 	};
@@ -1176,7 +1176,7 @@ namespace vulkan {
 			createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
 			VkResult result = vkCreateRenderPass(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
 			if (result)
-				outStream << std::format("[ renderPass ] ERROR\nFailed to create a render pass!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ renderPass ] ERROR\nFailed to create a render pass!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 	};
@@ -1197,7 +1197,7 @@ namespace vulkan {
 			createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 			VkResult result = vkCreateFramebuffer(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
 			if (result)
-				outStream << std::format("[ framebuffer ] ERROR\nFailed to create a framebuffer!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ framebuffer ] ERROR\nFailed to create a framebuffer!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 	};
@@ -1221,7 +1221,7 @@ namespace vulkan {
 			};
 			VkResult result = vkBeginCommandBuffer(handle, &beginInfo);
 			if (result)
-				outStream << std::format("[ commandBuffer ] ERROR\nFailed to begin a command buffer!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ commandBuffer ] ERROR\nFailed to begin a command buffer!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		result_t Begin(VkCommandBufferUsageFlags usageFlags = 0) const {
@@ -1231,13 +1231,13 @@ namespace vulkan {
 			};
 			VkResult result = vkBeginCommandBuffer(handle, &beginInfo);
 			if (result)
-				outStream << std::format("[ commandBuffer ] ERROR\nFailed to begin a command buffer!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ commandBuffer ] ERROR\nFailed to begin a command buffer!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		result_t End() const {
 			VkResult result = vkEndCommandBuffer(handle);
 			if (result)
-				outStream << std::format("[ commandBuffer ] ERROR\nFailed to end a command buffer!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ commandBuffer ] ERROR\nFailed to end a command buffer!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 	};
@@ -1266,7 +1266,7 @@ namespace vulkan {
 			};
 			VkResult result = vkAllocateCommandBuffers(graphicsBase::Base().Device(), &allocateInfo, buffers.Pointer());
 			if (result)
-				outStream << std::format("[ commandPool ] ERROR\nFailed to allocate command buffers!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ commandPool ] ERROR\nFailed to allocate command buffers!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		result_t AllocateBuffers(arrayRef<commandBuffer> buffers, VkCommandBufferLevel level = VK_COMMAND_BUFFER_LEVEL_PRIMARY) const {
@@ -1286,7 +1286,7 @@ namespace vulkan {
 			createInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 			VkResult result = vkCreateCommandPool(graphicsBase::Base().Device(), &createInfo, nullptr, &handle);
 			if (result)
-				outStream << std::format("[ commandPool ] ERROR\nFailed to create a command pool!\nError code: {}\n", int32_t(result));
+				outStream << std::format("[ commandPool ] ERROR\nFailed to create a command pool!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
 		result_t Create(uint32_t queueFamilyIndex, VkCommandPoolCreateFlags flags = 0) {

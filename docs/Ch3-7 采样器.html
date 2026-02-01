@@ -306,7 +306,7 @@
         <span class="par">createInfo</span>.sType = <span class="enum">VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO</span>;
         <span class="type">VkResult</span> result = <span class="fn">vkCreateSampler</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), &amp;<span class="par">createInfo</span>, <span class="kw">nullptr</span>, &amp;handle);
         <span class="kw">if</span> (result)
-            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ sampler ] ERROR\nFailed to create a sampler!\nError code: {}\n&quot;</span>, <span class="type">int32_t</span>(result));
+            outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ sampler ] ERROR\nFailed to create a sampler!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
 };
@@ -344,7 +344,7 @@
     <br>
     但是邻近滤波是没有颜色过渡的，所以若不是编写像素风游戏或图像处理软件，通常你会希望使用<span class="enum">VK_FILTER_LINER</span>。
     <br>
-    值得注意的是，如果你打算使用线性插值，且被渲染的图像有透明区域，那么被渲染的图像是否为预乘透明度会导致不同的结果（这在白色背景上尤为明显），具体参见<a class="reference internal" href="Ch8-4%20%E9%A2%84%E4%B9%98%E9%80%8F%E6%98%8E%E5%BA%A6.html">Ch8-4 预乘Alpha</a>。
+    值得注意的是，如果你打算使用线性插值，且被渲染的图像有透明区域，那么被渲染的图像是否为预乘透明度会导致不同的结果（这在白色背景上尤为明显），具体参见<a class="reference internal" href="Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html">Ch8-4 预乘Alpha</a>。
     <br>
     图中右下角的效果可能显得仍旧不够平滑，这可以通过使用sRGB格式的颜色附件解决，具体参见<a class="reference internal" href="Ch8-5%20sRGB%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%BC%80%E5%90%AFHDR.html">Ch8-5 sRGB色彩空间与开启HDR</a>。
 </p>

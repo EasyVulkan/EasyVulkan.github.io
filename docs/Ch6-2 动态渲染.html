@@ -152,7 +152,15 @@
     渲染通道对象在子通道开始和结束时会执行子通道依赖，并进行图像内存布局转换。而在动态渲染中，原先子通道依赖的作用和图像内存布局转换得通过<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#pipeline-barrier">图像内存屏障</a>来实行。
 </p>
 <p>
+    <strong>Vulkan 1.4之前：</strong>
+    <br>
     动态渲染相比渲染通道对象有一个显著劣势：不能使用输入附件。而输入附件的设备内存往往可以被指定为<a class="reference internal" href="Ch3-2%20%E5%9B%BE%E5%83%8F%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.html#id18">惰性分配</a>以优化内存开销。
+    <br>
+    <strong>Vulkan 1.4起：</strong>
+    <br>
+    可以用<span class="fn">vkCmdSetRenderingInputAttachmentIndices</span>(...)设置输入附件。
+    <br>
+    自Vulkan1.4起，动态渲染已经在API层面上全面替代渲染通道对象（但部分硬件厂的驱动还不支持），本套教程预计也会相应进行更新。
 </p>
 <div class="admonition note">
     <p class="admonition-title">Note</p>

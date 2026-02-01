@@ -50,7 +50,7 @@ bool InitializeWindow(VkExtent2D size, bool fullScreen = false, bool isResizable
 
 	VkSurfaceKHR surface = VK_NULL_HANDLE;
 	if (VkResult result = glfwCreateWindowSurface(vulkan::graphicsBase::Base().Instance(), pWindow, nullptr, &surface)) {
-		std::cout << std::format("[ InitializeWindow ] ERROR\nFailed to create a window surface!\nError code: {}\n", int32_t(result));
+		std::cout << std::format("[ InitializeWindow ] ERROR\nFailed to create a window surface!\nError code: {}\n", string_VkResult(result));
 		glfwTerminate();
 		return false;
 	}

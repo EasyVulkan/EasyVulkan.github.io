@@ -253,13 +253,13 @@ public:
 		};
 		VkResult result = vkSignalSemaphore(graphicsBase::Base().Device(), &signalInfo);
 		if (result)
-			OutputMessage("[ timelineSemaphore ] ERROR\nFailed to signal the semaphore!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ timelineSemaphore ] ERROR\nFailed to signal the semaphore!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	result_t GetValue(uint64_t& value) const {
 		VkResult result = vkGetSemaphoreCounterValue(graphicsBase::Base().Device(), *this, &value);
 		if (result)
-			OutputMessage("[ timelineSemaphore ] ERROR\nFailed to get the counter value of the semaphore!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ timelineSemaphore ] ERROR\nFailed to get the counter value of the semaphore!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 	//Non-const Function
@@ -292,7 +292,7 @@ public:
 		};
 		VkResult result = vkWaitSemaphores(graphicsBase::Base().Device(), &waitInfo, UINT64_MAX);
 		if (result)
-			OutputMessage("[ timelineSemaphore ] ERROR\nFailed to wait for semaphores!\nError code: {}\n", int32_t(result));
+			OutputMessage("[ timelineSemaphore ] ERROR\nFailed to wait for semaphores!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
 };
@@ -306,7 +306,7 @@ class stagingBuffer {
 		stagingBuffer* Create() {
 			static stagingBuffer stagingBuffer;
 			graphicsBase::Base().AddCallback_DestroyDevice([] { stagingBuffer.~stagingBuffer(); });
-			return std::addressof(stagingBuffer);
+			return &stagingBuffer;
 		}
 	public:
 		stagingBuffer_MainThread_t() : pointer(Create()) {}
