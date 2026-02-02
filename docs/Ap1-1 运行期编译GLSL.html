@@ -146,15 +146,13 @@
   <section id="ap1-1-glsl">
 <h1>Ap1-1 运行期编译GLSL<a class="headerlink" href="#ap1-1-glsl" title="Permalink to this heading"></a></h1>
 <p>
-    你是否已经厌倦了每次写完GLSL着色器代码，都得在文件浏览器的地址栏中复制入<code>glslc.exe路径 着色器文件路径 -c</code>这样的语句？
+    你是否已经厌倦了每次写完GLSL着色器代码，都得在文件浏览器的地址栏中复制入<code>glslc 着色器文件路径 -c</code>这样的语句？
     <br>
     你可以用一些简单的C++代码来写个exe放桌面上，使得着色器拖上去就能编译：
 </p>
 <pre class="code">
 <span class="pragma">#include</span> <span class="str">&lt;iostream&gt;</span>
 <span class="pragma">#include</span> <span class="str">&lt;sstream&gt;</span>
-
-<span class="pragma">#define</span> <span class="mcr">COMPILER</span> <span class="str">&quot;glslc.exe路径&quot;</span>
 
 <span class="kw">int</span> <span class="fn">main</span>(<span class="kw">int</span> <span class="par">argc</span>, <span class="kw">char</span>** <span class="par">argv</span>) {
     <span class="cmt">//argv[0]是程序本身的路径，argv[1]开始是拖上去的文件的路径</span>
@@ -163,7 +161,7 @@
             std::cout &lt;&lt; <span class="str">&quot;Compile file: &quot;</span> &lt;&lt; <span class="par">argv</span>[count] &lt;&lt; std::endl;
             <span class="cmt">//构造命令行语句</span>
             std::<span class="type">stringstream</span> command;
-            command &lt;&lt; <span class="mcr">COMPILER</span> &lt;&lt; <span class="str">' '</span> &lt;&lt; <span class="par">argv</span>[count] &lt;&lt; <span class="str">&quot; -c&quot</span>;
+            command &lt;&lt; <span class="str">"glslc "</span> &lt;&lt; <span class="par">argv</span>[count] &lt;&lt; <span class="str">&quot; -c&quot</span>;
             <span class="cmt">//使用system(...)来执行命令行语句</span>
             <span class="fn">system</span>(command.<span class="fn">str</span>().<span class="fn">c_str</span>());
         }
@@ -176,6 +174,9 @@
     <br>
     而且，也可能会有需要根据具体情况，动态地生成着色器代码，然后再编译的需求。
     <br>
+    或者，也许你会想要实现一键热重载。
+</p>
+<p>
     出于以上考虑，这一节对如何在运行期编译GLSL进行简单介绍。
 </p><section id="shaderc">
 <h2>shaderc<a class="headerlink" href="#shaderc" title="Permalink to this heading"></a></h2>

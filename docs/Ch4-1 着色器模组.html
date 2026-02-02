@@ -630,19 +630,30 @@ file.<span class="fn">close</span>();
     指定文件名：
 </p>
 <pre class="code">
-glslc.exe路径 着色器文件路径 -o 输出文件路径
+glslc 着色器文件路径 -o 输出文件路径
 <span class="cmt">//若显式指定着色器对应的阶段名称</span>
-glslc.exe路径 着色器文件路径 -fshader-stage=阶段名称 -o 输出文件路径
+glslc 着色器文件路径 -fshader-stage=阶段名称 -o 输出文件路径
 </pre>
 <p>
     自动命名：
 </p>
 <pre class="code">
-glslc.exe路径 着色器文件路径 -c
+glslc 着色器文件路径 -c
 <span class="cmt">//若显式指定着色器对应的阶段名称</span>
-glslc.exe路径 着色器文件路径 -fshader-stage=阶段名称 -c
+glslc 着色器文件路径 -fshader-stage=阶段名称 -c
 </pre>
 <ul>
+    <li>
+        <p>
+            其中<span class="mcr">glslc</span>是安装Vulkan SDK时设置的环境变量，会在执行命令时被替换成<span class="path">glslc.exe</span>的具体路径。<br>
+            这便于你写一个简单的拖放程序用于编译（见<a class="reference internal" href="Ap1-1%20%E8%BF%90%E8%A1%8C%E6%9C%9F%E7%BC%96%E8%AF%91GLSL.html">Ap1-1</a>）而不必在每次安装新版本的SDK后修改代码中的版本号。
+        </p>
+    </li>
+    <li>
+        <p>
+            着色器文件路径中不能有空格。
+        </p>
+    </li>
     <li>
         <p>
             其实<code>-fshader-stage=阶段名称</code>和<code>-c</code>或<code>-o 输出文件路径</code>之间不分先后。

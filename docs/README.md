@@ -6,9 +6,14 @@
 1.捉虫/答疑，发Issue，开新的，或者发在[【长期】 捉虫/答疑集中贴](https://github.com/EasyVulkan/EasyVulkan.github.io/issues/7)。<br>
 2.反馈/交流/答疑，发Discussion。
 
-2025.08.27 各种细枝末节的更新，代码中Ch8的[VKBase.h](https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch8/VKBase.h)和[VKBase+.h](https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch8/VKBase+.h)相比先前更接近我个人使用的版本。<br>
-2025.05.07 [Ch4-4 几何着色器](https://easyvulkan.github.io/Ch4-4%20%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8.html)完成。<br>
 2024.04.02 代码里加了CMakeLists.txt（我不确定Visual Studio之外是什么效果，谁愿意的话可以fork到私有仓库，帮我改一下然后pull request给我）
+
+## 关于代码
+
+这套教程里的代码虽然最早改自我个人用的Vulkan封装库，但我也不可能每次自己一改代码就立马把教程里的也改了（复制粘贴代码容易，改教程很麻烦啊），日积月累下来其实在设计上有很多小问题没有改正，因此仅供学习参考。
+
+建议你做个人项目的时候使用[Vulkan-Hpp](https://github.com/KhronosGroup/Vulkan-Hpp)（就在安装VulkanSDK后的Include文件夹里，无需另外下载）。<br>
+另外我也写了一套符合自己需求的Vulkan的C++绑定及封装库：[VKEncapsulation](https://github.com/EasyVulkan/VKEncapsulation)
 
 ## 章节目录
 
