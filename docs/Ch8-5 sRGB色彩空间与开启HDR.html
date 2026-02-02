@@ -304,7 +304,9 @@
     </li>
     <li>
         <p>
-            Vulkan标准（截至撰写本文时的1.3.285）中对解析SRGB格式的多重采样附件到SRGB格式的解析附件，解析模式是平均时，是否会在线性色彩空间中做平均没有规定。实验结论表明会在线性空间中做平均。（注：这里考虑<span class="type">VkImage</span>的格式与<span class="type">VkImageView</span>的格式一致的情况。当图像与view的格式不同时，我无法确定不同的显卡驱动是否有一致的行为。）
+            解析SRGB格式的多重采样附件到SRGB格式的解析附件，解析模式是平均时，是否会在线性色彩空间中做平均为实现特定，可以通过<a href="https://docs.vulkan.org/refpages/latest/refpages/source/VkPhysicalDeviceMaintenance10PropertiesKHR.html">VkPhysicalDeviceMaintenance10PropertiesKHR</a>::resolveSrgbFormatAppliesTransferFunction进行查询。
+            <br>
+            （注：图像附件的<span class="type">VkImageView</span>的格式应当与其底层的<span class="type">VkImage</span>的格式一致，我查不到使用不同格式的view时会发生什么）
         </p>
     </li>
 </ul>
