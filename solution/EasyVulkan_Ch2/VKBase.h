@@ -1281,6 +1281,10 @@ namespace vulkan {
 		void FreeBuffers(arrayRef<commandBuffer> buffers) const {
 			FreeBuffers({ &buffers[0].handle, buffers.Count() });
 		}
+		/*Provided by VK_API_VERSION_1_1*/
+		void Trim(/*reserved for future use*/) const {
+			vkTrimCommandPool(graphicsBase::Base().Device(), handle, 0);
+		}
 		//Non-const Function
 		result_t Create(VkCommandPoolCreateInfo& createInfo) {
 			createInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;

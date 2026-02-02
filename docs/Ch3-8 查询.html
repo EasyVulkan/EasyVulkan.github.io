@@ -221,7 +221,7 @@
         </tr>
         <tr class="row-even">
             <td><p><span class="type">VkQueryPoolCreateFlags</span> flags</p></td>
-            <td><p>到Vulkan1.3为止没用</p></td>
+            <td><p></p></td>
         </tr>
         <tr class="row-odd">
             <td><p><span class="type">VkQueryType</span> queryType</p></td>
@@ -237,6 +237,13 @@
         </tr>
     </tbody>
 </table>
+<ul>
+    <li>
+        <p>
+            可以在flags中填入<span class="enum">VK_QUERY_POOL_CREATE_RESET_BIT_KHR</span>（需启用扩展VK_KHR_maintenance9），以要求查询池在创建时进行初始化，从而无需在首次使用前调用<a class="reference internal" href="Ch3-8%20%E6%9F%A5%E8%AF%A2.html#id4">vkCmdResetQueryPool</a>(...)重置它。
+        </p>
+    </li>
+</ul>
 <table class="docutils align-default">
     <colgroup>
         <col>
@@ -513,7 +520,8 @@
 <section id="id4">
 <h3>重置查询<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
 <p>
-    开始查询前（包括首次开始），必须重置查询。
+    开始查询前，必须重置查询。<br>
+    除非创建查询时指定了<span class="enum">VK_QUERY_POOL_CREATE_RESET_BIT_KHR</span>，否则在首次开始前也必须重置。
 </p>
 <p>
     在命令缓冲区中，用<a href="https://renderdoc.org/vkspec_chunked/chap18.html#vkCmdResetQueryPool">vkCmdResetQueryPool</a>(...)重置查询：
@@ -601,8 +609,8 @@
     <span class="fn">queryPool</span>(<span class="type">VkQueryPoolCreateInfo</span>&amp; <span class="par">createInfo</span>) {
         <span class="fn">Create</span>(<span class="par">createInfo</span>);
     }
-    <span class="fn">queryPool</span>(<span class="type">VkQueryType</span> <span class="par">queryType</span>, <span class="type">uint32_t</span> <span class="par">queryCount</span>, <span class="type">VkQueryPipelineStatisticFlags</span> <span class="par">pipelineStatistics</span> = 0 <span class="cmt">/*VkQueryPoolCreateFlags flags*/</span>) {
-        <span class="fn">Create</span>(<span class="par">queryType</span>, <span class="par">queryCount</span>, <span class="par">pipelineStatistics</span>);
+    <span class="fn">queryPool</span>(<span class="type">VkQueryType</span> <span class="par">queryType</span>, <span class="type">uint32_t</span> <span class="par">queryCount</span>, <span class="type">VkQueryPipelineStatisticFlags</span> <span class="par">pipelineStatistics</span> = 0, <span class="type">VkQueryPoolCreateFlags</span> <span class="par">flags</span> = 0) {
+        <span class="fn">Create</span>(<span class="par">queryType</span>, <span class="par">queryCount</span>, <span class="par">pipelineStatistics</span>, <span class="par">flags</span>);
     }
     <span class="fn">queryPool</span>(<span class="type">queryPool</span>&amp;&amp; <span class="par">other</span>) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
     <span class="fn">~queryPool</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyQueryPool</span>); }
@@ -646,8 +654,9 @@
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ queryPool ] ERROR\nFailed to create a query pool!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
-    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkQueryType</span> <span class="par">queryType</span>, <span class="type">uint32_t</span> <span class="par">queryCount</span>, <span class="type">VkQueryPipelineStatisticFlags</span> <span class="par">pipelineStatistics</span> = 0 <span class="cmt">/*VkQueryPoolCreateFlags flags*/</span>) {
+    <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkQueryType</span> <span class="par">queryType</span>, <span class="type">uint32_t</span> <span class="par">queryCount</span>, <span class="type">VkQueryPipelineStatisticFlags</span> <span class="par">pipelineStatistics</span> = 0, <span class="type">VkQueryPoolCreateFlags</span> <span class="par">flags</span> = 0) {
         <span class="type">VkQueryPoolCreateInfo</span> createInfo = {
+            .flags = <span class="par">flags</span>,
             .queryType = <span class="par">queryType</span>,
             .queryCount = <span class="par">queryCount</span>,
             .pipelineStatistics = <span class="par">pipelineStatistics</span>

@@ -1769,6 +1769,10 @@ namespace vulkan {
 		void FreeBuffers(arrayRef<commandBuffer> buffers) const {
 			FreeBuffers({ &buffers[0].handle, buffers.Count() });
 		}
+		/*Provided by VK_API_VERSION_1_1*/
+		void Trim(/*reserved for future use*/) const {
+			vkTrimCommandPool(graphicsBase::Base().Device(), handle, 0);
+		}
 		//Non-const Function
 		result_t Create(VkCommandPoolCreateInfo& createInfo) {
 			createInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -1902,6 +1906,9 @@ namespace vulkan {
 		result_t FreeSets(arrayRef<descriptorSet> sets) const {
 			return FreeSets({ &sets[0].handle, sets.Count() });
 		}
+		result_t Reset(/*reserved for future use*/) const {
+			return vkResetDescriptorPool(graphicsBase::Base().Device(), handle, 0);
+		}
 		//Non-const Function
 		result_t Create(VkDescriptorPoolCreateInfo& createInfo) {
 			createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -1928,8 +1935,8 @@ namespace vulkan {
 		queryPool(VkQueryPoolCreateInfo& createInfo) {
 			Create(createInfo);
 		}
-		queryPool(VkQueryType queryType, uint32_t queryCount, VkQueryPipelineStatisticFlags pipelineStatistics = 0 /*reserved for future use*/) {
-			Create(queryType, queryCount, pipelineStatistics);
+		queryPool(VkQueryType queryType, uint32_t queryCount, VkQueryPipelineStatisticFlags pipelineStatistics = 0, VkQueryPoolCreateFlags flags = 0) {
+			Create(queryType, queryCount, pipelineStatistics, flags);
 		}
 		queryPool(queryPool&& other) noexcept { MoveHandle; }
 		~queryPool() { DestroyHandleBy(vkDestroyQueryPool); }
@@ -1973,8 +1980,9 @@ namespace vulkan {
 				outStream << std::format("[ queryPool ] ERROR\nFailed to create a query pool!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
-		result_t Create(VkQueryType queryType, uint32_t queryCount, VkQueryPipelineStatisticFlags pipelineStatistics = 0 /*reserved for future use*/) {
+		result_t Create(VkQueryType queryType, uint32_t queryCount, VkQueryPipelineStatisticFlags pipelineStatistics = 0, VkQueryPoolCreateFlags flags = 0) {
 			VkQueryPoolCreateInfo createInfo = {
+				.flags = flags,
 				.queryType = queryType,
 				.queryCount = queryCount,
 				.pipelineStatistics = pipelineStatistics

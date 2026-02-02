@@ -450,7 +450,31 @@ rpwf.framebuffers.<span class="fn">resize</span>(<span class="type">graphicsBase
             如果你需要重建逻辑设备，那么需要一并重建与之相关的Vulkan对象，则重建逻辑设备后势必会再次调用<span class="fn">CreateRpwf_Screen</span>()以创建渲染通道，而添加回调函数的两条语句只应该被执行一次，用<a class="reference internal" href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html#execute_once">Ch2-0</a>中定义的宏<span class="mcr">ExecuteOnce</span>来确保这一点。
         </p>
     </li>
-</ul></section>
+</ul>
+<p>
+    注意到创建渲染通道时填写了交换链图像的格式，如果你需要在运行过程中改变交换链图像的格式（比如开启HDR时），那么应当将重建渲染通道的代码也放入一个回调函数：
+</p>
+<pre class="code">
+<span class="kw">static</span> <span class="type">VkFormat</span> colorAttachmentFormat;
+<span class="kw">constexpr auto</span> CreateRenderPass = [] {
+    <span class="type">VkAttachmentDescription</span> attachmentDescription = {
+        .format = colorAttachmentFormat = <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat,
+        <span class="cmt">/*...*/</span>
+    };
+    <span class="cmt">/*...*/</span>
+};
+CreateRenderPass();
+
+<span class="cmt">/*...*/</span>
+
+<span class="mcr" id="execute_once">ExecuteOnce</span>(rpwf);
+
+<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>([] {
+    <span class="kw">if</span> (colorAttachmentFormat != <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat)
+        rpwf_screen.renderPass.<span class="fn">~renderPass</span>(),
+        CreateRenderPass();
+});
+</pre></section>
 <section id="id5">
 <h2>更新主函数并测试<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
 <p>

@@ -82,6 +82,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#id6">创建描述符池</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id7">分配描述符集</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id8">释放描述符集</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">重置描述符池</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#descriptorpool">封装为descriptorPool类</a></li>
 </ul>
 </li>
@@ -909,6 +910,36 @@
         </p>
     </li>
 </ul></section>
+<section id="id9">
+<h3>重置描述符池<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<p>
+    用<a href="https://renderdoc.org/vkspec_chunked/chap14.html#vkResetDescriptorPool">vkResetDescriptorPool</a>(...)重置整个描述符池，这将导致所有从该描述符池中分配的描述符集被释放 ：
+</p>
+<table class="docutils align-default">
+    <colgroup>
+        <col style="width: 30%" />
+        <col style="width: 70%" />
+    </colgroup>
+    <thead>
+        <tr class="row-odd">
+            <th class="head" colspan="2"><p><span class="type">VkResult</span> <span class="mcr">VKAPI_CALL</span> <a href="https://renderdoc.org/vkspec_chunked/chap14.html#vkResetDescriptorPool">vkResetDescriptorPool</a> 的参数说明</p></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="row-even">
+            <td><p><span class="type">VkDevice</span> device</p></td>
+            <td><p>逻辑设备的handle</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><span class="type">VkDescriptorPool</span> descriptorPool</p></td>
+            <td><p>描述符池的handle</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><span class="type">VkDescriptorPoolResetFlags</span> flags</p></td>
+            <td><p>到Vulkan1.4为止没用</p></td>
+        </tr>
+    </tbody>
+</table></section>
 <section id="descriptorpool">
 <h3>封装为descriptorPool类<a class="headerlink" href="#descriptorpool" title="Permalink to this heading"></a></h3>
 <p>
@@ -975,6 +1006,9 @@
     }
     <span class="type">result_t</span> <span class="fn">FreeSets</span>(<span class="type">arrayRef</span>&lt;<span class="type">descriptorSet</span>&gt; <span class="par">sets</span>) <span class="kw">const</span> {
         <span class="kw">return</span> <span class="fn">FreeSets</span>({ &amp;<span class="par">sets</span>[0].handle, <span class="par">sets</span>.<span class="fn">Count</span>() });
+    }
+    <span class="type">result_t</span> <span class="fn">Reset</span>(<span class="cmt">/*VkDescriptorPoolResetFlags flags*/</span>) <span class="kw">const</span> {
+        <span class="kw">return</span> <span class="fn">vkResetDescriptorPool(</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, 0);
     }
     <span class="cmt">//Non-const Function</span>
     <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">VkDescriptorPoolCreateInfo</span>&amp; <span class="par">createInfo</span>) {

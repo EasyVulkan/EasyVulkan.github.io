@@ -337,7 +337,7 @@
     <span class="type">VkPhysicalDeviceVulkan11Properties</span> physicalDeviceVulkan11Properties; <span class="cmt">//Provided by VK_API_VERSION_1_2</span>
     <span class="type">VkPhysicalDeviceVulkan12Properties</span> physicalDeviceVulkan12Properties;
     <span class="type">VkPhysicalDeviceVulkan13Properties</span> physicalDeviceVulkan13Properties;
-    <span class="type">VkPhysicalDeviceMemoryProperties2</span> physicalDeviceMemoryProperties;   <span class="cmt">//截至Vulkan1.3为止，不存在VkPhysicalDeviceVulkan11MemoryProperties等结构体</span>
+    <span class="type">VkPhysicalDeviceMemoryProperties2</span> physicalDeviceMemoryProperties;   <span class="cmt">//截至Vulkan1.4为止，不存在VkPhysicalDeviceVulkan11MemoryProperties等结构体</span>
     <span class="cmt">//获取物理设备属性，逻辑跟GetPhysicalDeviceFeatures()一样，解说略</span>
     <span class="kw">void</span> <span class="type">GetPhysicalDeviceProperties</span>() {
         <span class="kw">if</span> (apiVersion &gt;= <span class="mcr">VK_API_VERSION_1_1</span>) {

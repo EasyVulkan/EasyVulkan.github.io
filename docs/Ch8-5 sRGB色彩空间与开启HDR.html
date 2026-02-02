@@ -592,7 +592,7 @@
 <span class="kw">auto</span> <span class="fn">PreInitialization_TrySetColorSpaceByOrder</span>(<span class="type">arrayRef</span>&lt;<span class="kw">const</span> <span class="type">VkColorSpaceKHR</span>&gt; <span class="par">colorSpaces</span>) {
     <span class="kw">static</span> std::<span class="type">unique_ptr</span>&lt;<span class="type">VkColorSpaceKHR</span>[]&gt; pColorSpaces;
     pColorSpaces = std::<span class="fn">make_unique</span>&lt;<span class="type">VkColorSpaceKHR</span>[]&gt;(<span class="par">colorSpaces</span>.<span class="fn">Count</span>() + 1);
-    <span class="fn">memcpy</span>(pColorSpaces.<span class="fn">get</span>(), <span class="par">colorSpaces</span>.<span class="fn">Pointer</span>(), <span class="kw">sizeof</span> <span class="type">VkColorSpaceKHR</span> * <span class="par">colorSpaces</span>.<span class="fn">Count</span>());
+    <span class="fn">memcpy</span>(pColorSpaces.<span class="fn">get</span>(), <span class="par">colorSpaces</span>.<span class="fn">Pointer</span>(), <span class="kw">sizeof</span>(<span class="type">VkColorSpaceKHR</span>) * <span class="par">colorSpaces</span>.<span class="fn">Count</span>());
     <span class="kw">return</span> []()-&gt;<span class="kw">const</span> <span class="type">VkColorSpaceKHR</span>* { <span class="kw">return</span> pColorSpaces.<span class="fn">get</span>(); };
 }
 </pre>
