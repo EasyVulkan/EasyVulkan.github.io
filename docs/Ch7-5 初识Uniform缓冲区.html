@@ -197,7 +197,7 @@ glm::<span class="type">vec2</span> uniform_positions[] = {
 uniformBuffer.<span class="fn">TransferData</span>(uniform_positions);
 </pre>
 <p>
-    着色器中uniform缓冲区的<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id15">内存布局</a>只能为std140，由于C++中<span class="type">vec2</span>的大小和对齐是8，凑整到16为16，于是需要在每个数组成员后再放一个<span class="type">vec2</span>作为空数据以满足对其要求。
+    着色器中uniform缓冲区的<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id16">内存布局</a>只能为std140，由于C++中<span class="type">vec2</span>的大小和对齐是8，凑整到16为16，于是需要在每个数组成员后再放一个<span class="type">vec2</span>作为空数据以满足对其要求。
 </p></section>
 <section id="id2">
 <h2>创建描述符布局和管线布局<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>

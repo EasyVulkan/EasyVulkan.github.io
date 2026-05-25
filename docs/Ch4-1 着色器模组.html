@@ -93,10 +93,13 @@
 <li class="toctree-l3"><a class="reference internal" href="#uniform">Uniform缓冲区的声明方式</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id12">其他Uniform对象的声明</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id13">输入附件的的声明</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#storage">Storage缓冲区的声明</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id14">其他Storage对象的声明</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id15">块成员的内存布局</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id16">可特化常量的声明方式和使用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#storage">Storage缓冲区的声明</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id14">内存修饰符</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">其他Storage对象的声明</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">块成员的内存布局</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id17">可特化常量的声明方式和使用</a></li>
 </ul>
 </li>
 </ul>
@@ -991,7 +994,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
 <ul>
     <li>
         <p>
-            若省略<code>内存布局修饰符,</code>，则默认为std430，详见后文<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id15">块成员的内存布局</a>。
+            若省略<code>内存布局修饰符,</code>，则默认为std430，详见后文<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id16">块成员的内存布局</a>。
         </p>
     </li>
     <li>
@@ -1137,11 +1140,13 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
     关于输入附件的具体用例见：<a class="reference internal" href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html">Ch8-3 延迟渲染</a>
 </p></section>
 <section id="storage">
-<h3>Storage缓冲区的声明<a class="headerlink" href="#storage" title="Permalink to this heading"></a></h3>
+<h3>Storage缓冲区的声明<a class="headerlink" href="#storage" title="Link to this heading"></a></h3>
 <p>
     //TODO 等写计算着色器的示例再写。
     <br>
-    //25.10.05 空置太久也不好，把陈年草稿放上来（为什么这是草稿？有哪里还需要检查？）：
+    Storage缓冲区常用于需要将GPU侧写入的数据取回到CPU侧的情况，或者需要在着色器调用之间传递数据的情况。
+    <br>
+    如果只需要让着色器读取CPU侧提供的数据，通常不会使用storage缓冲区（因为其读取性能可能比uniform缓冲区慢，后者只读不写便不需要刷新处理单元的缓存）。但storage缓冲区在许多硬件上的最大可分配容量远大于uniform缓冲区，因此需要传递巨量数据时，存在使用storage缓冲区而非uniform缓冲区的情况。
 </p>
 <pre class="code">
 <span class="kw">layout</span>(内存布局修饰符, set = 描述符集索引, binding = 绑定索引) 内存修饰符 <span class="kw">buffer</span> 块名称 {
@@ -1151,11 +1156,16 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
 <ul>
     <li>
         <p>
+            内存修饰符与<span class="kw">buffer</span>不分先后。
+        </p>
+    </li>
+    <li>
+        <p>
             语法细则见<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#uniform">uniform缓冲区的声明</a>。
         </p>
     </li>
-</ul>
-<h4>内存修饰符</h4>
+</ul><section id="id14">
+<h4>内存修饰符<a class="headerlink" href="#id14" title="Link to this heading"></a></h4>
 <p>
     可使用一个或多个内存修饰符修饰storage对象，也可以为<span class="kw">buffer</span>块中的成员添加各自的内存修饰符。
 </p>
@@ -1222,7 +1232,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
 <p>
     <span class="kw">restrict</span>
     <br>
-    &emsp;&emsp;表示在<strong>当前着色器</strong>中，该变量/块代表的数据不会被其它变量/块引用，或者说，该变量/块与其他变量/块没有混叠。
+    &emsp;&emsp;表示在<strong>当前着色器</strong>中，该变量/块代表的数据不会被其他变量/块引用，或者说，该变量/块与其他变量/块没有混叠。
     <br>
     &emsp;&emsp;该修饰符<strong>能用则用</strong>。
 </p>
@@ -1243,13 +1253,44 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
         </p>
     </li>
 </ul></section>
-<section id="id14">
-<h3>其他Storage对象的声明<a class="headerlink" href="#id14" title="Permalink to this heading"></a></h3>
-<p>
-    //TODO 等写计算着色器的示例再写。
-</p></section>
+</section>
 <section id="id15">
-<h3>块成员的内存布局<a class="headerlink" href="#id15" title="Permalink to this heading"></a></h3>
+<h3>其他Storage对象的声明<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
+<p>
+    语法：
+</p>
+<pre class="code">
+<span class="kw">layout</span>(set = 描述符集索引, binding = 绑定索引, 格式修饰符) 内存修饰符 <span class="kw">uniform</span> 类型 实例名称;
+</pre>
+<ul>
+    <li>
+        <p>
+            内存修饰符与<span class="kw">uniform</span>不分先后。
+        </p>
+    </li>
+    <li>
+        <p>
+            格式修饰符一览，参见<a href="https://wikis.khronos.org/opengl/Image_Load_Store#format_qualifiers">OpenGL Wiki</a>。
+        </p>
+    </li>
+</ul>
+<p>
+    以下几种storage对象能以类似的方式声明：
+</p>
+<ul>
+    <li>
+        <p>
+            Storage图像：以image、iimage、uimage开头的一系列类型，如<span class="type">image2D</span>。无前缀、i、u前缀分别对应浮点、有符号整形和无符号整形（所涉及注意事项见<a class="reference internal" href="Ch7-7%20%E4%BD%BF%E7%94%A8%E8%B4%B4%E5%9B%BE.html">Ch7-7 使用贴图</a>）。
+        </p>
+    </li>
+    <li>
+        <p>
+            Storage纹素缓冲区时：有<span class="type">imageBuffer</span>、<span class="type">iimageBuffer</span>、<span class="type">uimageBuffer</span>三种。
+        </p>
+    </li>
+</ul></section>
+<section id="id16">
+<h3>块成员的内存布局<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
 <p>
     Vulkan的GLSL着色器中，对于块，允许两种内存布局：std140和std430。不同的内存布局遵循不同的对齐规则。
     <br>
@@ -1362,8 +1403,8 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
     <br>
     我建议始终手动<span class="kw">alignas</span>(...)而非使用GLM的aligned type。
 </p></section>
-<section id="id16">
-<h3>可特化常量的声明方式和使用<a class="headerlink" href="#id16" title="Permalink to this heading"></a></h3>
+<section id="id17">
+<h3>可特化常量的声明方式和使用<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
 <p>
     如前文所述，用以下语法声明可特化的常量：
 </p>
