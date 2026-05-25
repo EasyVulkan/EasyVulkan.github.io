@@ -72,7 +72,7 @@
 
 [使用动态渲染功能实现延迟渲染（仅代码）](https://github.com/EasyVulkan/VKEncapsulation/blob/main/VKEncapsulation/Sample/DeferredToScreen.hpp)
 
-考虑到使用动态渲染（Dynamic Rendering）实现延迟渲染的代码可能令人不知所措，因此附上示例。<br>
+考虑到使用动态渲染（Dynamic Rendering）实现延迟渲染的具体写法比较麻烦，因此附上示例（暂不打算解说，有不明白的可以提问）。<br>
 使用我自己的封装库书写，**重点在于**让你看懂该**怎么写同步命令及如何设置输入附件**。
 
 ## 更新计划（猴年马月？）
