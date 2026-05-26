@@ -1,22 +1,22 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh" >
+<html class="writer-html5" lang="zh" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ch2-1 Rendering Loop &mdash; EasyVulkan</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/theme.css?v=4d85d03b" />
+
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=10aaca3b"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
@@ -29,17 +29,21 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> EasyVulkan
-            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            EasyVulkan
+              <img src="_static/logo1.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
               <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
@@ -59,8 +63,12 @@
 <li class="toctree-l2"><a class="reference internal" href="#id5">呈现图像</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id6">在窗口最小化时暂停渲染循环</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id7">最后一件事：等待栅栏的时机</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id8">即时帧</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id9">队列族所有权转移</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">即时帧</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id9">经典的做法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">改进的做法</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id11">队列族所有权转移</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch2-2 创建渲染通道和帧缓冲</a></li>
@@ -124,17 +132,17 @@
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">EasyVulkan</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+          <div role="navigation" aria-label="页面导航">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Ch2-1 Rendering Loop</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Ch2-1 Rendering Loop</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -144,7 +152,7 @@
            <div itemprop="articleBody">
              
   <section id="ch2-1-rendering-loop">
-<h1>Ch2-1 Rendering Loop<a class="headerlink" href="#ch2-1-rendering-loop" title="Permalink to this heading"></a></h1>
+<h1>Ch2-1 Rendering Loop<a class="headerlink" href="#ch2-1-rendering-loop" title="Link to this heading"></a></h1>
 <p>
     本节当中我们将构建一个最基本的渲染循环（rendering loop）。
 </p>
@@ -161,7 +169,7 @@
     <br>
     5.等待信号量B，确保本次的命令执行完毕后，呈现图像
 </p><section id="id1">
-<h2>创建栅栏和信号量<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<h2>创建栅栏和信号量<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
 <p>
     信号量（semaphore）和栅栏（fence）是用于同步的Vulkan对象。
     <br>
@@ -279,7 +287,7 @@
    （太啰嗦吗？虽然我想看这个教程的人大多知道什么是异步，姑且以防万一）
 </p></section>
 <section id="id2">
-<h2>获取交换链图像索引<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<h2>获取交换链图像索引<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)获取下一张用于渲染的交换链图像的索引：
 </p>
@@ -437,7 +445,7 @@
 }
 </pre></section>
 <section id="id3">
-<h2>创建命令池和命令缓冲区<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<h2>创建命令池和命令缓冲区<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
 <p>
     同OpenGL或DirectX11这类API不同，DirectX12、Vulkan等底层API中的命令被录制在命令缓冲区（command buffer）中，而命令缓冲区从命令池（command pool）分配。
     <br>
@@ -475,7 +483,7 @@
 }
 </pre></section>
 <section id="id4">
-<h2>录制及提交命令缓冲区<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<h2>录制及提交命令缓冲区<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
 <p>
     调用函数开始命令缓冲区的录制，中间渲染过程留待填充，然后结束命令缓冲区的录制：
 </p>
@@ -615,7 +623,7 @@
 }
 </pre></section>
 <section id="id5">
-<h2>呈现图像<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<h2>呈现图像<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...)呈现图像：
 </p>
@@ -744,7 +752,7 @@
 }
 </pre></section>
 <section id="id6">
-<h2>在窗口最小化时暂停渲染循环<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
+<h2>在窗口最小化时暂停渲染循环<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
 <p>
     在窗口最小化到任务栏时继续渲染循环，可能收到来自验证层的报错信息：
     <pre class="code">Validation Error: [ VUID-vkQueueSubmit-pWaitSemaphores-03238 ]</pre>
@@ -787,7 +795,7 @@
     </li>
 </ul></section>
 <section id="id7">
-<h2>最后一件事：等待栅栏的时机<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h2>
+<h2>最后一件事：等待栅栏的时机<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
 <p>
     前面将“等待栅栏”放在渲染循环开头，是为了方便说明其与“获取交换链图像”的先后关系，及说明以置位状态创建栅栏的意义所在。
     <br>
@@ -863,7 +871,7 @@
     接下来是非必要的选读内容。
 </p></section>
 <section id="id8">
-<h2>即时帧<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h2>
+<h2>即时帧<a class="headerlink" href="#id8" title="Link to this heading"></a></h2>
 <p>
     上述渲染循环代码中，每一帧所用的同步对象是相同的，这意味着必须渲染完上一帧才能渲染当前帧。
     <br>
@@ -873,13 +881,15 @@
 </p>
 <p>
     即时帧的好处显而易见，对每张交换链图像的写入，只需发生在呈现引擎上一次读取同一图像之后即可，假设交换链图像有3张，那么便是与2帧之前的操作同步，相比与上一帧同步，大幅提升了并行度。
-    <br>
+</p>
+<p>
     但是即时帧的设备内存开销也是成倍增加的，由于所有会被更新、写入的Vulkan对象都得创建与交换链图像相同的份数，在一些情况下会产生惊人的内存开销（比如延迟渲染）。而且即便应用了即时帧也未必能大幅提升帧数，如果每帧的渲染时间都很短的话，即时帧不会对帧数产生影响，换言之只应该在每帧渲染时间较长的情况下应用即时帧（起码应该要长于屏幕的垂直刷新间隔）。
     <br>
     后续教程中不会应用即时帧，仅在此略作知会。除了内存开销外，代码会被写更复杂难看也是个原因（会出现一堆用于存放Vulkan对象的<span class="type">vector</span>和用来创建这些对象的循环代码，虽然可以通过封装每一套Vulkan对象或者某些更省事的奇怪手段来简化）。
-</p>
+</p><section id="id9">
+<h3>经典的做法<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
 <p>
-    如果你想应用即时帧，那么渲染循环应被改成：
+    使用与老祖宗级教程<a href="https://vulkan-tutorial.com/Drawing_a_triangle/Drawing/Frames_in_flight">Vulkan-Tutorial</a>类似的做法，在渲染循环中应用即时帧：
 </p>
 <pre class="code">
 <span class="kw">int</span> <span class="fn">main</span>() {
@@ -903,7 +913,6 @@
             <span class="fn">glfwWaitEvents</span>();
 
         <span class="kw">const auto</span>&amp; [fence, semaphore_imageIsAvailable, semaphore_renderingIsOver, commandBuffer] = perFrameObjects[index];
-        index = (index + 1) % <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>();
 
         fence.<span class="fn">WaitAndReset</span>(); <span class="cmt">//在渲染循环开头等待与当前交换链图像配套的栅栏（在渲染循环末尾等待的话，下一帧必须等待当前帧渲染完，即时帧的做法便没了意义）</span>
         <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(semaphore_imageIsAvailable);
@@ -915,6 +924,9 @@
         <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, semaphore_imageIsAvailable, semaphore_renderingIsOver, fence);
         <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PresentImage</span>(semaphore_renderingIsOver);
 
+        <span class="cmt">//由于你可能在渲染命令中使用index来选择相应索引的其它对象，将index的自增回绕写在这里</span>
+        index = (index + 1) % <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>();
+
         <span class="fn">glfwPollEvents</span>();
         <span class="fn">TitleFps</span>();
     }
@@ -922,22 +934,150 @@
     <span class="kw">return</span> 0;
 }
 </pre>
+<ul>
+    <li>
+        <p>
+            这个做法可以简单地描述为：使用<strong>一定的、同等数量的</strong>同步对象与命令缓冲区。比如上述代码中我分配了与交换链图像同等数量的同步对象与命令缓冲。
+        </p>
+    </li>
+</ul>
 <p>
-    假定获取到的交换链图像索引在每个周期中有固定顺序，那么虽然这里的<span class="var">index</span>可能跟当前图像索引不同（如果获取到的交换链图像索引总是0、1、2依序而来，那么<span class="var">i</span>跟当前图像索引一致），但<span class="var">index</span>总是跟图像索引一一对应（也就是一种映射关系）。
+    假定获取到的交换链图像索引在每个周期中有固定顺序，那么虽然这里的<span class="var">index</span>可能跟当前图像索引不同（如果获取到的交换链图像索引总是0、1、2依序而来，那么<span class="var">index</span>跟当前图像索引一致），但<span class="var">index</span>总是跟图像索引一一对应（也就是一种映射关系）。
 </p>
 <p>
     如先前<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id2">获取交换链图像索引</a>所述，Vulkan标准对交换链图像索引在每个周期中的顺序并无要求。那么上述代码是否还能确保执行逻辑不出错呢？
     <br>
-    考虑比较极端的情况：如果连续两次获取到索引为0的交换链图像，而<span class="var">perFrameObjects</span>中的对象按0、1的索引依序使用。既然是连续两次渲染到同一交换链图像，后一次得等待前一次命令执行完成，可前一次点亮的是0号栅栏，后一次等待的为1号栅栏，这么一来同步不就出问题了吗！？
+    考虑比较极端的情况：如果连续两次获取到索引为0的交换链图像，而<span class="var">perFrameObjects</span>中的对象按0、1的索引依序使用。既然是连续两次渲染到同一交换链图像，后一次得等待前一次命令执行完成，可前一次置位的是0号栅栏，后一次等待的为1号栅栏，这么一来同步不就出问题了吗！？
     <br>
     上述情况没有什么值得你担心的：
     <br>
-    <strong>只有在将图像交还给呈现引擎后（此时已通过信号量确保已完成了先前在该图像上的渲染），<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)才获取到与该图像对应的索引。</strong>
+    <strong>对于已使用过一次的交换链图像，只有在将图像交还给呈现引擎后（此时已通过信号量确保已完成了先前在该图像上的渲染），才可能获取到与该图像对应的索引</strong>（<a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html#id3">Ch1-4中各呈现模式的例图</a>中，呈现引擎一侧的是可被<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)获取到的图像的索引）。
     <br>
     因此，前文的代码在获取到的交换链图像索引是乱序时也不会有问题，只是不会起到减少阻塞的效果（理论上，若是真有“能连续获取到同一索引的交换链图像”这种情况，说明渲染任务很轻，也不必减少阻塞）。
 </p></section>
-<section id="id9">
-<h2>队列族所有权转移<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h2>
+<section id="id10">
+<h3>改进的做法<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<p>
+    上文的做法在重建交换链时可能会报错（对程序运行没有实质影响），Nvidia显卡给出的信息类似于：
+</p>
+<pre class="code">
+vkQueueSubmit(): pSubmits[0].pSignalSemaphores[0] (VkSemaphore 0x140000000014) is being signaled by VkQueue 0x1b251e2e880,but it may still be in use by
+VkSwapchainKHR 0x40000000004.
+</pre>
+<p>
+    而修正的办法也有提示：
+</p>
+<pre class="code">
+Swapchain image 0 was presented but was not re-acquired, so VkSemaphore 0x140000000014 may still be in use and cannot be safely reused with image index 1.
+</pre>
+<p>
+    简而言之就是：如果某一交换链图像索引，被呈现后没有重新被获取，那么呈现该索引的图像时提供的信号量有可能仍被占用，因而无法被安全地重用（有啥不安全的？问底层驱动开发人员去！）。
+    <br>
+    稍稍咬文嚼字就能看出消除这个错误信息的方法：若某一索引已被获取，则与其对应的信号量可以被安全使用。即，使得渲染结束时的信号量与交换连图像索引一一对应即可。
+</p>
+<p>
+    Intel核显的话有不同的错误信息，而且很奇怪，具体内容略。报错信息的差异源于应对窗口大小变化的机制不同，Nvidia的显卡驱动会在调用<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...)时返回<span class="enum">VK_ERROR_OUT_OF_DATE_KHR</span>，而Intel核显的驱动在调用<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)时返回<span class="enum">VK_SUBOPTIMAL_KHR</span>。
+</p>
+<p>
+    每次要实现即时帧时都要处理索引问题的话有些麻烦，于是干脆对即时帧相关的同步对象进行封装，方便使用。
+    <br>
+    由于代码中<span class="var">fence</span>与<span class="var">semaphore_renderingIsOver</span>同样表示渲染命令执行完成，只是同步粒度和具体用法不同，所以也需要与图像索引一一对应。
+    <br>
+    <span class="var">semaphore_imageIsAvailable</span>是无法与索引一一对应的，毕竟你不可能在获取到图像索引前得知这次的索引值（废话），关于在获取图像索引时如何提供信号量，看完代码再说：
+</p>
+<pre class="code">
+<span class="kw">class</span> <span class="type">renderingLoopSynchronization</span> {
+<span class="kw">protected</span>:
+    std::<span class="type">vector</span>&lt;<span class="type">fence</span>&gt; fences;
+    std::<span class="type">vector</span>&lt;<span class="type">semaphore</span>&gt; semaphores_imageIsAvailable;
+    std::<span class="type">vector</span>&lt;<span class="type">semaphore</span>&gt; semaphores_renderingIsOver;
+    <span class="type">uint32_t</span> index_swapImage = 0;
+<span class="kw">public</span>:
+    <span class="type">renderingLoopSynchronization</span>() :
+        semaphores_imageIsAvailable(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>() + 1),
+        semaphores_renderingIsOver(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>()) {
+        <span class="cmt">//以置位状态创建栅栏</span>
+        fences.<span class="fn">reserve</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
+        <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i < <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>(); i++)
+            fences.<span class="fn">emplace_back</span>(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
+    }
+    <span class="cmt">//Getter</span>
+    <span class="kw">const</span> <span class="type">fence</span>&amp; <span class="fn">Fence</span>() <span class="kw">const</span> { <span class="kw">return</span> fences[*<span class="kw">this</span>]; }
+    <span class="type">VkSemaphore</span> <span class="fn">Semaphore_ImageIsAvailable</span>() <span class="kw">const</span> { <span class="kw">return</span> semaphores_imageIsAvailable[index_swapImage]; }
+    <span class="type">VkSemaphore</span> <span class="fn">Semaphore_RenderingIsOver</span>() <span class="kw">const</span> { <span class="kw">return</span> semaphores_renderingIsOver[*<span class="kw">this</span>]; }
+    <span class="cmt">//Const Function</span>
+    <span class="cmt">//因为graphicsBase::Base().CurrentImageIndex()这一串连我自己都嫌太长了，定义一个函数以简化书写</span>
+    <span class="kw">operator</span> <span class="type">uint32_t</span>() <span class="kw">const</span> { <span class="kw">return</span> <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">CurrentImageIndex</span>(); }
+    <span class="cmt">//Non-const Function</span>
+    <span class="type">result_t</span> <span class="fn">SwapImage</span>() {
+        index_swapImage = (index_swapImage + 1) % semaphores_imageIsAvailable.<span class="fn">size</span>(); <span class="cmt">//自增回绕</span>
+        <span class="kw">return</span> <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapImage</span>(<span class="fn">Semaphore_ImageIsAvailable</span>());
+    }
+};
+</pre>
+<ul>
+    <li>
+        <p>
+            获取图像时的信号量不必与索引一一对应，使用一个自增回绕的数值作为semaphores_imageIsAvailable的索引即可。
+        </p>
+    </li>
+</ul>
+<p>
+    数组semaphores_imageIsAvailable中的元素个数比交换链图像数量多1，若元素个数小于这个值，那么在渲染任务较轻时会有错误信息，提示调用<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)时附带的信号量正被占用。
+    <br>
+    仔细分析就能明白原由：如果交换链图像全部被交还给了呈现引擎，假定交换链图像一共3张，那么<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)最多可以调用4次，到第4次时没有可以获取的图像索引，函数执行被阻塞。<strong>即<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)在渲染任务较轻时直到被阻塞为止可以调用“交换链图像数+1”次</strong>，应确保这些调用中提供的信号量绝对不会重复。
+</p>
+<p>
+    上面这个类的具体使用方式如下：
+</p>
+<pre class="code">
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }))
+        <span class="kw">return</span> -1;
+
+    <span class="type">renderingLoopSynchronization</span> sync;
+    std::<span class="type">vector</span>&lt;<span class="type">commandBuffer</span>&gt; commandBuffers(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
+    <span class="type">commandPool</span> commandPool(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">QueueFamilyIndex_Graphics</span>(), <span class="enum">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>);
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; i : commandBuffers)
+        commandPool.<span class="fn">AllocateBuffers</span>(i);
+
+    <span class="kw">while</span> (!<span class="fn">glfwWindowShouldClose</span>(pWindow)) {
+        <span class="kw">while</span> (<span class="fn">glfwGetWindowAttrib</span>(pWindow, <span class="mcr">GLFW_ICONIFIED</span>))
+            <span class="fn">glfwWaitEvents</span>();
+
+        sync.<span class="fn">SwapImage</span>();
+        sync.<span class="fn">Fence</span>().<span class="fn">WaitAndReset</span>();
+
+        <span class="kw">auto</span>&amp; commandBuffer = commandBuffers[sync];
+        commandBuffer.<span class="fn">Begin</span>(<span class="enum">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>);
+        <span class="cmt">/*渲染命令*/</span>
+        commandBuffer.<span class="fn">End</span>();
+
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SubmitCommandBuffer_Graphics</span>(commandBuffer, sync.<span class="fn">Semaphore_ImageIsAvailable</span>(), sync.<span class="fn">Semaphore_RenderingIsOver</span>(), sync.<span class="fn">Fence</span>());
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PresentImage</span>(sync.<span class="fn">Semaphore_RenderingIsOver</span>());
+
+        <span class="fn">glfwPollEvents</span>();
+        <span class="fn">TitleFps</span>();
+    }
+    <span class="fn">TerminateWindow</span>();
+    <span class="kw">return</span> 0;
+}
+</pre>
+<ul>
+    <li>
+        <p>
+            等待并重置栅栏被放在了<span class="fn">SwapImage</span>()之后，因为要先获取交换链图像索引才能确定对应的栅栏。
+        </p>
+    </li>
+</ul>
+<p>
+    完整的、应用了即时帧的“First Triangle”示例代码见：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch2/Ch2-3_FramesInFlight.hpp">Ch2-3_FramesInFlight.hpp</a>
+    <br>
+    编译上述hpp的代码，在使用Nvidia显卡运行时应该不会有错误信息。
+</p></section>
+</section>
+<section id="id11">
+<h2>队列族所有权转移<a class="headerlink" href="#id11" title="Link to this heading"></a></h2>
 <p>
     <strong>若这一小节里有任何看不懂的地方，请看过往后的章节后再回过来看。</strong>
 </p>
@@ -1200,7 +1340,7 @@
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
         <a href="Ch2-0%20%E4%BB%A3%E7%A0%81%E6%95%B4%E7%90%86%E5%8F%8A%E4%B8%80%E4%BA%9B%E8%BE%85%E5%8A%A9%E7%B1%BB.html" class="btn btn-neutral float-left" title="Ch2-0 代码整理及一些辅助类" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
         <a href="Ch2-2%20%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html" class="btn btn-neutral float-right" title="Ch2-2 创建渲染通道和帧缓冲" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
@@ -1208,12 +1348,12 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; 版权所有 2021-2025, 葉橙.</p>
+    <p>&#169; 版权所有 2021-2025, 葉橙。</p>
   </div>
 
-  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
-    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
    
 
 </footer>

@@ -925,7 +925,7 @@
     总结地讲，在提交进行数据传输的命令缓冲区（比如用来加载资源）时只要带上一个栅栏并等待，就足以确保<a class="reference internal" href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html#device-local-buffer">各类缓冲区</a>能被之后的命令正确读写了（但对于图像，你仍旧可能需要图像内存屏障以确保内存布局转换在正确的时机发生）。
 </p>
 <p>
-    注意虽然官方标准中没有到处提及，同步操作的作用若无明确说明，默认不适用于不同队列族间，这时候得（虽然你应该已经读过了）：<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id9">队列族所有权转移</a>。
+    注意虽然官方标准中没有到处提及，同步操作的作用若无明确说明，默认不适用于不同队列族间，这时候得（虽然你应该已经读过了）：<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id11">队列族所有权转移</a>。
 </p>
 <p>
     写到这里我真的得吐槽下：<strong>那些说C++官方标准太学术化太难啃的程序员，真该看看Vulkan官方标准！</strong>
@@ -1119,7 +1119,7 @@
 <ul>
     <li>
         <p>
-            关于资源的队列族所有权转移，具体说明参见<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id9">队列族所有权转移</a>，若不需要转移资源的队列族所有权，则srcQueueFamilyIndex和dstQueueFamilyIndex应当皆为<span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>。
+            关于资源的队列族所有权转移，具体说明参见<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id11">队列族所有权转移</a>，若不需要转移资源的队列族所有权，则srcQueueFamilyIndex和dstQueueFamilyIndex应当皆为<span class="mcr">VK_QUEUE_FAMILY_IGNORED</span>。
         </p>
     </li>
 </ul></section>

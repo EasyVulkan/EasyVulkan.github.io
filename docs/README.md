@@ -10,10 +10,10 @@
 
 ## 关于代码
 
-这套教程里的代码虽然最早改自我个人用的Vulkan封装库，但我也不可能每次自己一改代码就立马把教程里的也改了（复制粘贴代码容易，改教程很麻烦啊），日积月累下来其实在设计上有很多小问题没有改正，因此仅供学习参考。
+这套教程里的代码最早改自我个人用的Vulkan封装库，尽可能满足了我的懒人需求。<br>
+日积月累下来在设计上有很多大大小小的问题没有改正（比如滥用默认构造器），但我也不可能每次自己一改代码就立马把教程里的也改了（复制粘贴代码容易，改教程很麻烦啊），因此仅供学习参考。
 
-建议你做个人项目的时候使用[Vulkan-Hpp](https://github.com/KhronosGroup/Vulkan-Hpp)（就在安装VulkanSDK后的Include文件夹里，无需另外下载）。<br>
-~~另外我也写了一套符合自己需求的Vulkan的C++绑定及封装库：[VKEncapsulation](https://github.com/EasyVulkan/VKEncapsulation)~~（无力维护，请无视掉）
+建议你做个人项目的时候使用[Vulkan-Hpp](https://github.com/KhronosGroup/Vulkan-Hpp)（就在安装VulkanSDK后的Include文件夹里，无需另外下载）。
 
 ## 章节目录
 
@@ -73,7 +73,7 @@
 [使用动态渲染功能实现延迟渲染（仅代码）](https://github.com/EasyVulkan/VKEncapsulation/blob/main/VKEncapsulation/Sample/DeferredToScreen.hpp)
 
 考虑到使用动态渲染（Dynamic Rendering）实现延迟渲染的具体写法比较麻烦，因此附上示例（暂不打算解说，有不明白的可以提问）。<br>
-使用我自己的封装库书写，**重点在于**让你看懂该**怎么写同步命令及如何设置输入附件**。
+使用我自己的封装库书写，但应该不难看懂，函数名都很顾名思义。**重点在于**让你看懂该**怎么写同步命令及如何设置输入附件**。
 
 ## 更新计划（猴年马月？）
 
