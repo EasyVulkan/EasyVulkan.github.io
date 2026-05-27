@@ -755,9 +755,13 @@
 <h2>在窗口最小化时暂停渲染循环<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
 <p>
     在窗口最小化到任务栏时继续渲染循环，可能收到来自验证层的报错信息：
+</p>
     <pre class="code">Validation Error: [ VUID-vkQueueSubmit-pWaitSemaphores-03238 ]</pre>
+<p>
     恢复窗口大小后会持续收到另一个报错信息：
+</p>
     <pre class="code">Validation Error: [ VUID-vkAcquireNextImageKHR-swapchain-01802 ]</pre>
+<p>
     尽管上述情况可能不影响程序的正常执行，以防万一之外，也出于节省CPU和GPU占用的考量，有必要在窗口最小化时阻塞渲染循环。<br>
     这可以通过一串简单的代码来实现：
 </p>

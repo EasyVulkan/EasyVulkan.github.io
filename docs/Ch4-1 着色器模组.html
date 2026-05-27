@@ -1,22 +1,22 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh" >
+<html class="writer-html5" lang="zh" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ch4-1 着色器模组 &mdash; EasyVulkan</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/theme.css?v=4d85d03b" />
+
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=10aaca3b"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
@@ -29,17 +29,21 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> EasyVulkan
-            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            EasyVulkan
+              <img src="_static/logo1.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
               <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
@@ -148,17 +152,17 @@
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">EasyVulkan</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+          <div role="navigation" aria-label="页面导航">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Ch4-1 着色器模组</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Ch4-1 着色器模组</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -168,7 +172,7 @@
            <div itemprop="articleBody">
              
   <section id="ch4-1">
-<h1>Ch4-1 着色器模组<a class="headerlink" href="#ch4-1" title="Permalink to this heading"></a></h1>
+<h1>Ch4-1 着色器模组<a class="headerlink" href="#ch4-1" title="Link to this heading"></a></h1>
 <p>
     着色器是在管线的可编程阶段运行的GPU程序。
     <br>
@@ -181,9 +185,9 @@
 <p>
     本节先讲述Vulkan API中与着色器模组相关的接口，再说明编写用于Vulkan的GLSL着色器时的一些通用常识。
 </p><section id="id1">
-<h2>着色器模组<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<h2>着色器模组<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
 <section id="id2">
-<h3>创建着色器模组<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<h3>创建着色器模组<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap9.html#vkCreateShaderModule">vkCreateShaderModule</a>(...)创建着色器模组：
 </p>
@@ -264,7 +268,7 @@ file.<span class="fn">read</span>(<span class="kw">reinterpret_cast</span>&lt;<s
 file.<span class="fn">close</span>();
 </pre></section>
 <section id="id3">
-<h3>管线着色器阶段的创建信息<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<h3>管线着色器阶段的创建信息<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
 <p>
     创建渲染管线时需要着色器阶段的创建信息（<a href="https://renderdoc.org/vkspec_chunked/chap10.html#VkPipelineShaderStageCreateInfo">VkPipelineShaderStageCreateInfo</a>）：
 </p>
@@ -418,7 +422,7 @@ file.<span class="fn">close</span>();
 };
 </pre></section>
 <section id="shadermodule">
-<h3>封装为shaderModule类<a class="headerlink" href="#shadermodule" title="Permalink to this heading"></a></h3>
+<h3>封装为shaderModule类<a class="headerlink" href="#shadermodule" title="Link to this heading"></a></h3>
 <p>
     向<span class="path">VKBase.h</span>，vulkan命名空间中添加以下代码：
 </p>
@@ -485,7 +489,7 @@ file.<span class="fn">close</span>();
 </pre></section>
 </section>
 <section id="id4">
-<h2>标准化设备坐标系<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<h2>标准化设备坐标系<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
 <p>
     编写Vulkan用的GLSL着色器时，首先需要注意的是其NDC（标准化设备坐标系，normalized device coordinates）。
 </p>
@@ -563,11 +567,11 @@ file.<span class="fn">close</span>();
 }
 </pre></section>
 <section id="glslspir-v">
-<h2>从GLSL编译到SPIR-V<a class="headerlink" href="#glslspir-v" title="Permalink to this heading"></a></h2>
+<h2>从GLSL编译到SPIR-V<a class="headerlink" href="#glslspir-v" title="Link to this heading"></a></h2>
 <p>
     你所下载到的Vulkan SDK中应该附带<span class="path">Bin/glslc.exe</span>，这是谷歌提供的工具（<a href="https://github.com/google/shaderc/tree/main/glslc">官方Github文档见此</a>），用于将由GLSL书写的着色器编译到.spv文件。
 </p><section id="id5">
-<h3>着色器类型判别<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<h3>着色器类型判别<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
 <p>
     编译GLSL着色器到SPIR-V时，需要告诉<span class="path">glslc.exe</span>该着色器对应的可编程阶段。
     <br>
@@ -628,7 +632,7 @@ file.<span class="fn">close</span>();
     </tbody>
 </table></section>
 <section id="id6">
-<h3>基础命令行语法<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<h3>基础命令行语法<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
 <p>
     指定文件名：
 </p>
@@ -670,9 +674,9 @@ glslc 着色器文件路径 -fshader-stage=阶段名称 -c
 </ul></section>
 </section>
 <section id="glsl">
-<h2>GLSL着色器的基本语法<a class="headerlink" href="#glsl" title="Permalink to this heading"></a></h2>
+<h2>GLSL着色器的基本语法<a class="headerlink" href="#glsl" title="Link to this heading"></a></h2>
 <section id="id7">
-<h3>版本声明<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<h3>版本声明<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
 <p>
     在着色器的开头须声明其版本，语法为：
 </p>
@@ -686,7 +690,7 @@ glslc 着色器文件路径 -fshader-stage=阶段名称 -c
 <span class="pragma">#version</span> 460
 </pre></section>
 <section id="id8">
-<h3>接入点函数<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<h3>接入点函数<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
 <p>
     同C++程序需要主函数一样，着色器需要一个主函数作为程序接入点，通常我会把它也称作<span class="fn">main</span>()。
     <br>
@@ -695,7 +699,7 @@ glslc 着色器文件路径 -fshader-stage=阶段名称 -c
     除了主函数外，你当然还能声明其他的函数。
 </p></section>
 <section id="id9">
-<h3>数据类型<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<h3>数据类型<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
 <p>
     着色器中可用以下标量类型：
 </p>
@@ -906,7 +910,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
     此外，着色器中也可以定义结构体类型，同C语言中类似。
 </p></section>
 <section id="id10">
-<h3>图形着色器中通用的输入输出声明方式<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
+<h3>图形着色器中通用的输入输出声明方式<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
 <p>
     用以下语法在着色器中声明输入输出：
 </p>
@@ -938,7 +942,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
         </p>
     </li>
 </ul><section id="id11">
-<h4>插值修饰符<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h4>
+<h4>插值修饰符<a class="headerlink" href="#id11" title="Link to this heading"></a></h4>
 <p>
     可以对以下阶段的输入使用插值修饰符：
     <br>
@@ -978,7 +982,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
 <img alt="_images/ch4-1-1.png" src="_images/ch4-1-1.png"></section>
 </section>
 <section id="push-constant">
-<h3>Push Constant的声明方式<a class="headerlink" href="#push-constant" title="Permalink to this heading"></a></h3>
+<h3>Push Constant的声明方式<a class="headerlink" href="#push-constant" title="Link to this heading"></a></h3>
 <p>
     Push constant是在着色器中使用可变更（由CPU侧）常量的两种方式之一。
     <br>
@@ -1023,7 +1027,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
     以上代码摘自一组很简单的用于2D渲染的着色器，其中，顶点着色器中需要<span class="var">proj</span>矩阵、<span class="var">view</span>和<span class="var">scale</span>两个矢量，而片段着色器只需要<span class="var">color</span>，它们加在一起一共96个字节，可以全部放进push constant中，片段着色器中只需要声明<span class="var">color</span>，但它和<span class="var">proj</span>、<span class="var">view</span>和<span class="var">scale</span>在同一整块数据中，若不想在片段着色器中声明<span class="var">proj</span>、<span class="var">view</span>和<span class="var">scale</span>，则必须写明<span class="var">color</span>的offset。
 </p></section>
 <section id="uniform">
-<h3>Uniform缓冲区的声明方式<a class="headerlink" href="#uniform" title="Permalink to this heading"></a></h3>
+<h3>Uniform缓冲区的声明方式<a class="headerlink" href="#uniform" title="Link to this heading"></a></h3>
 <p>
     Uniform缓冲区（uniform buffer）是在着色器中使用可变更（由CPU侧）常量的两种方式之一，类似于HLSL中的常量缓冲区。
     <br>
@@ -1059,7 +1063,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
     </li>
 </ul></section>
 <section id="id12">
-<h3>其他Uniform对象的声明<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h3>
+<h3>其他Uniform对象的声明<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
 <p>
     注意到上文中声明push constant和uniform缓冲区时皆用到了<span class="kw">uniform</span>这个关键字。
     <br>
@@ -1109,7 +1113,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
     </li>
 </ul></section>
 <section id="id13">
-<h3>输入附件的的声明<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h3>
+<h3>输入附件的的声明<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
 <p>
     最后还剩一种uniform对象：子通道输入（subpass input），即输入附件（input attachment）在GLSL中的概念，有<span class="type">subpssInput</span>、<span class="type">subpssInputMS</span>、<span class="type">isubpssInput</span>、<span class="type">isubpssInputMS</span>、<span class="type">usubpssInput</span>、<span class="type">usubpssInputMS</span>六种类型，MS后缀说明是多重采样附件。
     <br>
@@ -1443,7 +1447,7 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
         <a href="Ch3-8%20%E6%9F%A5%E8%AF%A2.html" class="btn btn-neutral float-left" title="Ch3-8 查询" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
         <a href="Ch4-2%20%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.html" class="btn btn-neutral float-right" title="Ch4-2 顶点着色器" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
@@ -1451,12 +1455,12 @@ matrix[2][0] = 16.0; <span class="cmt">//第三列第一个元素赋值为16.0</
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; 版权所有 2021-2025, 葉橙.</p>
+    <p>&#169; 版权所有 2021-2025, 葉橙。</p>
   </div>
 
-  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
-    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
    
 
 </footer>

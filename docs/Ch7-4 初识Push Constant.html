@@ -1,22 +1,22 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh" >
+<html class="writer-html5" lang="zh" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ch7-4 初识Push Constant &mdash; EasyVulkan</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/theme.css?v=4d85d03b" />
+
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=10aaca3b"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
@@ -29,17 +29,21 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> EasyVulkan
-            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            EasyVulkan
+              <img src="_static/logo1.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
               <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
@@ -120,17 +124,17 @@
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">EasyVulkan</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+          <div role="navigation" aria-label="页面导航">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Ch7-4 初识Push Constant</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Ch7-4 初识Push Constant</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -140,7 +144,7 @@
            <div itemprop="articleBody">
              
   <section id="ch7-4-push-constant">
-<h1>Ch7-4 初识Push Constant<a class="headerlink" href="#ch7-4-push-constant" title="Permalink to this heading"></a></h1>
+<h1>Ch7-4 初识Push Constant<a class="headerlink" href="#ch7-4-push-constant" title="Link to this heading"></a></h1>
 <p>
     本节的<span class="path">main.cpp</span>对应示例代码中的：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7/Ch7-4.hpp">Ch7-4.hpp</a>
 </p>
@@ -149,7 +153,7 @@
     <br>
     这一节尝试使用push constant来为三角形指定位移，并用实例化来绘制多个在不同位置的三角形。
 </p><section id="push-constant">
-<h2>使用Push Constant绘制多个三角形的流程<a class="headerlink" href="#push-constant" title="Permalink to this heading"></a></h2>
+<h2>使用Push Constant绘制多个三角形的流程<a class="headerlink" href="#push-constant" title="Link to this heading"></a></h2>
 <p>
     在之前<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7/Ch7-1.hpp">Ch7-1.hpp</a>用顶点缓冲区绘制三角形代码的基础上，使用顶点和push constant绘制三角形需要经历以下步骤：
     <br>
@@ -167,7 +171,7 @@
     管线能使用的push constant常量的大小为128个字节。
 </p></section>
 <section id="id1">
-<h2>书写Push Constant所需数据<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<h2>书写Push Constant所需数据<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
 <p>
     跟上一节一样，在主函数里添加每个三角形的位移数据，不过这次不建立顶点缓冲区：
 </p>
@@ -182,7 +186,7 @@ glm::<span class="type">vec2</span> pushConstants[] = {
     参见<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id16">块成员的内存布局</a>，push constant在着色器中默认为std430布局，那么以上数组中<span class="type">vec2</span>类型的对齐为8，同C++代码中一致，不需要在以上C++代码中填补额外的空数据。
 </p></section>
 <section id="id2">
-<h2>创建新的管线布局<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<h2>创建新的管线布局<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
 <p>
     创建管线布局时，定义一个<a href="https://renderdoc.org/vkspec_chunked/chap14.html#VkPushConstantRange">VkPushConstantRange</a>：
 </p>
@@ -201,7 +205,7 @@ glm::<span class="type">vec2</span> pushConstants[] = {
 }
 </pre></section>
 <section id="pushconstant-vert-shader">
-<h2>PushConstant.vert.shader<a class="headerlink" href="#pushconstant-vert-shader" title="Permalink to this heading"></a></h2>
+<h2>PushConstant.vert.shader<a class="headerlink" href="#pushconstant-vert-shader" title="Link to this heading"></a></h2>
 <p>
     新建<span class="path">PushConstant.vert.shader</span>，基于<span class="path">InstancedRendering.vert.shader</span>略作修改即可：
 </p>
@@ -244,7 +248,7 @@ glm::<span class="type">vec2</span> pushConstants[] = {
 }
 </pre></section>
 <section id="id3">
-<h2>在命令缓冲区中更新Push Constant<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<h2>在命令缓冲区中更新Push Constant<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap14.html#vkCmdPushConstants">vkCmdPushConstants</a>(...)更新push constant：
 </p>
@@ -327,7 +331,7 @@ glm::<span class="type">vec2</span> pushConstants[] = {
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
         <a href="Ch7-3%20%E5%88%9D%E8%AF%86%E5%AE%9E%E4%BE%8B%E5%8C%96%E7%BB%98%E5%88%B6.html" class="btn btn-neutral float-left" title="Ch7-3 初识实例化绘制" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
         <a href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-right" title="Ch7-5 初识Uniform缓冲区" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
@@ -335,12 +339,12 @@ glm::<span class="type">vec2</span> pushConstants[] = {
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; 版权所有 2021-2025, 葉橙.</p>
+    <p>&#169; 版权所有 2021-2025, 葉橙。</p>
   </div>
 
-  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
-    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
    
 
 </footer>
