@@ -573,7 +573,7 @@ namespace vulkan {
 				return result;
 			}
 			//Set image count
-			swapchainCreateInfo.minImageCount = surfaceCapabilities.minImageCount + (surfaceCapabilities.maxImageCount > surfaceCapabilities.minImageCount);
+			swapchainCreateInfo.minImageCount = surfaceCapabilities.minImageCount + !surfaceCapabilities.maxImageCount + (surfaceCapabilities.maxImageCount > surfaceCapabilities.minImageCount);
 			//Set image extent
 			swapchainCreateInfo.imageExtent =
 				surfaceCapabilities.currentExtent.width == -1 ?

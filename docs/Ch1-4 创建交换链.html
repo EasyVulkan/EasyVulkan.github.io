@@ -360,7 +360,12 @@
 <ul>
     <li>
         <p>
-            如果currentExtent的width或height为特殊值-1，说明当前window surface的大小尚未被指定。
+            若maxImageCount为0，表示不限制最大图像数量。
+        </p>
+    </li>
+    <li>
+        <p>
+            若currentExtent的width或height为特殊值-1，说明当前window surface的大小尚未被指定。
         </p>
     </li>
 </ul>
@@ -370,7 +375,17 @@
     于是，如果容许的最大数量与最小数量不等，那么使用最小数量+1：
 </p>
 <pre class="code">
-swapchainCreateInfo.minImageCount = surfaceCapabilities.minImageCount + (surfaceCapabilities.maxImageCount &gt; surfaceCapabilities.minImageCount);
+swapchainCreateInfo.minImageCount =
+    surfaceCapabilities.minImageCount
+    + (surfaceCapabilities.maxImageCount == 0)                                 <span class="cmt">//若maxImageCount为0，表示不限制图像数量，+1</span>
+    + (surfaceCapabilities.maxImageCount &gt; surfaceCapabilities.minImageCount); <span class="cmt">//或者，若maxImageCount大于minImageCount，+1</span>
+</pre>
+<p>
+    略作简化整理：
+</p>
+<pre class="code">
+swapchainCreateInfo.minImageCount =
+    surfaceCapabilities.minImageCount + !surfaceCapabilities.maxImageCount + (surfaceCapabilities.maxImageCount &gt; surfaceCapabilities.minImageCount);
 </pre>
 <ul>
     <li>
@@ -394,7 +409,8 @@ swapchainCreateInfo.minImageCount = surfaceCapabilities.minImageCount + (surface
                 std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get physical device surface capabilities!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
                 <span class="kw">return</span> result;
             }
-            swapchainCreateInfo.minImageCount = surfaceCapabilities.minImageCount + (surfaceCapabilities.maxImageCount &gt; surfaceCapabilities.minImageCount);
+            swapchainCreateInfo.minImageCount =
+                surfaceCapabilities.minImageCount + !surfaceCapabilities.maxImageCount + (surfaceCapabilities.maxImageCount &gt; surfaceCapabilities.minImageCount);
             swapchainCreateInfo.imageExtent =
                 surfaceCapabilities.currentExtent.width == -1 ?
                 <span class="type">VkExtent2D</span>{
@@ -992,7 +1008,8 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
         <span class="kw">return</span> result;
     }
     <span class="cmt">//指定图像数量</span>
-    swapchainCreateInfo.minImageCount = surfaceCapabilities.minImageCount + (surfaceCapabilities.maxImageCount &gt; surfaceCapabilities.minImageCount);
+    swapchainCreateInfo.minImageCount =
+        surfaceCapabilities.minImageCount + !surfaceCapabilities.maxImageCount + (surfaceCapabilities.maxImageCount &gt; surfaceCapabilities.minImageCount);
     <span class="cmt">//指定图像大小</span>
     swapchainCreateInfo.imageExtent =
         surfaceCapabilities.currentExtent.width == -1 ?
