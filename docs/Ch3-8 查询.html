@@ -743,16 +743,7 @@
     <span class="fn">Destroy</span>();
     <span class="fn">Create</span>(<span class="par">capacity</span>);
 }
-</pre>
-<ul>
-    <li>
-        <p>
-            用std::<span class="type">vector</span>::<span class="fn">resize</span>(...)重设一个<span class="type">vector</span>容器的元素数时，即便重设到更小容量，容器底层的堆内存大小也不会减少。
-            <br>
-            重设<span class="type">vector</span>容器到更小容量后，用std::<span class="type">vector</span>::<span class="fn">shrink_to_fit</span>()可以将底层的堆内存重新分配，以节省多余的容量。
-        </p>
-    </li>
-</ul></section>
+</pre></section>
 <section id="id7">
 <h3>开始和结束遮挡查询<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
 <p>
