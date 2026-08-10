@@ -157,7 +157,7 @@
            <div itemprop="articleBody">
              
   <section id="ch3-5">
-<h1>Ch3-5 命令缓冲区<a class="headerlink" href="#ch3-5" title="Permalink to this heading"></a></h1>
+<h1>Ch3-5 命令缓冲区<a class="headerlink" href="#ch3-5" title="Link to this heading"></a></h1>
 <p>
     命令缓冲区（<span class="type">VkCommandBuffer</span>）用于录制命令，而命令池（<span class="type">VkCommandPool</span>）用于分配命令缓冲区。
     <br>
@@ -165,7 +165,7 @@
     <br>
     在多线程中录制命令缓冲区时，必须给每个线程一个不同的命令池（而不是从同一个命令池中为每个线程分配不同的命令缓冲区），以避免访问冲突。
 </p><section id="command-buffer">
-<h2>Command Buffer<a class="headerlink" href="#command-buffer" title="Permalink to this heading"></a></h2>
+<h2>Command Buffer<a class="headerlink" href="#command-buffer" title="Link to this heading"></a></h2>
 <p>
     命令缓冲区有两个级别：一级命令缓冲区和二级命令缓冲区。
     <br>
@@ -175,7 +175,7 @@
     <br>
     对于有多个子通道的渲染通道，通过在主线程中录制一级命令缓冲区，另一线程中将某个子通道中的命令录制在二级命令缓冲区中，可能可以在一定程度上缩减CPU一侧的执行时间。
 </p><section id="id1">
-<h3>命令缓冲区的生命周期<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<h3>命令缓冲区的生命周期<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
 <img alt="_images/ch3-5-1.png" src="_images/ch3-5-1.png">
 <img alt="_images/ch3-5-2.png" src="_images/ch3-5-2.png">
 <ul>
@@ -205,7 +205,7 @@
     关于分配、释放、重置命令缓冲区的相应函数，见后文关于命令池的说明。
 </p></section>
 <section id="id2">
-<h3>提交命令缓冲区<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<h3>提交命令缓冲区<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkQueueSubmit">vkQueueSubmit</a>(...)向队列提交命令缓冲区：
 </p>
@@ -319,7 +319,7 @@
     4.置位所需置位的信号量和栅栏。
 </p></section>
 <section id="id3">
-<h3>开始和结束录制命令缓冲区<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<h3>开始和结束录制命令缓冲区<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkBeginCommandBuffer">vkBeginCommandBuffer</a>(...)开始录制命令缓冲区：
 </p>
@@ -420,14 +420,14 @@
     </tbody>
 </table></section>
 <section id="id4">
-<h3>二级命令缓冲区<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<h3>二级命令缓冲区<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
 <p>
     //TODO 暂时用不着所以<a href="https://renderdoc.org/vkspec_chunked/chap6.html#VkCommandBufferInheritanceInfo">VkCommandBufferInheritanceInfo</a>也先不写了。
     <br>
     单线程里用处不大，相关示例可能要等我写到阴影。
 </p></section>
 <section id="commandbuffer">
-<h3>封装为commandBuffer类<a class="headerlink" href="#commandbuffer" title="Permalink to this heading"></a></h3>
+<h3>封装为commandBuffer类<a class="headerlink" href="#commandbuffer" title="Link to this heading"></a></h3>
 <p>
     向<span class="path">VKBase.h</span>，vulkan命名空间中添加以下代码：
 </p>
@@ -476,9 +476,9 @@
 </pre></section>
 </section>
 <section id="command-pool">
-<h2>Command Pool<a class="headerlink" href="#command-pool" title="Permalink to this heading"></a></h2>
+<h2>Command Pool<a class="headerlink" href="#command-pool" title="Link to this heading"></a></h2>
 <section id="id5">
-<h3>创建命令池<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<h3>创建命令池<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkCreateCommandPool">vkCreateCommandPool</a>(...)创建命令池：
 </p>
@@ -558,7 +558,7 @@
     </li>
 </ul></section>
 <section id="id6">
-<h3>分配命令缓冲区<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<h3>分配命令缓冲区<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkAllocateCommandBuffers">vkAllocateCommandBuffers</a>(...)分配命令缓冲区：
 </p>
@@ -621,7 +621,7 @@
     </tbody>
 </table></section>
 <section id="id7">
-<h3>释放命令缓冲区<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<h3>释放命令缓冲区<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkFreeCommandBuffers">vkFreeCommandBuffers</a>(...)释放命令缓冲区：
 </p>
@@ -658,7 +658,7 @@
     通常而言你不需要手动释放命令缓冲区，销毁命令池时，会回收从中分配的所有命令缓冲区。
 </p></section>
 <section id="id8">
-<h3>重置命令缓冲区<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<h3>重置命令缓冲区<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
 <p>
     对于可以被重置的命令缓冲区，每次重新录制命令时，命令缓冲区会被自动重置。
     <br>
@@ -693,7 +693,7 @@
     </li>
 </ul></section>
 <section id="id9">
-<h3>重置命令池<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<h3>重置命令池<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkResetCommandPool">vkResetCommandPool</a>(...)重置整个命令池，这将导致所有从该命令池中分配的命令缓冲区的状态变为初始化状态：
 </p>
@@ -726,7 +726,7 @@
     </li>
 </ul></section>
 <section id="id10">
-<h3>从命令池释放多余内存<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
+<h3>从命令池释放多余内存<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap6.html#vkCreateCommandPool">vkTrimCommandPool</a>(...)释放命令池中多余的内存（需要Vulkan1.1）：
 </p>
@@ -759,7 +759,7 @@
     多余的内存通常来自已经执行完并重置回了初始化状态的命令缓冲区。调用此函数后命令缓冲区的handle仍旧有效，录制的内容不受影响。
 </p></section>
 <section id="commandpool">
-<h3>封装为commandPool类<a class="headerlink" href="#commandpool" title="Permalink to this heading"></a></h3>
+<h3>封装为commandPool类<a class="headerlink" href="#commandpool" title="Link to this heading"></a></h3>
 <p>
     向<span class="path">VKBase.h</span>，vulkan命名空间中，<span class="type">commandBuffer</span>的定义后添加以下代码：
 </p>

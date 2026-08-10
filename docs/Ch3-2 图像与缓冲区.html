@@ -180,15 +180,15 @@
            <div itemprop="articleBody">
              
   <section id="ch3-2">
-<h1>Ch3-2 图像与缓冲区<a class="headerlink" href="#ch3-2" title="Permalink to this heading"></a></h1>
+<h1>Ch3-2 图像与缓冲区<a class="headerlink" href="#ch3-2" title="Link to this heading"></a></h1>
 <section id="device-memory">
-<h2>Device Memory<a class="headerlink" href="#device-memory" title="Permalink to this heading"></a></h2>
+<h2>Device Memory<a class="headerlink" href="#device-memory" title="Link to this heading"></a></h2>
 <p>
     设备内存（<span class="type">VkDeviceMemory</span>）是物理设备可以访问的内存。
     <br>
     根据你需要的内存属性，设备内存可以是计算机主存的一部分，也可以是显卡的显存。
 </p><section id="id1">
-<h3>分配设备内存<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<h3>分配设备内存<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkAllocateMemory">vkAllocateMemory</a>分配设备内存：
 </p>
@@ -263,7 +263,7 @@
     </li>
 </ul></section>
 <section id="id2">
-<h3>将设备内存绑定给缓冲区或图像<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<h3>将设备内存绑定给缓冲区或图像<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
 <p>
     通常会把连续的设备内存区域绑定给缓冲区/图像，一次性分配的大量设备内存可以拆分成几块进行绑定。
     <br>
@@ -302,7 +302,7 @@
     关于绑定缓冲区或图像的具体函数，见其各自的段落。
 </p></section>
 <section id="id3">
-<h3>映射内存区<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<h3>映射内存区<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
 <p>
     对于具有<span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>内存属性的设备内存区（关于取得内存属性的方法见后文的封装代码），在对其进行映射（map）后，可以由CPU侧对其进行直接读写。
 </p>
@@ -442,7 +442,7 @@
     </tbody>
 </table></section>
 <section id="id4">
-<h3>取消映射内存区<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<h3>取消映射内存区<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap11.html#vkUnmapMemory">vkUnmapMemory</a>(...)取消对内存区的映射：
 </p>
@@ -504,7 +504,7 @@
 </p>
 </div></section>
 <section id="devicememory">
-<h3>封装为deviceMemory类<a class="headerlink" href="#devicememory" title="Permalink to this heading"></a></h3>
+<h3>封装为deviceMemory类<a class="headerlink" href="#devicememory" title="Link to this heading"></a></h3>
 <p>
     向<span class="path">VKBase.h</span>，vulkan命名空间中添加以下代码：
 </p>
@@ -640,11 +640,11 @@
 </ul></section>
 </section>
 <section id="buffer">
-<h2>Buffer<a class="headerlink" href="#buffer" title="Permalink to this heading"></a></h2>
+<h2>Buffer<a class="headerlink" href="#buffer" title="Link to this heading"></a></h2>
 <p>
     缓冲区（<span class="type">VkBuffer</span>）引用设备内存，指代缓冲区数据。缓冲区中的数据是线性排列的。
 </p><section id="id5">
-<h3>创建缓冲区<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<h3>创建缓冲区<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkCreateBuffer">vkCreateBuffer</a>(...)创建缓冲区：
 </p>
@@ -842,7 +842,7 @@
     </li>
 </ul></section>
 <section id="id6">
-<h3>获取缓冲区的内存分配要求<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<h3>获取缓冲区的内存分配要求<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkGetBufferMemoryRequirements">vkGetBufferMemoryRequirements</a>(...)获取缓冲区的内存分配信息：
 </p>
@@ -925,7 +925,7 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
     </li>
 </ul></section>
 <section id="id7">
-<h3>将设备内存绑定到缓冲区<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<h3>将设备内存绑定到缓冲区<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkBindBufferMemory">vkBindBufferMemory</a>(...)将一块连续的设备内存绑定到缓冲区：
 </p>
@@ -959,7 +959,7 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
     </tbody>
 </table></section>
 <section id="id8">
-<h3>封装为buffer类<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<h3>封装为buffer类<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
 <p>
     向<span class="path">VKBase.h</span>，vulkan命名空间中，添加以下代码：
 </p>
@@ -1015,7 +1015,7 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
 };
 </pre></section>
 <section id="buffermemory">
-<h3>同设备内存一起封装为bufferMemory类<a class="headerlink" href="#buffermemory" title="Permalink to this heading"></a></h3>
+<h3>同设备内存一起封装为bufferMemory类<a class="headerlink" href="#buffermemory" title="Link to this heading"></a></h3>
 <p>
     向<span class="path">VKBase.h</span>，vulkan命名空间中，<span class="type">buffer</span>的定义后添加以下代码：
 </p>
@@ -1078,11 +1078,11 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
 </pre></section>
 </section>
 <section id="buffer-view">
-<h2>Buffer View<a class="headerlink" href="#buffer-view" title="Permalink to this heading"></a></h2>
+<h2>Buffer View<a class="headerlink" href="#buffer-view" title="Link to this heading"></a></h2>
 <p>
     缓冲区视图（<span class="type">VkBufferView</span>）定义了将纹素缓冲区作为1D图像使用的方式。
 </p><section id="id9">
-<h3>创建缓冲区视图<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<h3>创建缓冲区视图<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkCreateBufferView">vkCreateBufferView</a>(...)创建缓冲区视图：
 </p>
@@ -1157,7 +1157,7 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
     </tbody>
 </table></section>
 <section id="bufferview">
-<h3>封装为bufferView类<a class="headerlink" href="#bufferview" title="Permalink to this heading"></a></h3>
+<h3>封装为bufferView类<a class="headerlink" href="#bufferview" title="Link to this heading"></a></h3>
 <p>
     向<span class="path">VKBase.h</span>，vulkan命名空间中添加以下代码：
 </p>
@@ -1199,11 +1199,11 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
 </pre></section>
 </section>
 <section id="image">
-<h2>Image<a class="headerlink" href="#image" title="Permalink to this heading"></a></h2>
+<h2>Image<a class="headerlink" href="#image" title="Link to this heading"></a></h2>
 <p>
     图像（<span class="type">VkImage</span>）引用设备内存，指代图像数据。图像同缓冲区的不同之处是，图像具有格式和内存布局，也就意味着其中的数据未必是线性排列的。
 </p><section id="id10">
-<h3>创建图像<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
+<h3>创建图像<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkCreateImage">vkCreateImage</a>(...)创建图像：
 </p>
@@ -1441,7 +1441,7 @@ memoryAllocateInfo.memoryTypeIndex = <span class="mcr">UINT32_MAX</span>;
     </li>
 </ul></section>
 <section id="id11">
-<h3>获取图像的内存分配要求<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>
+<h3>获取图像的内存分配要求<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkGetImageMemoryRequirements">vkGetImageMemoryRequirements</a>(...)获取图像的内存分配信息：
 </p>
@@ -1497,7 +1497,7 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
     memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memoryTypeBits, <span class="par">desiredMemoryProperties</span> &amp; ~<span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>);
 </pre></section>
 <section id="id12">
-<h3>将设备内存绑定到图像<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h3>
+<h3>将设备内存绑定到图像<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkBindImageMemory">vkBindImageMemory</a>(...)将一块连续的设备内存绑定到图像：
 </p>
@@ -1531,7 +1531,7 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
     </tbody>
 </table></section>
 <section id="id13">
-<h3>封装为image类<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h3>
+<h3>封装为image类<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
 <p>
     向<span class="path">VKBase.h</span>，vulkan命名空间中，添加以下代码：
 </p>
@@ -1591,7 +1591,7 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
 };
 </pre></section>
 <section id="imagememory">
-<h3>同设备内存一起封装为imageMemory类<a class="headerlink" href="#imagememory" title="Permalink to this heading"></a></h3>
+<h3>同设备内存一起封装为imageMemory类<a class="headerlink" href="#imagememory" title="Link to this heading"></a></h3>
 <p>
     向<span class="path">VKBase.h</span>，vulkan命名空间中，<span class="type">image</span>的定义后添加以下代码：
 </p>
@@ -1647,11 +1647,11 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
 </pre></section>
 </section>
 <section id="image-view">
-<h2>Image View<a class="headerlink" href="#image-view" title="Permalink to this heading"></a></h2>
+<h2>Image View<a class="headerlink" href="#image-view" title="Link to this heading"></a></h2>
 <p>
     图像视图（<span class="type">VkImageView</span>）定义了图像的使用方式。
 </p><section id="id14">
-<h3>创建图像视图<a class="headerlink" href="#id14" title="Permalink to this heading"></a></h3>
+<h3>创建图像视图<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap12.html#vkCreateImageView">vkCreateImageView</a>(...)创建图像视图，参数如下：
 </p>
@@ -1912,7 +1912,7 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
     baseArrayLayer和layerCount应用于贴图数组。此处图层的概念并非是类似Photoshop中的图层，一个图层指代数组中的一张图像。在着色器中以0为w坐标（w是采样坐标的第三个分量）进行采样时，采样得到的是图像中索引为baseArrayLayer的图层，有效的采样范围对应原image中索引范围在闭区间 [baseArrayLayer, baseArrayLayer + layerCount - 1] 内的图层。
 </p></section>
 <section id="imageview">
-<h3>封装为imageView类<a class="headerlink" href="#imageview" title="Permalink to this heading"></a></h3>
+<h3>封装为imageView类<a class="headerlink" href="#imageview" title="Link to this heading"></a></h3>
 <p>
     向<span class="path">VKBase.h</span>，vulkan命名空间中，添加以下代码：
 </p>
@@ -1955,13 +1955,13 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
 </pre></section>
 </section>
 <section id="id15">
-<h2>图像及数据的格式<a class="headerlink" href="#id15" title="Permalink to this heading"></a></h2>
+<h2>图像及数据的格式<a class="headerlink" href="#id15" title="Link to this heading"></a></h2>
 <p>
     Vulkan中的<a href="https://renderdoc.org/vkspec_chunked/chap48.html#VkFormat">VkFormat</a>即适用于图像格式，也适用于描述数据格式（比如顶点属性）。
     <br>
     由于<a href="https://renderdoc.org/vkspec_chunked/chap48.html#VkFormat">VkFormat</a>的枚举项过多，这里不一一解释，仅对非压缩颜色格式和深度格式做简单提要。
 </p><section id="id16">
-<h3>非压缩颜色格式<a class="headerlink" href="#id16" title="Permalink to this heading"></a></h3>
+<h3>非压缩颜色格式<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
 <p>
     非压缩颜色格式有两个部分，以<span class="enum">VK_FORMAT_R8G8B8A8_UNORM</span>为例，是R8G8B8A8和UNORM，前者是作为图像格式的各个通道名称与该通道所占据的比特数的组合，后者叫做数字格式（numeric format）。
 </p>
@@ -2051,7 +2051,7 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
     <span class="enum">VK_FORMAT_R16G16B16A16_SNORM</span>的任一通道，若数值为32767，则着色器中读取为1.f，若数值为-32768，则着色器中读取为-1.f。
 </p></section>
 <section id="id17">
-<h3>深度模板格式<a class="headerlink" href="#id17" title="Permalink to this heading"></a></h3>
+<h3>深度模板格式<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
 <p>
     深度模板格式有以下几种：
 </p>
@@ -2105,7 +2105,7 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
     </li>
 </ul></section>
 <section id="vkformat-h">
-<h3>VKFormat.h<a class="headerlink" href="#vkformat-h" title="Permalink to this heading"></a></h3>
+<h3>VKFormat.h<a class="headerlink" href="#vkformat-h" title="Link to this heading"></a></h3>
 <p>
     为了在从文件读取/存入文件时正确计算图像的大小，这里给出我的<span class="path">VKFormat.h</span>文件，其中记录了各种格式（仅包含Vulkan1.0且不算扩展提供的格式）对应的通道数、每个通道的大小、单个像素的大小，以及数据类型。
 </p>
@@ -2357,7 +2357,7 @@ memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(memoryRequirements.memor
 </ul></section>
 </section>
 <section id="id18">
-<h2>惰性初始化的设备内存<a class="headerlink" href="#id18" title="Permalink to this heading"></a></h2>
+<h2>惰性初始化的设备内存<a class="headerlink" href="#id18" title="Link to this heading"></a></h2>
 <p>
     若分配的设备内存具有<span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>内存属性，那么它是可以被惰性分配的。
     <br>

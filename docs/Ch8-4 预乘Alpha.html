@@ -1,22 +1,22 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh" >
+<html class="writer-html5" lang="zh" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ch8-4 预乘Alpha &mdash; EasyVulkan</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/theme.css?v=4d85d03b" />
+
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=10aaca3b"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
@@ -29,17 +29,21 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> EasyVulkan
-            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            EasyVulkan
+              <img src="_static/logo1.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
               <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
@@ -126,17 +130,17 @@
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">EasyVulkan</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+          <div role="navigation" aria-label="页面导航">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Ch8-4 预乘Alpha</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Ch8-4 预乘Alpha</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -146,7 +150,7 @@
            <div itemprop="articleBody">
              
   <section id="ch8-4-alpha">
-<h1>Ch8-4 预乘Alpha<a class="headerlink" href="#ch8-4-alpha" title="Permalink to this heading"></a></h1>
+<h1>Ch8-4 预乘Alpha<a class="headerlink" href="#ch8-4-alpha" title="Link to this heading"></a></h1>
 <p>
     你是否曾看到过这样的图像，3D场景中，薄片状物体的边缘显得很不自然：
 </p>
@@ -183,7 +187,7 @@
     <br>
     这个翻译并不能算准确，有两个原因：A通道值<strong>未必是</strong>用作<strong>不透明度</strong>。
 </p><section id="id1">
-<h2>混色与线性插值<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<h2>混色与线性插值<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
 <p>
     要理解预乘alpha的作用，得先从混色讲起。
 </p>
@@ -284,7 +288,7 @@
     </li>
 </ul></section>
 <section id="alpha">
-<h2>创建预乘alpha的贴图<a class="headerlink" href="#alpha" title="Permalink to this heading"></a></h2>
+<h2>创建预乘alpha的贴图<a class="headerlink" href="#alpha" title="Link to this heading"></a></h2>
 <p>
     虽然渲染中有使用预乘alpha贴图的必要性，但通常你接触到的图像文件会是直接alpha的。
 </p>
@@ -410,7 +414,7 @@
     其余各个成员函数的参数名，你应该在<a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html">Ch5-2 2D贴图及生成Mipmap</a>中都见过，就不多做解释了。
 </p></section>
 <section id="id2">
-<h2>创建渲染通道<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<h2>创建渲染通道<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
 <p>
     在<span class="fn">Instantiate</span>(...)中创建渲染通道和管线。
 </p>
@@ -504,9 +508,9 @@
 }
 </pre></section>
 <section id="id3">
-<h2>书写着色器并创建管线<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<h2>书写着色器并创建管线<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
 <section id="rendertoimage2d-nouv-vert-shader">
-<h3>RenderToImage2d_NoUV.vert.shader<a class="headerlink" href="#rendertoimage2d-nouv-vert-shader" title="Permalink to this heading"></a></h3>
+<h3>RenderToImage2d_NoUV.vert.shader<a class="headerlink" href="#rendertoimage2d-nouv-vert-shader" title="Link to this heading"></a></h3>
 <p>
     因为不会采样贴图，只要将整个NDC坐标范围输出到gl_Position即可，不需要输出贴图坐标：
 </p>
@@ -526,7 +530,7 @@
 }
 </pre></section>
 <section id="rendernothing-frag-shader">
-<h3>RenderNothing.frag.shader<a class="headerlink" href="#rendernothing-frag-shader" title="Permalink to this heading"></a></h3>
+<h3>RenderNothing.frag.shader<a class="headerlink" href="#rendernothing-frag-shader" title="Link to this heading"></a></h3>
 <pre class="code">
 <span class="pragma">#version</span> 460
 <span class="pragma">#pragma shader_stage</span>(fragment)
@@ -547,7 +551,7 @@
     </li>
 </ul></section>
 <section id="id4">
-<h3>创建管线<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<h3>创建管线<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
 <p>
     首先填充用来读取着色器的函数<span class="sfn">Ssci_Vert</span>()和<span class="sfn">Ssci_Frag</span>()：
 </p>
@@ -710,7 +714,7 @@ pipelineCiPack.colorBlendAttachmentStates.<span class="fn">emplace_back</span>(
 </pre></section>
 </section>
 <section id="cmdtransferdatatoimage">
-<h2>CmdTransferDataToImage<a class="headerlink" href="#cmdtransferdatatoimage" title="Permalink to this heading"></a></h2>
+<h2>CmdTransferDataToImage<a class="headerlink" href="#cmdtransferdatatoimage" title="Link to this heading"></a></h2>
 <p>
     这个函数用来将数据搬到<span class="type">VkImage</span>对象，跟之前<span class="type">texture2d</span>::<span class="fn">Create_Internal</span>(...)的逻辑类似，但不生成mipmap：
 </p>
@@ -876,7 +880,7 @@ pipelineCiPack.colorBlendAttachmentStates.<span class="fn">emplace_back</span>(
 }
 </pre></section>
 <section id="operator">
-<h2>operator()<a class="headerlink" href="#operator" title="Permalink to this heading"></a></h2>
+<h2>operator()<a class="headerlink" href="#operator" title="Link to this heading"></a></h2>
 <p>
     填充<code><span class="fn">operator()</span>(<span class="kw">const</span> <span class="type">uint8_t</span>* <span class="par">pImageData</span>, <span class="type">VkExtent2D</span> <span class="par">extent</span>, <span class="type">VkFormat</span> <span class="par">format_initial</span>)</code>，实现创建预乘alpha贴图的整个流程。
     <br>
@@ -1272,7 +1276,7 @@ easyVulkan::<span class="type">fCreateTexture2d_multiplyAlpha</span> function(<s
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
         <a href="Ch8-3%20%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93.html" class="btn btn-neutral float-left" title="Ch8-3 延迟渲染" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
         <a href="Ch8-5%20sRGB%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4%E4%B8%8E%E5%BC%80%E5%90%AFHDR.html" class="btn btn-neutral float-right" title="Ch8-5 sRGB色彩空间与开启HDR" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
@@ -1280,12 +1284,12 @@ easyVulkan::<span class="type">fCreateTexture2d_multiplyAlpha</span> function(<s
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; 版权所有 2021-2025, 葉橙.</p>
+    <p>&#169; 版权所有 2021-2025, 葉橙。</p>
   </div>
 
-  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
-    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
    
 
 </footer>

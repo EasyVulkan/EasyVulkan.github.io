@@ -146,7 +146,7 @@
            <div itemprop="articleBody">
              
   <section id="ch4-2">
-<h1>Ch4-2 顶点着色器<a class="headerlink" href="#ch4-2" title="Permalink to this heading"></a></h1>
+<h1>Ch4-2 顶点着色器<a class="headerlink" href="#ch4-2" title="Link to this heading"></a></h1>
 <p>
     顶点着色器（vertex shader）是图形管线中的一个着色器，它可以处理来自顶点缓冲区的数据，或根据一定的规则直接生成顶点数据。
     <br>
@@ -155,7 +155,7 @@
 <p>
     顶点着色器逐顶点发生调用。
 </p><section id="id1">
-<h2>顶点着色器的内置输入<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<h2>顶点着色器的内置输入<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
 <p>
     用GLSL编写的顶点着色器有以下内置输入：
 </p>
@@ -211,7 +211,7 @@
     gl_DrawID是从OpenGL所使用的GLSL继承而来的，因此不写作gl_DrawIndex。
 </p></section>
 <section id="id2">
-<h2>顶点着色器的内置输出<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<h2>顶点着色器的内置输出<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
 <p>
     用GLSL编写的顶点着色器有以下内置输出：
 </p>
@@ -264,7 +264,7 @@
         </p>
     </li>
 </ul><section id="gl-position">
-<h3>gl_Position<a class="headerlink" href="#gl-position" title="Permalink to this heading"></a></h3>
+<h3>gl_Position<a class="headerlink" href="#gl-position" title="Link to this heading"></a></h3>
 <p>
     gl_Position与片段渲染在屏幕上的位置及深度值的关系参见<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id4">NDC坐标</a>。
     <br>
@@ -273,7 +273,7 @@
     gl_Position在栅格化时发生插值，插值方式考虑透视（即相当于<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id11">插值修饰符</a>为<span class="kw">smooth</span>）。
 </p></section>
 <section id="gl-clipdistance">
-<h3>gl_ClipDistance<a class="headerlink" href="#gl-clipdistance" title="Permalink to this heading"></a></h3>
+<h3>gl_ClipDistance<a class="headerlink" href="#gl-clipdistance" title="Link to this heading"></a></h3>
 <p>
     gl_ClipDistance数组中的每个元素代表着到不同剪裁平面的距离。
     <br>
@@ -314,7 +314,7 @@
     </li>
 </ul></section>
 <section id="gl-culldistance">
-<h3>gl_CullDistance<a class="headerlink" href="#gl-culldistance" title="Permalink to this heading"></a></h3>
+<h3>gl_CullDistance<a class="headerlink" href="#gl-culldistance" title="Link to this heading"></a></h3>
 <p>
     gl_CullDistance数组中的每个元素代表着到不同剔除平面的距离，则：
     <br>

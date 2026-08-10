@@ -149,15 +149,15 @@
            <div itemprop="articleBody">
              
   <section id="ch3-7">
-<h1>Ch3-7 采样器<a class="headerlink" href="#ch3-7" title="Permalink to this heading"></a></h1>
+<h1>Ch3-7 采样器<a class="headerlink" href="#ch3-7" title="Link to this heading"></a></h1>
 <section id="sampler">
-<h2>Sampler<a class="headerlink" href="#sampler" title="Permalink to this heading"></a></h2>
+<h2>Sampler<a class="headerlink" href="#sampler" title="Link to this heading"></a></h2>
 <p>
     采样器（<span class="type">VkSampler</span>）用于指定采样方式。
     <br>
     采样方式包括如何读取图像数据、滤波方式，以及一系列其他变换，使用不同的采样器以满足对图像的不同使用要求。
 </p><section id="id1">
-<h3>创建采样器<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<h3>创建采样器<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap13.html#vkCreateSampler">vkCreateSampler</a>(...)创建采样器：
 </p>
@@ -288,7 +288,7 @@
     接下来先对<span class="type">VkSampler</span>进行封装，再逐一解说其他创建参数。
 </p></section>
 <section id="id2">
-<h3>封装为sampler类<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<h3>封装为sampler类<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
 <p>
     向<span class="path">VKBase.h</span>，vulkan命名空间中添加以下代码：
 </p>
@@ -317,7 +317,7 @@
 };
 </pre></section>
 <section id="id3">
-<h3>滤波方式<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<h3>滤波方式<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
 <table class="docutils align-default">
     <colgroup>
         <col>
@@ -386,7 +386,7 @@
     若你需要使用<span class="enum">VK_SAMPLER_MIPMAP_MODE_NEAREST</span>，会出现“图像被渲染到1/3.1的长宽，却采样1/4长宽的mipmap”的情况，但通常你会想要精度更高的mipmap，这可以通过设置mipLodBias实现。另外注意，如果图像被渲染到正好1/3的长宽，采样1/2长宽还是1/4长宽的mipmap为实现特定。
 </p></section>
 <section id="id4">
-<h3>细节等级<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<h3>细节等级<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
 <p>
     Mipmap的大小为<code>原图像长宽 / (mip等级 + 1)</code>，图像的LOD（level of detail）决定了要采样哪个mip等级的mipmap。
 </p>
@@ -418,7 +418,7 @@
     下半张图的光斑更明显，但是锯齿感显著减弱（尤其是小球右上角的那串“节日彩灯”）。
 </p></section>
 <section id="id5">
-<h3>寻址模式<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<h3>寻址模式<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
 <p>
     寻址模式（<span class="type">VkSamplerAddressMode</span>），也称wrapping mode，决定当用于采样的归一化坐标超出[0,1)范围时的采样结果。
 </p>
@@ -558,7 +558,7 @@
 </p>
 <img alt="_images/ch3-7-6.png" src="_images/ch3-7-6.png"></section>
 <section id="id6">
-<h3>各向异性采样<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<h3>各向异性采样<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
 <p>
     各向异性有助于改善图像倾斜时的采样效果：
 </p>
@@ -580,7 +580,7 @@
     </p>
 </div></section>
 <section id="id7">
-<h3>比较深度值<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<h3>比较深度值<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
 <p>
     基于不同的目的，有两种不同的采样深度贴图的方式：
     <br>

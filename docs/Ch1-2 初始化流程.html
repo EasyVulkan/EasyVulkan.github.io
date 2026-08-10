@@ -1,22 +1,22 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh" >
+<html class="writer-html5" lang="zh" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ch1-2 初始化流程 &mdash; EasyVulkan</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/theme.css?v=4d85d03b" />
+
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=10aaca3b"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
@@ -29,17 +29,21 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> EasyVulkan
-            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            EasyVulkan
+              <img src="_static/logo1.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
               <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
@@ -126,17 +130,17 @@
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">EasyVulkan</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+          <div role="navigation" aria-label="页面导航">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Ch1-2 初始化流程</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Ch1-2 初始化流程</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -146,13 +150,13 @@
            <div itemprop="articleBody">
              
   <section id="ch1-2">
-<h1>Ch1-2 初始化流程<a class="headerlink" href="#ch1-2" title="Permalink to this heading"></a></h1>
+<h1>Ch1-2 初始化流程<a class="headerlink" href="#ch1-2" title="Link to this heading"></a></h1>
 <p>
     为什么第一章的标题不是“从零到三角形”？因为步骤太多了！所以我分了两章来讲。
     <br>
     初始化一个Vulkan应用程序所必备的步骤已足以算得上繁多，在这一节先对所需步骤进行总结，解释名词概念，并定义各步骤中将要书写的函数及自建类型之名称。
 </p><section id="id1">
-<h2>单例类<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<h2>单例类<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
 <p>
     之前在<span class="path">VKBase.h</span>中添加了一个叫vulkan的命名空间，现在该命名空间中定义一个单例类<span class="type">graphicsBase</span>，该类将被用于管理Vulkan中那些最基础的对象和行为。
 </p>
@@ -183,7 +187,7 @@
     </li>
 </ul></section>
 <section id="id2">
-<h2>初始化流程<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<h2>初始化流程<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
 <p>
     一个呈现图像的Vulkan应用程序需经历以下的步骤以初始化：
     <br>
@@ -237,7 +241,7 @@
     <br>
     在将一张图像用于渲染或其他类型的写入时，已渲染好的图像可以被呈现引擎读取，如此交替呈现在窗口中的数张图像的集合即为交换链。
 </p><section id="vulkan">
-<h3>创建Vulkan实例的步骤<a class="headerlink" href="#vulkan" title="Permalink to this heading"></a></h3>
+<h3>创建Vulkan实例的步骤<a class="headerlink" href="#vulkan" title="Link to this heading"></a></h3>
 <p>
     创建Vulkan实例的步骤依序为：
     <br>
@@ -337,7 +341,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;
     3.若<a href="https://renderdoc.org/vkspec_chunked/chap4.html#vkCreateInstance">vkCreateInstance</a>(...)返回<span class="enum">VK_ERROR_LAYER_NOT_PRESENT</span>，从<span class="fn">InstanceLayers</span>()复制一份instanceLayers，用<span class="fn">CheckInstanceLayers</span>(...)检查可用性，若不可用的仅为非必要的层，创建一份去除该层后的<span class="type">vector</span>，用<span class="fn">InstanceLayers</span>(...)复制给instanceLayers。返回<span class="enum">VK_ERROR_EXTENSION_NOT_PRESENT</span>的情况亦类似。然后重新尝试创建Vulkan实例。
 </p></section>
 <section id="debug-messenger">
-<h3>创建debug messenger的步骤<a class="headerlink" href="#debug-messenger" title="Permalink to this heading"></a></h3>
+<h3>创建debug messenger的步骤<a class="headerlink" href="#debug-messenger" title="Link to this heading"></a></h3>
 <p>
     创建了Vulkan实例后，即可创建debug messenger，以便检查初始化流程中的所有其他步骤。
     <br>
@@ -352,7 +356,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;
 }
 </pre></section>
 <section id="window-surafce">
-<h3>创建window surafce的步骤<a class="headerlink" href="#window-surafce" title="Permalink to this heading"></a></h3>
+<h3>创建window surafce的步骤<a class="headerlink" href="#window-surafce" title="Link to this heading"></a></h3>
 <p>
     在创建了glfw窗口和Vulkan实例后，用<a href="https://www.glfw.org/docs/3.3/group__vulkan.html#ga1a24536bec3f80b08ead18e28e6ae965">glfwCreateWindowSurface</a>(...)创建window surface。这一步会写在之前的<span class="type">InitializeWindow</span>(...)中。
     <br>
@@ -383,7 +387,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;
     </li>
 </ul></section>
 <section id="id3">
-<h3>创建逻辑设备的步骤<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<h3>创建逻辑设备的步骤<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
 <p>
     创建逻辑设备的步骤依序为：
     <br>
@@ -553,7 +557,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">const char</span>*&gt;
     上述流程优先考虑在最佳情况下获得最快的初始化速度，因而显得有些繁琐（最佳情况下不需要检查扩展，最糟糕的情况为遍历所有物理设备一次后，因全数无法满足所需扩展，再次遍历并对每个设备检查扩展可用性），如果你的应用程序用到了显卡未必支持但对于程序运行非必要的扩展，且程序对显卡性能没有要求，可以先检查扩展（最佳情况下需要检查扩展一次，最糟糕的情况下需要遍历所有物理设备一次并对每个设备检查扩展可用性一次）。
 </p></section>
 <section id="id4">
-<h3>创建交换链的步骤<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<h3>创建交换链的步骤<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
 <p>
     创建交换链的步骤依序为：
     <br>
@@ -650,7 +654,7 @@ std::<span class="type">vector</span> &lt;<span class="type">VkImageView&gt;</sp
 </p></section>
 </section>
 <section id="id5">
-<h2>若要使用最新版Vulkan<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<h2>若要使用最新版Vulkan<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
 <p>
     如果你想使用Vulkan的最新版本，须在创建Vulkan实例前，取得当前运行环境所支持的最新Vulkan版本，在<span class="type">graphicsBase</span>中加入以下内容：
 </p>
@@ -668,7 +672,7 @@ std::<span class="type">vector</span> &lt;<span class="type">VkImageView&gt;</sp
 }
 </pre></section>
 <section id="id6">
-<h2>代码汇总<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
+<h2>代码汇总<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
 <p>
     本节中总共定义了如下内容：
 </p>
@@ -884,7 +888,7 @@ std::<span class="type">vector</span> &lt;<span class="type">VkImageView&gt;</sp
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
         <a href="Ch1-1%20%E5%88%9B%E5%BB%BAGLFW%E7%AA%97%E5%8F%A3.html" class="btn btn-neutral float-left" title="Ch1-1 创建GLFW窗口" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
         <a href="Ch1-3%20%E5%88%9B%E5%BB%BAVK%E5%AE%9E%E4%BE%8B%E4%B8%8E%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87.html" class="btn btn-neutral float-right" title="Ch1-3 创建VK实例与逻辑设备" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
@@ -892,12 +896,12 @@ std::<span class="type">vector</span> &lt;<span class="type">VkImageView&gt;</sp
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; 版权所有 2021-2025, 葉橙.</p>
+    <p>&#169; 版权所有 2021-2025, 葉橙。</p>
   </div>
 
-  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
-    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
    
 
 </footer>

@@ -164,13 +164,13 @@
            <div itemprop="articleBody">
              
   <section id="ch3-3">
-<h1>Ch3-3 管线布局和管线<a class="headerlink" href="#ch3-3" title="Permalink to this heading"></a></h1>
+<h1>Ch3-3 管线布局和管线<a class="headerlink" href="#ch3-3" title="Link to this heading"></a></h1>
 <section id="pipeline-layout">
-<h2>Pipeline Layout<a class="headerlink" href="#pipeline-layout" title="Permalink to this heading"></a></h2>
+<h2>Pipeline Layout<a class="headerlink" href="#pipeline-layout" title="Link to this heading"></a></h2>
 <p>
     管线布局（<span class="type">VkPipelineLayout</span>）包含了管线如何使用<a class="reference internal" href="Ch3-6%20%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">描述符</a>以及push constant的信息。
 </p><section id="id1">
-<h3>创建管线布局<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<h3>创建管线布局<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap14.html#vkCreatePipelineLayout">vkCreatePipelineLayout</a>(...)创建管线布局：
 </p>
@@ -277,7 +277,7 @@
     </li>
 </ul></section>
 <section id="pipelinelayout">
-<h3>封装为pipelineLayout类<a class="headerlink" href="#pipelinelayout" title="Permalink to this heading"></a></h3>
+<h3>封装为pipelineLayout类<a class="headerlink" href="#pipelinelayout" title="Link to this heading"></a></h3>
 <p>
     向<span class="path">VKBase.h</span>，vulkan命名空间中添加以下代码：
 </p>
@@ -307,11 +307,11 @@
 </pre></section>
 </section>
 <section id="pipeline">
-<h2>Pipeline<a class="headerlink" href="#pipeline" title="Permalink to this heading"></a></h2>
+<h2>Pipeline<a class="headerlink" href="#pipeline" title="Link to this heading"></a></h2>
 <p>
    管线（<span class="type">VkPipeline</span>）是数据处理流程的抽象，它由固定管线功能、可编程着色器阶段、以及一系列与之相关的状态参数构成。
 </p><section id="id2">
-<h3>纵观管线<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<h3>纵观管线<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
 <p>
    以下是Vulkan的图形和计算管线的执行流程图，图中也标示了各个阶段可以读/写的资源类型，箭头表示数据传递的方向。
    <br>
@@ -583,7 +583,7 @@
     </g>
 </svg></section>
 <section id="id3">
-<h3>创建图形管线<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<h3>创建图形管线<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap10.html#vkCreateGraphicsPipelines">vkCreateGraphicsPipelines</a>(...)创建图形管线：
 </p>
@@ -649,7 +649,7 @@
     </li>
 </ul></section>
 <section id="vkgraphicspipelinecreateinfo">
-<h3>VkGraphicsPipelineCreateInfo<a class="headerlink" href="#vkgraphicspipelinecreateinfo" title="Permalink to this heading"></a></h3>
+<h3>VkGraphicsPipelineCreateInfo<a class="headerlink" href="#vkgraphicspipelinecreateinfo" title="Link to this heading"></a></h3>
 <p>
     因<a href="https://renderdoc.org/vkspec_chunked/chap10.html#VkGraphicsPipelineCreateInfo">VkGraphicsPipelineCreateInfo</a>内容繁多，专门用这一段对其进行说明。
 </p>
@@ -818,7 +818,7 @@
         </p>
     </li>
 </ul><section id="vkpipelinevertexinputstatecreateinfo">
-<h4>VkPipelineVertexInputStateCreateInfo<a class="headerlink" href="#vkpipelinevertexinputstatecreateinfo" title="Permalink to this heading"></a></h4>
+<h4>VkPipelineVertexInputStateCreateInfo<a class="headerlink" href="#vkpipelinevertexinputstatecreateinfo" title="Link to this heading"></a></h4>
 <p>
     顶点输入状态用于指定顶点数据的内容，以及以如何输入顶点数据。
 </p>
@@ -1016,7 +1016,7 @@
     </li>
 </ul></section>
 <section id="vkpipelineinputassemblystatecreateinfo">
-<h4>VkPipelineInputAssemblyStateCreateInfo<a class="headerlink" href="#vkpipelineinputassemblystatecreateinfo" title="Permalink to this heading"></a></h4>
+<h4>VkPipelineInputAssemblyStateCreateInfo<a class="headerlink" href="#vkpipelineinputassemblystatecreateinfo" title="Link to this heading"></a></h4>
 <p>
     输入装配状态主要用于指定输入的图元拓扑类型。
 </p>
@@ -1138,7 +1138,7 @@
     若图元拓扑类型为<span class="enum">VK_PRIMITIVE_TOPOLOGY_LINE_STRIP</span>，由于每个点和其前一个点构成线段，若不重启图元，则绘制出的应当是不间断的折线；通过重启图元，可以使用一个绘制命令来绘制多条折线。
 </p></section>
 <section id="vkpipelinetessellationstatecreateinfo">
-<h4>VkPipelineTessellationStateCreateInfo<a class="headerlink" href="#vkpipelinetessellationstatecreateinfo" title="Permalink to this heading"></a></h4>
+<h4>VkPipelineTessellationStateCreateInfo<a class="headerlink" href="#vkpipelinetessellationstatecreateinfo" title="Link to this heading"></a></h4>
 <p>
     细分状态用于在进行细分的管线中，指定控制点的数量。
 </p>
@@ -1182,7 +1182,7 @@
     如果管线中没有细分控制和细分求值着色器，且输入图元拓扑类型非<span class="enum">VK_PRIMITIVE_TOPOLOGY_PATCH_LIST</span>，无视patchControlPoints。
 </p></section>
 <section id="vkpipelineviewportstatecreateinfo">
-<h4>VkPipelineViewportStateCreateInfo<a class="headerlink" href="#vkpipelineviewportstatecreateinfo" title="Permalink to this heading"></a></h4>
+<h4>VkPipelineViewportStateCreateInfo<a class="headerlink" href="#vkpipelineviewportstatecreateinfo" title="Link to this heading"></a></h4>
 <p>
     视口状态用于指定视口和剪裁范围。
 </p>
@@ -1296,7 +1296,7 @@
     最后，能显示出像素的区域为视口和对应索引的剪裁范围的交集。
 </p></section>
 <section id="vkpipelinerasterizationstatecreateinfo">
-<h4>VkPipelineRasterizationStateCreateInfo<a class="headerlink" href="#vkpipelinerasterizationstatecreateinfo" title="Permalink to this heading"></a></h4>
+<h4>VkPipelineRasterizationStateCreateInfo<a class="headerlink" href="#vkpipelinerasterizationstatecreateinfo" title="Link to this heading"></a></h4>
 <p>
     栅格化状态指定在栅格化阶段及该阶段前的操作。
 </p>
@@ -1453,7 +1453,7 @@
     </tbody>
 </table></section>
 <section id="vkpipelinemultisamplestatecreateinfo">
-<h4>VkPipelineMultisampleStateCreateInfo<a class="headerlink" href="#vkpipelinemultisamplestatecreateinfo" title="Permalink to this heading"></a></h4>
+<h4>VkPipelineMultisampleStateCreateInfo<a class="headerlink" href="#vkpipelinemultisamplestatecreateinfo" title="Link to this heading"></a></h4>
 <p>
     多重采样状态，顾名思义。
 </p>
@@ -1564,7 +1564,7 @@
     </p>
 </div></section>
 <section id="vkpipelinedepthstencilstatecreateinfo">
-<h4>VkPipelineDepthStencilStateCreateInfo<a class="headerlink" href="#vkpipelinedepthstencilstatecreateinfo" title="Permalink to this heading"></a></h4>
+<h4>VkPipelineDepthStencilStateCreateInfo<a class="headerlink" href="#vkpipelinedepthstencilstatecreateinfo" title="Link to this heading"></a></h4>
 <p>
     深度模板状态指定是否开启深度和模板测试，以及如何比较深度和模板值。
 </p>
@@ -1789,7 +1789,7 @@
     关于模板测试的实际使用，参见//TODO
 </p></section>
 <section id="vkpipelinecolorblendstatecreateinfo">
-<h4>VkPipelineColorBlendStateCreateInfo<a class="headerlink" href="#vkpipelinecolorblendstatecreateinfo" title="Permalink to this heading"></a></h4>
+<h4>VkPipelineColorBlendStateCreateInfo<a class="headerlink" href="#vkpipelinecolorblendstatecreateinfo" title="Link to this heading"></a></h4>
 <p>
     混色状态，指定如何混色，或对颜色数值运用逻辑运算。
 </p>
@@ -2115,7 +2115,7 @@
     关于混色方式的实际使用案例，参见<a class="reference internal" href="Ch8-4%20%E9%A2%84%E4%B9%98Alpha.html">Ch8-4 预乘Alpha</a>。
 </p></section>
 <section id="vkpipelinedynamicstatecreateinfo">
-<h4>VkPipelineDynamicStateCreateInfo<a class="headerlink" href="#vkpipelinedynamicstatecreateinfo" title="Permalink to this heading"></a></h4>
+<h4>VkPipelineDynamicStateCreateInfo<a class="headerlink" href="#vkpipelinedynamicstatecreateinfo" title="Link to this heading"></a></h4>
 <p>
     动态状态是可以在录制命令缓冲区时指定，而不必在创建管线时决定的状态。
 </p>
@@ -2275,7 +2275,7 @@
     </li>
 </ul></section>
 <section id="graphicspipelinecreateinfopack">
-<h4>封装为graphicsPipelineCreateInfoPack类<a class="headerlink" href="#graphicspipelinecreateinfopack" title="Permalink to this heading"></a></h4>
+<h4>封装为graphicsPipelineCreateInfoPack类<a class="headerlink" href="#graphicspipelinecreateinfopack" title="Link to this heading"></a></h4>
 <p>
     向<span class="path">VKBase+.h</span>（如不存在则创建，并在其中包含<span class="path">VKBase.h</span>），vulkan命名空间中添加以下代码：
 </p>
@@ -2397,7 +2397,7 @@
 </ul></section>
 </section>
 <section id="id4">
-<h3>创建计算管线<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<h3>创建计算管线<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap10.html#vkCreateComputePipelines">vkCreateComputePipelines</a>(...)创建图形管线：
 </p>
@@ -2480,7 +2480,7 @@
     </tbody>
 </table></section>
 <section id="id5">
-<h3>封装为pipeline类<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<h3>封装为pipeline类<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
 <p>
     向<span class="path">VKBase.h</span>，vulkan命名空间中添加以下代码：
 </p>

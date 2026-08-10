@@ -145,9 +145,9 @@
            <div itemprop="articleBody">
              
   <section id="ch2-2">
-<h1>Ch2-2 创建渲染通道和帧缓冲<a class="headerlink" href="#ch2-2" title="Permalink to this heading"></a></h1>
+<h1>Ch2-2 创建渲染通道和帧缓冲<a class="headerlink" href="#ch2-2" title="Link to this heading"></a></h1>
 <section id="id1">
-<h2>到三角形为止的流程<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<h2>到三角形为止的流程<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
 <p>
     构建完渲染循环后，直到渲染出三角形为止需经历以下步骤：
     <br>
@@ -192,7 +192,7 @@
     在命令缓冲区中录制命令时，首先开始一个渲染通道并同时指定所用的帧缓冲，然后绑定渲染管线，由此便指定了渲染所必须的所有参数。
 </p></section>
 <section id="easyvulkan-hpp">
-<h2>EasyVulkan.hpp<a class="headerlink" href="#easyvulkan-hpp" title="Permalink to this heading"></a></h2>
+<h2>EasyVulkan.hpp<a class="headerlink" href="#easyvulkan-hpp" title="Link to this heading"></a></h2>
 <p>
     创建<span class="path">EasyVulkan.hpp</span>，这个文件会用于书写本套教程中一些常用的渲染通道和帧缓冲的创建函数。
     <br>
@@ -216,7 +216,7 @@
     </li>
 </ul></section>
 <section id="id2">
-<h2>渲染通道和帧缓冲<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<h2>渲染通道和帧缓冲<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
 <p>
     参见<a class="reference internal" href="Ch3-4%20%E6%B8%B2%E6%9F%93%E9%80%9A%E9%81%93%E5%92%8C%E5%B8%A7%E7%BC%93%E5%86%B2.html">Ch3-4 渲染通道和帧缓冲</a>，我在该节中具体叙述了何为渲染通道及帧缓冲，并对它们进行了简单封装，请先阅览该节并完成封装。
     <br>
@@ -232,7 +232,7 @@
 }
 </pre></section>
 <section id="id3">
-<h2>创建一个最简单的渲染通道<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<h2>创建一个最简单的渲染通道<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
 <p>
    在easyVulkan命名空间中，定义函数<span class="fn">CreateRpwf_Screen</span>()，这个函数会创建一个直接渲染到交换链图像，且不做深度测试等任何测试的渲染通道，及其对应的帧缓冲：
 </p>
@@ -332,7 +332,7 @@
 rpwf.renderPass.<span class="fn">Create</span>(renderPassCreateInfo);
 </pre></section>
 <section id="id4">
-<h2>创建一组最简单的帧缓冲<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<h2>创建一组最简单的帧缓冲<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
 <p>
     为每张交换链图像创建帧缓冲，首先将<span class="var">rpwf.framebuffers</span>的元素数量<span class="fn">resize</span>(...)到与交换链图像一样多：
 </p>
@@ -480,7 +480,7 @@ CreateRenderPass();
 });
 </pre></section>
 <section id="id5">
-<h2>更新主函数并测试<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<h2>更新主函数并测试<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
 <p>
     现在可以去主函数中调用easyVulkan::<span class="fn">CreateRpwf_Screen</span>()，并测试一下清屏值是否有效了：
 </p>

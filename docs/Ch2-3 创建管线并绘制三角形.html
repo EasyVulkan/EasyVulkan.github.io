@@ -152,7 +152,7 @@
            <div itemprop="articleBody">
              
   <section id="ch2-3">
-<h1>Ch2-3 创建管线并绘制三角形<a class="headerlink" href="#ch2-3" title="Permalink to this heading"></a></h1>
+<h1>Ch2-3 创建管线并绘制三角形<a class="headerlink" href="#ch2-3" title="Link to this heading"></a></h1>
 <p>
     首先在<span class="path">main.cpp</span>中定义下列变量和函数：
 </p>
@@ -188,14 +188,14 @@
         而上述代码中，静态变量<span class="var">rpwf</span>所引用的对象会在<span class="fn">RenderPassAndFramebuffers</span>()被首次调用时初始化，若不调用该函数就不会被初始化。这么一来就可以避免考虑上述的两个问题，需要<span class="var">rpwf</span>所引用的对象时，就地调用<span class="fn">RenderPassAndFramebuffers</span>()获取它即可。
     </p>
 </div><section id="id1">
-<h2>书写着色器<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<h2>书写着色器<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
 <p>
     参见<a class="reference internal" href="Ch4-1%20%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E7%BB%84.html#id1">Ch4-1 着色器模组</a>，我在该节中具体叙述何为着色器模组，并对它进行了简单封装，请先阅览该节并完成封装。
 </p>
 <p>
     在项目目录下新建<span class="path">shader</span>文件夹，在其中创建文件<span class="path">FirstTriangle.vert.shader</span>和<span class="path">FirstTriangle.frag.shader</span>。
 </p><section id="id2">
-<h3>书写一个最简单的顶点着色器<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<h3>书写一个最简单的顶点着色器<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
 <p>
     用Visual Studio或其他文本编辑器打开<span class="path">FirstTriangle.vert.shader</span>，一上来首先在着色器的开头声明GLSL版本和着色器类型，并定义主函数。
 </p>
@@ -292,7 +292,7 @@ glslc FirstTriangle.vert.shader -c
     </li>
 </ul></section>
 <section id="id3">
-<h3>书写一个最简单的片段着色器<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<h3>书写一个最简单的片段着色器<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
 <p>
     打开<span class="path">FirstTriangle.frag.shader</span>，还是声明语言版本、着色器类型和主函数：
 </p>
@@ -349,7 +349,7 @@ glslc FirstTriangle.vert.shader -c
 </p></section>
 </section>
 <section id="id4">
-<h2>创建着色器模组<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<h2>创建着色器模组<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
 <p>
     填充<span class="fn">CreatePipeline</span>()，从先前写的顶点和片段着色器，以函数内静态变量的形式创建着色器模组，以及它们对应的管线阶段创建信息：
 </p>
@@ -365,7 +365,7 @@ glslc FirstTriangle.vert.shader -c
 }
 </pre></section>
 <section id="id5">
-<h2>创建管线布局<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<h2>创建管线布局<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
 <p>
     参见<a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html#pipeline-layout">Ch3-3 管线布局和管线</a>，我在该节中具体叙述何为管线布局，并对它进行了简单封装，请先阅览该节并完成封装。
     <br>
@@ -378,7 +378,7 @@ glslc FirstTriangle.vert.shader -c
 }
 </pre></section>
 <section id="id6">
-<h2>创建管线<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
+<h2>创建管线<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
 <p>
     参见<a class="reference internal" href="Ch3-3%20%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80%E5%92%8C%E7%AE%A1%E7%BA%BF.html#pipeline">Ch3-3 管线布局和管线</a>，我在该节中具体叙述何为管线，以及涉及到的所有管线状态，内容很长，请先完成封装并了解以下内容：
     1.<span class="type">VkGraphicsPipelineCreateInfo</span>有哪些成员
@@ -504,7 +504,7 @@ pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
 }
 </pre></section>
 <section id="id7">
-<h2>绘制三角形<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h2>
+<h2>绘制三角形<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
 <p>
     首先将主函数更新为：
 </p>
@@ -555,7 +555,7 @@ pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
 <p>
     绘制三角形需要两个命令，首先要在渲染通道中绑定管线，然后再使用绘制命令。
 </p><section id="id8">
-<h3>绑定管线<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<h3>绑定管线<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap10.html#vkCmdBindPipeline">vkCmdBindPipeline</a>(...)绑定管线：
 </p>
@@ -613,7 +613,7 @@ pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
 <span class="fn">vkCmdBindPipeline</span>(commandBuffer_graphics, <span class="enum">VK_PIPELINE_BIND_POINT_GRAPHICS</span>, pipeline_triangle);
 </pre></section>
 <section id="id9">
-<h3>绘制<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<h3>绘制<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
 <p>
     <a href="https://renderdoc.org/vkspec_chunked/chap21.html#vkCmdDraw">vkCmdDraw</a>(...)是最基本的绘制命令，它适用于直接绘制（而不是从缓冲区中读取绘制参数）且不需要索引缓冲区（index buffer）的情况。
 </p>

@@ -163,15 +163,15 @@
            <div itemprop="articleBody">
              
   <section id="ch3-8">
-<h1>Ch3-8 查询<a class="headerlink" href="#ch3-8" title="Permalink to this heading"></a></h1>
+<h1>Ch3-8 查询<a class="headerlink" href="#ch3-8" title="Link to this heading"></a></h1>
 <p>
     Vulkan中提供了一种用来取得Vulkan命令执行信息的机制，称之为查询（query）。
 </p><section id="query-pool">
-<h2>Query Pool<a class="headerlink" href="#query-pool" title="Permalink to this heading"></a></h2>
+<h2>Query Pool<a class="headerlink" href="#query-pool" title="Link to this heading"></a></h2>
 <p>
     查询池（<span class="type">VkQueryPool</span>）是用于管理查询的Vulkan对象。
 </p><section id="id1">
-<h3>创建查询池<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<h3>创建查询池<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap18.html#vkCreateQueryPool">vkCreateQueryPool</a>(...)创建查询池：
 </p>
@@ -275,7 +275,7 @@
     </tbody>
 </table></section>
 <section id="id2">
-<h3>开始和结束查询<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<h3>开始和结束查询<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
 <p>
     在Vulkan核心功能提供的三种查询中，遮挡查询和管线统计查询基于一定范围发生，有开始和结束。
 </p>
@@ -349,7 +349,7 @@
     </li>
 <ul></section>
 <section id="id3">
-<h3>获取查询结果<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<h3>获取查询结果<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
 <p>
     在命令缓冲区中，用<a href="https://renderdoc.org/vkspec_chunked/chap18.html#vkCmdCopyQueryPoolResults">vkCmdCopyQueryPoolResults</a>(...)将查询结果拷贝到数据缓冲区：
 </p>
@@ -522,7 +522,7 @@
     </li>
 </ul></section>
 <section id="id4">
-<h3>重置查询<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<h3>重置查询<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
 <p>
     开始查询前，必须重置查询。<br>
     除非创建查询时指定了<span class="enum">VK_QUERY_POOL_CREATE_RESET_BIT_KHR</span>，否则在首次开始前也必须重置。
@@ -599,7 +599,7 @@
     </tbody>
 </table></section>
 <section id="querypool">
-<h3>封装为queryPool类<a class="headerlink" href="#querypool" title="Permalink to this heading"></a></h3>
+<h3>封装为queryPool类<a class="headerlink" href="#querypool" title="Link to this heading"></a></h3>
 <p>
     接下来先对<span class="type">VkQueryPool</span>进行封装，再逐一解说Vulkan核心功能中提供的三种查询类型及相关函数。
     <br>
@@ -672,7 +672,7 @@
 </pre></section>
 </section>
 <section id="id5">
-<h2>遮挡查询<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<h2>遮挡查询<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
 <p>
     遮挡查询（occlusion query）可以统计绘制出的采样点的数量。
 </p>
@@ -683,7 +683,7 @@
     <br>
     先被绘制出来，之后被遮掉的采样点，当然计入查询结果（毕竟在计数的时候不知道后来会不会被遮掉）。
 </p><section id="id6">
-<h3>创建遮挡查询<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<h3>创建遮挡查询<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
 <p>
     要创建遮挡查询，只需要指定查询类型和查询个数即可，每组查询结果是一个整形数值，于是：
 </p>
@@ -754,7 +754,7 @@
     </li>
 </ul></section>
 <section id="id7">
-<h3>开始和结束遮挡查询<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<h3>开始和结束遮挡查询<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
 <p>
     若向<span class="fn">vkCmdBeginQuery</span>(...)的<span class="par">flags</span>参数填入<span class="enum">VK_QUERY_CONTROL_PRECISE_BIT</span>（值为1），则查询结果为最终保留下来的采样点个数的精确值（计数方法为实现特定，不同Vulkan实现提供的数值间可能略有偏差）。
 </p>
@@ -772,7 +772,7 @@
 }
 </pre></section>
 <section id="id8">
-<h3>封装<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<h3>封装<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
 <p>
     完成剩余封装：
 </p>
@@ -832,7 +832,7 @@
 </pre></section>
 </section>
 <section id="id9">
-<h2>管线统计查询<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h2>
+<h2>管线统计查询<a class="headerlink" href="#id9" title="Link to this heading"></a></h2>
 <p>
     在Vulkan的核心功能中（即不涉及扩展的话），可通过管线统计查询（pipeline statistics query）进行以下统计：
 </p>
@@ -916,7 +916,7 @@
     <br>
     比如，如果图元剪裁阶段输出的图元个数非0，而片段着色器执行次数为0，那么说明片段没有通过<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#early-fragment-test">早期片段测试</a>，进而检查相关参数来找出问题所在（注：对于这里所述的情况，如果开了深度测试，深度比较方式/深度清屏值的嫌疑很大）。
 </p><section id="id10">
-<h3>创建管线统计查询<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
+<h3>创建管线统计查询<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
 <p>
     不涉及扩展，<span class="type">VkQueryPipelineStatisticFlagBits</span>的枚举项有11种，各个bit的总和是<code>(1 &lt;&lt; 11) - 1</code>，即2047。
     <br>
@@ -971,7 +971,7 @@ outStream &lt;&lt; statistics[<span class="enum">invocationCount_cs</span>] &lt;
     </li>
 </ul></section>
 <section id="id11">
-<h3>封装<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>
+<h3>封装<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
 <p>
     可对保存1组统计结果的查询池做如下封装以方便使用：
 </p>
@@ -1061,13 +1061,13 @@ outStream &lt;&lt; statistics[<span class="enum">invocationCount_cs</span>] &lt;
 </ul></section>
 </section>
 <section id="id12">
-<h2>时间戳查询<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h2>
+<h2>时间戳查询<a class="headerlink" href="#id12" title="Link to this heading"></a></h2>
 <p>
     在命令缓冲区的执行过程中，可写入时间戳到时间戳查询（timestamp query）。
     <br>
     时间戳查询可用于性能测试：两个时间戳相减即表明两次写入的间隔时间，即其间命令大致的执行耗时。
 </p><section id="id13">
-<h3>写入时间戳<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h3>
+<h3>写入时间戳<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
 <p>
     时间戳查询没有“开始”和“结束”，不对其使用<span class="fn">vkCmdBeginQuery</span>(...)和<span class="fn">vkCmdEndQuery</span>(...)。
     <br>
@@ -1123,7 +1123,7 @@ outStream &lt;&lt; statistics[<span class="enum">invocationCount_cs</span>] &lt;
     两次写入之间存在隐式同步：对于两条<span class="fn">vkCmdWriteTimestamp</span>(...)命令，后录制的命令写入的数值所表明的时间，一定晚于先录制的命令（除非数值溢出）。
 </p></section>
 <section id="id14">
-<h3>封装<a class="headerlink" href="#id14" title="Permalink to this heading"></a></h3>
+<h3>封装<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
 <p>
     每组时间戳查询的查询结果是一个整形数值，既然获取到32位就够用了，对其做如下封装：
 </p>

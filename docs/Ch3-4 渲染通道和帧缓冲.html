@@ -157,13 +157,13 @@
            <div itemprop="articleBody">
              
   <section id="ch3-4">
-<h1>Ch3-4 渲染通道和帧缓冲<a class="headerlink" href="#ch3-4" title="Permalink to this heading"></a></h1>
+<h1>Ch3-4 渲染通道和帧缓冲<a class="headerlink" href="#ch3-4" title="Link to this heading"></a></h1>
 <section id="render-pass">
-<h2>Render Pass<a class="headerlink" href="#render-pass" title="Permalink to this heading"></a></h2>
+<h2>Render Pass<a class="headerlink" href="#render-pass" title="Link to this heading"></a></h2>
 <p>
     渲染通道（<span class="type">VkRenderPass</span>）由图像附件（attachment）、子通道描述（subpass）、以及子通道依赖（<span class="type">VkSubpassDependency</span>）组合而成。渲染通道指定渲染过程中，所绑定帧缓冲的参数（格式、内存布局）及各个渲染步骤之间的关系，换言之，渲染通道是对渲染流程的抽象。
 </p><section id="id1">
-<h3>创建渲染通道<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<h3>创建渲染通道<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap8.html#vkCreateRenderPass">vkCreateRenderPass</a>(...)创建渲染通道：
 </p>
@@ -245,7 +245,7 @@
         </tr>
     </tbody>
 </table><section id="id2">
-<h4>图像附件<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h4>
+<h4>图像附件<a class="headerlink" href="#id2" title="Link to this heading"></a></h4>
 <p>
     通俗地说，图像附件就是渲染目标，图形命令向图像附件上输出颜色/深度/模板值。
     <br>
@@ -389,7 +389,7 @@
     关于内存布局，参见<a class="reference internal" href="Ch3-1%20%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD.html#id13">图像内存屏障</a>。关于内存布局在渲染通道中的转换，见下一段。
 </p></section>
 <section id="id3">
-<h4>子通道<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h4>
+<h4>子通道<a class="headerlink" href="#id3" title="Link to this heading"></a></h4>
 <p>
     既然渲染通道是对渲染流程的抽象，那么子通道就是渲染流程中的一个环节。
     <br>
@@ -509,7 +509,7 @@
     一个子通道甚至整个渲染通道可以不使用任何图像附件，意在执行一些副作用，比方说在着色器中对storage缓冲区进行写入。
 </p></section>
 <section id="id4">
-<h4>子通道依赖<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h4>
+<h4>子通道依赖<a class="headerlink" href="#id4" title="Link to this heading"></a></h4>
 <p>
     子通道依赖是一种同步措施，它能确保附件的内存布局转换在正确的时机发生。
     <br>
@@ -698,7 +698,7 @@
 </ul></section>
 </section>
 <section id="id5">
-<h3>开始渲染通道<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<h3>开始渲染通道<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
 <p>
     所谓开始渲染通道，就是开始该渲染通道所代表的一系列渲染流程。
     <br>
@@ -790,7 +790,7 @@
     </li>
 </ul></section>
 <section id="id6">
-<h3>进入下一个子通道<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<h3>进入下一个子通道<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
 <p>
     在命令缓冲区中，用<a href="https://renderdoc.org/vkspec_chunked/chap8.html#vkCmdNextSubpass">vkCmdNextSubpass</a>(...)进入下一个子通道：
 </p>
@@ -823,7 +823,7 @@
     </li>
 </ul></section>
 <section id="id7">
-<h3>结束渲染通道<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<h3>结束渲染通道<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
 <p>
     在命令缓冲区中，用<a href="https://renderdoc.org/vkspec_chunked/chap8.html#vkCmdEndRenderPass">vkCmdEndRenderPass</a>(...)结束当前渲染通道：
 </p>
@@ -845,7 +845,7 @@
     </tbody>
 </table></section>
 <section id="renderpass">
-<h3>封装为renderPass类<a class="headerlink" href="#renderpass" title="Permalink to this heading"></a></h3>
+<h3>封装为renderPass类<a class="headerlink" href="#renderpass" title="Link to this heading"></a></h3>
 <p>
     向<span class="path">VKBase.h</span>，vulkan命名空间中添加以下代码：
 </p>
@@ -905,11 +905,11 @@
 </ul></section>
 </section>
 <section id="framebuffer">
-<h2>Framebuffer<a class="headerlink" href="#framebuffer" title="Permalink to this heading"></a></h2>
+<h2>Framebuffer<a class="headerlink" href="#framebuffer" title="Link to this heading"></a></h2>
 <p>
     帧缓冲（<span class="type">VkFramebuffer</span>）是用于特定渲染流程的一系列图像附件的集合。
 </p><section id="id8">
-<h3>创建帧缓冲<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<h3>创建帧缓冲<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
 <p>
     用<a href="https://renderdoc.org/vkspec_chunked/chap8.html#vkCreateFramebuffer">vkCreateFramebuffer</a>(...)创建帧缓冲：
 </p>
@@ -1008,7 +1008,7 @@
     如果提供的<span class="type">VkImageView</span>是2D图像数组，那么创建的帧缓冲称为多层帧缓冲（layered framebuffer），这有时候会非常有用，但有些硬件（比如英特尔核显）不支持多层帧缓冲。多层帧缓冲的应用实例，参考：//TODO 将Erp图像转为Cubemap
 </p></section>
 <section id="id9">
-<h3>封装为framebuffer类<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<h3>封装为framebuffer类<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
 <p>
     向<span class="path">VKBase.h</span>，vulkan命名空间中添加以下代码：
 </p>

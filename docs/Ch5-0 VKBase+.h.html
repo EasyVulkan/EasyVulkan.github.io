@@ -1,22 +1,22 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh" >
+<html class="writer-html5" lang="zh" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ch5-0 VKBase+.h &mdash; EasyVulkan</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/theme.css?v=4d85d03b" />
+
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=10aaca3b"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
@@ -29,17 +29,21 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> EasyVulkan
-            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            EasyVulkan
+              <img src="_static/logo1.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
               <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
@@ -117,17 +121,17 @@
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">EasyVulkan</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+          <div role="navigation" aria-label="页面导航">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Ch5-0 VKBase+.h</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Ch5-0 VKBase+.h</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -137,7 +141,7 @@
            <div itemprop="articleBody">
              
   <section id="ch5-0-vkbase-h">
-<h1>Ch5-0 VKBase+.h<a class="headerlink" href="#ch5-0-vkbase-h" title="Permalink to this heading"></a></h1>
+<h1>Ch5-0 VKBase+.h<a class="headerlink" href="#ch5-0-vkbase-h" title="Link to this heading"></a></h1>
 <p>
     之前在<a class="reference internal" href="Ch2-3%20%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF%E5%B9%B6%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2.html">Ch2-3 创建管线并绘制三角形</a>中应当创建过<span class="path">VKBase+.h</span>，并且在里面定义了<span class="type">graphicsPipelineCreateInfoPack</span>类。
     <br>
@@ -157,7 +161,7 @@
     <span class="kw">struct</span> <span class="type">graphicsPipelineCreateInfoPack</span> { <span class="cmt">/*内容略*/</span> };
 }
 </pre><section id="graphicsbaseplus">
-<h2>graphicsBasePlus<a class="headerlink" href="#graphicsbaseplus" title="Permalink to this heading"></a></h2>
+<h2>graphicsBasePlus<a class="headerlink" href="#graphicsbaseplus" title="Link to this heading"></a></h2>
 <p>
     <span class="type">graphicsBasePlus</span>扩展<span class="type">graphicsBase</span>的功能，用于默认创建一些对于Vulkan图形编程有必要的对象。
     <br>
@@ -316,7 +320,7 @@
     于是乎，利用C++中静态成员变量的初始化机制，上述代码使得在创建逻辑设备后，程序会自动创建前文所述的命令池和命令缓冲区。
 </p></section>
 <section id="id1">
-<h2>图像格式相关<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<h2>图像格式相关<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
 <p>
     <a href="https://renderdoc.org/vkspec_chunked/chap48.html#VkFormatProperties">VkFormatProperties</a>类型记录了对于某一图像格式，数据线性排列的图像、数据最优排列的图像，以及存储该格式数据的缓冲区所支持的格式特性：
 </p>
@@ -565,7 +569,7 @@
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
         <a href="Ch4-4%20%E5%87%A0%E4%BD%95%E7%9D%80%E8%89%B2%E5%99%A8.html" class="btn btn-neutral float-left" title="Ch4-4 几何着色器" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
         <a href="Ch5-1%20%E5%90%84%E7%A7%8D%E7%BC%93%E5%86%B2%E5%8C%BA.html" class="btn btn-neutral float-right" title="Ch5-1 各种缓冲区" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
@@ -573,12 +577,12 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; 版权所有 2021-2025, 葉橙.</p>
+    <p>&#169; 版权所有 2021-2025, 葉橙。</p>
   </div>
 
-  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
-    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
    
 
 </footer>

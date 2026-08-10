@@ -144,14 +144,14 @@
            <div itemprop="articleBody">
              
   <section id="ch1-1-glfw">
-<h1>Ch1-1 创建GLFW窗口<a class="headerlink" href="#ch1-1-glfw" title="Permalink to this heading"></a></h1>
+<h1>Ch1-1 创建GLFW窗口<a class="headerlink" href="#ch1-1-glfw" title="Link to this heading"></a></h1>
 <p>
     本章的示例代码参见：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch1">EasyVulkan_Ch1</a>
 </p>
 <p>
     关于本节，如果你倾向于直接使用WindowsAPI来创建窗口，你也可以参考示例代码中的<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan_Ch8/WinGeneral.hpp">WinGeneral.hpp</a>。
 </p><section id="id1">
-<h2>包含并链接必要的文件<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<h2>包含并链接必要的文件<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
 <p>
     在一切开始之前，来创建一个用于包含各种库的头文件，名称随你喜欢，我就决定叫它<span class="path">EasyVKStart.h</span>。
     <br>
@@ -244,7 +244,7 @@
     想必以上代码无需多做解释，全部抄完后，如果VS提示你有任何文件打不开，检查一下你的附加包含目录和附加库目录。
 </p></section>
 <section id="id2">
-<h2>创建窗口<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<h2>创建窗口<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
 <p>
     在<span class="path">GlfwGeneral.hpp</span>添加以下全局变量：
 </p>
@@ -414,7 +414,7 @@ pWindow = <span class="par">fullScreen</span> ?
     </p>
 </div></section>
 <section id="id3">
-<h2>在窗口标题上显示帧率<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<h2>在窗口标题上显示帧率<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
 <p>
     下面是一个用于在标题上显示帧率的函数，每帧调用一次。约每一秒更新一次帧率，其逻辑为：
     <br>
@@ -446,7 +446,7 @@ pWindow = <span class="par">fullScreen</span> ?
 我在<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/blob/main/solution/EasyVulkan/WinGeneral.hpp">WinGeneral.hpp</a>中也提供了通过C++标准库函数来取得时间的方法。
 </p></section>
 <section id="id4">
-<h2>试着运行一下吧！<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<h2>试着运行一下吧！<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
 <p>
     到<span class="path">main.cpp</span>中书写主函数：
 </p>
@@ -486,7 +486,7 @@ pWindow = <span class="par">fullScreen</span> ?
     如果你在控制台中见到信息“libpng warning: iCCP: cHRM chunk does not match sRGB”，那是因为你正在使用QQ输入法（这真的很奇怪，所以我特地提一嘴）。
 </p></section>
 <section id="id5">
-<h2>在全屏和窗口模式间切换<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<h2>在全屏和窗口模式间切换<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
 <p>本节为非必要项，与今后的学习内容无关。</p>
 <p>
     用<a href="https://www.glfw.org/docs/latest/group__window.html#ga81c76c418af80a1cce7055bccb0ae0a7">glfwSetWindowMonitor</a>(...)可以在全屏和窗口模式间切换。

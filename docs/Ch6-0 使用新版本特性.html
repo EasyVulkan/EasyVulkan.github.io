@@ -142,7 +142,7 @@
            <div itemprop="articleBody">
              
   <section id="ch6-0">
-<h1>Ch6-0 使用新版本特性<a class="headerlink" href="#ch6-0" title="Permalink to this heading"></a></h1>
+<h1>Ch6-0 使用新版本特性<a class="headerlink" href="#ch6-0" title="Link to this heading"></a></h1>
 <p>
     本章的示例代码参见：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch6">EasyVulkan_Ch6</a>
     <br>
@@ -161,7 +161,7 @@
     <span class="kw">return</span> <span class="enum">VK_SUCCESS</span>;
 }
 </pre><section id="id1">
-<h2>获取物理设备特性<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<h2>获取物理设备特性<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
 <p>
     先前在<span class="type">graphicsBase</span>::<span class="fn">CreateDevice</span>(...)中获取了物理设备特性<span class="type">VkPhysicalDeviceFeatures</span>，但并没有保存到成员变量。考虑到可能会有需要检验物理设备特性的情况，需要将其保存下来。
     <br>
@@ -279,7 +279,7 @@
 }
 </pre></section>
 <section id="id2">
-<h2>获取物理设备属性和物理设备内存属性<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<h2>获取物理设备属性和物理设备内存属性<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
 <p>
     类似物理设备特性，物理设备属性和物理设备内存属性在后续版本中也有相应的可扩展类型<a href="https://renderdoc.org/vkspec_chunked/chap5.html#VkPhysicalDeviceProperties2">VkPhysicalDeviceProperties2</a>和<a href="https://renderdoc.org/vkspec_chunked/chap11.html#VkPhysicalDeviceMemoryProperties2">VkPhysicalDeviceMemoryProperties2</a>：
 </p>
@@ -371,7 +371,7 @@
     <span class="kw">constexpr const</span> <span class="type">VkPhysicalDeviceMemoryProperties2</span>&amp; <span class="fn">PhysicalDeviceMemoryProperties</span>() <span class="kw">const</span> { <span class="kw">return</span> physicalDeviceProperties.properties; }
 </pre></section>
 <section id="pnext">
-<h2>设置pNext<a class="headerlink" href="#pnext" title="Permalink to this heading"></a></h2>
+<h2>设置pNext<a class="headerlink" href="#pnext" title="Link to this heading"></a></h2>
 <p>
     我在此前的教程中几乎完全忽略了各种结构体的pNext成员。
     <br>

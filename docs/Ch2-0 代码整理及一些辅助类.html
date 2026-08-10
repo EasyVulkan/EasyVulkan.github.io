@@ -151,7 +151,7 @@
            <div itemprop="articleBody">
              
   <section id="ch2-0">
-<h1>Ch2-0 代码整理及一些辅助类<a class="headerlink" href="#ch2-0" title="Permalink to this heading"></a></h1>
+<h1>Ch2-0 代码整理及一些辅助类<a class="headerlink" href="#ch2-0" title="Link to this heading"></a></h1>
 <p>
     本章的示例代码参见：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch2">EasyVulkan_Ch2</a>
 </p>
@@ -170,9 +170,9 @@
     如果你以后会在学习或工作中经常使用C++的话，我想对于这些语法和编程技巧的说明会是有益的。
 </p>
 </div><section id="id1">
-<h2>辅助类<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<h2>辅助类<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
 <section id="result-t">
-<h3>result_t<a class="headerlink" href="#result-t" title="Permalink to this heading"></a></h3>
+<h3>result_t<a class="headerlink" href="#result-t" title="Link to this heading"></a></h3>
 <p>
     当程序出现问题时，理应让它抛出异常以停止运行，并且不光是在Debug Build下需要如此，因此<span class="mcr">assert</span>(...)不作考虑。
     <br>
@@ -237,7 +237,7 @@
     之后将目前为止写过的函数的<strong>返回值类型</strong>从<span class="type">VkResult</span>改为<span class="type">result_t</span>即可。
 </p></section>
 <section id="arrayref">
-<h3>arrayRef<a class="headerlink" href="#arrayref" title="Permalink to this heading"></a></h3>
+<h3>arrayRef<a class="headerlink" href="#arrayref" title="Link to this heading"></a></h3>
 <p>
     一些Vulkan创建信息或函数会要求提供一个指向某类型数组的指针和数组元素个数，比如：
 </p>
@@ -354,9 +354,9 @@
 </div></section>
 </section>
 <section id="id2">
-<h2>实用的宏<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<h2>实用的宏<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
 <section id="enable-debug-messenger">
-<h3>ENABLE_DEBUG_MESSENGER<a class="headerlink" href="#enable-debug-messenger" title="Permalink to this heading"></a></h3>
+<h3>ENABLE_DEBUG_MESSENGER<a class="headerlink" href="#enable-debug-messenger" title="Link to this heading"></a></h3>
 <p>
     这个宏的目的纯粹是为了把预编译指令<code><span class="pragma">#ifdef</span></code>的分支改成常量表达式if语句<code><span class="kw">if constexpr</span></code>分支。
     <br>
@@ -405,7 +405,7 @@
 }
 </pre></section>
 <section id="vulkan">
-<h3>封装Vulkan对象用<a class="headerlink" href="#vulkan" title="Permalink to this heading"></a></h3>
+<h3>封装Vulkan对象用<a class="headerlink" href="#vulkan" title="Link to this heading"></a></h3>
 <p>
     用于销毁Vulkan对象的宏，该宏调用相应<span class="fn">vkDestroy</span>函数后将handle设置为<span class="mcr">VK_NULL_HANDLE</span>，以防止重复析构：
 </p>
@@ -461,7 +461,7 @@
     </li>
 </ul></section>
 <section id="executeonce">
-<h3>ExecuteOnce(...)<a class="headerlink" href="#executeonce" title="Permalink to this heading"></a></h3>
+<h3>ExecuteOnce(...)<a class="headerlink" href="#executeonce" title="Link to this heading"></a></h3>
 <p>
     这个宏用来把函数分割成能被多次执行，以及只执行一次的两个部分：
 </p>
@@ -475,7 +475,7 @@
 </p></section>
 </section>
 <section id="id3">
-<h2>错误信息的输出位置<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<h2>错误信息的输出位置<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
 <p>
     之前一直将错误信息直接输出到<span class="var">std::cout</span>，现在定义<span class="var">outStream</span>：
 </p>

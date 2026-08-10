@@ -1,22 +1,22 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="zh" >
+<html class="writer-html5" lang="zh" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ch7-7 使用贴图 &mdash; EasyVulkan</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/theme.css?v=4d85d03b" />
+
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=10aaca3b"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
@@ -29,17 +29,21 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> EasyVulkan
-            <img src="_static/logo1.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            EasyVulkan
+              <img src="_static/logo1.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
               <p class="caption" role="heading"><span class="caption-text">第一章 初始化</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Ch1-0%20%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C.html">Ch1-0 准备工作</a></li>
@@ -123,17 +127,17 @@
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">EasyVulkan</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+          <div role="navigation" aria-label="页面导航">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Ch7-7 使用贴图</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Ch7-7 使用贴图</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -143,7 +147,7 @@
            <div itemprop="articleBody">
              
   <section id="ch7-7">
-<h1>Ch7-7 使用贴图<a class="headerlink" href="#ch7-7" title="Permalink to this heading"></a></h1>
+<h1>Ch7-7 使用贴图<a class="headerlink" href="#ch7-7" title="Link to this heading"></a></h1>
 <p>
     本节的<span class="path">main.cpp</span>对应示例代码中的：<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7/Ch7-7.hpp">Ch7-7.hpp</a>
 </p>
@@ -152,7 +156,7 @@
     <br>
     本节的目标是在着色器中采样贴图。阅读本节前请确保已阅读<a class="reference internal" href="Ch3-7%20%E9%87%87%E6%A0%B7%E5%99%A8.html">Ch3-7 采样器</a>。
 </p><section id="id1">
-<h2>到采样贴图为止的流程<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<h2>到采样贴图为止的流程<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
 <p>
     在之前<a href="https://github.com/EasyVulkan/EasyVulkan.github.io/tree/main/solution/EasyVulkan_Ch7/Ch7-1.hpp">Ch7-1.hpp</a>用顶点缓冲区绘制三角形代码的基础上，到采样贴图为止需要经历以下步骤：
     <br>
@@ -196,7 +200,7 @@
     </li>
 </ul></section>
 <section id="id2">
-<h2>创建采样器<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<h2>创建采样器<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
 <p>
     由于往后你会经常需要创建采样器，在<span class="type">texture</span>类中添加一个函数来返回一个最普通平常的采样器的创建信息：
 </p>
@@ -242,7 +246,7 @@
 }
 </pre></section>
 <section id="id3">
-<h2>创建并写入描述符<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<h2>创建并写入描述符<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
 <p>
     先前在<a class="reference internal" href="Ch7-5%20%E5%88%9D%E8%AF%86Uniform%E7%BC%93%E5%86%B2%E5%8C%BA.html">Ch7-5 初识Uniform缓冲区</a>中已经创建过描述符池和描述符了，这里与之类似，但有两点变更：
     <br>
@@ -308,7 +312,7 @@
 }
 </pre></section>
 <section id="id4">
-<h2>创建顶点缓冲区并指定顶点属性<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<h2>创建顶点缓冲区并指定顶点属性<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
 <p>
     这次的顶点数据由位置坐标和贴图坐标构成。
     <br>
@@ -341,7 +345,7 @@ pipelineCiPack.vertexInputAttributes.<span class="fn">emplace_back</span>(0, 0, 
 pipelineCiPack.vertexInputAttributes.<span class="fn">emplace_back</span>(1, 0, <span class="enum">VK_FORMAT_R32G32_SFLOAT</span>, <span class="mcr">offsetof</span>(<span class="type">vertex</ span>, texCoord));
 </pre></section>
 <section id="texture-vert-shader">
-<h2>Texture.vert.shader<a class="headerlink" href="#texture-vert-shader" title="Permalink to this heading"></a></h2>
+<h2>Texture.vert.shader<a class="headerlink" href="#texture-vert-shader" title="Link to this heading"></a></h2>
 <p>
     新建<span class="path">Texture.vert.shader</span>，基于先前所写的<a class="reference internal" href="Ch7-1%20%E5%88%9D%E8%AF%86%E9%A1%B6%E7%82%B9%E7%BC%93%E5%86%B2%E5%8C%BA.html#firsttriangle-vertexbuffer-vert-shader">VertexBuffer.vert.shader</a>进行修改：
 </p>
@@ -358,7 +362,7 @@ pipelineCiPack.vertexInputAttributes.<span class="fn">emplace_back</span>(1, 0, 
 }
 </pre></section>
 <section id="texture-frag-shader">
-<h2>Texture.frag.shader<a class="headerlink" href="#texture-frag-shader" title="Permalink to this heading"></a></h2>
+<h2>Texture.frag.shader<a class="headerlink" href="#texture-frag-shader" title="Link to this heading"></a></h2>
 <pre class="code">
 <span class="pragma">#version</span> 460
 <span class="pragma">#pragma shader_stage</span>(fragment)
@@ -399,7 +403,7 @@ pipelineCiPack.vertexInputAttributes.<span class="fn">emplace_back</span>(1, 0, 
 }
 </pre></section>
 <section id="id5">
-<h2>创建管线并绘制<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<h2>创建管线并绘制<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
 <p>
     其他该改的管线创建参数都改了，这次（顺带）尝试将图元拓扑类型改为<span class="enum">VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP</span>，这么一来即使没有绑定索引缓冲区，也能仅靠4个顶点来绘制长方形（使用该种图元拓扑类型时，4个顶点生成2个三角形）：
 </p>
@@ -482,7 +486,7 @@ commandBuffer.<span class="fn">End</span>();
 </p>
 <img alt="_images/ch7-7-1.png" src="_images/ch7-7-1.png"></section>
 <section id="id6">
-<h2>使用分开的采样器和图像<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
+<h2>使用分开的采样器和图像<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
 <p>
     如果你要使用分开的采样器和图像，基于前述代码，做以下变更。
     <br>
@@ -560,7 +564,7 @@ descriptorSet_texture.<span class="fn">Write</span>(imageInfos[1], <span class="
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
         <a href="Ch7-6%20%E6%8B%B7%E8%B4%9D%E5%9B%BE%E5%83%8F%E5%88%B0%E5%B1%8F%E5%B9%95.html" class="btn btn-neutral float-left" title="Ch7-6 拷贝图像到屏幕" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
         <a href="Ch8-1%20%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93.html" class="btn btn-neutral float-right" title="Ch8-1 离屏渲染" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
@@ -568,12 +572,12 @@ descriptorSet_texture.<span class="fn">Write</span>(imageInfos[1], <span class="
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; 版权所有 2021-2025, 葉橙.</p>
+    <p>&#169; 版权所有 2021-2025, 葉橙。</p>
   </div>
 
-  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
-    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
    
 
 </footer>

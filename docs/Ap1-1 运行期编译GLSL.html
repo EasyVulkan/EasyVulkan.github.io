@@ -148,7 +148,7 @@
            <div itemprop="articleBody">
              
   <section id="ap1-1-glsl">
-<h1>Ap1-1 运行期编译GLSL<a class="headerlink" href="#ap1-1-glsl" title="Permalink to this heading"></a></h1>
+<h1>Ap1-1 运行期编译GLSL<a class="headerlink" href="#ap1-1-glsl" title="Link to this heading"></a></h1>
 <p>
     你是否已经厌倦了每次写完GLSL着色器代码，都得在文件浏览器的地址栏中复制入<code>glslc 着色器文件路径 -c</code>这样的语句？
     <br>
@@ -183,16 +183,16 @@
 <p>
     出于以上考虑，这一节对如何在运行期编译GLSL进行简单介绍。
 </p><section id="shaderc">
-<h2>shaderc<a class="headerlink" href="#shaderc" title="Permalink to this heading"></a></h2>
+<h2>shaderc<a class="headerlink" href="#shaderc" title="Link to this heading"></a></h2>
 <p>
     Vulkan SDK中包含了谷歌的shaderc库，它提供将GLSL或HLSL代码编译到SPIR-V的功能。
 </p><section id="id1">
-<h3>所需的头文件<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<h3>所需的头文件<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
 <p>
     从Vulkan SDK的安装目录下找到<span class="path">Include/shaderc</span>，里面是所需的头文件，将该文件夹复制到Vulkan相关文件的附加包含目录中。
 </p></section>
 <section id="lib">
-<h3>所需的lib<a class="headerlink" href="#lib" title="Permalink to this heading"></a></h3>
+<h3>所需的lib<a class="headerlink" href="#lib" title="Link to this heading"></a></h3>
 <p>
     Vulkan SDK的安装目录中，<span class="path">Lib</span>文件夹下有这三个与shaderc相关的预编译库：
 </p>
@@ -248,7 +248,7 @@
 </ul></section>
 </section>
 <section id="fcompileglsltospv">
-<h2>fCompileGlslToSpv<a class="headerlink" href="#fcompileglsltospv" title="Permalink to this heading"></a></h2>
+<h2>fCompileGlslToSpv<a class="headerlink" href="#fcompileglsltospv" title="Link to this heading"></a></h2>
 <p>
     定义一个仿函数类<span class="type">fCompileGlslToSpv</span>，并加入以下成员变量：
 </p>
@@ -409,7 +409,7 @@
     }
 };
 </pre><section id="includer">
-<h3>includer<a class="headerlink" href="#includer" title="Permalink to this heading"></a></h3>
+<h3>includer<a class="headerlink" href="#includer" title="Link to this heading"></a></h3>
 <p>
     <span class="type">Compiler</span>::<span class="fn">CompileGlslToSpv</span>(...)不负责读取代码文件，当然也包括被<span class="pragma">#include</span>的文件。
     <br>
@@ -629,7 +629,7 @@ filepath.<span class="fn">replace</span>(pos + 1 + filepath.<span class="fn">beg
     </li>
 </ul></section>
 <section id="id2">
-<h3>代码汇总及使用<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<h3>代码汇总及使用<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
 <p>
     这一节的代码没有上传到Github，整个文件的内容就写在这儿了：
 </p>

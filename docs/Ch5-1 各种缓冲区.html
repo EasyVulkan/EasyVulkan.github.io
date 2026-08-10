@@ -148,7 +148,7 @@
            <div itemprop="articleBody">
              
   <section id="ch5-1">
-<h1>Ch5-1 各种缓冲区<a class="headerlink" href="#ch5-1" title="Permalink to this heading"></a></h1>
+<h1>Ch5-1 各种缓冲区<a class="headerlink" href="#ch5-1" title="Link to this heading"></a></h1>
 <p>
     阅读本节前请务必先阅读<a class="reference internal" href="Ch5-0%20VKBase%2B.h.html">Ch5-0 VKBase+.h</a>。
     <br>
@@ -172,7 +172,7 @@
 <p>
     物理设备可能可以分配同时具有这两种属性的内存，也可能不行，因此从CPU一侧向物理设备传输数据的通用方式为：首先将数据存入具有<span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>属性的暂存缓冲区（staging buffer），再由物理设备将数据从暂存缓存区搬运到具有<span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>属性的、访问效率更高的另一缓冲区。
 </p><section id="staging-buffer">
-<h2>Staging Buffer<a class="headerlink" href="#staging-buffer" title="Permalink to this heading"></a></h2>
+<h2>Staging Buffer<a class="headerlink" href="#staging-buffer" title="Link to this heading"></a></h2>
 <p>
     如前文所述，可以在映射设备内存后，通过<span class="fn">memcpy</span>(...)等方式，将数据直接拷贝到具有<span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>属性的缓冲区，将这类可由CPU侧直接写入的缓冲区封装为专用于数据中转的暂存缓冲区（staging buffer）。
 </p>
@@ -556,7 +556,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
     <span class="kw">return</span> aliasedImage;
 }
 </pre><section id="id1">
-<h3>专用于主线程的暂存缓冲区<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<h3>专用于主线程的暂存缓冲区<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
 <p>
     由于之后各种缓冲区、图像的封装会大量用到暂存缓冲区，这里在<span class="type">stagingBuffer</span>中添加一个静态成员<span class="var">stagingBuffer_mainThread</span>专用于主线程。
     <br>
@@ -729,7 +729,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
 </pre></section>
 </section>
 <section id="device-local-buffer">
-<h2>Device Local Buffer<a class="headerlink" href="#device-local-buffer" title="Permalink to this heading"></a></h2>
+<h2>Device Local Buffer<a class="headerlink" href="#device-local-buffer" title="Link to this heading"></a></h2>
 <p>
     将具有<span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>内存属性的缓冲区封装为<span class="type">deviceLocalBuffer</span>，首先定义基本的Getter和创建、重建、销毁函数：
 </p>
@@ -1033,7 +1033,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
     （注意，尽管本节中这么封装，一个缓冲区有多种用途也是可以的，只要创建时声明的用途中包含相应bit即可）
 </p></section>
 <section id="vertex-buffer">
-<h2>Vertex Buffer<a class="headerlink" href="#vertex-buffer" title="Permalink to this heading"></a></h2>
+<h2>Vertex Buffer<a class="headerlink" href="#vertex-buffer" title="Link to this heading"></a></h2>
 <p>
     为顶点缓冲区创建专用的类型，<span class="type">vertexBuffer</span>继承<span class="type">deviceLocalBuffer</span>，在创建缓冲区时默认指定<span class="enum">VK_BUFFER_USAGE_VERTEX_BUFFER_BIT</span>：
 </p>
@@ -1052,7 +1052,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
 };
 </pre></section>
 <section id="index-buffer">
-<h2>Index Buffer<a class="headerlink" href="#index-buffer" title="Permalink to this heading"></a></h2>
+<h2>Index Buffer<a class="headerlink" href="#index-buffer" title="Link to this heading"></a></h2>
 <p>
     为索引缓冲区创建专用的类型，<span class="type">indexBuffer</span>继承<span class="type">deviceLocalBuffer</span>，在创建缓冲区时默认指定<span class="enum">VK_BUFFER_USAGE_INDEX_BUFFER_BIT</span>：
 </p>
@@ -1071,7 +1071,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
 };
 </pre></section>
 <section id="uniform-buffer">
-<h2>Uniform Buffer<a class="headerlink" href="#uniform-buffer" title="Permalink to this heading"></a></h2>
+<h2>Uniform Buffer<a class="headerlink" href="#uniform-buffer" title="Link to this heading"></a></h2>
 <p>
     为uniform缓冲区创建专用的类型，<span class="type">uniformBuffer</span>继承<span class="type">deviceLocalBuffer</span>，在创建缓冲区时默认指定<span class="enum">VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT</span>：
 </p>
@@ -1103,7 +1103,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
     由于<span class="var">alignment</span>必定为2的乘方，<code><span class="par">dataSize</span> + alignment - 1 &amp; ~(alignment - 1)</code>的计算结果等同于<code>(<span class="par">dataSize</span> + alignment - 1) / alignment * alignment</code>。
 </p></section>
 <section id="storage-buffer">
-<h2>Storage Buffer<a class="headerlink" href="#storage-buffer" title="Permalink to this heading"></a></h2>
+<h2>Storage Buffer<a class="headerlink" href="#storage-buffer" title="Link to this heading"></a></h2>
 <p>
     为storage缓冲区创建专用的类型，<span class="type">storageBuffer</span>继承<span class="type">deviceLocalBuffer</span>，在创建缓冲区时默认指定<span class="enum">VK_BUFFER_USAGE_STORAGE_BUFFER_BIT</span>：
 </p>
