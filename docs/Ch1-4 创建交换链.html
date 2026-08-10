@@ -1128,7 +1128,7 @@ std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; c
 <span class="kw">class</span> <span class="type">graphicsBase</span> {
 <span class="kw">private</span>:
     <span class="kw">static void</span> <span class="sfn">ExecuteCallbacks</span>(std::<span class="type">vector</span>&lt;<span class="kw">void</span>(*)()&gt; <span class="par">callbacks</span>) {
-        <span class="kw">for</span> (<span class="type">size_t</span> size = <span class="par">callbacks</span>.<span class="fn">size</span>(), i = 0; i < size; i++)
+        <span class="kw">for</span> (<span class="type">size_t</span> size = <span class="par">callbacks</span>.<span class="fn">size</span>(), i = 0; i &lt; size; i++)
             <span class="par">callbacks</span>[i]();
     }
 }
@@ -1457,10 +1457,11 @@ device = <span class="mcr">VK_NULL_HANDLE</span>;
     <br>
     如果你要在运行过程中终止Vulkan，那么为了防止程序退出时重复销毁相关对象，还需要把相关对象重置为零值，你可以在<span class="type">graphicsBase</span>中加入以下函数：
 </p>
-<pre class="code">
+<pre class="code" id="placement_new">
 <span class="kw">public</span>:
 <span class="kw">void</span> <span class="fn">Terminate</span>() {
     <span class="kw">this</span>-&gt;<span class="fn">~graphicsBase</span>();
+    <span class="kw">new</span>(<span class="kw">this</span>) <span class="type">graphicsBase</span>(); <span class="cmt">//避免未定义行为</span>
     instance = <span class="mcr">VK_NULL_HANDLE</span>;
     physicalDevice = <span class="mcr">VK_NULL_HANDLE</span>;
     device = <span class="mcr">VK_NULL_HANDLE</span>;
@@ -1470,6 +1471,13 @@ device = <span class="mcr">VK_NULL_HANDLE</span>;
     debugMessenger = <span class="mcr">VK_NULL_HANDLE</span>;
 }
 </pre>
+<ul>
+    <li>
+        <p>
+            显式地调用析构器具有“<a href="https://cppreference.cn/w/cpp/language/lifetime#Storage_reuse">提前结束生存期</a>”的语义，在某些编译环境中可能导致未定义行为。通过<a href="https://cppreference.cn/w/cpp/language/new#Placement_new">定位new</a>语句将对象重新初始化可以延续其生存期。
+        </p>
+    </li>
+</ul>
 <p>
     对于需要在运行过程中切换图形API的情况，我更推荐你单独写一个专用的函数，销毁其他对象但保留Vulkan实例，原因在于创建Vulkan实例是初始化过程中最耗时的一步（Release Bulid可能消耗1.4秒上下），而保留Vulkan实例并不会耗费你太多内存（30到40MB），方便来回切换。
 </p></section>

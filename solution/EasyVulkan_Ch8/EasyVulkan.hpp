@@ -563,9 +563,9 @@ namespace easyVulkan {
 				rpwf.framebuffers[i].Create(framebufferCreateInfo);
 		};
 		auto DestroyFramebuffers = [] {
-			ca_deferredToScreen_normalZ.~colorAttachment();
-			ca_deferredToScreen_albedoSpecular.~colorAttachment();
-			dsa_deferredToScreen.~depthStencilAttachment();
+			ca_deferredToScreen_normalZ.Destroy();
+			ca_deferredToScreen_albedoSpecular.Destroy();
+			dsa_deferredToScreen.Destroy();
 			rpwf.framebuffers.clear();
 		};
 		CreateFramebuffers();
@@ -658,7 +658,7 @@ namespace easyVulkan {
 			if (!shader) {
 				shader.Create(filepath_vert);
 				ExecuteOnce(shader.StageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT));
-				graphicsBase::Base().AddCallback_DestroyDevice([] { shader.~shaderModule(); });
+				graphicsBase::Base().AddCallback_DestroyDevice([] { shader.Destroy(); });
 			}
 			return shader.StageCreateInfo(VK_SHADER_STAGE_VERTEX_BIT);
 		}
@@ -667,7 +667,7 @@ namespace easyVulkan {
 			if (!shader) {
 				shader.Create(filepath_frag);
 				ExecuteOnce(shader.StageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT));
-				graphicsBase::Base().AddCallback_DestroyDevice([] { shader.~shaderModule(); });
+				graphicsBase::Base().AddCallback_DestroyDevice([] { shader.Destroy(); });
 			}
 			return shader.StageCreateInfo(VK_SHADER_STAGE_FRAGMENT_BIT);
 		}
@@ -677,7 +677,7 @@ namespace easyVulkan {
 				VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {};
 				pipelineLayout.Create(pipelineLayoutCreateInfo);
 				ExecuteOnce(pipelineLayout);
-				graphicsBase::Base().AddCallback_DestroyDevice([] { pipelineLayout.~pipelineLayout(); });
+				graphicsBase::Base().AddCallback_DestroyDevice([] { pipelineLayout.Destroy(); });
 			}
 			return pipelineLayout;
 		}
@@ -772,7 +772,7 @@ namespace easyVulkan {
 				stagingBuffer::UnmapMemory_MainThread();
 			//Create imageView if necessary
 			if (mipLevelCount > 1)
-				pTexture->imageView.~imageView(),
+				pTexture->imageView.Destroy(),
 				pTexture->imageView.Create(image, VK_IMAGE_VIEW_TYPE_2D, format_final, { VK_IMAGE_ASPECT_COLOR_BIT, 0, mipLevelCount, 0, 1 });
 			return texture;
 		}

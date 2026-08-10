@@ -475,7 +475,7 @@ CreateRenderPass();
 
 <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>([] {
     <span class="kw">if</span> (colorAttachmentFormat != <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainCreateInfo</span>().imageFormat)
-        rpwf_screen.renderPass.<span class="fn">~renderPass</span>(),
+        rpwf_screen.renderPass.<span class="fn">Destroy</span>(),
         CreateRenderPass();
 });
 </pre></section>

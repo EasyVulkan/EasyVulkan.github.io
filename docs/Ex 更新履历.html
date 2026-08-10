@@ -139,6 +139,12 @@
 <ul>
     <li>
         <p>
+            26.08.10 将各个Vulkan对象封装类中的析构器内容，移出至一个成员函数<span class="fn">Destroy</span>()，以<strong>避免</strong>在需要<strong>显式</strong>销毁对象时<strong>调用析构器</strong>（可以显式调用析构器，但有<a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html#placement_new">注意事项</a>）。
+        </p>
+    </li>
+<br>
+    <li>
+        <p>
             26.06.28 在<a class="reference internal" href="Ch1-4%20%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E9%93%BE.html#vksurfacecapabilitieskhr">Ch1-4</a>中修改了有关确定交换链图像数量的算式，处理<a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkSurfaceCapabilitiesKHR">VkSurfaceCapabilitiesKHR</a>::maxImageCount为0时的情况。
         </p>
     </li>

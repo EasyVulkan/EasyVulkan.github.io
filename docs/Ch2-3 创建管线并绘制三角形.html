@@ -410,7 +410,7 @@ glslc FirstTriangle.vert.shader -c
         pipeline_triangle.<span class="fn">Create</span>(pipelineCiPack);
     };
     <span class="kw">auto</span> Destroy = [] {
-        pipeline_triangle.<span class="fn">~pipeline</span>();
+        pipeline_triangle.<span class="fn">Destroy</span>();
     };
     <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>(Create);
     <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroySwapchain</span>(Destroy);
@@ -496,7 +496,7 @@ pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
         pipeline_triangle.<span class="fn">Create</span>(pipelineCiPack);
     };
     <span class="kw">auto</span> Destroy = [] {
-        pipeline_triangle.<span class="fn">~pipeline</span>();
+        pipeline_triangle.<span class="fn">Destroy</span>();
     };
     <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>(Create);
     <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroySwapchain</span>(Destroy);
@@ -660,9 +660,9 @@ pipelineCiPack.createInfo.pStages = shaderStageCreateInfos_triangle;
     <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }))
         <span class="kw">return</span> -1;
 
-    </span><span class="kw">const auto</span>&amp; [renderPass, framebuffers] = <span class="fn">RenderPassAndFramebuffers</span>();
-    </span><span class="fn">CreateLayout</span>();
-    </span><span class="fn">CreatePipeline</span>();
+    <span class="kw">const auto</span>&amp; [renderPass, framebuffers] = <span class="fn">RenderPassAndFramebuffers</span>();
+    <span class="fn">CreateLayout</span>();
+    <span class="fn">CreatePipeline</span>();
 
     <span class="type">fence</span> fence;
     <span class="type">semaphore</span> semaphore_imageIsAvailable;

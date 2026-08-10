@@ -89,7 +89,7 @@ void CreatePipeline(VkExtent2D canvasSize) {
 		pipeline_screen.Create(pipelineCiPack);
 	};
 	auto Destroy = [] {
-		pipeline_screen.~pipeline();
+		pipeline_screen.Destroy();
 	};
 	graphicsBase::Base().AddCallback_CreateSwapchain(Create);
 	graphicsBase::Base().AddCallback_DestroySwapchain(Destroy);

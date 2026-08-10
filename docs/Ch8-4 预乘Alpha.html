@@ -181,7 +181,7 @@
 <p>
     考虑到Ch1-4是入门篇章，将“premultiplied alpha”译作“预乘透明度”比较易懂，网络上通常也是这么翻译的。
     <br>
-    这个翻译并不能算准确，有两个原因：A通道值未必是用作不透明度。
+    这个翻译并不能算准确，有两个原因：A通道值<strong>未必是</strong>用作<strong>不透明度</strong>。
 </p><section id="id1">
 <h2>混色与线性插值<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
 <p>
@@ -393,8 +393,8 @@
     }
     <span class="cmt">//Non-const Function</span>
     <span class="kw">void</span> <span class="fn">Instantiate</span>(<span class="type">VkFormat</span> <span class="par">format_final</span>, <span class="kw">bool</span> <span class="par">generateMipmap</span>, <span class="type">callback_copyData_t</span> <span class="par">callback_copyMipLevel0</span>) {
-        <span class="kw">this</span>->format_final = <span class="par">format_final</span>;
-        <span class="kw">this</span>->generateMipmap = <span class="par">generateMipmap</span>;
+        <span class="kw">this</span>-&gt;format_final = <span class="par">format_final</span>;
+        <span class="kw">this</span>-&gt;generateMipmap = <span class="par">generateMipmap</span>;
         callback_copyData = <span class="par">callback_copyData_t</span>;
         <span class="cmt">/*待后续填充*/</span>
     }
@@ -461,8 +461,8 @@
 </p>
 <pre class="code">
 <span class="kw">void</span> <span class="fn">Instantiate</span>(<span class="type">VkFormat</span> <span class="par">format_final</span>, <span class="kw">bool</span> <span class="par">generateMipmap</span>, <span class="type">callback_copyData_t</span> <span class="par">callback_copyMipLevel0</span>) {
-    <span class="kw">this</span>->format_final = <span class="par">format_final</span>;
-    <span class="kw">this</span>->generateMipmap = <span class="par">generateMipmap</span>;
+    <span class="kw">this</span>-&gt;format_final = <span class="par">format_final</span>;
+    <span class="kw">this</span>-&gt;generateMipmap = <span class="par">generateMipmap</span>;
     callback_copyData = <span class="par">callback_copyData_t</span>;
 
     <span class="cmt">//Create renderpass</span>
@@ -557,7 +557,7 @@
     <span class="kw">if</span> (!shader) {
         shader.<span class="fn">Create</span>(filepath_vert);
         <span class="mcr">ExecuteOnce</span>(shader.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>)); <span class="cmt">//防止再次执行此if语句块时，重复添加回调函数</span>
-        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroyDevice</span>([] { shader.<span class="fn">~shaderModule</span>(); });
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroyDevice</span>([] { shader.<span class="fn">Destroy</span>(); });
     }
     <span class="kw">return</span> shader.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_VERTEX_BIT</span>);
 }
@@ -566,7 +566,7 @@
     <span class="kw">if</span> (!shader) {
         shader.<span class="fn">Create</span>(filepath_frag);
         <span class="mcr">ExecuteOnce</span>(shader.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>)); <span class="cmt">//防止再次执行此if语句块时，重复添加回调函数</span>
-        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroyDevice</span>([] { shader.<span class="fn">~shaderModule</span>(); });
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroyDevice</span>([] { shader.<span class="fn">Destroy</span>(); });
     }
     <span class="kw">return</span> shader.<span class="fn">StageCreateInfo</span>(<span class="enum">VK_SHADER_STAGE_FRAGMENT_BIT</span>);
 }
@@ -588,7 +588,7 @@
         <span class="type">VkPipelineLayoutCreateInfo</span> pipelineLayoutCreateInfo = {};
         pipelineLayout.<span class="fn">Create</span>(pipelineLayoutCreateInfo);
         <span class="mcr">ExecuteOnce</span>(pipelineLayout);
-        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroyDevice</span>([] { pipelineLayout.<span class="fn">~pipelineLayout</span>(); });
+        <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroyDevice</span>([] { pipelineLayout.<span class="fn">Destroy</span>(); });
     }
     <span class="kw">return</span> pipelineLayout;
 }
@@ -647,8 +647,8 @@ pipelineCiPack.colorBlendAttachmentStates.<span class="fn">emplace_back</span>(
 </p>
 <pre class="code">
 <span class="kw">void</span> <span class="fn">Instantiate</span>(<span class="type">VkFormat</span> <span class="par">format_final</span>, <span class="kw">bool</span> <span class="par">generateMipmap</span>, <span class="type">callback_copyData_t</span> <span class="par">callback_copyMipLevel0</span>) {
-    <span class="kw">this</span>->format_final = <span class="par">format_final</span>;
-    <span class="kw">this</span>->generateMipmap = <span class="par">generateMipmap</span>;
+    <span class="kw">this</span>-&gt;format_final = <span class="par">format_final</span>;
+    <span class="kw">this</span>-&gt;generateMipmap = <span class="par">generateMipmap</span>;
     callback_copyData = <span class="par">callback_copyData_t</span>;
 
     <span class="cmt">//Create renderpass</span>
@@ -936,7 +936,7 @@ pTexture = <span class="kw">static_cast</span>&lt;<span class="type">texture2d_l
     将图像的大小写入到<span class="var">texture.extent</span>：
 </p>
 <pre class="code">
-pTexture->extent = <span class="par">extent</span>;
+pTexture-&gt;extent = <span class="par">extent</span>;
 </pre>
 <p>
     创建<span class="var">texture.imageMemory</span>：
@@ -952,20 +952,20 @@ pTexture->extent = <span class="par">extent</span>;
     .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
     .usage = <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span> | <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span> | <span class="enum">VK_IMAGE_USAGE_SAMPLED_BIT</span> | <span class="enum">VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT</span>
 };
-pTexture->imageMemory.<span class="fn">Create</span>(imageCreateInfo, <span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>);
+pTexture-&gt;imageMemory.<span class="fn">Create</span>(imageCreateInfo, <span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>);
 
 <span class="cmt">//这个handle之后要用5次，先存到变量以简化之后的书写</span>
-<span class="type">VkImage</span> image = pTexture->imageMemory.<span class="fn">Image</span>();
+<span class="type">VkImage</span> image = pTexture-&gt;imageMemory.<span class="fn">Image</span>();
 </pre>
 <p>
     创建只有一个mip等级的<span class="var">texture.imageView</span>（帧缓冲所用的图像视图必须只有一个mip级别），然后创建帧缓冲：
 </p>
 <pre class="code">
-pTexture->imageView.<span class="fn">Create</span>(image, <span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>, format_final, { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, 1 });
+pTexture-&gt;imageView.<span class="fn">Create</span>(image, <span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>, format_final, { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, 1 });
 <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
     .renderPass = renderPass,
     .attachmentCount = 1,
-    .pAttachments = pTexture->imageView.<span class="fn">Address</span>(),
+    .pAttachments = pTexture-&gt;imageView.<span class="fn">Address</span>(),
     .width = <span class="par">extent</span>.width,
     .height = <span class="par">extent</span>.height,
     .layers = 1
@@ -1130,7 +1130,7 @@ renderPass.<span class="fn">CmdEnd</span>(commandBuffer);
     <span class="fn">vkCmdCopyImageToBuffer</span>(commandBuffer, image, <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL</span>, <span class="type">stagingBuffer</span>::<span class="sfn">Buffer_MainThread</span>(), 1, &amp;region);
 }
 <span class="cmt">//生成mipmap，转换内存布局</span>
-<span class="kw">if</span> (mipLevelCount > 1 || callback_copyData)
+<span class="kw">if</span> (mipLevelCount &gt; 1 || callback_copyData)
     <span class="type">imageOperation</span>::<span class="sfn">CmdGenerateMipmap2d</span>(commandBuffer, image, <span class="par">extent</span>, mipLevelCount, 1,
         { <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>, <span class="enum">VK_ACCESS_SHADER_READ_BIT</span>, <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span> });
 
@@ -1150,9 +1150,9 @@ commandBuffer.<span class="fn">End</span>();
     callback_copyData(<span class="type">stagingBuffer</span>::<span class="sfn">UnmapMemory_MainThread</span>(imageDataSize_final), imageDataSize_final),
     <span class="type">stagingBuffer</span>::<span class="sfn">UnmapMemory_MainThread</span>();
 <span class="cmt">//创建image view</span>
-<span class="kw">if</span> (mipLevelCount > 1)
-    pTexture->imageView.<span class="fn">~imageView</span>(),
-    pTexture->imageView.<span class="fn">Create</span>(image, <span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>, format_final, { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, mipLevelCount, 0, 1 });
+<span class="kw">if</span> (mipLevelCount &gt; 1)
+    pTexture-&gt;imageView.<span class="fn">Destroy</span>(),
+    pTexture-&gt;imageView.<span class="fn">Create</span>(image, <span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>, format_final, { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, mipLevelCount, 0, 1 });
 </pre>
 <p>
     对代码进行整理，最后整个函数如下：
@@ -1174,7 +1174,7 @@ commandBuffer.<span class="fn">End</span>();
         <span class="kw">using</span> <span class="type">texture2d</span>::extent;
     }*pTexture;
     pTexture = <span class="kw">static_cast</span>&lt;<span class="type">texture2d_local</span>*&gt;(&amp;texture);
-    pTexture->extent = <span class="par">extent</span>;
+    pTexture-&gt;extent = <span class="par">extent</span>;
     <span class="cmt">//创建imameMemory</span>
     <span class="type">uint32_t</span> mipLevelCount = <span class="par">generateMipmap</span> ? <span class="type">texture</span>::<span class="sfn">CalculateMipLevelCount</span>(<span class="par">extent</span>) : 1;
     <span class="type">VkImageCreateInfo</span> imageCreateInfo = {
@@ -1186,14 +1186,14 @@ commandBuffer.<span class="fn">End</span>();
         .samples = <span class="enum">VK_SAMPLE_COUNT_1_BIT</span>,
         .usage = <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span> | <span class="enum">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span> | <span class="enum">VK_IMAGE_USAGE_SAMPLED_BIT</span> | <span class="enum">VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT</span>
     };
-    pTexture->imageMemory.<span class="fn">Create</span>(imageCreateInfo, <span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>);
-    <span class="type">VkImage</span> image = pTexture->imageMemory.<span class="fn">Image</span>();
+    pTexture-&gt;imageMemory.<span class="fn">Create</span>(imageCreateInfo, <span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>);
+    <span class="type">VkImage</span> image = pTexture-&gt;imageMemory.<span class="fn">Image</span>();
     <span class="cmt">//创建帧缓冲</span>
-    pTexture->imageView.<span class="fn">Create</span>(image, <span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>, format_final, { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, 1 });
+    pTexture-&gt;imageView.<span class="fn">Create</span>(image, <span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>, format_final, { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, 1 });
     <span class="type">VkFramebufferCreateInfo</span> framebufferCreateInfo = {
         .renderPass = renderPass,
         .attachmentCount = 1,
-        .pAttachments = pTexture->imageView.<span class="fn">Address</span>(),
+        .pAttachments = pTexture-&gt;imageView.<span class="fn">Address</span>(),
         .width = <span class="par">extent</span>.width,
         .height = <span class="par">extent</span>.height,
         .layers = 1
@@ -1221,7 +1221,7 @@ commandBuffer.<span class="fn">End</span>();
         <span class="fn">vkCmdCopyImageToBuffer</span>(commandBuffer, image, <span class="enum">VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL</span>, <span class="type">stagingBuffer</span>::<span class="sfn">Buffer_MainThread</span>(), 1, &amp;region);
     }
     <span class="cmt">//如有必要，生成mipmap，转换内存布局</span>
-    <span class="kw">if</span> (mipLevelCount > 1 || callback_copyData)
+    <span class="kw">if</span> (mipLevelCount &gt; 1 || callback_copyData)
         <span class="type">imageOperation</span>::<span class="sfn">CmdGenerateMipmap2d</span>(commandBuffer, image, <span class="par">extent</span>, mipLevelCount, 1,
             { <span class="enum">VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</span>, <span class="enum">VK_ACCESS_SHADER_READ_BIT</span>, <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span> });
     <span class="cmt">//结束录制，执行命令</span>
@@ -1233,9 +1233,9 @@ commandBuffer.<span class="fn">End</span>();
         callback_copyData(<span class="type">stagingBuffer</span>::<span class="sfn">UnmapMemory_MainThread</span>(imageDataSize_final), imageDataSize_final),
         <span class="type">stagingBuffer</span>::<span class="sfn">UnmapMemory_MainThread</span>();
     <span class="cmt">//创建image view</span>
-    <span class="kw">if</span> (mipLevelCount > 1)
-        pTexture->imageView.<span class="fn">~imageView</span>(),
-        pTexture->imageView.<span class="fn">Create</span>(image, <span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>, format_final, { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, mipLevelCount, 0, 1 });
+    <span class="kw">if</span> (mipLevelCount &gt; 1)
+        pTexture-&gt;imageView.<span class="fn">Destroy</span>(),
+        pTexture-&gt;imageView.<span class="fn">Create</span>(image, <span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>, format_final, { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, mipLevelCount, 0, 1 });
     <span class="kw">return</span> texture;
 }
 </pre>

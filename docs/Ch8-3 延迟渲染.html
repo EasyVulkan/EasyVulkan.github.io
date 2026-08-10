@@ -487,9 +487,9 @@ rpwf.renderPass.<span class="fn">Create</span>(renderPassCreateInfo);
             rpwf.framebuffers[i].<span class="fn">Create</span>(framebufferCreateInfo);
     };
     <span class="kw">auto</span> DestroyFramebuffers = [] {
-        ca_deferredToScreen_normalZ.<span class="fn">~colorAttachment</span>();
-        ca_deferredToScreen_albedoSpecular.<span class="fn">~colorAttachment</span>();
-        dsa_deferredToScreen.<span class="fn">~depthStencilAttachment</span>();
+        ca_deferredToScreen_normalZ.<span class="fn">Destroy</span>();
+        ca_deferredToScreen_albedoSpecular.<span class="fn">Destroy</span>();
+        dsa_deferredToScreen.<span class="fn">Destroy</span>();
         rpwf.framebuffers.<span class="fn">clear</span>();
     };
     CreateFramebuffers();
@@ -1053,7 +1053,7 @@ o_Color.rgb += specular * lightIntensity * <span class="fn">pow</span>(<span cla
     <span class="kw">sizeof</span> shininess, <span class="cmt">//dataSize</span>
     &amp;shininess        <span class="cmt">//pData</span>
 };
-    shaderStageCreateInfos_composition[1].pSpecializationInfo = &amp;specializationInfo;
+shaderStageCreateInfos_composition[1].pSpecializationInfo = &amp;specializationInfo;
 </pre>
 <p>
     创建管线：
@@ -1098,8 +1098,8 @@ o_Color.rgb += specular * lightIntensity * <span class="fn">pow</span>(<span cla
     pipeline_composition.<span class="fn">Create</span>(pipelineCiPack);
 };
 <span class="kw">auto</span> Destroy = [] {
-    pipeline_gBuffer.<span class="fn">~pipeline</span>();
-    pipeline_composition.<span class="fn">~pipeline</span>();
+    pipeline_gBuffer.<span class="fn">Destroy</span>();
+    pipeline_composition.<span class="fn">Destroy</span>();
 };
 <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>(Create);
 <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroySwapchain</span>(Destroy);

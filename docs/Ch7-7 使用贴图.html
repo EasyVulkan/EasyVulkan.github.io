@@ -451,7 +451,7 @@ pipelineCiPack.inputAssemblyStateCi.topology = <span class="enum">VK_PRIMITIVE_T
         pipeline_texture.<span class="fn">Create</span>(pipelineCiPack);
     };
     <span class="kw">auto</span> Destroy = [] {
-        pipeline_texture.<span class="fn">~pipeline</span>();
+        pipeline_texture.<span class="fn">Destroy</span>();
     };
     <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>(Create);
     <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroySwapchain</span>(Destroy);

@@ -313,7 +313,7 @@
         rpwf.framebuffer.<span class="fn">Create</span>(framebufferCreateInfo);
     };
     <span class="kw">auto</span> DestroyFramebuffer = [] {
-        rpwf.framebuffer.<span class="fn">~framebuffer</span>();
+        rpwf.framebuffer.<span class="fn">Destroy</span>();
     };
     CreateFramebuffer();
 
@@ -626,9 +626,9 @@
     <span class="kw">if</span> (!<span class="fn">InitializeWindow</span>({ 1280, 720 }))
         <span class="kw">return</span> -1;
 
-    </span><span class="kw">const auto</span>&amp; [renderPass, framebuffer] = <span class="fn">RenderPassAndFramebuffers</span>();
-    </span><span class="fn">CreateLayout</span>();
-    </span><span class="fn">CreatePipeline</span>();
+    <span class="kw">const auto</span>&amp; [renderPass, framebuffer] = <span class="fn">RenderPassAndFramebuffers</span>();
+    <span class="fn">CreateLayout</span>();
+    <span class="fn">CreatePipeline</span>();
 
     <span class="type">fence</span> fence;
     <span class="type">semaphore</span> semaphore_imageIsAvailable;

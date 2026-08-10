@@ -34,9 +34,9 @@ class graphicsBasePlus {
 				vkGetPhysicalDeviceFormatProperties(graphicsBase::Base().PhysicalDevice(), VkFormat(i), &singleton.formatProperties[i]);
 		};
 		auto CleanUp = [] {
-			singleton.commandPool_graphics.~commandPool();
-			singleton.commandPool_presentation.~commandPool();
-			singleton.commandPool_compute.~commandPool();
+			singleton.commandPool_graphics.Destroy();
+			singleton.commandPool_presentation.Destroy();
+			singleton.commandPool_compute.Destroy();
 		};
 		graphicsBase::Plus(singleton);
 		graphicsBase::Base().AddCallback_CreateDevice(Initialize);
@@ -229,7 +229,7 @@ inline const VkFormatProperties& FormatProperties(VkFormat format) {
 
 #pragma region Synchronization
 /*Provided by VK_API_VERSION_1_2*/
-class timelineSemaphore : semaphore {
+class timelineSemaphore :semaphore {
 public:
 	timelineSemaphore(uint64_t initialValue = 0) {
 		Create(initialValue);
@@ -274,6 +274,7 @@ public:
 		};
 		return semaphore::Create(createInfo);
 	}
+	using semaphore::Destroy;
 	//Static Functino
 	static result_t Wait(arrayRef<const timelineSemaphore> semaphores, arrayRef<uint64_t> values, bool waitAll = true) {
 		if (semaphores.Count() != values.Count())
@@ -305,7 +306,7 @@ class stagingBuffer {
 		stagingBuffer* pointer;
 		stagingBuffer* Create() {
 			static stagingBuffer stagingBuffer;
-			graphicsBase::Base().AddCallback_DestroyDevice([] { stagingBuffer.~stagingBuffer(); });
+			graphicsBase::Base().AddCallback_DestroyDevice([] { stagingBuffer.Release(); stagingBuffer.aliasedImage.Destroy(); });
 			return &stagingBuffer;
 		}
 	public:
@@ -342,7 +343,7 @@ public:
 		bufferMemory.Create(bufferCreateInfo, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 	}
 	void Release() {
-		bufferMemory.~bufferMemory();
+		bufferMemory.Destroy();
 	}
 	void* MapMemory(VkDeviceSize size) {
 		Expand(size);
@@ -385,7 +386,7 @@ public:
 			layerCount > imageFormatProperties.maxArrayLayers ||
 			imageDataSize > imageFormatProperties.maxResourceSize)
 			return VK_NULL_HANDLE;
-		aliasedImage.~image();
+		aliasedImage.Destroy();
 		aliasedImage.Create(
 			imageType,
 			format,
@@ -510,8 +511,11 @@ public:
 	}
 	void Recreate(VkDeviceSize size, VkBufferUsageFlags desiredUsages_Without_transfer_dst, optionalRef_any next_allocateInfo = {}) {
 		graphicsBase::Base().WaitIdle();
-		bufferMemory.~bufferMemory();
+		Destroy();
 		Create(size, desiredUsages_Without_transfer_dst, next_allocateInfo);
+	}
+	void Destroy() {
+		bufferMemory.Destroy();
 	}
 };
 
@@ -600,6 +604,11 @@ public:
 	//Const Function
 	VkDescriptorImageInfo DescriptorImageInfo(VkSampler sampler) const {
 		return { sampler, imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+	}
+	//Non-const Function
+	void Destroy() {
+		imageView.Destroy();
+		imageMemory.Destroy();
 	}
 };
 
@@ -911,6 +920,11 @@ public:
 	//Const Function
 	VkDescriptorImageInfo DescriptorImageInfo(VkSampler sampler) const {
 		return { sampler, imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+	}
+	//Non-const Function
+	void Destroy() {
+		imageView.Destroy();
+		imageMemory.Destroy();
 	}
 	//Static Function
 	/*CheckArguments(...) should only be called in tests*/
@@ -1523,13 +1537,16 @@ public:
 	//Non-const Function
 	void Create(uint32_t capacity) {
 		passingSampleCounts.resize(capacity);
-		passingSampleCounts.shrink_to_fit();
 		queryPool.Create(VK_QUERY_TYPE_OCCLUSION, Capacity());
 	}
 	void Recreate(uint32_t capacity) {
 		graphicsBase::Base().WaitIdle();
-		queryPool.~queryPool();
+		Destroy();
 		Create(capacity);
+	}
+	void Destroy() {
+		queryPool.Destroy();
+		passingSampleCounts = {};
 	}
 	result_t GetResults() {
 		return GetResults(Capacity());
@@ -1600,6 +1617,9 @@ public:
 	void Create() {
 		queryPool.Create(VK_QUERY_TYPE_PIPELINE_STATISTICS, 1, (1 << statisticCount) - 1);
 	}
+	void Destroy() {
+		queryPool.Destroy();
+	}
 	result_t GetResults() {
 		return queryPool.GetResults(0, 1, sizeof statistics, statistics, sizeof statistics);
 	}
@@ -1629,13 +1649,16 @@ public:
 	//Non-const Function
 	void Create(uint32_t capacity) {
 		timestamps.resize(capacity);
-		timestamps.shrink_to_fit();
 		queryPool.Create(VK_QUERY_TYPE_TIMESTAMP, Capacity());
 	}
 	void Recreate(uint32_t capacity) {
 		graphicsBase::Base().WaitIdle();
-		queryPool.~queryPool();
+		Destroy();
 		Create(capacity);
+	}
+	void Destroy() {
+		queryPool.Destroy();
+		timestamps = {};
 	}
 	result_t GetResults() {
 		return GetResults(Capacity());

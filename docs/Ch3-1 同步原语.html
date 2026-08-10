@@ -429,7 +429,7 @@
         <span class="fn">Create</span>(<span class="par">flags</span>);
     }
     <span class="fn">fence</span>(<span class="type">fence</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
-    <span class="fn">~fence</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyFence</span>); }
+    <span class="fn">~fence</span>() { <span class="fn">Destroy</span>(); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
@@ -472,6 +472,7 @@
         };
         <span class="kw">return</span> <span class="fn">Create</span>(createInfo);
     }
+    <span class="kw">void</span> <span class="fn">Destroy</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyFence</span>); }
 };
 </pre>
 <ul>
@@ -614,7 +615,7 @@
         <span class="fn">Create</span>();
     }
     <span class="fn">semaphore</span>(<span class="type">semaphore</span>&amp;&amp; <span class="par">other</span>) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
-    <span class="fn">~semaphore</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroySemaphore</span>); }
+    <span class="fn">~semaphore</span>() { <span class="fn">Destroy</span>(); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
@@ -630,6 +631,7 @@
         <span class="type">VkSemaphoreCreateInfo</span> createInfo = {};
         <span class="kw">return</span> <span class="fn">Create</span>(createInfo);
     }
+    <span class="kw">void</span> <span class="fn">Destroy</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroySemaphore</span>); }
 };
 </pre>
 <ul>
@@ -1301,7 +1303,7 @@
     </li>
     <li>
         <p>
-            <a class="reference internal" href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html">动态渲染</a>过程中，若需要对storage图像或输入附件进行布局转换以便被片段着色器读取，应将图像转换到<span class="enum">VK_IMAGE_LAYOUT_RENDERING_LOCAL_READ</span>布局，而非<span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>。        
+            <a class="reference internal" href="Ch6-2%20%E5%8A%A8%E6%80%81%E6%B8%B2%E6%9F%93.html">动态渲染</a>过程中，若需要对storage图像或输入附件进行布局转换以便被片段着色器读取，应将图像转换到<span class="enum">VK_IMAGE_LAYOUT_RENDERING_LOCAL_READ</span>布局，而非<span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>。
         </p>
     </li>
 </ul>
@@ -1714,7 +1716,7 @@
         <span class="fn">Create</span>(<span class="par">flags</span>);
     }
     <span class="fn">event</span>(<span class="type">event</span>&amp;&amp; other) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
-    <span class="fn">~event</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyEvent</span>); }
+    <span class="fn">~event</span>() { <span class="fn">Destroy</span>(); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
@@ -1772,6 +1774,7 @@
         };
         <span class="kw">return</span> <span class="fn">Create</span>(createInfo);
     }
+    <span class="kw">void</span> <span class="fn">Destroy</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyEvent</span>); }
 };
 </code></section>
 </section>

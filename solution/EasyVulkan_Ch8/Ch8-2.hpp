@@ -53,7 +53,7 @@ void CreatePipeline() {
 		pipeline_into3d.Create(pipelineCiPack);
 	};
 	auto Destroy = [] {
-		pipeline_into3d.~pipeline();
+		pipeline_into3d.Destroy();
 	};
 	graphicsBase::Base().AddCallback_CreateSwapchain(Create);
 	graphicsBase::Base().AddCallback_DestroySwapchain(Destroy);

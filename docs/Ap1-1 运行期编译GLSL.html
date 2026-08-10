@@ -160,7 +160,7 @@
 
 <span class="kw">int</span> <span class="fn">main</span>(<span class="kw">int</span> <span class="par">argc</span>, <span class="kw">char</span>** <span class="par">argv</span>) {
     <span class="cmt">//argv[0]是程序本身的路径，argv[1]开始是拖上去的文件的路径</span>
-    <span class="kw">for</span> (<span class="kw">int</span> count = 1; count < <span class="par">argc</span>; count++) {
+    <span class="kw">for</span> (<span class="kw">int</span> count = 1; count &lt; <span class="par">argc</span>; count++) {
             <span class="cmt">//显示被编译的文件名</span>
             std::cout &lt;&lt; <span class="str">&quot;Compile file: &quot;</span> &lt;&lt; <span class="par">argv</span>[count] &lt;&lt; std::endl;
             <span class="cmt">//构造命令行语句</span>

@@ -321,7 +321,7 @@
 };
 </pre>
 <p>
-    25.08.05更新：
+    25.08.05 更新：
     <br>
     以上代码中<span class="type">arrayRef</span>不支持直接从底层内存连续的标准库容器构造，而std::<span class="type">vector</span>又用得尤其多。
     <br>
@@ -340,7 +340,7 @@
 <ul>
     <li>
         <p>
-            <span class="kw">requires</span>关键字用于<a href="https://en.cppreference.com/w/cpp/language/constraints.html">类型约束</a>，这里不作讲解（通常你也用不着它），需要解释的话可向我提问。
+            <span class="kw">requires</span>关键字用于<a href="https://cppreference.cn/w/cpp/language/constraints">类型约束</a>，这里不作讲解（通常你也用不着它），需要解释的话可向我提问。
         </p>
     </li>
 </ul>
@@ -407,7 +407,7 @@
 <section id="vulkan">
 <h3>封装Vulkan对象用<a class="headerlink" href="#vulkan" title="Permalink to this heading"></a></h3>
 <p>
-    用于析构器中销毁Vulkan对象的宏，该宏调用相应Destroy函数后将handle设置为<span class="mcr">VK_NULL_HANDLE</span>，以防止重复析构：
+    用于销毁Vulkan对象的宏，该宏调用相应<span class="fn">vkDestroy</span>函数后将handle设置为<span class="mcr">VK_NULL_HANDLE</span>，以防止重复析构：
 </p>
 <pre class="code">
 <span class="pragma">#define</span> <span class="mcr">DestroyHandleBy</span>(Func) <span class="kw">if</span> (handle) { Func(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">Device</span>(), handle, <span class="kw">nullptr</span>); handle = <span class="mcr">VK_NULL_HANDLE</span>; }

@@ -230,7 +230,7 @@
     }
     <span class="cmt">//该函数用于手动释放所有内存并销毁设备内存和缓冲区的handle</span>
     <span class="kw">void</span> <span class="fn">Release</span>() {
-        bufferMemory.<span class="fn">~bufferMemory</span>();
+        bufferMemory.<span class="fn">Destroy</span>();
     }
     <span class="kw">void</span>* <span class="fn">MapMemory</span>(<span class="type">VkDeviceSize</span> <span class="par">size</span>) {
         <span class="fn">Expand</span>(<span class="par">size</span>);
@@ -404,7 +404,7 @@
     若混叠图像已存在，先析构它，然后再创建新图像：
 </p>
 <pre class="code">
-aliasedImage.<span class="fn">~image</span>();
+aliasedImage.<span class="fn">Destroy</span>();
 aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
 </pre>
 <p>
@@ -545,7 +545,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
         .usage = <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>,
         .initialLayout = <span class="enum">VK_IMAGE_LAYOUT_PREINITIALIZED</span>
     };
-    aliasedImage.<span class="fn">~image</span>();
+    aliasedImage.<span class="fn">Destroy</span>();
     aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
     <span class="type">VkImageSubresource</span> subResource = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 0 };
     <span class="type">VkSubresourceLayout</span> subresourceLayout = {};
@@ -579,7 +579,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
         <span class="type">stagingBuffer</span>* pointer;
         <span class="type">stagingBuffer</span>* <span class="fn">Create</span>() {
             <span class="kw">static</span> <span class="type">stagingBuffer</span> stagingBuffer;
-            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroyDevice</span>([] { stagingBuffer.<span class="fn">~stagingBuffer</span>(); });
+            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroyDevice</span>([] { stagingBuffer.<span class="fn">Release</span>(); stagingBuffer.aliasedImage.<span class="fn">Destroy</span>(); });
             <span class="kw">return</span> &amp;stagingBuffer;
         }
         <span class="kw">public</span>:
@@ -610,7 +610,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
         <span class="type">stagingBuffer</span>* pointer;
         <span class="type">stagingBuffer</span>* <span class="fn">Create</span>() {
             <span class="kw">static</span> <span class="type">stagingBuffer</span> stagingBuffer;
-            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroyDevice</span>([] { stagingBuffer.<span class="fn">~stagingBuffer</span>(); });
+            <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroyDevice</span>([] { stagingBuffer.<span class="fn">Release</span>(); stagingBuffer.aliasedImage.<span class="fn">Destroy</span>(); });
             <span class="kw">return</span> &amp;stagingBuffer;
         }
         <span class="kw">public</span>:
@@ -647,7 +647,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
         bufferMemory.<span class="fn">Create</span>(bufferCreateInfo, <span class="enum">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>);
     }
     <span class="kw">void</span> <span class="fn">Release</span>() {
-        bufferMemory.<span class="fn">~bufferMemory</span>();
+        bufferMemory.<span class="fn">Destroy</span>();
     }
     <span class="kw">void</span>* <span class="fn">MapMemory</span>(<span class="type">VkDeviceSize</span> <span class="par">size</span>) {
         <span class="fn">Expand</span>(<span class="par">size</span>);
@@ -689,7 +689,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
             .usage = <span class="enum">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>,
             .initialLayout = <span class="enum">VK_IMAGE_LAYOUT_PREINITIALIZED</span>
         };
-        aliasedImage.<span class="fn">~image</span>();
+        aliasedImage.<span class="fn">Destroy</span>();
         aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
         <span class="type">VkImageSubresource</span> subResource = { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 0 };
         <span class="type">VkSubresourceLayout</span> subresourceLayout = {};
@@ -731,7 +731,7 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
 <section id="device-local-buffer">
 <h2>Device Local Buffer<a class="headerlink" href="#device-local-buffer" title="Permalink to this heading"></a></h2>
 <p>
-    将具有<span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>内存属性的缓冲区封装为<span class="type">deviceLocalBuffer</span>，首先定义基本的Getter和创建/重建函数：
+    将具有<span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>内存属性的缓冲区封装为<span class="type">deviceLocalBuffer</span>，首先定义基本的Getter和创建、重建、销毁函数：
 </p>
     <pre class="code">
 <span class="kw">class</span> <span class="type">deviceLocalBuffer</span> {
@@ -761,8 +761,11 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
     }
     <span class="kw">void</span> <span class="fn">Recreate</span>(<span class="type">VkDeviceSize</span> <span class="par">size</span>, <span class="type">VkBufferUsageFlags</span> <span class="par">desiredUsages_Without_transfer_dst</span>) {
         <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">WaitIdle</span>(); <span class="cmt">//deviceLocalBuffer封装的缓冲区可能会在每一帧中被频繁使用，重建它之前应确保物理设备没有在使用它</span>
-        bufferMemory.<span class="fn">~bufferMemory</span>();
+        <span class="fn">Destroy</span>();
         <span class="fn">Create</span>(<span class="par">size</span>, <span class="par">desiredUsages_Without_transfer_dst</span>);
+    }
+    <span class="kw">void</span> <span class="fn">Destroy</span>() {
+        bufferMemory.<span class="fn">Destroy</span>();
     }
 };
 </pre>
@@ -1016,8 +1019,11 @@ aliasedImage.<span class="fn">Create</span>(imageCreateInfo);
     }
     <span class="kw">void</span> <span class="fn">Recreate</span>(<span class="type">VkDeviceSize</span> <span class="par">size</span>, <span class="type">VkBufferUsageFlags</span> <span class="par">desiredUsages_Without_transfer_dst</span>) {
         <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">WaitIdle</span>();
-        bufferMemory.<span class="fn">~bufferMemory</span>();
+        <span class="fn">Destroy</span>();
         <span class="fn">Create</span>(<span class="par">size</span>, <span class="par">desiredUsages_Without_transfer_dst</span>);
+    }
+    <span class="kw">void</span> <span class="fn">Destroy</span>() {
+        bufferMemory.<span class="fn">Destroy</span>();
     }
 };
 </pre>

@@ -465,7 +465,7 @@
 <span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec3</span> o_UVS;
 
 <span class="kw">void</span> <span class="fn">main</span>() {
-    <span class="kw">for</span> (<span class="kw">uint</span> i = 0; i < 4; i++) {
+    <span class="kw">for</span> (<span class="kw">uint</span> i = 0; i &lt; 4; i++) {
         gl_Position = <span class="type">vec4</span>(positions[i], 0, 1);
         gl_Layer = i_Layers[0];
         o_UVS = texCoords[i + gl_Layer * 4];
@@ -485,7 +485,7 @@
     关于输入输出的语法都讲解过了，重点看下几何着色器的主函数，循环部分：
 </p>
 <pre class="code">
-<span class="kw">for</span> (<span class="kw">uint</span> i = 0; i < 4; i++) {
+<span class="kw">for</span> (<span class="kw">uint</span> i = 0; i &lt; 4; i++) {
     gl_Position = <span class="type">vec4</span>(positions[i], 0, 1);
     gl_Layer = i_Layers[0];
     o_UVS = texCoords[i + gl_Layer * 4];
@@ -504,7 +504,7 @@
 </p>
 <pre class="code">
 <span class="kw">void</span> <span class="fn">main</span>() {
-    <span class="kw">for</span> (<span class="kw">uint</span> i = 0; i < 4; i++) {
+    <span class="kw">for</span> (<span class="kw">uint</span> i = 0; i &lt; 4; i++) {
         <span class="cmt">/*...*/</span>
     }
     <span class="fn">EndPrimitive</span>();
@@ -539,7 +539,7 @@
 <span class="kw">layout</span>(location = 0) <span class="kw">out</span> <span class="type">vec3</span> o_UVS;
 
 <span class="kw">void</span> <span class="fn">main</span>() {
-    <span class="kw">for</span> (<span class="kw">uint</span> i = 0; i < 4; i++) {
+    <span class="kw">for</span> (<span class="kw">uint</span> i = 0; i &lt; 4; i++) {
         gl_Position = <span class="type">vec4</span>(positions[i], 0, 1);
 
         <span class="cmt">/*变更*/</span>gl_Layer = gl_PrimitiveIDIn;

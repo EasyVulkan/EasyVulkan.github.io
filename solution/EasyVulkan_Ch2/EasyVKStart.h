@@ -32,6 +32,7 @@
 #include <vulkan/vulkan.h>
 #include <vulkan/vk_enum_string_helper.h>
 
+//----------Helper Class-------------------------------------------------------
 template<typename T>
 class arrayRef {
     T* const pArray = nullptr;
@@ -53,4 +54,6 @@ public:
     //Non-const Function
     arrayRef& operator=(const arrayRef&) = delete;
 };
+
+//----------Other--------------------------------------------------------------
 #define ExecuteOnce(...) { static bool executed = false; if (executed) return __VA_ARGS__; executed = true; }

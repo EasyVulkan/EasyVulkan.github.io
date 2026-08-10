@@ -1002,7 +1002,7 @@ Swapchain image 0 was presented but was not re-acquired, so VkSemaphore 0x140000
         semaphores_renderingIsOver(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>()) {
         <span class="cmt">//以置位状态创建栅栏</span>
         fences.<span class="fn">reserve</span>(<span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>());
-        <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i < <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>(); i++)
+        <span class="kw">for</span> (<span class="type">size_t</span> i = 0; i &lt; <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">SwapchainImageCount</span>(); i++)
             fences.<span class="fn">emplace_back</span>(<span class="enum">VK_FENCE_CREATE_SIGNALED_BIT</span>);
     }
     <span class="cmt">//Getter</span>

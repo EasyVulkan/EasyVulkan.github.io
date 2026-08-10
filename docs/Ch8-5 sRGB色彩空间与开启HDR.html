@@ -748,7 +748,7 @@
 
 <span class="kw">void</span> <span class="fn">main</span>() {
     o_Color = <span class="fn">texture</span>(u_Texture, i_TexCoord);
-    <span class="kw">if</span> (o_Color.r < 1)
+    <span class="kw">if</span> (o_Color.r &lt; 1)
         o_Color.rgb = <span class="fn">InverseEotf_PQ</span>(o_Color.rgb * brightnessScale);
 }
 </pre>

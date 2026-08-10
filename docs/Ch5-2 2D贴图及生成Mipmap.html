@@ -196,6 +196,11 @@
     <span class="type">VkDescriptorImageInfo</span> <span class="fn">DescriptorImageInfo</span>(<span class="type">VkSampler</span> <span class="par">sampler</span>) <span class="kw">const</span> {
         <span class="kw">return</span> { <span class="par">sampler</span>, imageView, <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span> };
     }
+    <span class="cmt">//Non-const Function</span>
+    <span class="kw">void</span> <span class="fn">Destroy</span>() {
+        imageView.<span class="fn">Destroy</span>();
+        imageMemory.<span class="fn">Destroy</span>();
+    }
     <span class="cmt">//Static Function</span>
     [[nodiscard]]
     <span class="kw">static</span> std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; <span class="sfn">LoadFile</span>(<span class="kw">const char</span>* <span class="par">filepath</span>, <span class="type">VkExtent2D</span>&amp; <span class="par">extent</span>, <span class="type">formatInfo</span> <span class="par">requiredFormatInfo</span>) {
@@ -695,9 +700,9 @@
 <span class="kw">for</span> (<span class="type">uint32_t</span> i = 1; i &lt; <span class="par">mipLevelCount</span>; i++) {
     <span class="type">VkImageBlit</span> region = {
         { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, i - 1, 0, <span class="par">layerCount</span> }, <span class="cmt">//srcSubresource</span>
-        { {}, MipmapExtent(<span class="par">imageExtent</span>, i - 1) },           <span class="cmt">//srcOffsets</span>
+        { {}, MipmapExtent(<span class="par">imageExtent</span>, i - 1) },            <span class="cmt">//srcOffsets</span>
         { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, i, 0, <span class="par">layerCount</span> },     <span class="cmt">//dstSubresource</span>
-        { {}, MipmapExtent(<span class="par">imageExtent</span>, i) }                <span class="cmt">//dstOffsets</span>
+        { {}, MipmapExtent(<span class="par">imageExtent</span>, i) }                 <span class="cmt">//dstOffsets</span>
     };
     <span class="sfn">CmdBlitImage</span>(<span class="cmt">/*待填充*/</span>);
 }
@@ -715,9 +720,9 @@
 <span class="kw">for</span> (<span class="type">uint32_t</span> i = 1; i &lt; <span class="par">mipLevelCount</span>; i++) {
     <span class="type">VkImageBlit</span> region = {
         { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, i - 1, 0, <span class="par">layerCount</span> }, <span class="cmt">//srcSubresource</span>
-        { {}, MipmapExtent(<span class="par">imageExtent</span>, i - 1) },           <span class="cmt">//srcOffsets</span>
+        { {}, MipmapExtent(<span class="par">imageExtent</span>, i - 1) },            <span class="cmt">//srcOffsets</span>
         { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, i, 0, <span class="par">layerCount</span> },     <span class="cmt">//dstSubresource</span>
-        { {}, MipmapExtent(<span class="par">imageExtent</span>, i) }                <span class="cmt">//dstOffsets</span>
+        { {}, MipmapExtent(<span class="par">imageExtent</span>, i) }                 <span class="cmt">//dstOffsets</span>
     };
     <span class="sfn">CmdBlitImage</span>(<span class="par">commandBuffer</span>, <span class="par">image</span>, <span class="par">image</span>, region,
         { <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, 0, <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span> },
@@ -765,9 +770,9 @@
     <span class="kw">for</span> (<span class="type">uint32_t</span> i = 1; i &lt; <span class="par">mipLevelCount</span>; i++) {
         <span class="type">VkImageBlit</span> region = {
             { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, i - 1, 0, <span class="par">layerCount</span> }, <span class="cmt">//srcSubresource</span>
-            { {}, MipmapExtent(<span class="par">imageExtent</span>, i - 1) },           <span class="cmt">//srcOffsets</span>
+            { {}, MipmapExtent(<span class="par">imageExtent</span>, i - 1) },            <span class="cmt">//srcOffsets</span>
             { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, i, 0, <span class="par">layerCount</span> },     <span class="cmt">//dstSubresource</span>
-            { {}, MipmapExtent(<span class="par">imageExtent</span>, i) }                <span class="cmt">//dstOffsets</span>
+            { {}, MipmapExtent(<span class="par">imageExtent</span>, i) }                 <span class="cmt">//dstOffsets</span>
         };
         <span class="sfn">CmdBlitImage</span>(<span class="par">commandBuffer</span>, <span class="par">image</span>, <span class="par">image</span>, region,
             { <span class="enum">VK_PIPELINE_STAGE_TRANSFER_BIT</span>, 0, <span class="enum">VK_IMAGE_LAYOUT_UNDEFINED</span> },

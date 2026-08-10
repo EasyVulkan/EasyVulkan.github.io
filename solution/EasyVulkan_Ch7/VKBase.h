@@ -751,6 +751,7 @@ namespace vulkan {
 		//                    After Initialization
 		void Terminate() {
 			this->~graphicsBase();
+			new(this) graphicsBase();
 			instance = VK_NULL_HANDLE;
 			physicalDevice = VK_NULL_HANDLE;
 			device = VK_NULL_HANDLE;
@@ -958,7 +959,7 @@ namespace vulkan {
 			Create();
 		}
 		semaphore(semaphore&& other) noexcept { MoveHandle; }
-		~semaphore() { DestroyHandleBy(vkDestroySemaphore); }
+		~semaphore() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -974,6 +975,7 @@ namespace vulkan {
 			VkSemaphoreCreateInfo createInfo = {};
 			return Create(createInfo);
 		}
+		void Destroy() { DestroyHandleBy(vkDestroySemaphore); }
 	};
 	class fence {
 		VkFence handle = VK_NULL_HANDLE;
@@ -986,7 +988,7 @@ namespace vulkan {
 			Create(flags);
 		}
 		fence(fence&& other) noexcept { MoveHandle; }
-		~fence() { DestroyHandleBy(vkDestroyFence); }
+		~fence() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -1028,6 +1030,7 @@ namespace vulkan {
 			};
 			return Create(createInfo);
 		}
+		void Destroy() { DestroyHandleBy(vkDestroyFence); }
 	};
 	class event {
 		VkEvent handle = VK_NULL_HANDLE;
@@ -1040,7 +1043,7 @@ namespace vulkan {
 			Create(flags);
 		}
 		event(event& other) noexcept { MoveHandle; }
-		~event() { DestroyHandleBy(vkDestroyEvent); }
+		~event() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -1098,6 +1101,7 @@ namespace vulkan {
 			};
 			return Create(createInfo);
 		}
+		void Destroy() { DestroyHandleBy(vkDestroyEvent); }
 	};
 
 	class deviceMemory {
@@ -1132,7 +1136,7 @@ namespace vulkan {
 			other.allocationSize = 0;
 			other.memoryProperties = 0;
 		}
-		~deviceMemory() { DestroyHandleBy(vkFreeMemory); allocationSize = 0; memoryProperties = 0; }
+		~deviceMemory() { Free(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -1211,6 +1215,7 @@ namespace vulkan {
 			memoryProperties = graphicsBase::Base().PhysicalDeviceMemoryProperties().memoryTypes[allocateInfo.memoryTypeIndex].propertyFlags;
 			return VK_SUCCESS;
 		}
+		void Free() { DestroyHandleBy(vkFreeMemory); allocationSize = 0; memoryProperties = 0; }
 	};
 	class buffer {
 		VkBuffer handle = VK_NULL_HANDLE;
@@ -1220,7 +1225,7 @@ namespace vulkan {
 			Create(createInfo);
 		}
 		buffer(buffer&& other) noexcept { MoveHandle; }
-		~buffer() { DestroyHandleBy(vkDestroyBuffer); }
+		~buffer() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -1256,6 +1261,7 @@ namespace vulkan {
 				outStream << std::format("[ buffer ] ERROR\nFailed to create a buffer!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
+		void Destroy() { DestroyHandleBy(vkDestroyBuffer); }
 	};
 	class bufferMemory :buffer, deviceMemory {
 	public:
@@ -1306,6 +1312,7 @@ namespace vulkan {
 				(result = BindMemory());
 			return result;
 		}
+		void Destroy() { buffer::Destroy(); deviceMemory::Free(); areBound = false; }
 	};
 	class image {
 		VkImage handle = VK_NULL_HANDLE;
@@ -1315,7 +1322,7 @@ namespace vulkan {
 			Create(createInfo);
 		}
 		image(image&& other) noexcept { MoveHandle; }
-		~image() { DestroyHandleBy(vkDestroyImage); }
+		~image() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -1355,6 +1362,7 @@ namespace vulkan {
 				outStream << std::format("[ image ] ERROR\nFailed to create an image!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
+		void Destroy() { DestroyHandleBy(vkDestroyImage); }
 	};
 	class imageMemory :image, deviceMemory {
 	public:
@@ -1400,6 +1408,7 @@ namespace vulkan {
 				(result = BindMemory());
 			return result;
 		}
+		void Destroy() { image::Destroy(); deviceMemory::Free(); areBound = false; }
 	};
 
 	class bufferView {
@@ -1413,7 +1422,7 @@ namespace vulkan {
 			Create(buffer, format, offset, range);
 		}
 		bufferView(bufferView&& other) noexcept { MoveHandle; }
-		~bufferView() { DestroyHandleBy(vkDestroyBufferView); }
+		~bufferView() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -1434,6 +1443,7 @@ namespace vulkan {
 			};
 			return Create(createInfo);
 		}
+		void Destroy() { DestroyHandleBy(vkDestroyBufferView); }
 	};
 	class imageView {
 		VkImageView handle = VK_NULL_HANDLE;
@@ -1446,7 +1456,7 @@ namespace vulkan {
 			Create(image, viewType, format, subresourceRange, flags);
 		}
 		imageView(imageView&& other) noexcept { MoveHandle; }
-		~imageView() { DestroyHandleBy(vkDestroyImageView); }
+		~imageView() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -1468,6 +1478,7 @@ namespace vulkan {
 			};
 			return Create(createInfo);
 		}
+		void Destroy() { DestroyHandleBy(vkDestroyImageView); }
 	};
 	class sampler {
 		VkSampler handle = VK_NULL_HANDLE;
@@ -1477,7 +1488,7 @@ namespace vulkan {
 			Create(createInfo);
 		}
 		sampler(sampler&& other) noexcept { MoveHandle; }
-		~sampler() { DestroyHandleBy(vkDestroySampler); }
+		~sampler() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -1489,6 +1500,7 @@ namespace vulkan {
 				outStream << std::format("[ sampler ] ERROR\nFailed to create a sampler!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
+		void Destroy() { DestroyHandleBy(vkDestroySampler); }
 	};
 
 	class shaderModule {
@@ -1505,7 +1517,7 @@ namespace vulkan {
 			Create(codeSize, pCode);
 		}
 		shaderModule(shaderModule&& other) noexcept { MoveHandle; }
-		~shaderModule() { DestroyHandleBy(vkDestroyShaderModule); }
+		~shaderModule() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -1549,6 +1561,7 @@ namespace vulkan {
 			};
 			return Create(createInfo);
 		}
+		void Destroy() { DestroyHandleBy(vkDestroyShaderModule); }
 	};
 	class descriptorSetLayout {
 		VkDescriptorSetLayout handle = VK_NULL_HANDLE;
@@ -1558,7 +1571,7 @@ namespace vulkan {
 			Create(createInfo);
 		}
 		descriptorSetLayout(descriptorSetLayout&& other) noexcept { MoveHandle; }
-		~descriptorSetLayout() { DestroyHandleBy(vkDestroyDescriptorSetLayout); }
+		~descriptorSetLayout() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -1570,6 +1583,7 @@ namespace vulkan {
 				outStream << std::format("[ descriptorSetLayout ] ERROR\nFailed to create a descriptor set layout!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
+		void Destroy() { DestroyHandleBy(vkDestroyDescriptorSetLayout); }
 	};
 	class pipelineLayout {
 		VkPipelineLayout handle = VK_NULL_HANDLE;
@@ -1579,7 +1593,7 @@ namespace vulkan {
 			Create(createInfo);
 		}
 		pipelineLayout(pipelineLayout&& other) noexcept { MoveHandle; }
-		~pipelineLayout() { DestroyHandleBy(vkDestroyPipelineLayout); }
+		~pipelineLayout() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -1591,6 +1605,7 @@ namespace vulkan {
 				outStream << std::format("[ pipelineLayout ] ERROR\nFailed to create a pipeline layout!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
+		void Destroy() { DestroyHandleBy(vkDestroyPipelineLayout); }
 	};
 	class pipeline {
 		VkPipeline handle = VK_NULL_HANDLE;
@@ -1603,7 +1618,7 @@ namespace vulkan {
 			Create(createInfo);
 		}
 		pipeline(pipeline&& other) noexcept { MoveHandle; }
-		~pipeline() { DestroyHandleBy(vkDestroyPipeline); }
+		~pipeline() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -1622,6 +1637,7 @@ namespace vulkan {
 				outStream << std::format("[ pipeline ] ERROR\nFailed to create a compute pipeline!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
+		void Destroy() { DestroyHandleBy(vkDestroyPipeline); }
 	};
 
 	class renderPass {
@@ -1632,7 +1648,7 @@ namespace vulkan {
 			Create(createInfo);
 		}
 		renderPass(renderPass&& other) noexcept { MoveHandle; }
-		~renderPass() { DestroyHandleBy(vkDestroyRenderPass); }
+		~renderPass() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -1667,6 +1683,7 @@ namespace vulkan {
 				outStream << std::format("[ renderPass ] ERROR\nFailed to create a render pass!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
+		void Destroy() { DestroyHandleBy(vkDestroyRenderPass); }
 	};
 	class framebuffer {
 		VkFramebuffer handle = VK_NULL_HANDLE;
@@ -1676,7 +1693,7 @@ namespace vulkan {
 			Create(createInfo);
 		}
 		framebuffer(framebuffer&& other) noexcept { MoveHandle; }
-		~framebuffer() { DestroyHandleBy(vkDestroyFramebuffer); }
+		~framebuffer() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -1688,6 +1705,7 @@ namespace vulkan {
 				outStream << std::format("[ framebuffer ] ERROR\nFailed to create a framebuffer!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
+		void Destroy() { DestroyHandleBy(vkDestroyFramebuffer); }
 	};
 
 	class commandBuffer {
@@ -1740,7 +1758,7 @@ namespace vulkan {
 			Create(queueFamilyIndex, flags);
 		}
 		commandPool(commandPool&& other) noexcept { MoveHandle; }
-		~commandPool() { DestroyHandleBy(vkDestroyCommandPool); }
+		~commandPool() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -1788,6 +1806,7 @@ namespace vulkan {
 			};
 			return Create(createInfo);
 		}
+		void Destroy() { DestroyHandleBy(vkDestroyCommandPool); }
 	};
 	class descriptorSet {
 		friend class descriptorPool;
@@ -1856,7 +1875,7 @@ namespace vulkan {
 			Create(maxSetCount, poolSizes, flags);
 		}
 		descriptorPool(descriptorPool&& other) noexcept { MoveHandle; }
-		~descriptorPool() { DestroyHandleBy(vkDestroyDescriptorPool); }
+		~descriptorPool() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -1926,6 +1945,7 @@ namespace vulkan {
 			};
 			return Create(createInfo);
 		}
+		void Destroy() { DestroyHandleBy(vkDestroyDescriptorPool); }
 	};
 
 	class queryPool {
@@ -1939,7 +1959,7 @@ namespace vulkan {
 			Create(queryType, queryCount, pipelineStatistics, flags);
 		}
 		queryPool(queryPool&& other) noexcept { MoveHandle; }
-		~queryPool() { DestroyHandleBy(vkDestroyQueryPool); }
+		~queryPool() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -1989,5 +2009,6 @@ namespace vulkan {
 			};
 			return Create(createInfo);
 		}
+		void Destroy() { DestroyHandleBy(vkDestroyQueryPool); }
 	};
 }

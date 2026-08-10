@@ -670,7 +670,7 @@ commandBuffer.<span class="fn">End</span>();
 <ul>
     <li>
         <p>
-            指定构造器为<span class="kw">constexpr</span>以便后续创建可被<a href="https://en.cppreference.com/w/cpp/language/constant_initialization">常量初始化</a>的静态常量（涉及一些简化代码的技巧，会在<a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html#blitandgeneratemipmap2d">Ch5-2</a>用到）。
+            指定构造器为<span class="kw">constexpr</span>以便后续创建可被<a href="https://cppreference.cn/w/cpp/language/constant_initialization">常量初始化</a>的静态常量（涉及一些简化代码的技巧，会在<a class="reference internal" href="Ch5-2%202D%E8%B4%B4%E5%9B%BE%E5%8F%8A%E7%94%9F%E6%88%90Mipmap.html#blitandgeneratemipmap2d">Ch5-2</a>用到）。
         </p>
     </li>
 </ul>
@@ -887,7 +887,7 @@ commandBuffer.<span class="fn">End</span>();
     </li>
     <li>
         <p>
-            bufferRowLength大于imageExtent.width意味着有每行的数据之间有空余字节而非紧密排列，若<code>bufferRowLength * bufferImageHeight > imageExtent.width * imageExtent.length</code>则说明每个切面（可以拷贝自/拷贝到3D图像）之间有空余字节。
+            bufferRowLength大于imageExtent.width意味着有每行的数据之间有空余字节而非紧密排列，若<code>bufferRowLength * bufferImageHeight &gt; imageExtent.width * imageExtent.length</code>则说明每个切面（可以拷贝自/拷贝到3D图像）之间有空余字节。
         </p>
     </li>
     <li>

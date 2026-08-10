@@ -290,7 +290,7 @@
         <span class="fn">Create</span>(<span class="par">createInfo</span>);
     }
     <span class="fn">pipelineLayout</span>(<span class="type">pipelineLayout</span>&amp;&amp; <span class="par">other</span>) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
-    <span class="fn">~pipelineLayout</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyPipelineLayout</span>); }
+    <span class="fn">~pipelineLayout</span>() { <span class="fn">Destroy</span>(); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator;</span>
     <span class="mcr">DefineAddressFunction;</span>
@@ -302,6 +302,7 @@
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ pipelineLayout ] ERROR\nFailed to create a pipeline layout!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
+    <span class="kw">void</span> <span class="fn">Destroy</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyPipelineLayout</span>); }
 };
 </pre></section>
 </section>
@@ -1539,7 +1540,7 @@
         <br>
         你可以开启sample shading后，用如下GLSL代码进行验证，count_covered和count_notCovered为storage缓冲区中的变量，写入结束后在CPU侧读取其数值，若对不被覆盖的采样点不执行片段着色器，那么count_notCovered应该总是0：
         <br>
-        <code><span class="kw">if</span> (gl_SampleMaskIn[0] == 1 << gl_SampleID) <span class="fn">atomicAdd</span>(count_covered, 1); <span class="kw">else</span> <span class="fn">atomicAdd</span>(count_notCovered, 1);</code>
+        <code><span class="kw">if</span> (gl_SampleMaskIn[0] == 1 &lt;&lt; gl_SampleID) <span class="fn">atomicAdd</span>(count_covered, 1); <span class="kw">else</span> <span class="fn">atomicAdd</span>(count_notCovered, 1);</code>
         <br>
         ↑你可以顺带验证一下<a class="reference internal" href="Ch4-3%20%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8.html#gl-samplemaskin">gl_SampleMaskIn</a>[0]的数值。
     </p>
@@ -2495,7 +2496,7 @@
         <span class="fn">Create</span>(<span class="par">createInfo</span>);
     }
     <span class="fn">pipeline</span>(<span class="type">pipeline</span>&amp;&amp; <span class="par">other</span>) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
-    <span class="fn">~pipeline</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyPipeline</span>); }
+    <span class="fn">~pipeline</span>() { <span class="fn">Destroy</span>(); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
@@ -2514,6 +2515,7 @@
             outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ pipeline ] ERROR\nFailed to create a compute pipeline!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));
         <span class="kw">return</span> result;
     }
+    <span class="kw">void</span> <span class="fn">Destroy</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyPipeline</span>); }
 };
 </pre></section>
 </section>

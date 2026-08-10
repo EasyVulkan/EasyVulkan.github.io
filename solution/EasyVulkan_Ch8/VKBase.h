@@ -917,6 +917,7 @@ public:
 	/*Call Terminate() if you need to terminate Vulkan before program exits*/
 	void Terminate() {
 		this->~graphicsBase();
+		new(this) graphicsBase();
 		instance = nullptr;
 		physicalDevice = nullptr;
 		device = nullptr;
@@ -1047,7 +1048,7 @@ public:
 		Create();
 	}
 	semaphore(semaphore&& other) noexcept { MoveHandle; }
-	~semaphore() { DestroyHandleBy(vkDestroySemaphore); }
+	~semaphore() { Destroy(); }
 	//Getter
 	DefineHandleTypeOperator;
 	DefineAddressFunction;
@@ -1063,6 +1064,7 @@ public:
 		VkSemaphoreCreateInfo createInfo = {};
 		return Create(createInfo);
 	}
+	void Destroy() { DestroyHandleBy(vkDestroySemaphore); }
 };
 //Done++
 class fence {
@@ -1076,7 +1078,7 @@ public:
 		Create(flags);
 	}
 	fence(fence&& other) noexcept { MoveHandle; }
-	~fence() { DestroyHandleBy(vkDestroyFence); }
+	~fence() { Destroy(); }
 	//Getter
 	DefineHandleTypeOperator;
 	DefineAddressFunction;
@@ -1118,6 +1120,7 @@ public:
 		};
 		return Create(createInfo);
 	}
+	void Destroy() { DestroyHandleBy(vkDestroyFence); }
 };
 //Done++
 class event {
@@ -1131,7 +1134,7 @@ public:
 		Create(flags);
 	}
 	event(event& other) noexcept { MoveHandle; }
-	~event() { DestroyHandleBy(vkDestroyEvent); }
+	~event() { Destroy(); }
 	//Getter
 	DefineHandleTypeOperator;
 	DefineAddressFunction;
@@ -1189,6 +1192,7 @@ public:
 		};
 		return Create(createInfo);
 	}
+	void Destroy() { DestroyHandleBy(vkDestroyEvent); }
 };
 #pragma endregion
 
@@ -1227,7 +1231,7 @@ public:
 		other.allocationSize = 0;
 		other.memoryProperties = 0;
 	}
-	~deviceMemory() { DestroyHandleBy(vkFreeMemory); allocationSize = 0; memoryProperties = 0; }
+	~deviceMemory() { Free(); }
 	//Getter
 	DefineHandleTypeOperator;
 	DefineAddressFunction;
@@ -1307,6 +1311,7 @@ public:
 		memoryProperties = graphicsBase::Base().PhysicalDeviceMemoryProperties().memoryTypes[allocateInfo.memoryTypeIndex].propertyFlags;
 		return VK_SUCCESS;
 	}
+	void Free() { DestroyHandleBy(vkFreeMemory); allocationSize = 0; memoryProperties = 0; }
 	//Static Function
 	/*Provided by VK_API_VERSION_1_1*/
 	static VkMemoryAllocateFlagsInfo AllocateFlagsInfo(VkMemoryAllocateFlags flags, uint32_t deviceMask = 0) {
@@ -1330,7 +1335,7 @@ public:
 		Create(size, usages, queueFamilyIndices, flags);
 	}
 	buffer(buffer&& other) noexcept { MoveHandle; }
-	~buffer() { DestroyHandleBy(vkDestroyBuffer); }
+	~buffer() { Destroy(); }
 	//Getter
 	DefineHandleTypeOperator;
 	DefineAddressFunction;
@@ -1381,6 +1386,7 @@ public:
 		};
 		return Create(createInfo);
 	}
+	void Destroy() { DestroyHandleBy(vkDestroyBuffer); }
 };
 
 //Done
@@ -1436,6 +1442,7 @@ public:
 			(result = BindMemory());
 		return result;
 	}
+	void Destroy() { buffer::Destroy(); deviceMemory::Free(); areBound = false; }
 };
 
 //Done+
@@ -1450,7 +1457,7 @@ public:
 		Create(buffer, format, offset, range);
 	}
 	bufferView(bufferView&& other) noexcept { MoveHandle; }
-	~bufferView() { DestroyHandleBy(vkDestroyBufferView); }
+	~bufferView() { Destroy(); }
 	//Getter
 	DefineHandleTypeOperator;
 	DefineAddressFunction;
@@ -1471,6 +1478,7 @@ public:
 		};
 		return Create(createInfo);
 	}
+	void Destroy() { DestroyHandleBy(vkDestroyBufferView); }
 };
 
 //Done
@@ -1486,7 +1494,7 @@ public:
 		Create(imageType, format, extent, mipLevelCount, layerCount, sampleCount, tiling, usages, queueFamilyIndices, initialLayout, flags);
 	}
 	image(image&& other) noexcept { MoveHandle; }
-	~image() { DestroyHandleBy(vkDestroyImage); }
+	~image() { Destroy(); }
 	//Getter
 	DefineHandleTypeOperator;
 	DefineAddressFunction;
@@ -1548,6 +1556,7 @@ public:
 		};
 		return Create(createInfo);
 	}
+	void Destroy() { DestroyHandleBy(vkDestroyImage); }
 };
 
 //Done
@@ -1597,6 +1606,7 @@ public:
 			(result = BindMemory());
 		return result;
 	}
+	void Destroy() { image::Destroy(); deviceMemory::Free(); areBound = false; }
 };
 
 //Done++
@@ -1611,7 +1621,7 @@ public:
 		Create(image, viewType, format, subresourceRange);
 	}
 	imageView(imageView&& other) noexcept { MoveHandle; }
-	~imageView() { DestroyHandleBy(vkDestroyImageView); }
+	~imageView() { Destroy(); }
 	//Getter
 	DefineHandleTypeOperator;
 	DefineAddressFunction;
@@ -1633,6 +1643,7 @@ public:
 		};
 		return Create(createInfo);
 	}
+	void Destroy() { DestroyHandleBy(vkDestroyImageView); }
 };
 
 //Done
@@ -1644,7 +1655,7 @@ public:
 		Create(createInfo);
 	}
 	sampler(sampler&& other) noexcept { MoveHandle; }
-	~sampler() { DestroyHandleBy(vkDestroySampler); }
+	~sampler() { Destroy(); }
 	//Getter
 	DefineHandleTypeOperator;
 	DefineAddressFunction;
@@ -1656,6 +1667,7 @@ public:
 			OutputMessage("[ sampler ] ERROR\nFailed to create a sampler!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
+	void Destroy() { DestroyHandleBy(vkDestroySampler); }
 };
 #pragma endregion
 
@@ -1675,7 +1687,7 @@ public:
 		Create(codeSize, pCode);
 	}
 	shaderModule(shaderModule&& other) noexcept { MoveHandle; }
-	~shaderModule() { DestroyHandleBy(vkDestroyShaderModule); }
+	~shaderModule() { Destroy(); }
 	//Getter
 	DefineHandleTypeOperator;
 	DefineAddressFunction;
@@ -1719,6 +1731,7 @@ public:
 		};
 		return Create(createInfo);
 	}
+	void Destroy() { DestroyHandleBy(vkDestroyShaderModule); }
 };
 
 //Done++
@@ -1733,7 +1746,7 @@ public:
 		Create(bindings, flags);
 	}
 	descriptorSetLayout(descriptorSetLayout&& other) noexcept { MoveHandle; }
-	~descriptorSetLayout() { DestroyHandleBy(vkDestroyDescriptorSetLayout); }
+	~descriptorSetLayout() { Destroy(); }
 	//Getter
 	DefineHandleTypeOperator;
 	DefineAddressFunction;
@@ -1753,6 +1766,7 @@ public:
 		};
 		return Create(createInfo);
 	}
+	void Destroy() { DestroyHandleBy(vkDestroyDescriptorSetLayout); }
 };
 //Done++
 class pipelineLayout {
@@ -1772,7 +1786,7 @@ public:
 		Create({}, pushConstantRanges, flags);
 	}
 	pipelineLayout(pipelineLayout&& other) noexcept { MoveHandle; }
-	~pipelineLayout() { DestroyHandleBy(vkDestroyPipelineLayout); }
+	~pipelineLayout() { Destroy(); }
 	//Getter
 	DefineHandleTypeOperator;
 	DefineAddressFunction;
@@ -1800,6 +1814,7 @@ public:
 	result_t Create(emptyList, arrayRef<const VkPushConstantRange> pushConstantRanges, VkPipelineLayoutCreateFlags flags = 0) {
 		return Create(arrayRef<const VkDescriptorSetLayout>{}, pushConstantRanges, flags);
 	}
+	void Destroy() { DestroyHandleBy(vkDestroyPipelineLayout); }
 };
 
 //Done
@@ -1814,7 +1829,7 @@ public:
 		Create(createInfo);
 	}
 	pipeline(pipeline&& other) noexcept { MoveHandle; }
-	~pipeline() { DestroyHandleBy(vkDestroyPipeline); }
+	~pipeline() { Destroy(); }
 	//Getter
 	DefineHandleTypeOperator;
 	DefineAddressFunction;
@@ -1833,6 +1848,7 @@ public:
 			OutputMessage("[ pipeline ] ERROR\nFailed to create a compute pipeline!\nError code: {}\n", string_VkResult(result));
 		return result;
 	}
+	void Destroy() { DestroyHandleBy(vkDestroyPipeline); }
 };
 #pragma endregion
 
@@ -1852,7 +1868,7 @@ public:
 		Create(attachmentDescriptions, subpassDescriptions, subpassDependencies, flags);
 	}
 	renderPass(renderPass&& other) noexcept { MoveHandle; }
-	~renderPass() { DestroyHandleBy(vkDestroyRenderPass); }
+	~renderPass() { Destroy(); }
 	//Getter
 	DefineHandleTypeOperator;
 	DefineAddressFunction;
@@ -1900,6 +1916,7 @@ public:
 		};
 		return Create(createInfo);
 	}
+	void Destroy() { DestroyHandleBy(vkDestroyRenderPass); }
 };
 
 //Done++
@@ -1917,7 +1934,7 @@ public:
 		Create(renderPass, attachments, extent, layerCount, flags);
 	}
 	framebuffer(framebuffer&& other) noexcept { MoveHandle; }
-	~framebuffer() { DestroyHandleBy(vkDestroyFramebuffer); }
+	~framebuffer() { Destroy(); }
 	//Getter
 	DefineHandleTypeOperator;
 	DefineAddressFunction;
@@ -1944,6 +1961,7 @@ public:
 	result_t Create(VkRenderPass renderPass, arrayRef<const imageView> attachments, VkExtent2D extent, uint32_t layerCount, VkFramebufferCreateFlags flags = 0) {
 		return Create(renderPass, { attachments[0].Address(), attachments.Count() }, extent, layerCount, flags);
 	}
+	void Destroy() { DestroyHandleBy(vkDestroyFramebuffer); }
 };
 #pragma endregion
 
@@ -1990,7 +2008,7 @@ public:
 		Create(queueFamilyIndex, flags);
 	}
 	commandPool(commandPool&& other) noexcept { MoveHandle; }
-	~commandPool() { DestroyHandleBy(vkDestroyCommandPool); }
+	~commandPool() { Destroy(); }
 	//Getter
 	DefineHandleTypeOperator;
 	DefineAddressFunction;
@@ -2036,6 +2054,7 @@ public:
 		};
 		return Create(createInfo);
 	}
+	void Destroy() { DestroyHandleBy(vkDestroyCommandPool); }
 };
 
 //Done++
@@ -2105,7 +2124,7 @@ public:
 		Create(maxSetCount, poolSizes, flags);
 	}
 	descriptorPool(descriptorPool&& other) noexcept { MoveHandle; }
-	~descriptorPool() { DestroyHandleBy(vkDestroyDescriptorPool); }
+	~descriptorPool() { Destroy(); }
 	//Getter
 	DefineHandleTypeOperator;
 	DefineAddressFunction;
@@ -2169,6 +2188,7 @@ public:
 		};
 		return Create(createInfo);
 	}
+	void Destroy() { DestroyHandleBy(vkDestroyDescriptorPool); }
 };
 
 //Done+
@@ -2183,7 +2203,7 @@ public:
 		Create(queryType, queryCount, pipelineStatistics, flags);
 	}
 	queryPool(queryPool&& other) noexcept { MoveHandle; }
-	~queryPool() { DestroyHandleBy(vkDestroyQueryPool); }
+	~queryPool() { Destroy(); }
 	//Getter
 	DefineHandleTypeOperator;
 	DefineAddressFunction;
@@ -2233,6 +2253,7 @@ public:
 		};
 		return Create(createInfo);
 	}
+	void Destroy() { DestroyHandleBy(vkDestroyQueryPool); }
 };
 #pragma endregion
 NAMESPACE_END

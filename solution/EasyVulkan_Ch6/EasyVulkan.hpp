@@ -77,7 +77,7 @@ namespace easyVulkan {
 			rpwf.framebuffer.Create(framebufferCreateInfo);
 		};
 		auto DestroyFramebuffer = [] {
-			rpwf.framebuffer.~framebuffer();
+			rpwf.framebuffer.Destroy();
 		};
 		CreateFramebuffer();
 

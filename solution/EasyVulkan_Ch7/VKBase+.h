@@ -29,9 +29,9 @@ namespace vulkan {
 					vkGetPhysicalDeviceFormatProperties(graphicsBase::Base().PhysicalDevice(), VkFormat(i), &singleton.formatProperties[i]);
 			};
 			auto CleanUp = [] {
-				singleton.commandPool_graphics.~commandPool();
-				singleton.commandPool_presentation.~commandPool();
-				singleton.commandPool_compute.~commandPool();
+				singleton.commandPool_graphics.Destroy();
+				singleton.commandPool_presentation.Destroy();
+				singleton.commandPool_compute.Destroy();
 			};
 			graphicsBase::Plus(singleton);
 			graphicsBase::Base().AddCallback_CreateDevice(Initialize);
@@ -217,17 +217,17 @@ namespace vulkan {
 	};
 
 	//Synchronization
-	class timelineSemaphore : semaphore {
+	class timelineSemaphore :semaphore {
 	public:
 		timelineSemaphore(uint64_t initialValue = 0) {
 			Create(initialValue);
 		}
 		//Getter
-#ifndef NDEBUG
+	#ifndef NDEBUG
 		using semaphore::operator volatile VkSemaphore;
-#else
+	#else
 		using semaphore::operator VkSemaphore;
-#endif
+	#endif
 		using semaphore::Address;
 		//Const Function
 		result_t Wait(uint64_t value) const {
@@ -262,6 +262,7 @@ namespace vulkan {
 			};
 			return semaphore::Create(createInfo);
 		}
+		using semaphore::Destroy;
 		//Static Functino
 		static result_t Wait(arrayRef<const timelineSemaphore> semaphores, arrayRef<uint64_t> values, bool waitAll = true) {
 			if (semaphores.Count() != values.Count())
@@ -291,7 +292,7 @@ namespace vulkan {
 			stagingBuffer* pointer;
 			stagingBuffer* Create() {
 				static stagingBuffer stagingBuffer;
-				graphicsBase::Base().AddCallback_DestroyDevice([] { stagingBuffer.~stagingBuffer(); });
+				graphicsBase::Base().AddCallback_DestroyDevice([] { stagingBuffer.Release(); stagingBuffer.aliasedImage.Destroy(); });
 				return &stagingBuffer;
 			}
 		public:
@@ -328,7 +329,7 @@ namespace vulkan {
 			bufferMemory.Create(bufferCreateInfo, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 		}
 		void Release() {
-			bufferMemory.~bufferMemory();
+			bufferMemory.Destroy();
 		}
 		void* MapMemory(VkDeviceSize size) {
 			Expand(size);
@@ -370,7 +371,7 @@ namespace vulkan {
 				.usage = VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
 				.initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED
 			};
-			aliasedImage.~image();
+			aliasedImage.Destroy();
 			aliasedImage.Create(imageCreateInfo);
 			VkImageSubresource subResource = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 0 };
 			VkSubresourceLayout subresourceLayout = {};
@@ -476,8 +477,11 @@ namespace vulkan {
 		}
 		void Recreate(VkDeviceSize size, VkBufferUsageFlags desiredUsages_Without_transfer_dst) {
 			graphicsBase::Base().WaitIdle();
-			bufferMemory.~bufferMemory();
+			Destroy();
 			Create(size, desiredUsages_Without_transfer_dst);
+		}
+		void Destroy() {
+			bufferMemory.Destroy();
 		}
 	};
 	class vertexBuffer :public deviceLocalBuffer {
@@ -816,12 +820,12 @@ namespace vulkan {
 		}
 		//Static Function
 		static std::unique_ptr<uint8_t[]> LoadFile_Internal(const auto* address, size_t fileSize, VkExtent2D& extent, formatInfo requiredFormatInfo) {
-#ifndef NDEBUG
+		#ifndef NDEBUG
 			if (!(requiredFormatInfo.rawDataType == formatInfo::floatingPoint && requiredFormatInfo.sizePerComponent == 4) &&
 				!(requiredFormatInfo.rawDataType == formatInfo::integer && Between_Closed<int32_t>(1, requiredFormatInfo.sizePerComponent, 2)))
 				outStream << std::format("[ texture ] ERROR\nRequired format is not available for source image data!\n"),
 				abort();
-#endif
+		#endif
 			int& width = reinterpret_cast<int&>(extent.width);
 			int& height = reinterpret_cast<int&>(extent.height);
 			int channelCount;
@@ -863,6 +867,11 @@ namespace vulkan {
 		//Const Function
 		VkDescriptorImageInfo DescriptorImageInfo(VkSampler sampler) const {
 			return { sampler, imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+		}
+		//Non-const Function
+		void Destroy() {
+			imageView.Destroy();
+			imageMemory.Destroy();
 		}
 		//Static Function
 		/*CheckArguments(...) should only be called in tests*/
@@ -1473,13 +1482,16 @@ namespace vulkan {
 		//Non-const Function
 		void Create(uint32_t capacity) {
 			passingSampleCounts.resize(capacity);
-			passingSampleCounts.shrink_to_fit();
 			queryPool.Create(VK_QUERY_TYPE_OCCLUSION, Capacity());
 		}
 		void Recreate(uint32_t capacity) {
 			graphicsBase::Base().WaitIdle();
-			queryPool.~queryPool();
+			Destroy();
 			Create(capacity);
+		}
+		void Destroy() {
+			queryPool.Destroy();
+			passingSampleCounts = {};
 		}
 		result_t GetResults() {
 			return GetResults(Capacity());
@@ -1550,6 +1562,9 @@ namespace vulkan {
 		void Create() {
 			queryPool.Create(VK_QUERY_TYPE_PIPELINE_STATISTICS, 1, (1 << statisticCount) - 1);
 		}
+		void Destroy() {
+			queryPool.Destroy();
+		}
 		result_t GetResults() {
 			return queryPool.GetResults(0, 1, sizeof statistics, statistics, sizeof statistics);
 		}
@@ -1579,13 +1594,16 @@ namespace vulkan {
 		//Non-const Function
 		void Create(uint32_t capacity) {
 			timestamps.resize(capacity);
-			timestamps.shrink_to_fit();
 			queryPool.Create(VK_QUERY_TYPE_TIMESTAMP, Capacity());
 		}
 		void Recreate(uint32_t capacity) {
 			graphicsBase::Base().WaitIdle();
-			queryPool.~queryPool();
+			Destroy();
 			Create(capacity);
+		}
+		void Destroy() {
+			queryPool.Destroy();
+			timestamps = {};
 		}
 		result_t GetResults() {
 			return GetResults(Capacity());

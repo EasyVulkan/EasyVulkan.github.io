@@ -303,9 +303,9 @@
     <span class="cmt">//如果你不需要更换物理设备或在运行中重启Vulkan（皆涉及重建逻辑设备），那么此CleanUp回调非必要</span>
     <span class="cmt">//程序运行结束时，无论是否有这个回调，graphicsBasePlus中的对象必会在析构graphicsBase前被析构掉</span>
     <span class="kw">auto</span> CleanUp = [] {
-        singleton.commandPool_graphics.<span class="fn">~commandPool</span>();
-        singleton.commandPool_presentation.<span class="fn">~commandPool</span>();
-        singleton.commandPool_compute.<span class="fn">~commandPool</span>();
+        singleton.commandPool_graphics.<span class="fn">Destroy</span>();
+        singleton.commandPool_presentation.<span class="fn">Destroy</span>();
+        singleton.commandPool_compute.<span class="fn">Destroy</span>();
     };
     <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>(singleton);
     <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateDevice</span>(Initialize);
@@ -471,9 +471,9 @@
             <span class="cmt">//----------------------------------------</span>
         };
         <span class="kw">auto</span> CleanUp = [] {
-            singleton.commandPool_graphics.<span class="fn">~commandPool</span>();
-            singleton.commandPool_presentation.<span class="fn">~commandPool</span>();
-            singleton.commandPool_compute.<span class="fn">~commandPool</span>();
+            singleton.commandPool_graphics.<span class="fn">Destroy</span>();
+            singleton.commandPool_presentation.<span class="fn">Destroy</span>();
+            singleton.commandPool_compute.<span class="fn">Destroy</span>();
         };
         <span class="type">graphicsBase</span>::<span class="sfn">Plus</span>(singleton);
         <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateDevice</span>(Initialize);
@@ -486,7 +486,7 @@
     <span class="cmt">/*新增*/ </span><span class="kw">const</span> <span class="type">VkFormatProperties</span>&amp; <span class="fn">FormatProperties</span>(<span class="type">VkFormat</span> <span class="par">format</span>) <span class="kw">const</span> {
 <span class="pragma">#ifndef</span> <span class="mcr">NDEBUG</span>
        <span class="kw">if</span> (<span class="type">uint32_t</span>(<span class="par">format</span>) &gt;= std::<span class="fn">size</span>(formatInfos_v1_0))
-           outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ FormatProperties ] ERROR\nThis function only supports definite formats provided by VK_VERSION_1_0.\n&quot;</span>),
+           outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ FormatProperties ] ERROR\nThis function only supports definite formats provided by VK_API_VERSION_1_0.\n&quot;</span>),
            <span class="fn">abort</span>();
 <span class="pragma">#endif</span>
         <span class="kw">return</span> formatProperties[<span class="par">format</span>];
@@ -538,7 +538,7 @@
 <span class="kw">constexpr</span> <span class="type">formatInfo</span> <span class="fn">FormatInfo</span>(<span class="type">VkFormat</span> <span class="par">format</span>) {
 <span class="pragma">#ifndef</span> <span class="mcr">NDEBUG</span>
     <span class="kw">if</span> (<span class="type">uint32_t</span>(<span class="par">format</span>) &gt;= std::<span class="fn">size</span>(formatInfos_v1_0))
-        outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ FormatInfo ] ERROR\nThis function only supports definite formats provided by VK_VERSION_1_0.\n&quot;</span>),
+        outStream &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ FormatInfo ] ERROR\nThis function only supports definite formats provided by VK_API_VERSION_1_0.\n&quot;</span>),
         <span class="fn">abort</span>();
 <span class="pragma">#endif</span>
     <span class="kw">return</span> formatInfos_v1_0[<span class="par">format</span>];

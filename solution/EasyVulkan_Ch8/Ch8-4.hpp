@@ -69,8 +69,8 @@ void CreatePipeline() {
 		pipeline_premultipliedAlpha.Create(pipelineCiPack);
 	};
 	auto Destroy = [] {
-		pipeline_straightAlpha.~pipeline();
-		pipeline_premultipliedAlpha.~pipeline();
+		pipeline_straightAlpha.Destroy();
+		pipeline_premultipliedAlpha.Destroy();
 	};
 	graphicsBase::Base().AddCallback_CreateSwapchain(Create);
 	graphicsBase::Base().AddCallback_DestroySwapchain(Destroy);

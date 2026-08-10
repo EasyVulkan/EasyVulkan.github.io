@@ -775,7 +775,7 @@
         <span class="fn">Create</span>(<span class="par">queueFamilyIndex</span>, <span class="par">flags</span>);
     }
     <span class="fn">commandPool</span>(<span class="type">commandPool</span>&amp;&amp; <span class="par">other</span>) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
-    <span class="fn">~commandPool</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyCommandPool</span>); }
+    <span class="fn">~commandPool</span>() { <span class="fn">Destroy</span>(); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
@@ -822,6 +822,7 @@
         };
         <span class="kw">return</span> <span class="fn">Create</span>(createInfo);
     }
+    <span class="kw">void</span> <span class="fn">Destroy</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyCommandPool</span>); }
 };
 </pre></section>
 </section>

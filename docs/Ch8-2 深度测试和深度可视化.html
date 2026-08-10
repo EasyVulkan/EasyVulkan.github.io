@@ -677,7 +677,7 @@ indexBuffer.<span class="type">TransferData</span>(indices);
         pipeline_Into3d.<span class="fn">Create</span>(pipelineCiPack);
     };
     <span class="kw">auto</span> Destroy = [] {
-        pipeline_into3d.<span class="fn">~pipeline</span>();
+        pipeline_into3d.<span class="fn">Destroy</span>();
     };
     <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>(Create);
     <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroySwapchain</span>(Destroy);

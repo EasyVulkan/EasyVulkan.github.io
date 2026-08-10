@@ -98,8 +98,8 @@ void CreatePipeline() {
 		pipeline_composition.Create(pipelineCiPack);
 	};
 	auto Destroy = [] {
-		pipeline_gBuffer.~pipeline();
-		pipeline_composition.~pipeline();
+		pipeline_gBuffer.Destroy();
+		pipeline_composition.Destroy();
 	};
 	graphicsBase::Base().AddCallback_CreateSwapchain(Create);
 	graphicsBase::Base().AddCallback_DestroySwapchain(Destroy);

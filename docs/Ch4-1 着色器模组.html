@@ -441,7 +441,7 @@ file.<span class="fn">close</span>();
         <span class="fn">Create</span>(<span class="par">codeSize</span>, <span class="par">pCode</span>);
     }
     <span class="fn">shaderModule</span>(<span class="type">shaderModule</span>&amp;&amp; <span class="par">other</span>) <span class="kw">noexcept</span> { <span class="mcr">MoveHandle</span>; }
-    <span class="fn">~shaderModule</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyShaderModule</span>); }
+    <span class="fn">~shaderModule</span>() { <span class="fn">Destroy</span>(); }
     <span class="cmt">//Getter</span>
     <span class="mcr">DefineHandleTypeOperator</span>;
     <span class="mcr">DefineAddressFunction</span>;
@@ -485,6 +485,7 @@ file.<span class="fn">close</span>();
         };
         <span class="kw">return</span> <span class="fn">Create</span>(createInfo);
     }
+    <span class="kw">void</span> <span class="fn">Destroy</span>() { <span class="mcr">DestroyHandleBy</span>(<span class="fn">vkDestroyShaderModule</span>); }
 };
 </pre></section>
 </section>

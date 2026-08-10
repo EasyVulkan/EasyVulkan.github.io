@@ -212,6 +212,11 @@
     <span class="type">VkDescriptorImageInfo</span> <span class="fn">DescriptorImageInfo</span>(<span class="type">VkSampler</span> <span class="par">sampler</span>) <span class="kw">const</span> {
         <span class="kw">return</span> { <span class="par">sampler</span>, imageView, <span class="enum">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span> };
     }
+    <span class="cmt">//Non-const Function</span>
+    <span class="kw">void</span> <span class="fn">Destroy</span>() {
+        imageView.<span class="fn">Destroy</span>();
+        imageMemory.<span class="fn">Destroy</span>();
+    }
 };
 </pre>
 <p>
@@ -304,7 +309,7 @@
         <span class="enum">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span> | <span class="kw">bool</span>(<span class="par">otherUsages</span> &amp; <span class="enum">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</span>) * <span class="enum">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>);
     imageView.<span class="fn">Create</span>(
         imageMemory.<span class="fn">Image</span>(),
-        <span class="par">layerCount</span> > 1 ? <span class="enum">VK_IMAGE_VIEW_TYPE_2D_ARRAY</span> : <span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>,
+        <span class="par">layerCount</span> &gt; 1 ? <span class="enum">VK_IMAGE_VIEW_TYPE_2D_ARRAY</span> : <span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>,
         <span class="par">format</span>,
         { <span class="enum">VK_IMAGE_ASPECT_COLOR_BIT</span>, 0, 1, 0, <span class="par">layerCount</span> });
 }
@@ -348,7 +353,7 @@
     <span class="cmt">//----------------------------------------</span>
     imageView.<span class="fn">Create</span>(
         imageMemory.<span class="fn">Image</span>(),
-        <span class="par">layerCount</span> > 1 ? <span class="enum">VK_IMAGE_VIEW_TYPE_2D_ARRAY</span> : <span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>,
+        <span class="par">layerCount</span> &gt; 1 ? <span class="enum">VK_IMAGE_VIEW_TYPE_2D_ARRAY</span> : <span class="enum">VK_IMAGE_VIEW_TYPE_2D</span>,
         <span class="par">format</span>,
         { aspectMask, 0, 1, 0, <span class="par">layerCount</span> });
 }
@@ -910,7 +915,7 @@ descriptorSetLayout_texture.<span class="fn">Create</span>(descriptorSetLayoutCr
         pipeline_screen.<span class="fn">Create</span>(pipelineCiPack);
     };
     <span class="kw">auto</span> Destroy = [] {
-        pipeline_screen.<span class="fn">~pipeline</span>();
+        pipeline_screen.<span class="fn">Destroy</span>();
     };
     <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_CreateSwapchain</span>(Create);
     <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">AddCallback_DestroySwapchain</span>(Destroy);

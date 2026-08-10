@@ -34,7 +34,7 @@ void CreatePipeline() {
 		pipeline_triangle.Create(pipelineCiPack);
 	};
 	auto Destroy = [] {
-		pipeline_triangle.~pipeline();
+		pipeline_triangle.Destroy();
 	};
 	graphicsBase::Base().AddCallback_CreateSwapchain(Create);
 	graphicsBase::Base().AddCallback_DestroySwapchain(Destroy);

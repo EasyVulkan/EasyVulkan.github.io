@@ -745,6 +745,7 @@ namespace vulkan {
 		//                    After Initialization
 		void Terminate() {
 			this->~graphicsBase();
+			new(this) graphicsBase();
 			instance = VK_NULL_HANDLE;
 			physicalDevice = VK_NULL_HANDLE;
 			device = VK_NULL_HANDLE;
@@ -952,7 +953,7 @@ namespace vulkan {
 			Create();
 		}
 		semaphore(semaphore&& other) noexcept { MoveHandle; }
-		~semaphore() { DestroyHandleBy(vkDestroySemaphore); }
+		~semaphore() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -968,6 +969,7 @@ namespace vulkan {
 			VkSemaphoreCreateInfo createInfo = {};
 			return Create(createInfo);
 		}
+		void Destroy() { DestroyHandleBy(vkDestroySemaphore); }
 	};
 	class fence {
 		VkFence handle = VK_NULL_HANDLE;
@@ -980,7 +982,7 @@ namespace vulkan {
 			Create(flags);
 		}
 		fence(fence&& other) noexcept { MoveHandle; }
-		~fence() { DestroyHandleBy(vkDestroyFence); }
+		~fence() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -1022,6 +1024,7 @@ namespace vulkan {
 			};
 			return Create(createInfo);
 		}
+		void Destroy() { DestroyHandleBy(vkDestroyFence); }
 	};
 
 	class shaderModule {
@@ -1038,7 +1041,7 @@ namespace vulkan {
 			Create(codeSize, pCode);
 		}
 		shaderModule(shaderModule&& other) noexcept { MoveHandle; }
-		~shaderModule() { DestroyHandleBy(vkDestroyShaderModule); }
+		~shaderModule() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -1082,6 +1085,7 @@ namespace vulkan {
 			};
 			return Create(createInfo);
 		}
+		void Destroy() { DestroyHandleBy(vkDestroyShaderModule); }
 	};
 	class pipelineLayout {
 		VkPipelineLayout handle = VK_NULL_HANDLE;
@@ -1091,7 +1095,7 @@ namespace vulkan {
 			Create(createInfo);
 		}
 		pipelineLayout(pipelineLayout&& other) noexcept { MoveHandle; }
-		~pipelineLayout() { DestroyHandleBy(vkDestroyPipelineLayout); }
+		~pipelineLayout() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -1103,6 +1107,7 @@ namespace vulkan {
 				outStream << std::format("[ pipelineLayout ] ERROR\nFailed to create a pipeline layout!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
+		void Destroy() { DestroyHandleBy(vkDestroyPipelineLayout); }
 	};
 	class pipeline {
 		VkPipeline handle = VK_NULL_HANDLE;
@@ -1115,7 +1120,7 @@ namespace vulkan {
 			Create(createInfo);
 		}
 		pipeline(pipeline&& other) noexcept { MoveHandle; }
-		~pipeline() { DestroyHandleBy(vkDestroyPipeline); }
+		~pipeline() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -1134,6 +1139,7 @@ namespace vulkan {
 				outStream << std::format("[ pipeline ] ERROR\nFailed to create a compute pipeline!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
+		void Destroy() { DestroyHandleBy(vkDestroyPipeline); }
 	};
 
 	class renderPass {
@@ -1144,7 +1150,7 @@ namespace vulkan {
 			Create(createInfo);
 		}
 		renderPass(renderPass&& other) noexcept { MoveHandle; }
-		~renderPass() { DestroyHandleBy(vkDestroyRenderPass); }
+		~renderPass() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -1179,6 +1185,7 @@ namespace vulkan {
 				outStream << std::format("[ renderPass ] ERROR\nFailed to create a render pass!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
+		void Destroy() { DestroyHandleBy(vkDestroyRenderPass); }
 	};
 	class framebuffer {
 		VkFramebuffer handle = VK_NULL_HANDLE;
@@ -1188,7 +1195,7 @@ namespace vulkan {
 			Create(createInfo);
 		}
 		framebuffer(framebuffer&& other) noexcept { MoveHandle; }
-		~framebuffer() { DestroyHandleBy(vkDestroyFramebuffer); }
+		~framebuffer() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -1200,6 +1207,7 @@ namespace vulkan {
 				outStream << std::format("[ framebuffer ] ERROR\nFailed to create a framebuffer!\nError code: {}\n", string_VkResult(result));
 			return result;
 		}
+		void Destroy() { DestroyHandleBy(vkDestroyFramebuffer); }
 	};
 
 	class commandBuffer {
@@ -1252,7 +1260,7 @@ namespace vulkan {
 			Create(queueFamilyIndex, flags);
 		}
 		commandPool(commandPool&& other) noexcept { MoveHandle; }
-		~commandPool() { DestroyHandleBy(vkDestroyCommandPool); }
+		~commandPool() { Destroy(); }
 		//Getter
 		DefineHandleTypeOperator;
 		DefineAddressFunction;
@@ -1300,6 +1308,7 @@ namespace vulkan {
 			};
 			return Create(createInfo);
 		}
+		void Destroy() { DestroyHandleBy(vkDestroyCommandPool); }
 	};
 
 }
