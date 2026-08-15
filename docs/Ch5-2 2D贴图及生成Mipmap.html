@@ -211,8 +211,8 @@
         <span class="kw">return</span> <span class="sfn">LoadFile_Internal</span>(<span class="par">filepath</span>, 0, <span class="par">extent</span>, <span class="par">requiredFormatInfo</span>);
     }
     [[nodiscard]]
-    <span class="kw">static</span> std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; <span class="sfn">LoadFile</span>(<span class="kw">const</span> <span class="type">uint8_t</span>* <span class="par">fileBinaries</span>, <span class="type">size_t</span> <span class="par">fileSize</span>, <span class="type">VkExtent2D</span>&amp; <span class="par">extent</span>, <span class="type">formatInfo</span> <span class="par">requiredFormatInfo</span>) {
-        <span class="kw">return</span> <span class="sfn">LoadFile_Internal</span>(<span class="par">fileBinaries</span>, <span class="par">fileSize</span>, <span class="par">extent</span>, <span class="par">requiredFormatInfo</span>);
+    <span class="kw">static</span> std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]&gt; <span class="sfn">LoadFile</span>(<span class="kw">const</span> <span class="type">uint8_t</span>* <span class="par">fileBytes</span>, <span class="type">size_t</span> <span class="par">fileSize</span>, <span class="type">VkExtent2D</span>&amp; <span class="par">extent</span>, <span class="type">formatInfo</span> <span class="par">requiredFormatInfo</span>) {
+        <span class="kw">return</span> <span class="sfn">LoadFile_Internal</span>(<span class="par">fileBytes</span>, <span class="par">fileSize</span>, <span class="par">extent</span>, <span class="par">requiredFormatInfo</span>);
     }
     <span class="kw">static</span> <span class="type">uint32_t</span> <span class="sfn">CalculateMipLevelCount</span>(<span class="type">VkExtent2D</span> <span class="par">extent</span>) {
         <span class="cmt">/*涉及生成mipmap，待填充*/</span>

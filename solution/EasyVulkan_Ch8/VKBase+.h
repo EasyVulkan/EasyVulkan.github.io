@@ -975,8 +975,8 @@ public:
 		return LoadFile_Internal(filepath, 0, extent, requiredFormatInfo);
 	}
 	[[nodiscard]]
-	static std::unique_ptr<uint8_t[]> LoadFile(const uint8_t* fileBinaries, size_t fileSize, VkExtent2D& extent, formatInfo requiredFormatInfo) {
-		return LoadFile_Internal(fileBinaries, fileSize, extent, requiredFormatInfo);
+	static std::unique_ptr<uint8_t[]> LoadFile(const uint8_t* fileBytes, size_t fileSize, VkExtent2D& extent, formatInfo requiredFormatInfo) {
+		return LoadFile_Internal(fileBytes, fileSize, extent, requiredFormatInfo);
 	}
 	static uint32_t CalculateMipLevelCount(VkExtent2D extent) {
 		return uint32_t(std::floor(std::log2(std::max(extent.width, extent.height)))) + 1;
@@ -1193,7 +1193,7 @@ public:
 	void Create(const char* filepath, VkExtent2D extentInTiles, VkFormat format_initial, VkFormat format_final, bool generateMipmap = true) {
 		if (extentInTiles.width * extentInTiles.height > graphicsBase::Base().PhysicalDeviceProperties().limits.maxImageArrayLayers) {
 			OutputMessage(
-				"[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than: {}\nFile: {}\n",
+				"[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than or equal to: {}\nFile: {}\n",
 				graphicsBase::Base().PhysicalDeviceProperties().limits.maxImageArrayLayers, filepath);
 			return;
 		}
@@ -1213,7 +1213,7 @@ public:
 		layerCount = extentInTiles.width * extentInTiles.height;
 		if (layerCount > graphicsBase::Base().PhysicalDeviceProperties().limits.maxImageArrayLayers) {
 			OutputMessage(
-				"[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than: {}\n",
+				"[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than or equal to: {}\n",
 				graphicsBase::Base().PhysicalDeviceProperties().limits.maxImageArrayLayers);
 			return;
 		}
@@ -1250,7 +1250,7 @@ public:
 	void Create(arrayRef<const char* const> filepaths, VkFormat format_initial, VkFormat format_final, bool generateMipmap = true) {
 		if (filepaths.Count() > graphicsBase::Base().PhysicalDeviceProperties().limits.maxImageArrayLayers) {
 			OutputMessage(
-				"[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than: {}\n",
+				"[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than or equal to: {}\n",
 				graphicsBase::Base().PhysicalDeviceProperties().limits.maxImageArrayLayers);
 			return;
 		}
@@ -1278,7 +1278,7 @@ public:
 		layerCount = psImageData.Count();
 		if (layerCount > graphicsBase::Base().PhysicalDeviceProperties().limits.maxImageArrayLayers) {
 			OutputMessage(
-				"[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than: {}\n",
+				"[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than or equal to: {}\n",
 				graphicsBase::Base().PhysicalDeviceProperties().limits.maxImageArrayLayers);
 			return;
 		}

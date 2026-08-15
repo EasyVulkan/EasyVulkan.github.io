@@ -245,7 +245,7 @@
     <span class="cmt">//判定图层数是否超过硬件容许的最大值</span>
     <span class="kw">if</span> (<span class="par">extentInTiles</span>.width * <span class="par">extentInTiles</span>.height &gt; <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers) {
         outStream &lt;&lt; std::<span class="fn">format</span>(
-            <span class="str">&quot;[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than: {}\nFile: {}\n&quot;</span>,
+            <span class="str">&quot;[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than or equal to: {}\nFile: {}\n&quot;</span>,
             <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers, <span class="par">filepath</span>);
         <span class="kw">return</span>;
     }
@@ -274,7 +274,7 @@ std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]
 <span class="kw">void</span> <span class="fn">Create</span>(<span class="kw">const char</span>* <span class="par">filepath</span>, <span class="type">VkExtent2D</span> <span class="par">extentInTiles</span>, <span class="type">VkFormat</span> <span class="par">format_initial</span>, <span class="type">VkFormat</span> <span class="par">format_final</span>, <span class="kw">bool</span> <span class="par">generateMipmap</span> = <span class="kw">true</span>) {
     <span class="kw">if</span> (<span class="par">extentInTiles</span>.width * <span class="par">extentInTiles</span>.height &gt; <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers) {
         outStream &lt;&lt; std::<span class="fn">format</span>(
-            <span class="str">&quot;[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than: {}\nFile: {}\n&quot;</span>,
+            <span class="str">&quot;[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than or equal to: {}\nFile: {}\n&quot;</span>,
             <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers, <span class="par">filepath</span>);
         <span class="kw">return</span>;
     }
@@ -301,7 +301,7 @@ std::<span class="type">unique_ptr</span>&lt;<span class="type">uint8_t</span>[]
     layerCount = <span class="par">extentInTiles</span>.width * <span class="par">extentInTiles</span>.height;
     <span class="kw">if</span> (layerCount &gt; <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers) {
         outStream &lt;&lt; std::<span class="fn">format</span>(
-            <span class="str">&quot;[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than: {}\n&quot;</span>,
+            <span class="str">&quot;[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than or equal to: {}\n&quot;</span>,
             <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers);
         <span class="kw">return</span>;
     }
@@ -420,7 +420,7 @@ std::<span class="type">unique_ptr</span>&lt;<span class="type">VkBufferImageCop
     layerCount = <span class="par">extentInTiles</span>.width * <span class="par">extentInTiles</span>.height;
     <span class="kw">if</span> (layerCount &gt; <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers) {
         outStream &lt;&lt; std::<span class="fn">format</span>(
-            <span class="str">&quot;[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than: {}\n&quot;</span>,
+            <span class="str">&quot;[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than or equal to: {}\n&quot;</span>,
             <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers);
         <span class="kw">return</span>;
     }
@@ -489,7 +489,7 @@ std::<span class="type">unique_ptr</span>&lt;<span class="type">VkBufferImageCop
     <span class="cmt">//验证图层数是否满足硬件限制</span>
     <span class="kw">if</span> (<span class="par">filepaths</span>.<span class="fn">Count</span>() &gt; <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers) {
         outStream &lt;&lt; std::<span class="fn">format</span>(
-            <span class="str">&quot;[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than: {}\nFile: {}\n&quot;</span>,
+            <span class="str">&quot;[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than or equal to: {}\nFile: {}\n&quot;</span>,
             <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers, filepath);
         <span class="kw">return</span>;
     }
@@ -527,7 +527,7 @@ std::<span class="type">unique_ptr</span>&lt;<span class="type">VkBufferImageCop
     <span class="cmt">//验证图层数是否满足硬件限制</span>
     <span class="kw">if</span> (layerCount &gt; <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers) {
         outStream &lt;&lt; std::<span class="fn">format</span>(
-            <span class="str">&quot;[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than: {}\nFile: {}\n&quot;</span>,
+            <span class="str">&quot;[ texture2dArray ] ERROR\nLayer count is out of limit! Must be less than or equal to: {}\nFile: {}\n&quot;</span>,
             <span class="type">graphicsBase</span>::<span class="sfn">Base</span>().<span class="fn">PhysicalDeviceProperties</span>().limits.maxImageArrayLayers, filepath);
         <span class="kw">return</span>;
     }

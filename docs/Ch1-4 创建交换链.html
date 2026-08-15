@@ -784,7 +784,7 @@ swapchainImages.<span class="fn">resize</span>(swapchainImageCount);
         <span class="kw">return</span> result;
     }
 
-    <span class="cmt">//获取交换连图像</span>
+    <span class="cmt">//获取交换链图像</span>
     <span class="type">uint32_t</span> swapchainImageCount;
     <span class="kw">if</span> (<span class="type">VkResult</span> result = <span class="fn">vkGetSwapchainImagesKHR</span>(device, swapchain, &amp;swapchainImageCount, <span class="kw">nullptr</span>)) {
         std::cout &lt;&lt; std::<span class="fn">format</span>(<span class="str">&quot;[ graphicsBase ] ERROR\nFailed to get the count of swapchain images!\nError code: {}\n&quot;</span>, <span class="fn">string_VkResult</span>(result));

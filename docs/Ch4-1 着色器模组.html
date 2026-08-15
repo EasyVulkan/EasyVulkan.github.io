@@ -262,9 +262,9 @@ std::<span class="type">ifstream</span> file(filepath, std::<span class="type">i
     <span class="cmt">/*错误信息，此处略*/</span>
 }
 <span class="type">size_t</span> fileSize = <span class="type">size_t</span>(file.<span class="fn">tellg</span>());
-std::<span class="type">vector</span>&lt;<span class="type">uint32_t</span>&gt; binaries(fileSize / 4);
+std::<span class="type">vector</span>&lt;<span class="type">uint32_t</span>&gt; code(fileSize / 4);
 file.<span class="fn">seekg</span>(0);
-file.<span class="fn">read</span>(<span class="kw">reinterpret_cast</span>&lt;<span class="kw">char</span>*&gt;(binaries.<span class="fn">data</span>()), fileSize);
+file.<span class="fn">read</span>(<span class="kw">reinterpret_cast</span>&lt;<span class="kw">char</span>*&gt;(code.<span class="fn">data</span>()), fileSize);
 file.<span class="fn">close</span>();
 </pre></section>
 <section id="id3">
@@ -472,11 +472,11 @@ file.<span class="fn">close</span>();
             <span class="kw">return</span> <span class="enum">VK_RESULT_MAX_ENUM</span>; <span class="cmt">//没有合适的错误代码，别用VK_ERROR_UNKNOWN</span>
         }
         <span class="type">size_t</span> fileSize = <span class="type">size_t</span>(file.<span class="fn">tellg</span>());
-        std::<span class="type">vector</span>&lt;<span class="type">uint32_t</span>&gt; binaries(fileSize / 4);
+        std::<span class="type">vector</span>&lt;<span class="type">uint32_t</span>&gt; code(fileSize / 4);
         file.<span class="fn">seekg</span>(0);
-        file.<span class="fn">read</span>(<span class="kw">reinterpret_cast</span>&lt;<span class="kw">char</span>*&gt;(binaries.<span class="fn">data</span>()), fileSize);
+        file.<span class="fn">read</span>(<span class="kw">reinterpret_cast</span>&lt;<span class="kw">char</span>*&gt;(code.<span class="fn">data</span>()), fileSize);
         file.<span class="fn">close</span>();
-        <span class="kw">return</span> <span class="fn">Create</span>(fileSize, binaries.<span class="fn">data</span>());
+        <span class="kw">return</span> <span class="fn">Create</span>(fileSize, code.<span class="fn">data</span>());
     }
     <span class="type">result_t</span> <span class="fn">Create</span>(<span class="type">size_t</span> <span class="par">codeSize</span>, <span class="kw">const</span> <span class="type">uint32_t</span>* <span class="par">pCode</span> <span class="cmt">/*VkShaderModuleCreateFlags flags*/</span>) {
         <span class="type">VkShaderModuleCreateInfo</span> createInfo = {

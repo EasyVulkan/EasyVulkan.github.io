@@ -495,7 +495,7 @@
 <p>
     可以在CPU一侧等待、重置时间线信号量，换言之时间线信号量兼具栅栏的功能。
     <br>
-    时间线信号量并不完全涵盖二值信号量的作用，在提交命令缓冲区时，时间线信号量可以替代二值信号量，但在渲染循环中获取下一张交换连图像时，或呈现图像时，必须使用二值信号量，见后文。
+    时间线信号量并不完全涵盖二值信号量的作用，在提交命令缓冲区时，时间线信号量可以替代二值信号量，但在渲染循环中获取下一张交换链图像时，或呈现图像时，必须使用二值信号量，见后文。
     <br>
     本套教程不会使用时间线信号量，仅对其创建和使用方式做简单提要。
 </p><section id="id7">
@@ -565,7 +565,7 @@
 <p>
     信号量通常用于三种情形：
     <br>
-    1.在渲染循环中获取下一张交换连图像时，可以置位信号量
+    1.在渲染循环中获取下一张交换链图像时，可以置位信号量
     <br>
     2.提交命令缓冲区时，可以等待信号量、置位信号量
     <br>
@@ -578,11 +578,11 @@
     下文简单讲解下为何时间线信号量不完全涵盖二值信号量的作用，如果你不打算使用时间线信号量，你可以跳过这一部分。
 </p>
 <p>
-    <strong>情形1：在渲染循环中获取下一张交换连图像</strong>
+    <strong>情形1：在渲染循环中获取下一张交换链图像</strong>
     <br>
     通过<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)获取图像，参见<a class="reference internal" href="Ch2-1%20Rendering%20Loop.html#id2">获取交换链图像索引</a>，这个函数没有pNext参数。
     <br>
-    Vulkan1.1中提供了<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImage2KHR">vkAcquireNextImage2KHR</a>(...)，其参数之一为<a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkAcquireNextImageInfoKHR">VkAcquireNextImageInfoKHR</a>类型，该结构体中有pNext，但标准中规定其必须为<span class="kw">nullptr</span>（即目前该pNext无用处），因此在渲染循环中获取下一张交换连图像时，必须使用二值信号量。
+    Vulkan1.1中提供了<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImage2KHR">vkAcquireNextImage2KHR</a>(...)，其参数之一为<a href="https://renderdoc.org/vkspec_chunked/chap34.html#VkAcquireNextImageInfoKHR">VkAcquireNextImageInfoKHR</a>类型，该结构体中有pNext，但标准中规定其必须为<span class="kw">nullptr</span>（即目前该pNext无用处），因此在渲染循环中获取下一张交换链图像时，必须使用二值信号量。
 </p>
 <p>
     <strong>情形2：提交命令缓冲区</strong>

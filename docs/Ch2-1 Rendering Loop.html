@@ -977,7 +977,7 @@ Swapchain image 0 was presented but was not re-acquired, so VkSemaphore 0x140000
 <p>
     简而言之就是：如果某一交换链图像索引，被呈现后没有重新被获取，那么呈现该索引的图像时提供的信号量有可能仍被占用，因而无法被安全地重用（有啥不安全的？问底层驱动开发人员去！）。
     <br>
-    稍稍咬文嚼字就能看出消除这个错误信息的方法：若某一索引已被获取，则与其对应的信号量可以被安全使用。即，使得渲染结束时的信号量与交换连图像索引一一对应即可。
+    稍稍咬文嚼字就能看出消除这个错误信息的方法：若某一索引已被获取，则与其对应的信号量可以被安全使用。即，使得渲染结束时的信号量与交换链图像索引一一对应即可。
 </p>
 <p>
     Intel核显的话有不同的错误信息，而且很奇怪，具体内容略。报错信息的差异源于应对窗口大小变化的机制不同，Nvidia的显卡驱动会在调用<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkQueuePresentKHR">vkQueuePresentKHR</a>(...)时返回<span class="enum">VK_ERROR_OUT_OF_DATE_KHR</span>，而Intel核显的驱动在调用<a href="https://renderdoc.org/vkspec_chunked/chap34.html#vkAcquireNextImageKHR">vkAcquireNextImageKHR</a>(...)时返回<span class="enum">VK_SUBOPTIMAL_KHR</span>。

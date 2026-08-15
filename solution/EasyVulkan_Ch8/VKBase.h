@@ -1718,11 +1718,11 @@ public:
 			return VK_RESULT_MAX_ENUM;//No proper VkResult enum value, don't use VK_ERROR_UNKNOWN
 		}
 		size_t fileSize = size_t(file.tellg());
-		std::vector<uint32_t> binaries(fileSize / 4);
+		std::vector<uint32_t> code(fileSize / 4);
 		file.seekg(0);
-		file.read(reinterpret_cast<char*>(binaries.data()), fileSize);
+		file.read(reinterpret_cast<char*>(code.data()), fileSize);
 		file.close();
-		return Create(fileSize, binaries.data());
+		return Create(fileSize, code.data());
 	}
 	result_t Create(size_t codeSize, const uint32_t* pCode /*reserved for future use*/) {
 		VkShaderModuleCreateInfo createInfo = {
