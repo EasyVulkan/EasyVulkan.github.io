@@ -654,7 +654,7 @@ namespace vulkan {
 		//                    After Initialization
 		void Terminate() {
 			this->~graphicsBase();
-			new(this) graphicsBase();
+			new(this) graphicsBase;
 			instance = VK_NULL_HANDLE;
 			physicalDevice = VK_NULL_HANDLE;
 			device = VK_NULL_HANDLE;
