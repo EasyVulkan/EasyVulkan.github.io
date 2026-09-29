@@ -1,7 +1,7 @@
 #include "ChimeImpl.h"
 
 CHIME_NAMESPACE_BEGIN
-void InitializeText() {
+void InitializeTextPrinter() {
 	apiData_texture::Initialize();
 	apiData_font::Initialize();
 	apiData_textPrinter::Initialize();

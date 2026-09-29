@@ -29,7 +29,7 @@
 
 #pragma once
 #include <optional>
-#include "Chime_TrueType/Chime_TrueType.h"
+#include "Chime_TrueType.h"
 
 #pragma region Macro
 #ifndef API_SPECIFIC
@@ -82,7 +82,7 @@ CHIME_NAMESPACE_BEGIN
 API_SPECIFIC class apiData_font;
 API_SPECIFIC class apiData_textPrinter;
 
-API_SPECIFIC void InitializeText();
+API_SPECIFIC void InitializeTextPrinter();
 
 #ifdef CHIME_TRUETYPE_NAMESPACE
 using namespace CHIME_TRUETYPE_NAMESPACE;
@@ -176,7 +176,7 @@ public:
 		return 0;
 	}
 	/* Const Function */
-	const bool IsTextureless() const { return pGlyfData.get(); }
+	bool IsTextureless() const { return pGlyfData.get(); }
 	const apiData_font* operator->() const { return pApiData.get(); }
 };
 class font_textureless : public font {
@@ -224,7 +224,7 @@ public:
 class textPrinter {
 public:
 	using fnNextCharacter_t = std::optional<uint32_t>(*)(const void* text, uint32_t textLength, uint8_t characterStride, uint32_t& currentIndex);
-	using fnPerformBlending_t = void(*)(uint8_t* pPixel, uint8_t monochromeValue, uint8_t canvasChannelCount, const uint8_t color_rgba[4]);
+	using fnPerformBlending_t = void(*)(uint8_t* pPixel, uint8_t monochromeValue, uint8_t canvasPixelStride, const uint8_t color_rgba[4]);
 	class fnPrint {
 	protected:
 		textPrinter* pTextPrinter = nullptr;
@@ -525,7 +525,7 @@ protected:
 					if (fnPerformBlending)
 						for (size_t j = 0; j < copyHeight; j++, pImageData_src += imageWidth, pImageData_dst += canvasSize.x * canvasPixelStride)
 							for (size_t i = 0; i < copyWidth; i++)
-								fnPerformBlending(pImageData_dst + i * canvasPixelStride, pImageData_src[i], canvasPixelStride, reinterpret_cast<uint8_t*>(&color));
+								fnPerformBlending(pImageData_dst + i * canvasPixelStride, pImageData_src[i], canvasPixelStride, reinterpret_cast<const uint8_t*>(&pVertex->color));
 					else
 						if (canvasPixelStride == 1)
 							for (size_t j = 0; j < copyHeight; j++, pImageData_src += imageWidth, pImageData_dst += canvasSize.x)

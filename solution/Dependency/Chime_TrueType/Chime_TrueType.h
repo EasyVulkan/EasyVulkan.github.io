@@ -65,7 +65,6 @@ using int32 = int8_t[4];
 using uint8 = uint8_t;
 using uint16 = uint8_t[2];
 using uint32 = uint8_t[4];
-/* For little-endian machine */
 inline int8_t GetI8(const uint8_t* pData) {
 	return pData[0];
 }

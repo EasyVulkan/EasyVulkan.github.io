@@ -46,7 +46,7 @@ public:
 	// ======== For initialization
 	void Initialize() {
 		ExecuteOnce();
-		InitializeText();
+		InitializeTextPrinter();
 		auto ResetContext_RecreateDevice = [] {
 			singleton.sampleCount = {};
 		};
