@@ -1,4 +1,3 @@
-#define STB_IMAGE_IMPLEMENTATION
 #include "GlfwGeneral.hpp"
 #include "EasyVulkan.hpp"
 #include "ChimeImpl.hpp"
@@ -90,7 +89,7 @@ int main() {
 
 	thread.Wait();
 	font font(ttfLoader);
-	textPrinter printer(256, 64, 64, 0, float(swapchainImageExtent.width), 0xff0000ff);
+	textPrinter printer(256, 64, 1, 0, float(swapchainImageExtent.width), 0xff0000ff);
 
 	while (!glfwWindowShouldClose(pWindow)) {
 		TitleFps();
@@ -103,20 +102,18 @@ int main() {
 		graphics::Base().CurrentContext(commandBuffers[sync], 0, graphicsBase::Base().SwapchainCreateInfo().imageFormat, VK_SAMPLE_COUNT_1_BIT, graphicsBase::Base().SwapchainCreateInfo().imageExtent);
 
 		printer.FontHeight(128);
-		printer.LineSpacing(128);
-		float scaledFontAscent = font.FontAscent() * printer.FontHeight() / font.FontHeight();
-		printer.Print({ 0, scaledFontAscent }, u"Font name: ", font);
+		float baseline = printer.GetBaseline(0, font);
+		printer.Print({ 0, baseline }, u"Font name: ", font);
 		font.FontNameEncodingIsU16() ?
-			printer.Print({ 0, scaledFontAscent }, font.FontName().U16StringView(), font) :
-			printer.Print({ 0, scaledFontAscent }, font.FontName(), font);
+			printer.Print({ 0, baseline }, font.FontName().U16StringView(), font) :
+			printer.Print({ 0, baseline }, font.FontName(), font);
 
 		printer.ResetPrintArea();
 		printer.FontHeight(64);
-		printer.LineSpacing(64);
-		scaledFontAscent /= 2;
+		baseline /= 2;
 		textPrinter::fnPrint deferredPrinting;
 		float printAreaHeight = printer.Print_RightAligned(deferredPrinting, u"Text Rendering Sample \u00a9 2026 Citrus Qiao ", font);
-		deferredPrinting({ swapchainImageExtent.width + 0.f, swapchainImageExtent.height - printAreaHeight + scaledFontAscent });
+		deferredPrinting({ swapchainImageExtent.width + 0.f, swapchainImageExtent.height - printAreaHeight + baseline });
 
 		ToScreen::CmdEndRendering(commandBuffers[sync], sync);
 		commandBuffers[sync].End();

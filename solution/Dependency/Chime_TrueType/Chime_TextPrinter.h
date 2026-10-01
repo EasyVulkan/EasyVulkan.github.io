@@ -223,8 +223,15 @@ public:
 
 class textPrinter {
 public:
-	using fnNextCharacter_t = std::optional<uint32_t>(*)(const void* text, uint32_t textLength, uint8_t characterStride, uint32_t& currentIndex);
-	using fnPerformBlending_t = void(*)(uint8_t* pPixel, uint8_t monochromeValue, uint8_t canvasPixelStride, const uint8_t color_rgba[4]);
+	struct characterVertex {
+		vec2 position;
+		float scale;
+		uint32_t color; // RGBA8
+		uint16_t glyphIndex;
+		uint16_t layerIndex;
+		uint16_t offsetU;
+		uint16_t sizeU;
+	};
 	class fnPrint {
 	protected:
 		textPrinter* pTextPrinter = nullptr;
@@ -260,19 +267,26 @@ public:
 			pTextPrinter->Print_Internal(view, *pFont, vertexCount, firstVertexIndex);
 		}
 	};
-	struct characterVertex {
-		vec2 position;
-		float scale;
-		uint32_t color; // RGBA8
-		uint16_t glyphIndex;
-		uint16_t layerIndex;
-		uint16_t offsetU;
-		uint16_t sizeU;
+	class proxy;
+	using fnNextCharacter_t = std::optional<uint32_t>(*)(proxy textPrinter, const void* text, uint32_t textLength, uint8_t characterStride, uint32_t& currentIndex);
+	using fnPerformBlending_t = void(*)(uint8_t* pPixel, uint8_t monochromeValue, uint8_t canvasPixelStride, const uint8_t color_rgba[4]);
+	class proxy {
+		friend class textPrinter;
+		textPrinter& ref;
+		proxy(textPrinter& printer) : ref(printer) {}
+	public:
+		const textPrinter& Ref() const { return ref; }
+		void LineHeightRatio(float lineHeightRatio) { ref.LineHeightRatio(lineHeightRatio); }
+		void ExtraCharacterSpacing(float extraCharacterSpacing) { ref.ExtraCharacterSpacing(extraCharacterSpacing); }
+		void MaxLineWidth(float maxLineWidth) { ref.MaxLineWidth(maxLineWidth); }
+		void Color(uint32_t color_rgba) { ref.Color(color_rgba); };
+		void FnNextCharacter(fnNextCharacter_t fnNextCharacter) { ref.FnNextCharacter(fnNextCharacter); }
+		void FnPerformBlending(fnPerformBlending_t fnPerformBlending) { ref.FnPerformBlending(fnPerformBlending); }
 	};
 protected:
 	pImpl<apiData_textPrinter> pApiData;
 	float fontHeight = 0;
-	float lineSpacing = 0;
+	float lineHeightRatio = 0;
 	float extraCharacterSpacing = 0;
 	float maxLineWidth = 0;
 	uint32_t color = 0xffffffff; // Straight alpha
@@ -309,6 +323,7 @@ protected:
 		float fontAscent = font.FontAscent() * scale;
 		float imageAscent = font.ImageAscent() * scale;
 		float imagePadding = font.ImagePadding() * scale;
+		float lineHeight = fontHeight * lineHeightRatio;
 		// Calculate print area top and bottom position
 		float lineTop = currentPosition.y - fontAscent;
 		float lineBottom = lineTop + fontHeight;
@@ -325,7 +340,7 @@ protected:
 		for (uint32_t i = 0; i < textLength; i++, characterCount++) {
 			uint32_t character;
 			if (fnNextCharacter)
-				if (auto optional = fnNextCharacter(text.data(), textLength, sizeof(T), i))
+				if (auto optional = fnNextCharacter(*this, text.data(), textLength, sizeof(T), i))
 					character = *optional;
 				else
 					break;
@@ -335,7 +350,7 @@ protected:
 				!printLineFeed) {
 				vertex.glyphIndex = UINT16_MAX;
 				position.x = -imagePadding;
-				position.y += lineSpacing;
+				position.y += lineHeight;
 				continue;
 			}
 			if (characterCount)
@@ -349,7 +364,7 @@ protected:
 			if (maxLineWidth < position.x + imagePadding + advanceWidth) // maxLineWidth < lineRight
 				if (position.x != -imagePadding)
 					position.x = -imagePadding,
-					position.y += lineSpacing;
+					position.y += lineHeight;
 			vertex.position.x = position.x + leftmostPixelBearing;
 			vertex.position.y = position.y;
 			position.x += std::max(advanceWidth + extraCharacterSpacing, 0.f);
@@ -413,7 +428,7 @@ protected:
 		for (; i < textLength; i++, characterCount++) {
 			uint32_t character;
 			if (fnNextCharacter)
-				if (auto optional = fnNextCharacter(text.data(), textLength, sizeof(T), i))
+				if (auto optional = fnNextCharacter(*this, text.data(), textLength, sizeof(T), i))
 					character = *optional;
 				else {
 					i++;
@@ -468,7 +483,7 @@ protected:
 		printAreaSize.y = printAreaBottom - printAreaTop;
 		// New line
 		if (characterCount)
-			currentPosition.y += lineSpacing,
+			currentPosition.y += fontHeight * lineHeightRatio,
 			previousGlyphIndex = UINT16_MAX;
 
 		if (size_t newVertexCount = vertices.size() - previousVertexCount)
@@ -544,8 +559,8 @@ protected:
 		return value;
 	}
 public:
-	textPrinter(uint32_t initialCapacity, float fontHeight, float lineSpacing, float extraCharacterSpacing, float maxLineWidth, uint32_t color_rgba = 0xffffffff) :
-		fontHeight(fontHeight), lineSpacing(lineSpacing), extraCharacterSpacing(extraCharacterSpacing), maxLineWidth(maxLineWidth), color(EndiannessCast(color_rgba)) {
+	textPrinter(uint32_t initialCapacity, float fontHeight, float lineHeightRatio, float extraCharacterSpacing, float maxLineWidth, uint32_t color_rgba = 0xffffffff) :
+		fontHeight(fontHeight), lineHeightRatio(lineHeightRatio), extraCharacterSpacing(extraCharacterSpacing), maxLineWidth(maxLineWidth), color(EndiannessCast(color_rgba)) {
 		if (initialCapacity)
 			vertices.reserve(initialCapacity),
 			CreateApiData(vertices.capacity());
@@ -555,7 +570,7 @@ public:
 	textPrinter(textPrinter&&) = default;
 	/* Getter */
 	float FontHeight() const { return fontHeight; }
-	float LineSpacing() const { return lineSpacing; }
+	float LineHeightRatio() const { return lineHeightRatio; }
 	float ExtraCharacterSpacing() const { return extraCharacterSpacing; }
 	float MaxLineWidth() const { return maxLineWidth; }
 	uint32_t Color() const { return EndiannessCast(color); };
@@ -568,7 +583,7 @@ public:
 	float PrintAreaTop() const { return printAreaTop; }
 	/* Setter */
 	void FontHeight(float fontHeight) { this->fontHeight = fontHeight; }
-	void LineSpacing(float lineSpacing) { this->lineSpacing = lineSpacing; }
+	void LineHeightRatio(float lineHeightRatio) { this->lineHeightRatio = lineHeightRatio; }
 	void ExtraCharacterSpacing(float extraCharacterSpacing) { this->extraCharacterSpacing = extraCharacterSpacing; }
 	void MaxLineWidth(float maxLineWidth) { this->maxLineWidth = maxLineWidth; }
 	void Color(uint32_t color_rgba) { this->color = EndiannessCast(color_rgba); };

@@ -153,6 +153,7 @@ protected:
 	/* Static */
 	static inline uint32_t maxImageLayerCount = 2048;
 	static inline uint32_t maxImageLayerWidth = 16384;
+	static inline float squarePrecision = 0; // See CalculateSquarePrecision(...) and TessellationPrecision(...)
 	/* Const Function */
 	bool SaveLoaded_Ttfl(std::ofstream& file) const {
 		// Compress image data
@@ -275,12 +276,12 @@ protected:
 	}
 	/* Non-const Function */
 	void RasterizeGlyphs(glyfParser& glyfParser, const uint8_t* pTable_glyf, const std::vector<uint32_t>& glyphDescriptionLengths, const rasterizer::bounds* glyphBoundingBoxes, int8_t sdfPadding) {
-		static constexpr float squarePrecision = 0.35f * 0.35f;
 		auto RasterizeGlyphs_Inner = [this](auto& glyfParser, const std::vector<uint32_t>& glyphDescriptionLengths, const rasterizer::bounds* glyphBoundingBoxes, auto... sdfPadding) {
+			float squarePrecision = CalculateSquarePrecision(fontHeight);
 			std::vector<glyfParser::pointF32> points;
 			std::vector<rasterizer::point> tessellatedPoints;
 			rasterizer rasterizer;
-			pImageData = std::make_unique<uint8_t[]>(imageLayerCount * imageLayerWidth * imageLayerHeight);
+			pImageData = std::make_unique<uint8_t[]>(size_t{} + imageLayerCount * imageLayerWidth * imageLayerHeight);
 			for (auto& i : glyfParser.Result().glyphRecords) {
 				size_t glyphIndex = &i - glyfParser.Result().glyphRecords.data();
 				if (glyphIndex % 100 == 0)
@@ -397,8 +398,21 @@ protected:
 			}
 			pData_src += 44;
 		}
-		else
+		else switch (GetU32(pData_src)) {
+		case 0x00010000:
+		//case 'true':
+		//case 'typ1':
+		case 'OTTO':
+			filepath ?
+				CHIME_TRUETYPE_PRINT_ERROR("To load a TrueType file, call LoadTtf(...) or LoadTtc(...).\nFile: {}", filepath) :
+				CHIME_TRUETYPE_PRINT_ERROR("To load a TrueType file, call LoadTtf(...) or LoadTtc(...).");
 			return false;
+		default:
+			filepath ?
+				CHIME_TRUETYPE_PRINT_ERROR("File format is not supported!\nFile: {}", filepath) :
+				CHIME_TRUETYPE_PRINT_ERROR("File format is not supported!");
+			return false;
+		}
 		// Load everything except image data
 		memcpy(this, pData_src, offsetof(ttfLoader, endOfFixedLengthFields));
 		pData_src += offsetof(ttfLoader, endOfFixedLengthFields);
@@ -458,6 +472,14 @@ protected:
 		for (size_t i = 0; i < count; i++)
 			values[i] = glyphIndices_copy[indices[i]];
 		values.resize(count);
+	}
+	static float CalculateSquarePrecision(float fontHeight) {
+		if (squarePrecision >= 1.f / 256)
+			return squarePrecision;
+		if (fontHeight >= 32)
+			return 0.1875f * 0.1875;
+		float precision = std::max(0.1875f / 32 * fontHeight, 1.f / 16);
+		return precision * precision;
 	}
 	static void TessellateSimpleGlyphContour(const glyfParser::result_t& glyfParseResult, uint16_t indexIntoSimpleGlyphs, const glyfParser::pointF32*& pFirstPoint, float squarePrecision, std::vector<rasterizer::point>& points_out) {
 		for (auto& i : glyfParseResult.simpleGlyphs[indexIntoSimpleGlyphs].contourPointCounts) {
@@ -763,7 +785,7 @@ public:
 	/* Const Function */
 	bool SaveLoaded(const char* filepath) const {
 		if (glyphRenderingInfos.empty()) {
-			CHIME_TRUETYPE_PRINT_ERROR("Call LoadTtf(...) first, then you may call SaveLoaded(...) before calling MoveGlyphRenderingInfosTo(...).");
+			CHIME_TRUETYPE_PRINT_ERROR("Call LoadTtf(...) or LoadTtc(...) first, then you may call SaveLoaded(...) before calling MoveGlyphRenderingInfosTo(...).");
 			return false;
 		}
 		std::ofstream file(filepath, std::ios::binary);
@@ -846,6 +868,7 @@ public:
 	}
 	static void MaxImageLayerCount(uint32_t maxImageLayerCount) { ttfLoader::maxImageLayerCount = maxImageLayerCount; }
 	static void MaxImageLayerWidth(uint32_t maxImageLayerWidth) { ttfLoader::maxImageLayerWidth = maxImageLayerWidth; }
+	static void TessellationPrecision(float precision) { squarePrecision = precision * precision; }
 };
 
 class ttfLoader_imageless {
@@ -955,8 +978,8 @@ public:
 		float scale, float fontHeight, float subpixelPositionX, float subpixelPositionY, // 0 <= subpixelPositionX < 1; 0 <= subpixelPositionY < 1
 		std::vector<glyfParser::pointF32>& points, std::vector<rasterizer::point>& tessellatedPoints, rasterizer& rasterizer,
 		std::vector<uint8_t>& pixels, uint16_t& imageWidth, uint16_t& imageHeight) {
-		static constexpr float squarePrecision = 0.35f * 0.35f;
 		struct _ : ttfLoader {
+			using ttfLoader::CalculateSquarePrecision;
 			using ttfLoader::TessellateSimpleGlyphContour;
 			using ttfLoader::TessellateCompoundGlyphContour;
 		};
@@ -976,11 +999,11 @@ public:
 		if (glyphRecord.indexIntoSimpleGlyphs != UINT16_MAX)
 			glyfData.GetSimpleGlyphPoints(glyphRecord.indexIntoSimpleGlyphs, points, scale),
 			AddOffset(points, subpixelOffsetX, subpixelOffsetY),
-			_::TessellateSimpleGlyphContour(glyfData.Result(), glyphRecord.indexIntoSimpleGlyphs, pFirstPoint = points.data(), squarePrecision, tessellatedPoints);
+			_::TessellateSimpleGlyphContour(glyfData.Result(), glyphRecord.indexIntoSimpleGlyphs, pFirstPoint = points.data(), _::CalculateSquarePrecision(fontHeight), tessellatedPoints);
 		else
 			glyfData.GetCompoundGlyphPoints(glyphRecord.indexIntoCompoundGlyphs, /*sfntVersion,*/ points, scale),
 			AddOffset(points, subpixelOffsetX, subpixelOffsetY),
-			_::TessellateCompoundGlyphContour(glyfData.Result(), glyphRecord.indexIntoCompoundGlyphs, pFirstPoint = points.data(), squarePrecision, tessellatedPoints);
+			_::TessellateCompoundGlyphContour(glyfData.Result(), glyphRecord.indexIntoCompoundGlyphs, pFirstPoint = points.data(), _::CalculateSquarePrecision(fontHeight), tessellatedPoints);
 		rasterizer::bounds bounds = {
 			int16_t(std::floor(scaledXMin)), // Same result with or without '+ subpixelOffsetX'
 			int16_t(std::floor(glyphRecord.boundingBox.yMin * scale + subpixelOffsetY)),

@@ -44,7 +44,7 @@ protected:
 				break;
 			case 3: // Windows
 				switch (GetU16(pEncodingRecord + offsetof(encodingRecord, encodingID))) {
-				case 0:  // Non-Standard symbol
+				case 0:  // Non-standard symbol
 				case 1:  // Unicode BMP
 				case 10: // Unicode full repertoire
 					_pSubtable = pTable + GetU32(pEncodingRecord + offsetof(encodingRecord, subtableOffset));

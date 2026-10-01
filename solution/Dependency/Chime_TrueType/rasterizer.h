@@ -223,7 +223,9 @@ protected:
 		auto CalculateMagnitude = [](float x, float y) {
 			return std::sqrt(x * x + y * y);
 		};
-		DrawGlyph(glyphBoundingBox, pImageData + sdfPadding * (1 + imageLayerWidth), imageLayerWidth, imageLayerHeight, imageAscent);
+		glyphBoundingBox.top - glyphBoundingBox.bottom <= 124 ?
+			DrawGlyph(glyphBoundingBox, pImageData + sdfPadding * (1 + imageLayerWidth), imageLayerWidth, imageLayerHeight, imageAscent) :
+			DrawGlyph_LineByLine(glyphBoundingBox, pImageData + sdfPadding * (1 + imageLayerWidth), imageLayerWidth);
 		float pixelDistanceScale = 128.f / sdfPadding;
 		for (auto& i : edges) {
 			auto& points = i.points;
@@ -317,7 +319,9 @@ public:
 			return;
 		PointsToEdges(points);
 		if (!edges.empty())
-			DrawGlyph(glyphBoundingBox, pImageData, imageLayerWidth, imageLayerHeight, imageAscent);
+			glyphBoundingBox.top - glyphBoundingBox.bottom <= 124 ?
+				DrawGlyph(glyphBoundingBox, pImageData, imageLayerWidth, imageLayerHeight, imageAscent) :
+				DrawGlyph_LineByLine(glyphBoundingBox, pImageData, imageLayerWidth);
 	}
 	void Rasterize(const std::vector<point>& points, bounds glyphBoundingBox, uint8_t* pImageData, uint16_t imageLayerWidth) {
 		if (points.empty())
